@@ -65,18 +65,6 @@ FwdAlgClassifier::FwdAlgClassifier(int num_timesteps,
     bleach_transition = new BinomialTransition(max_num_dyes,
                                                error_model.p_bleach);
     switch(error_model.distribution_type) {
-    // case NORMAL:
-    //     double scale = error_model.mu;
-    //     double sigma = error_model.sigma / error_model.mu;
-    //     double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
-    //     pdf = [scale, sigma, multiplier](double observed, int state) -> double {
-    //         double unit_obs = observed / scale;
-    //         double offset = unit_obs - (double) state;
-    //         return (multiplier / sqrt((double) state))
-    //                * exp(-(offset * offset)
-    //                / (2.0 * (double) state * sigma * sigma));
-    //     };
-    //     break;
     case LOGNORMAL:
         double scale = error_model.mu;
         double sigma = error_model.sigma;
