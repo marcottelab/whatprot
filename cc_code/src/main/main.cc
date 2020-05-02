@@ -13,11 +13,17 @@
 #include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/scored_classification.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#include "classifiers/omp_fwd_alg_classifier.h"
+#else
+#include "classifiers/fwd_alg_classifier.h"
+#endif
+
 namespace {
 using fluoroseq::DistributionType;
 using fluoroseq::DyeSeq;
 using fluoroseq::ErrorModel;
-using fluoroseq::FwdAlgClassifier;
 using fluoroseq::Radiometry;
 using fluoroseq::ScoredClassification;
 using std::cout;
@@ -25,6 +31,11 @@ using std::ifstream;
 using std::ofstream;
 using std::setprecision;
 using std::string;
+#ifdef _OPENMP
+using fluoroseq::OMPFwdAlgClassifier;
+#else
+using fluoroseq::FwdAlgClassifier;
+#endif
 }
 
 int main(int argc, char** argv) {
@@ -80,11 +91,20 @@ int main(int argc, char** argv) {
     frad.close();
     cout << "read from radiometries file\n";
 
+    #ifdef _OPENMP
+    OMPFwdAlgClassifier classifier(omp_get_max_threads(),
+                                   num_timesteps,
+                                   num_channels,
+                                   error_model,
+                                   num_dye_seqs,
+                                   dye_seqs);
+    #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 num_dye_seqs,
                                 dye_seqs);
+    #endif
     cout << "constructed classifier\n";
     ScoredClassification** results = classifier.classify(num_radiometries,
                                                          radiometries);
@@ -95,7 +115,7 @@ int main(int argc, char** argv) {
     for (int i = 0; i < num_radiometries; i++) {
         fpred << i << ",";
         fpred << results[i]->y->id << ",";
-        fpred << setprecision(17) << results[i]->score << "\n";
+        fpred << setprecision(17) << results[i]->adjusted_score() << "\n";
     }
     fpred.close();
     cout << "finished\n";

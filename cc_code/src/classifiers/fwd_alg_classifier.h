@@ -27,7 +27,6 @@ public:
     ScoredClassification** classify(int num_radiometries, 
                                     Radiometry** radiometries);
 
-
     DetachTransition* detach_transition;
     BinomialTransition* dud_transition;
     BinomialTransition* bleach_transition;
