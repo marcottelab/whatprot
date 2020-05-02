@@ -132,7 +132,7 @@ ScoredClassification* FwdAlgClassifier::classify(const Radiometry& radiometry) {
         }
     }
     delete emission;
-    return new ScoredClassification(dye_seqs[best_i], best_score );// / total_score);
+    return new ScoredClassification(dye_seqs[best_i], best_score / total_score);
 }
 
 ScoredClassification** FwdAlgClassifier::classify(
