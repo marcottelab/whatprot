@@ -5,7 +5,7 @@
 
 #include <omp.h>
 
-#include "classifiers/fwd_alg_classifier.h"
+#include "classifiers/scored_classification.h"
 
 namespace fluoroseq {
 
@@ -47,7 +47,7 @@ OMPFwdAlgClassifier::OMPFwdAlgClassifier(int num_omp_dye_seq_groups,
 }
 
 OMPFwdAlgClassifier::~OMPFwdAlgClassifier() {
-    for (int i = 0; i < num_omp_dye_seq_groups; i++) {
+    for (int i = 0; i < num_omp_dye_seq_groups * omp_get_max_threads(); i++) {
         delete classifiers[i];
     }
     delete[] classifiers;
@@ -65,13 +65,20 @@ ScoredClassification* OMPFwdAlgClassifier::classify(
     return best;
 }
 
+}  // namespace flurooseq
+#include <iostream>
+using std::cout;
+namespace fluoroseq {
+
 ScoredClassification** OMPFwdAlgClassifier::classify(
         int num_radiometries, Radiometry** radiometries) {
     ScoredClassification** best = new ScoredClassification*[num_radiometries];
-    omp_lock_t** lock_best = new omp_lock_t*[num_radiometries];
-    #pragma omp parallel for
     for (int i = 0; i < num_radiometries; i++) {
-        omp_init_lock(lock_best[i]);
+        best[i] = new ScoredClassification();
+    }
+    omp_lock_t* lock_best = new omp_lock_t[num_radiometries];
+    for (int i = 0; i < num_radiometries; i++) {
+        omp_init_lock(&lock_best[i]);
     }
     #pragma omp parallel for
     for (int k = 0; k < num_omp_dye_seq_groups * num_radiometries; k++) {
@@ -80,14 +87,14 @@ ScoredClassification** OMPFwdAlgClassifier::classify(
         ScoredClassification* classification = classifiers[
                 omp_get_thread_num() * num_omp_dye_seq_groups + i]->classify(
                         *radiometries[j]);
-        omp_set_lock(lock_best[j]);
+        omp_set_lock(&lock_best[j]);
         best[j] = merge_scores(best[j], classification);
-        omp_unset_lock(lock_best[j]);
+        omp_unset_lock(&lock_best[j]);
     }
-    #pragma omp parallel for
     for (int i = 0; i < num_radiometries; i++) {
-        omp_destroy_lock(lock_best[i]);
+        omp_destroy_lock(&lock_best[i]);
     }
+    delete[] lock_best;
     return best;
 }
 
