@@ -42,6 +42,8 @@ using fluoroseq::FwdAlgClassifier;
 double wtime();
 
 int main(int argc, char** argv) {
+    double total_start_time = wtime();
+
     if (argc != 4) {
         cout << "wrong number of inputs\n";
         return EXIT_FAILURE;
@@ -138,8 +140,9 @@ int main(int argc, char** argv) {
     end_time = wtime();
     cout << "Got results.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Total number of runs: " << num_dye_seqs * num_radiometries
-                                         << "\n";
+    cout << "    Total number of runs: "
+         << num_dye_seqs * num_radiometries
+         << "\n";
     cout << "    Time per run in seconds: "
          << (end_time - start_time) / (num_dye_seqs * num_radiometries)
          << "\n";
@@ -157,6 +160,18 @@ int main(int argc, char** argv) {
     cout << "Wrote to file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
 
+    double total_end_time = wtime();
+    cout << "Totals:\n";
+    cout << "    Time in seconds: "
+         << total_end_time - total_start_time
+         << "\n";
+    cout << "    Total number of runs: "
+         << num_dye_seqs * num_radiometries
+         << "\n";
+    cout << "    Time per run in seconds: "
+         << (total_end_time - total_start_time)
+            / (num_dye_seqs * num_radiometries)
+         << "\n";
     return 0;
 }
 
