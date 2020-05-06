@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 
     start_time = wtime();
     #ifdef _OPENMP
-    OMPFwdAlgClassifier classifier(omp_get_max_threads(),
+    OMPFwdAlgClassifier classifier(num_dye_seqs,
                                    num_timesteps,
                                    num_channels,
                                    error_model,
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
     cout << "    Time in seconds: " << end_time - start_time << "\n";
 
     start_time = wtime();
-    ScoredClassification** results = classifier.classify(num_radiometries,
+    ScoredClassification* results = classifier.classify(num_radiometries,
                                                          radiometries);
     end_time = wtime();
     cout << "Got results.\n";
@@ -152,8 +152,8 @@ int main(int argc, char** argv) {
     fpred << "radmat_iz,best_pep_iz,best_pep_score\n";
     for (int i = 0; i < num_radiometries; i++) {
         fpred << i << ",";
-        fpred << results[i]->y->id << ",";
-        fpred << setprecision(17) << results[i]->adjusted_score() << "\n";
+        fpred << results[i].y->id << ",";
+        fpred << setprecision(17) << results[i].adjusted_score() << "\n";
     }
     fpred.close();
     end_time = wtime();

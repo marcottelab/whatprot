@@ -17,9 +17,6 @@ public:
     double total;
 };
 
-ScoredClassification* merge_scores(ScoredClassification* a,
-                                   ScoredClassification* b);
-
 }  // namespace fluoroseq
 
 #endif  // FLUOROSEQ_CLASSIFIERS_SCORED_CLASSIFICATION_H

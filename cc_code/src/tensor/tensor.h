@@ -11,8 +11,13 @@ public:
     Tensor(int order, int* shape);
     ~Tensor();
     double& operator[](int* loc);
+    // IMPORTANT: There is ONE TensorIterator. Never try to hold multiple
+    // TensorIterators on the same Tensor at the same time. Furthermore, the
+    // caller of the iterator() function DOES NOT OWN the TensorIterator that is
+    // returned.
     TensorIterator* iterator();
 
+    TensorIterator* tensor_iterator;
     double* values;
     int* shape;
     int* strides;

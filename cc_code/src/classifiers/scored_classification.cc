@@ -21,17 +21,4 @@ double ScoredClassification::adjusted_score() {
     return score / total;
 }
 
-ScoredClassification* merge_scores(ScoredClassification* a,
-                                   ScoredClassification* b) {
-    if (a->score > b->score) {
-        a->total += b->total;
-        delete b;
-        return a;
-    } else {
-        b->total += a->total;
-        delete a;
-        return b;
-    }
-}
-
 }  // namespace fluoroseq

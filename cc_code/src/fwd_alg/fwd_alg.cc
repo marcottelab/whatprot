@@ -21,18 +21,18 @@ double fwd_alg(Tensor* states,
                const BinomialTransition& bleach_transition,
                const EdmanTransition& edman_transition,
                const Summation& summation) {
-    initialization(states);  // good
+    initialization(states);
     for (int c = 0; c < num_channels; c++) {
-        dud_transition(states, c, 0);  // good
+        dud_transition(states, c, 0);
     }
-    emission(states, 0);  // good
+    emission(states, 0);
     for (int t = 1; t < num_timesteps; t++) {
-        detach_transition(states, t - 1);  // good
+        detach_transition(states, t - 1);
         for (int c = 0; c < num_channels; c++) {
-            bleach_transition(states, c, t - 1);  // good
+            bleach_transition(states, c, t - 1);
         }
-        edman_transition(states, t);  // good
-        emission(states, t);  // good
+        edman_transition(states, t);
+        emission(states, t);
     }
     return summation(states, num_timesteps);
 }

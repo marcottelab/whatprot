@@ -23,8 +23,8 @@ public:
                      int num_dye_seqs,
                      DyeSeq** dye_seqs);
     ~FwdAlgClassifier();
-    ScoredClassification* classify(const Radiometry& radiometry);
-    ScoredClassification** classify(int num_radiometries, 
+    ScoredClassification classify(const Radiometry& radiometry);
+    ScoredClassification* classify(int num_radiometries, 
                                     Radiometry** radiometries);
 
     DetachTransition* detach_transition;

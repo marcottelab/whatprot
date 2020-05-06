@@ -105,40 +105,36 @@ FwdAlgClassifier::~FwdAlgClassifier() {
     delete[] tensors;
 }
 
-ScoredClassification* FwdAlgClassifier::classify(const Radiometry& radiometry) {
-    Emission* emission = new Emission(radiometry, max_num_dyes, pdf);
+ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
+    Emission emission(radiometry, max_num_dyes, pdf);
     int best_i = -1;
     double best_score = -1.0;
     double total_score = 0.0;
     for (int i = 0; i < num_dye_seqs; i++) {
-        Initialization* initialization = new Initialization();
-        Summation* summation = new Summation();
+        Initialization initialization;
+        Summation summation;
         double score = fwd_alg(tensors[i],
                                num_timesteps,
                                num_channels,
-                               *initialization,
-                               *emission,
+                               initialization,
+                               emission,
                                *detach_transition,
                                *dud_transition,
                                *bleach_transition,
                                *edman_transitions[i],
-                               *summation);
-        delete initialization;
-        delete summation;
+                               summation);
         total_score += score * dye_seqs[i]->num_peptides;
         if (score > best_score) {
             best_score = score;
             best_i = i;
         }
     }
-    delete emission;
-    return new ScoredClassification(dye_seqs[best_i], best_score, total_score);
+    return ScoredClassification(dye_seqs[best_i], best_score, total_score);
 }
 
-ScoredClassification** FwdAlgClassifier::classify(
-                           int num_radiometries,
-                           Radiometry** radiometries) {
-    ScoredClassification** result = new ScoredClassification*[num_radiometries];
+ScoredClassification* FwdAlgClassifier::classify(int num_radiometries,
+                                                 Radiometry** radiometries) {
+    ScoredClassification* result = new ScoredClassification[num_radiometries];
     for (int i = 0; i < num_radiometries; i++) {
         result[i] = classify(*radiometries[i]);
     }

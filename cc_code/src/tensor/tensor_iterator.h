@@ -8,6 +8,7 @@ class TensorIterator {
 public:
     TensorIterator(int order, int* shape, int size, double* values);
     ~TensorIterator();
+    void reset();
     void advance();
     double* get();
     bool done();

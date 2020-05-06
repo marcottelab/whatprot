@@ -12,6 +12,13 @@ TensorIterator::~TensorIterator() {
     delete[] loc;
 }
 
+void TensorIterator::reset() {
+    for (int o = 0; o < order; o++) {
+        loc[o] = 0;
+    }
+    index = 0;
+}
+
 void TensorIterator::advance() {
     index++;
     for (int o = order - 1; o >= 0; o--) {
