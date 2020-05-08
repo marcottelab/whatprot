@@ -129,7 +129,7 @@ ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
             best_i = i;
         }
     }
-    return ScoredClassification(dye_seqs[best_i], best_score, total_score);
+    return ScoredClassification(dye_seqs[best_i]->id, best_score, total_score);
 }
 
 ScoredClassification* FwdAlgClassifier::classify(int num_radiometries,

@@ -9,13 +9,11 @@
 
 namespace fluoroseq {
 
-OMPFwdAlgClassifier::OMPFwdAlgClassifier(int num_omp_dye_seq_groups,
-                                         int num_timesteps,
+OMPFwdAlgClassifier::OMPFwdAlgClassifier(int num_timesteps,
                                          int num_channels,
                                          const ErrorModel& error_model,
                                          int num_dye_seqs,
-                                         DyeSeq** dye_seqs)
-        : num_omp_dye_seq_groups(num_omp_dye_seq_groups) {
+                                         DyeSeq** dye_seqs) {
     classifiers = new FwdAlgClassifier*[omp_get_max_threads()];
     for (int i = 0; i < omp_get_max_threads(); i++) {
         classifiers[i] = new FwdAlgClassifier(num_timesteps,

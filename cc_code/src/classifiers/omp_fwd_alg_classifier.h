@@ -12,8 +12,7 @@ namespace fluoroseq {
 
 class OMPFwdAlgClassifier {
 public:
-    OMPFwdAlgClassifier(int num_omp_dye_seq_groups,
-                        int num_timesteps,
+    OMPFwdAlgClassifier(int num_timesteps,
                         int num_channels,
                         const ErrorModel& error_model,
                         int num_dye_seqs,
@@ -24,7 +23,6 @@ public:
                                     Radiometry** radiometries);
 
     FwdAlgClassifier** classifiers;
-    int num_omp_dye_seq_groups;
 };
 
 }  // namespace fluoroseq

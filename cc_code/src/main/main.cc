@@ -117,8 +117,7 @@ int main(int argc, char** argv) {
 
     start_time = wtime();
     #ifdef _OPENMP
-    OMPFwdAlgClassifier classifier(num_dye_seqs,
-                                   num_timesteps,
+    OMPFwdAlgClassifier classifier(num_timesteps,
                                    num_channels,
                                    error_model,
                                    num_dye_seqs,
@@ -152,7 +151,7 @@ int main(int argc, char** argv) {
     fpred << "radmat_iz,best_pep_iz,best_pep_score\n";
     for (int i = 0; i < num_radiometries; i++) {
         fpred << i << ",";
-        fpred << results[i].y->id << ",";
+        fpred << results[i].id << ",";
         fpred << setprecision(17) << results[i].adjusted_score() << "\n";
     }
     fpred.close();
@@ -172,13 +171,14 @@ int main(int argc, char** argv) {
          << (total_end_time - total_start_time)
             / (num_dye_seqs * num_radiometries)
          << "\n";
+
     return 0;
 }
 
 double wtime() {
     #ifdef _OPENMP
     return omp_get_wtime();
-    #else
+    #else  // _OPENMP
     return (double) clock() / (double) CLOCKS_PER_SEC;
-    #endif
+    #endif  // _OPENMP
 }

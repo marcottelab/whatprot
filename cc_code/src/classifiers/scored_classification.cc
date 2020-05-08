@@ -7,13 +7,13 @@
 
 namespace fluoroseq {
 
-ScoredClassification::ScoredClassification(DyeSeq* y,
+ScoredClassification::ScoredClassification(int id,
                                            double score,
-                                           double total) : y(y),
+                                           double total) : id(id),
                                                            score(score),
                                                            total(total) {}
 
-ScoredClassification::ScoredClassification() : y(NULL),
+ScoredClassification::ScoredClassification() : id(-1),
                                                score(INT_MIN),
                                                total(0.0) {}
 
