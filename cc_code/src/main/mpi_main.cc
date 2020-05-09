@@ -2,21 +2,26 @@
 // Simple application to read in a TSV file of dye seqs, a TSV file of
 // radiometries, and write predicted classifications to a TSV file.
 
+#include <cstddef>  // for offsetof
 #include <fstream>
 #include <iomanip>  // for std::setprecision
 #include <iostream>
 #include <string>
 
+// Not a standard c++ library. Must have installed MPI to build.
+#include <mpi.h>
+
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
-#include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/scored_classification.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#include "classifiers/omp_fwd_alg_classifier.h"
+#else
 #include "classifiers/fwd_alg_classifier.h"
-
-#include <mpi.h>
-#include <cstddef>  // for offsetof
+#endif
 
 namespace {
 using fluoroseq::DistributionType;
@@ -69,6 +74,11 @@ void main_for_master(char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     cout << "Using MPI\n";
     cout << "    Number of processes: " << mpi_size << "\n";
+
+    #ifdef _OPENMP
+    cout << "Using OpenMP\n";
+    cout << "    Threads per process: " << omp_get_max_threads() << "\n";
+    #endif
 
     char* dye_seqs_filename = argv[1];
     char* radiometries_filename = argv[2];
@@ -213,11 +223,19 @@ void main_for_master(char** argv) {
     cout << "    Number of radiometries: " << num_radiometries << "\n";
 
     start_time = wtime();
+    #ifdef _OPENMP
+    OMPFwdAlgClassifier classifier(num_timesteps,
+                                   num_channels,
+                                   error_model,
+                                   num_dye_seqs,
+                                   dye_seqs);
+    #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 num_dye_seqs,
                                 dye_seqs);
+    #endif
     end_time = wtime();
     cout << "Constructed classifier.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -413,13 +431,20 @@ void main_for_slave() {
         }
     }
 
+    #ifdef _OPENMP
+    OMPFwdAlgClassifier classifier(num_timesteps,
+                                   num_channels,
+                                   error_model,
+                                   num_dye_seqs,
+                                   dye_seqs);
+    #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 num_dye_seqs,
                                 dye_seqs);
+    #endif
 
-    
     ScoredClassification* results = classifier.classify(num_radiometries,
                                                         radiometries);
     
@@ -467,5 +492,9 @@ void main_for_slave() {
 }
 
 double wtime() {
+    #ifdef _OPENMP
+    return omp_get_wtime();
+    #else
     return MPI_Wtime();
+    #endif
 }

@@ -10,7 +10,6 @@
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
-#include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/scored_classification.h"
 
 #ifdef _OPENMP
@@ -178,7 +177,7 @@ int main(int argc, char** argv) {
 double wtime() {
     #ifdef _OPENMP
     return omp_get_wtime();
-    #else  // _OPENMP
+    #else
     return (double) clock() / (double) CLOCKS_PER_SEC;
-    #endif  // _OPENMP
+    #endif
 }
