@@ -43,7 +43,7 @@ double Emission::prob(int t, int c, int d) const {
 
 void Emission::operator()(Tensor* tensor, int timestep) const {
     TensorIterator* iterator = tensor->iterator();  // not owned.
-    while (!iterator->done()) {
+    while (iterator->index < (timestep + 1) * tensor->strides[0]) {
         double product = 1.0;
         for (int c = 0; c < num_channels; c++) {
             product *= prob(timestep, c, iterator->loc[1 + c]);
