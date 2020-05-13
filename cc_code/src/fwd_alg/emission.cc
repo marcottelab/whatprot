@@ -15,10 +15,12 @@ using std::function;
 
 Emission::Emission(const Radiometry& radiometry,
                    int max_num_dyes,
-                   function<double (double, int)> pdf)
+                   function<double (double, int)> pdf,
+                   int max_edman_failures)
         : num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
-          max_num_dyes(max_num_dyes) {
+          max_num_dyes(max_num_dyes),
+          max_edman_failures(max_edman_failures) {
     values = new double[num_timesteps * num_channels * max_num_dyes];
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
@@ -42,7 +44,13 @@ double Emission::prob(int t, int c, int d) const {
 }
 
 void Emission::operator()(Tensor* tensor, int timestep) const {
+    int min_t = timestep - max_edman_failures;
+    if (min_t < 0) {
+        min_t = 0;
+    }
     TensorIterator* iterator = tensor->iterator();  // not owned.
+    iterator->loc[0] = min_t;
+    iterator->index = min_t * tensor->strides[0];
     while (iterator->index < (timestep + 1) * tensor->strides[0]) {
         double product = 1.0;
         for (int c = 0; c < num_channels; c++) {

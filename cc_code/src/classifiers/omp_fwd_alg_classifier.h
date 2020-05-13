@@ -15,6 +15,7 @@ public:
     OMPFwdAlgClassifier(int num_timesteps,
                         int num_channels,
                         const ErrorModel& error_model,
+                        const ApproximationModel& approximation_model,
                         int num_dye_seqs,
                         DyeSeq** dye_seqs);
     ~OMPFwdAlgClassifier();

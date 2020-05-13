@@ -9,7 +9,7 @@ namespace fluoroseq {
 
 class BinomialTransition {
 public:
-    BinomialTransition(int max_n, double q);
+    BinomialTransition(int max_n, double q, int max_failed_edmans);
     ~BinomialTransition();
     double& prob(int from, int to);
     double prob(int from, int to) const;
@@ -19,6 +19,7 @@ public:
     double* values;
     int length;  // length of array in one dimension.
     int size;  // length of values.
+    int max_failed_edmans;
 };
 
 }  // namespace fluoroseq

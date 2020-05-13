@@ -27,16 +27,20 @@ using std::sqrt;
 double PI = 3.141592653589793238;
 }  // namespace
 
-FwdAlgClassifier::FwdAlgClassifier(int num_timesteps,
-                                   int num_channels,
-                                   const ErrorModel& error_model,
-                                   int num_dye_seqs,
-                                   DyeSeq** dye_seqs)
+FwdAlgClassifier::FwdAlgClassifier(
+        int num_timesteps,
+        int num_channels,
+        const ErrorModel& error_model,
+        const ApproximationModel& approximation_model,
+        int num_dye_seqs,
+        DyeSeq** dye_seqs)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           num_dye_seqs(num_dye_seqs),
-          dye_seqs(dye_seqs) {
-    detach_transition = new DetachTransition(error_model.p_detach);
+          dye_seqs(dye_seqs),
+          max_failed_edmans(approximation_model.max_failed_edmans) {
+    detach_transition = new DetachTransition(error_model.p_detach,
+                                             max_failed_edmans);
     edman_transitions = new EdmanTransition*[num_dye_seqs]();
     tensors = new Tensor*[num_dye_seqs]();
     max_num_dyes = 0;
@@ -51,7 +55,8 @@ FwdAlgClassifier::FwdAlgClassifier(int num_timesteps,
         }
         edman_transitions[i] = new EdmanTransition(error_model.p_edman_failure,
                                                    *dye_seqs[i],
-                                                   dye_track);
+                                                   dye_track,
+                                                   max_failed_edmans);
         int* tensor_shape = new int[1 + num_channels];
         tensor_shape[0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {
@@ -61,9 +66,12 @@ FwdAlgClassifier::FwdAlgClassifier(int num_timesteps,
         tensors[i] = new Tensor(1 + num_channels, tensor_shape);
         delete[] tensor_shape;
     }
-    dud_transition = new BinomialTransition(max_num_dyes, error_model.p_dud);
+    dud_transition = new BinomialTransition(max_num_dyes,
+                                            error_model.p_dud,
+                                            max_failed_edmans);
     bleach_transition = new BinomialTransition(max_num_dyes,
-                                               error_model.p_bleach);
+                                               error_model.p_bleach,
+                                               max_failed_edmans);
     switch(error_model.distribution_type) {
     case LOGNORMAL:
         double scale = error_model.mu;
@@ -106,13 +114,13 @@ FwdAlgClassifier::~FwdAlgClassifier() {
 }
 
 ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
-    Emission emission(radiometry, max_num_dyes, pdf);
+    Emission emission(radiometry, max_num_dyes, pdf, max_failed_edmans);
     int best_i = -1;
     double best_score = -1.0;
     double total_score = 0.0;
     for (int i = 0; i < num_dye_seqs; i++) {
         Initialization initialization;
-        Summation summation;
+        Summation summation(max_failed_edmans);
         double score = fwd_alg(tensors[i],
                                num_timesteps,
                                num_channels,

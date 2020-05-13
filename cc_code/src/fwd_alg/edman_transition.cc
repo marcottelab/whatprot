@@ -15,22 +15,34 @@ using std::copy;
 
 EdmanTransition::EdmanTransition(double p_edman_failure,
                                  const DyeSeq& dye_seq,
-                                 const DyeTrack& dye_track)
+                                 const DyeTrack& dye_track,
+                                 int max_failed_edmans)
         : p_edman_failure(p_edman_failure),
           dye_seq(dye_seq),
-          dye_track(dye_track) {}
+          dye_track(dye_track),
+          max_failed_edmans(max_failed_edmans) {}
 
 void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
     int t_stride = tensor->strides[0];
-    for (int i = t_stride * timestep - 1; i >= 0; i--) {
+    int t_min = timestep - max_failed_edmans - 1;
+    bool removing_lowest = (t_min >= 0);
+    if (t_min < 0) {
+        t_min = 0;
+    }
+    for (int i = t_stride * timestep - 1; i >= t_min * t_stride; i--) {
         tensor->values[i + t_stride] = tensor->values[i];
     }
-    for (int i = 0; i < t_stride; i++) {
-        tensor->values[i] = 0;
+    if (!removing_lowest) {
+        for (int i = 0; i < t_stride; i++) {
+            tensor->values[i] *= p_edman_failure;
+        }
     }
-    for (int t = 0; t < timestep; t++) {
-        for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-            tensor->values[i] += p_edman_failure * tensor->values[i + t_stride];
+    for (int t = t_min; t < timestep; t++) {
+        if (t > t_min) {
+            for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
+                tensor->values[i] += p_edman_failure
+                                     * tensor->values[i + t_stride];
+            }
         }
         short channel = dye_seq[t];
         if (channel != -1) {

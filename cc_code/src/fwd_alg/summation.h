@@ -8,7 +8,10 @@ namespace fluoroseq {
 
 class Summation {
 public:
+    Summation(int max_edman_failures);
     double operator()(Tensor* tensor, int timestep) const;
+
+    int max_edman_failures;
 };
 
 }  // namespace fluoroseq

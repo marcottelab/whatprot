@@ -11,12 +11,14 @@ class EdmanTransition {
 public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
-                    const DyeTrack& dye_track);
+                    const DyeTrack& dye_track,
+                    int max_failed_edmans);
     void operator()(Tensor* tensor, int timestep) const;
 
     DyeSeq dye_seq;
     DyeTrack dye_track;
     double p_edman_failure;
+    int max_failed_edmans;
 };
 
 }  // namespace fluoroseq

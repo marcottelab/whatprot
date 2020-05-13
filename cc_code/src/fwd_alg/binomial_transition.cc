@@ -6,7 +6,10 @@
 
 namespace fluoroseq {
 
-BinomialTransition::BinomialTransition(int max_n, double q) {
+BinomialTransition::BinomialTransition(int max_n,
+                                       double q,
+                                       int max_failed_edmans)
+            : max_failed_edmans(max_failed_edmans) {
     double p = 1 - q;
     length = max_n + 1;
     size = length * (length + 1) / 2;
@@ -39,8 +42,12 @@ void BinomialTransition::operator()(Tensor* tensor,
     int vector_stride = tensor->strides[1 + channel];
     int vector_length = tensor->shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
+    int outer_min = tensor->strides[0] * (edmans - max_failed_edmans);
+    if (outer_min < 0) {
+        outer_min = 0;
+    }
     int outer_max = tensor->strides[0] * (edmans + 1);
-    for (int outer = 0; outer < outer_max; outer += outer_stride) {
+    for (int outer = outer_min; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
             Vector v(vector_length,
                      vector_stride,

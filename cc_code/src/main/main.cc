@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 
+#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
@@ -21,6 +22,7 @@
 #endif
 
 namespace {
+using fluoroseq::ApproximationModel;
 using fluoroseq::DistributionType;
 using fluoroseq::DyeSeq;
 using fluoroseq::ErrorModel;
@@ -67,8 +69,9 @@ int main(int argc, char** argv) {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
+    ApproximationModel approximation_model(4);
     end_time = wtime();
-    cout << "Built error model.\n";
+    cout << "Built error model and approximation model.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
 
     start_time = wtime();
@@ -119,12 +122,14 @@ int main(int argc, char** argv) {
     OMPFwdAlgClassifier classifier(num_timesteps,
                                    num_channels,
                                    error_model,
+                                   approximation_model,
                                    num_dye_seqs,
                                    dye_seqs);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
+                                approximation_model,
                                 num_dye_seqs,
                                 dye_seqs);
     #endif

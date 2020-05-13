@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "classifiers/scored_classification.h"
+#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "fwd_alg/binomial_transition.h"
@@ -20,6 +21,7 @@ public:
     FwdAlgClassifier(int num_timesteps,
                      int num_channels,
                      const ErrorModel& error_model,
+                     const ApproximationModel& approximation_model,
                      int num_dye_seqs,
                      DyeSeq** dye_seqs);
     ~FwdAlgClassifier();
@@ -38,6 +40,7 @@ public:
     int num_timesteps;
     int num_channels;
     int max_num_dyes;
+    int max_failed_edmans;
 };
 
 }  // namespace fluoroseq

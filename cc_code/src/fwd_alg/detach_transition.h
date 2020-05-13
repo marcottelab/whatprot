@@ -8,10 +8,11 @@ namespace fluoroseq {
 
 class DetachTransition {
 public:
-    DetachTransition(double p_detach);
-    void operator()(Tensor* tensor, int timestep) const;
+    DetachTransition(double p_detach, int max_failed_edmans);
+    void operator()(Tensor* tensor, int edmans) const;
 
     double p_detach;
+    int max_failed_edmans;
 };
 
 }  // namespace fluoroseq
