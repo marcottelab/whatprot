@@ -1,6 +1,7 @@
 // Author: Matthew Beauregard Smith (UT Austin)
 #include "emission.h"
 
+#include <algorithm>
 #include <functional>
 
 #include "common/radiometry.h"
@@ -11,6 +12,7 @@ namespace fluoroseq {
 
 namespace {
 using std::function;
+using std::max;
 }  // namespace
 
 Emission::Emission(const Radiometry& radiometry,
@@ -44,10 +46,7 @@ double Emission::prob(int t, int c, int d) const {
 }
 
 void Emission::operator()(Tensor* tensor, int timestep) const {
-    int min_t = timestep - max_edman_failures;
-    if (min_t < 0) {
-        min_t = 0;
-    }
+    int min_t = max(0, timestep - max_edman_failures);
     TensorIterator* iterator = tensor->iterator();  // not owned.
     iterator->loc[0] = min_t;
     iterator->index = min_t * tensor->strides[0];

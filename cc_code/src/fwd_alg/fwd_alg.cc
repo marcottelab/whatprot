@@ -31,10 +31,10 @@ double fwd_alg(Tensor* states,
         for (int c = 0; c < num_channels; c++) {
             bleach_transition(states, c, t - 1);
         }
-        edman_transition(states, t);
+        edman_transition(states, t - 1);
         emission(states, t);
     }
-    return summation(states, num_timesteps);
+    return summation(states, num_timesteps - 1);
 }
 
 }  // namespace fluoroseq

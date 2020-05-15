@@ -10,7 +10,7 @@
 namespace fluoroseq {
 
 namespace {
-using std::copy;
+using std::max;
 }  // namespace
 
 EdmanTransition::EdmanTransition(double p_edman_failure,
@@ -24,12 +24,9 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
 
 void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
     int t_stride = tensor->strides[0];
-    int t_min = timestep - max_failed_edmans - 1;
-    bool removing_lowest = (t_min >= 0);
-    if (t_min < 0) {
-        t_min = 0;
-    }
-    for (int i = t_stride * timestep - 1; i >= t_min * t_stride; i--) {
+    int t_min = max(0, timestep - max_failed_edmans);
+    bool removing_lowest = (timestep >= max_failed_edmans);
+    for (int i = t_stride * (1 + timestep) - 1; i >= t_min * t_stride; i--) {
         tensor->values[i + t_stride] = tensor->values[i];
     }
     if (!removing_lowest) {
@@ -37,7 +34,7 @@ void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
             tensor->values[i] *= p_edman_failure;
         }
     }
-    for (int t = t_min; t < timestep; t++) {
+    for (int t = t_min; t < timestep + 1; t++) {
         if (t > t_min) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
                 tensor->values[i] += p_edman_failure

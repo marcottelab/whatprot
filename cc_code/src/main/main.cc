@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
-    ApproximationModel approximation_model(4);
+    ApproximationModel approximation_model(0);
     end_time = wtime();
     cout << "Built error model and approximation model.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";

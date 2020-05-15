@@ -1,10 +1,16 @@
 // Author: Matthew Beauregard Smith
 #include "binomial_transition.h"
 
+#include <algorithm>
+
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
 namespace fluoroseq {
+
+namespace {
+using std::max;
+}  // namespace
 
 BinomialTransition::BinomialTransition(int max_n,
                                        double q,
@@ -42,10 +48,7 @@ void BinomialTransition::operator()(Tensor* tensor,
     int vector_stride = tensor->strides[1 + channel];
     int vector_length = tensor->shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_min = tensor->strides[0] * (edmans - max_failed_edmans);
-    if (outer_min < 0) {
-        outer_min = 0;
-    }
+    int outer_min = max(0, tensor->strides[0] * (edmans - max_failed_edmans));
     int outer_max = tensor->strides[0] * (edmans + 1);
     for (int outer = outer_min; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
