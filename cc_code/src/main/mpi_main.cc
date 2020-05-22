@@ -11,6 +11,7 @@
 // Not a standard c++ library. Must have installed MPI to build.
 #include <mpi.h>
 
+#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
@@ -24,6 +25,7 @@
 #endif
 
 namespace {
+using fluoroseq::ApproximationModel;
 using fluoroseq::DistributionType;
 using fluoroseq::DyeSeq;
 using fluoroseq::ErrorModel;
@@ -92,6 +94,7 @@ void main_for_master(char** argv) {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
+    ApproximationModel approximation_model(16);
     double end_time = wtime();
     cout << "Built error model.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -114,13 +117,13 @@ void main_for_master(char** argv) {
                MPI_COMM_WORLD);
     string* dye_strings = new string[num_dye_seqs];
     int* dye_string_lengths = new int[num_dye_seqs];
-    int* nums_peptides = new int[num_dye_seqs];
-    int* ids = new int[num_dye_seqs];
+    int* dye_seqs_num_peptides = new int[num_dye_seqs];
+    int* dye_seqs_ids = new int[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
         fdye >> dye_strings[i];
         dye_string_lengths[i] = dye_strings[i].length();
-        fdye >> nums_peptides[i];
-        fdye >> ids[i];
+        fdye >> dye_seqs_num_peptides[i];
+        fdye >> dye_seqs_ids[i];
     }
     fdye.close();
     MPI_Bcast(dye_string_lengths,
@@ -135,23 +138,21 @@ void main_for_master(char** argv) {
                   0,  // root
                   MPI_COMM_WORLD);
     }
-    MPI_Bcast(nums_peptides,
-              num_dye_seqs,
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
-    MPI_Bcast(ids,
-              num_dye_seqs,
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
     DyeSeq** dye_seqs = new DyeSeq*[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
         dye_seqs[i] = new DyeSeq(num_channels,
-                                 dye_strings[i],
-                                 nums_peptides[i],
-                                 ids[i]);
+                                 dye_strings[i]);
     }
+    MPI_Bcast(dye_seqs_num_peptides,
+              num_dye_seqs,
+              MPI_INT,
+              0,  // root
+              MPI_COMM_WORLD);
+    MPI_Bcast(dye_seqs_ids,
+              num_dye_seqs,
+              MPI_INT,
+              0,  // root
+              MPI_COMM_WORLD);
     end_time = wtime();
     cout << "Read from dye seqs file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -227,14 +228,20 @@ void main_for_master(char** argv) {
     OMPFwdAlgClassifier classifier(num_timesteps,
                                    num_channels,
                                    error_model,
+                                   approximation_model,
                                    num_dye_seqs,
-                                   dye_seqs);
+                                   dye_seqs,
+                                   dye_seqs_num_peptides,
+                                   dye_seqs_ids);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
+                                approximation_model,
                                 num_dye_seqs,
-                                dye_seqs);
+                                dye_seqs,
+                                dye_seqs_num_peptides,
+                                dye_seqs_ids);
     #endif
     end_time = wtime();
     cout << "Constructed classifier.\n";
@@ -336,6 +343,7 @@ void main_for_slave() {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
+    ApproximationModel approximation_model(16);
     
     int num_channels;
     MPI_Bcast(&num_channels,
@@ -367,14 +375,14 @@ void main_for_slave() {
         delete[] cstr;
     }
     delete[] dye_string_lengths;
-    int* nums_peptides = new int[num_dye_seqs];
-    MPI_Bcast(nums_peptides,
+    int* dye_seqs_num_peptides = new int[num_dye_seqs];
+    MPI_Bcast(dye_seqs_num_peptides,
               num_dye_seqs,
               MPI_INT,
               0,  // root
               MPI_COMM_WORLD);
-    int* ids = new int[num_dye_seqs];
-    MPI_Bcast(ids,
+    int* dye_seqs_ids = new int[num_dye_seqs];
+    MPI_Bcast(dye_seqs_ids,
               num_dye_seqs,
               MPI_INT,
               0,  // root
@@ -382,9 +390,7 @@ void main_for_slave() {
     DyeSeq** dye_seqs = new DyeSeq*[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
         dye_seqs[i] = new DyeSeq(num_channels,
-                                 dye_strings[i],
-                                 nums_peptides[i],
-                                 ids[i]);
+                                 dye_strings[i]);
     }
 
     int num_timesteps;
@@ -435,14 +441,20 @@ void main_for_slave() {
     OMPFwdAlgClassifier classifier(num_timesteps,
                                    num_channels,
                                    error_model,
+                                   approximation_model,
                                    num_dye_seqs,
-                                   dye_seqs);
+                                   dye_seqs,
+                                   dye_seqs_num_peptides,
+                                   dye_seqs_ids);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
+                                approximation_model,
                                 num_dye_seqs,
-                                dye_seqs);
+                                dye_seqs,
+                                dye_seqs_num_peptides,
+                                dye_seqs_ids);
     #endif
 
     ScoredClassification* results = classifier.classify(num_radiometries,

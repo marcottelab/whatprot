@@ -81,14 +81,14 @@ int main(int argc, char** argv) {
     int num_dye_seqs = 0;
     fdye >> num_dye_seqs;
     DyeSeq** dye_seqs = new DyeSeq*[num_dye_seqs];
+    int* dye_seqs_num_peptides = new int[num_dye_seqs];
+    int* dye_seqs_ids = new int[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
         string dye_string;
         fdye >> dye_string;
-        int num_peptides;
-        fdye >> num_peptides;
-        int id;
-        fdye >> id;
-        dye_seqs[i] = new DyeSeq(num_channels, dye_string, num_peptides, id);
+        dye_seqs[i] = new DyeSeq(num_channels, dye_string);
+        fdye >> dye_seqs_num_peptides[i];
+        fdye >> dye_seqs_ids[i];
     }
     fdye.close();
     end_time = wtime();
@@ -124,14 +124,18 @@ int main(int argc, char** argv) {
                                    error_model,
                                    approximation_model,
                                    num_dye_seqs,
-                                   dye_seqs);
+                                   dye_seqs,
+                                   dye_seqs_num_peptides,
+                                   dye_seqs_ids);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
-                                dye_seqs);
+                                dye_seqs,
+                                dye_seqs_num_peptides,
+                                dye_seqs_ids);
     #endif
     end_time = wtime();
     cout << "Constructed classifier.\n";

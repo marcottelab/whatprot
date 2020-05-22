@@ -15,7 +15,9 @@ OMPFwdAlgClassifier::OMPFwdAlgClassifier(
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
         int num_dye_seqs,
-        DyeSeq** dye_seqs) {
+        DyeSeq** dye_seqs,
+        int* dye_seqs_num_peptides,
+        int* dye_seqs_ids) {
     classifiers = new FwdAlgClassifier*[omp_get_max_threads()];
     for (int i = 0; i < omp_get_max_threads(); i++) {
         classifiers[i] = new FwdAlgClassifier(num_timesteps,
@@ -23,7 +25,9 @@ OMPFwdAlgClassifier::OMPFwdAlgClassifier(
                                               error_model,
                                               approximation_model,
                                               num_dye_seqs,
-                                              dye_seqs);
+                                              dye_seqs,
+                                              dye_seqs_num_peptides,
+                                              dye_seqs_ids);
     }
 }
 

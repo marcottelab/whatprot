@@ -33,7 +33,9 @@ FwdAlgClassifier::FwdAlgClassifier(
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
         int num_dye_seqs,
-        DyeSeq** dye_seqs)
+        DyeSeq** dye_seqs,
+        int* dye_seqs_num_peptides,
+        int* dye_seqs_ids)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           num_dye_seqs(num_dye_seqs),
@@ -131,13 +133,13 @@ ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
                                *bleach_transition,
                                *edman_transitions[i],
                                summation);
-        total_score += score * dye_seqs[i]->num_peptides;
+        total_score += score * dye_seqs_num_peptides[i];
         if (score > best_score) {
             best_score = score;
             best_i = i;
         }
     }
-    return ScoredClassification(dye_seqs[best_i]->id, best_score, total_score);
+    return ScoredClassification(dye_seqs_ids[best_i], best_score, total_score);
 }
 
 ScoredClassification* FwdAlgClassifier::classify(int num_radiometries,

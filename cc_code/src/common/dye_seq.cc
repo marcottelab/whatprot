@@ -11,8 +11,7 @@ using std::copy;
 using std::string;
 }  // namespace
 
-DyeSeq::DyeSeq(int num_channels, const string& s, int num_peptides, int id)
-        : num_channels(num_channels), num_peptides(num_peptides), id(id) {
+DyeSeq::DyeSeq(int num_channels, const string& s) : num_channels(num_channels) {
     length = s.length();
     while (s[length - 1] == '.') {
         length--;

@@ -23,7 +23,9 @@ public:
                      const ErrorModel& error_model,
                      const ApproximationModel& approximation_model,
                      int num_dye_seqs,
-                     DyeSeq** dye_seqs);
+                     DyeSeq** dye_seqs,
+                     int* dye_seqs_num_peptides,
+                     int* dye_seqs_ids);
     ~FwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification* classify(int num_radiometries, 
@@ -34,6 +36,8 @@ public:
     BinomialTransition* bleach_transition;
     function<double (double, int)> pdf;
     DyeSeq** dye_seqs;  // not owned
+    int* dye_seqs_num_peptides;  // not owned
+    int* dye_seqs_ids;  // not owned
     EdmanTransition** edman_transitions;
     Tensor** tensors;
     int num_dye_seqs;
