@@ -2,15 +2,15 @@
 
 OFLAG = -O2
 CC_DEPS = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd_alg/*.cc ./src/tensor/*.cc
-IQUOTES = -iquote ./src/ -iquote ./extern/flann-1.9.1/src/cpp/
+INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/
 MAIN = ./src/main/main.cc
 MPI_MAIN = ./src/main/mpi_main.cc
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
 FLANN = -L ./extern/flann-1.9.1/build/lib/ -lflann_cpp_s
 
-ARGS = $(OFLAG) $(MAIN) $(CC_DEPS) $(IQUOTES) $(FLANN)
-MPI_ARGS = $(OFLAG) $(MPI_MAIN) $(CC_DEPS) $(IQUOTES) $(FLANN)
+ARGS = $(OFLAG) $(MAIN) $(CC_DEPS) $(INCLUDES) $(FLANN)
+MPI_ARGS = $(OFLAG) $(MPI_MAIN) $(CC_DEPS) $(INCLUDES) $(FLANN)
 
 all: x64 skx
 x64: classify classify_omp classify_mpi classify_mpi_omp
