@@ -19,14 +19,6 @@
 
 namespace fluoroseq {
 
-namespace {
-using std::exp;
-using std::log;
-using std::sqrt;
-
-double PI = 3.141592653589793238;
-}  // namespace
-
 FwdAlgClassifier::FwdAlgClassifier(
         int num_timesteps,
         int num_channels,
@@ -74,31 +66,7 @@ FwdAlgClassifier::FwdAlgClassifier(
     bleach_transition = new BinomialTransition(max_num_dyes,
                                                error_model.p_bleach,
                                                max_failed_edmans);
-    switch(error_model.distribution_type) {
-    case LOGNORMAL:
-        double scale = error_model.mu;
-        double sigma = error_model.sigma;
-        double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
-        pdf = [scale, sigma, multiplier](double observed, int state) -> double {
-            if (state > 0) {
-                if (observed == 0.0) {
-                    return 0.0;
-                } else {
-                    double unit_obs = observed / scale;
-                    double offset = log(unit_obs) - log((double) state);
-                    return (multiplier / unit_obs)
-                           * exp(-(offset * offset) / (2.0 * sigma * sigma));
-                }
-            } else {
-                if (observed == 0.0) {
-                    return 1.0;
-                } else {
-                    return 0.0;
-                }
-            }
-        };
-        break;
-    }
+    pdf = error_model.pdf();
 }
 
 FwdAlgClassifier::~FwdAlgClassifier() {

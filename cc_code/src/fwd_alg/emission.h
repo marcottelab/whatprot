@@ -9,15 +9,11 @@
 
 namespace fluoroseq {
 
-namespace {
-using std::function;
-}  // namespace
-
 class Emission {
 public:
     Emission(const Radiometry& radiometry,
              int max_num_dyes,
-             function<double (double, int)> pdf,
+             std::function<double (double, int)> pdf,
              int max_edman_failures);
     ~Emission();
     double& prob(int timestep, int channel, int num_dyes);

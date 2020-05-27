@@ -34,7 +34,7 @@ public:
     DetachTransition* detach_transition;
     BinomialTransition* dud_transition;
     BinomialTransition* bleach_transition;
-    function<double (double, int)> pdf;
+    std::function<double (double, int)> pdf;
     DyeSeq** dye_seqs;  // not owned
     int* dye_seqs_num_peptides;  // not owned
     int* dye_seqs_ids;  // not owned

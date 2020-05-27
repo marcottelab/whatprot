@@ -2,6 +2,8 @@
 #ifndef FLUOROSEQ_COMMON_ERROR_MODEL_H
 #define FLUOROSEQ_COMMON_ERROR_MODEL_H
 
+#include <functional>
+
 namespace fluoroseq {
 
 enum DistributionType {
@@ -18,6 +20,8 @@ public:
                DistributionType distribution_type,
                double mu,
                double sigma);
+    std::function<double (double, int)> pdf() const;
+
     double p_edman_failure;
     double p_detach;
     double p_bleach;
@@ -26,6 +30,7 @@ public:
     double mu;
     double sigma;
 };
+
 
 }  // namespace fluoroseq
 
