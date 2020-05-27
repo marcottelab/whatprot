@@ -3,8 +3,6 @@
 
 #include <functional>
 
-#include <math.h>
-
 #include "classifiers/scored_classification.h"
 #include "common/dye_seq.h"
 #include "common/dye_track.h"
