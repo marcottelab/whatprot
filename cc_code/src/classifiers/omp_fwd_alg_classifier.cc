@@ -5,7 +5,7 @@
 
 #include <omp.h>
 
-#include "classifiers/scored_classification.h"
+#include "common/scored_classification.h"
 
 namespace fluoroseq {
 

@@ -15,7 +15,7 @@
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
-#include "classifiers/scored_classification.h"
+#include "common/scored_classification.h"
 
 #ifdef _OPENMP
 #include <omp.h>

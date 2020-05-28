@@ -3,10 +3,10 @@
 
 #include <functional>
 
-#include "classifiers/scored_classification.h"
 #include "common/dye_seq.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
+#include "common/scored_classification.h"
 #include "fwd_alg/binomial_transition.h"
 #include "fwd_alg/detach_transition.h"
 #include "fwd_alg/edman_transition.h"

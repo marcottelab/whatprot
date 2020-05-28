@@ -2,8 +2,6 @@
 // Simple application to read in a TSV file of dye seqs, a TSV file of
 // radiometries, and write predicted classifications to a TSV file.
 
-#include <fstream>
-#include <iomanip>  // for std::setprecision
 #include <iostream>
 #include <string>
 
@@ -11,7 +9,10 @@
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
-#include "classifiers/scored_classification.h"
+#include "common/scored_classification.h"
+#include "io/dye_seqs_io.h"
+#include "io/radiometries_io.h"
+#include "io/scored_classifications_io.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -22,6 +23,9 @@
 #endif
 
 namespace {
+using fluoroseq::read_dye_seqs;
+using fluoroseq::read_radiometries;
+using fluoroseq::write_scored_classifications;
 using fluoroseq::ApproximationModel;
 using fluoroseq::DistributionType;
 using fluoroseq::DyeSeq;
@@ -29,9 +33,6 @@ using fluoroseq::ErrorModel;
 using fluoroseq::Radiometry;
 using fluoroseq::ScoredClassification;
 using std::cout;
-using std::ifstream;
-using std::ofstream;
-using std::setprecision;
 using std::string;
 #ifdef _OPENMP
 using fluoroseq::OMPFwdAlgClassifier;
@@ -75,43 +76,32 @@ int main(int argc, char** argv) {
     cout << "    Time in seconds: " << end_time - start_time << "\n";
 
     start_time = wtime();
-    ifstream fdye(dye_seqs_filename);
-    int num_channels = 0;
-    fdye >> num_channels;
-    int num_dye_seqs = 0;
-    fdye >> num_dye_seqs;
-    DyeSeq** dye_seqs = new DyeSeq*[num_dye_seqs];
-    int* dye_seqs_num_peptides = new int[num_dye_seqs];
-    int* dye_seqs_ids = new int[num_dye_seqs];
-    for (int i = 0; i < num_dye_seqs; i++) {
-        string dye_string;
-        fdye >> dye_string;
-        dye_seqs[i] = new DyeSeq(num_channels, dye_string);
-        fdye >> dye_seqs_num_peptides[i];
-        fdye >> dye_seqs_ids[i];
-    }
-    fdye.close();
+    int num_channels;
+    int num_dye_seqs;
+    DyeSeq** dye_seqs;
+    int* dye_seqs_num_peptides;
+    int* dye_seqs_ids;
+    read_dye_seqs(dye_seqs_filename,
+                  &num_channels,
+                  &num_dye_seqs,
+                  &dye_seqs,
+                  &dye_seqs_num_peptides,
+                  &dye_seqs_ids);
     end_time = wtime();
     cout << "Read from dye seqs file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
     cout << "    Number of dye seqs: " << num_dye_seqs << "\n";
 
     start_time = wtime();
-    ifstream frad(radiometries_filename);
-    int num_timesteps = 0;
-    frad >> num_timesteps;
-    // int num_channels = 0;
-    frad >> num_channels;
-    int num_radiometries = 0;
-    frad >> num_radiometries;
+    int num_timesteps;
+    int duplicate_num_channels;  // also get this from dye seq file.
+    int num_radiometries;
     Radiometry** radiometries = new Radiometry*[num_radiometries];
-    for (int i = 0; i < num_radiometries; i++) {
-        radiometries[i] = new Radiometry(num_timesteps, num_channels);
-        for (int j = 0; j < num_timesteps * num_channels; j++) {
-            frad >> radiometries[i]->intensities[j];
-        }
-    }
-    frad.close();
+    read_radiometries(radiometries_filename,
+                      &num_timesteps,
+                      &duplicate_num_channels,
+                      &num_radiometries,
+                      &radiometries);
     end_time = wtime();
     cout << "Read from radiometries file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -155,14 +145,9 @@ int main(int argc, char** argv) {
          << "\n";
     
     start_time = wtime();
-    ofstream fpred(predictions_filename);
-    fpred << "radmat_iz,best_pep_iz,best_pep_score\n";
-    for (int i = 0; i < num_radiometries; i++) {
-        fpred << i << ",";
-        fpred << results[i].id << ",";
-        fpred << setprecision(17) << results[i].adjusted_score() << "\n";
-    }
-    fpred.close();
+    write_scored_classifications(predictions_filename,
+                                 num_radiometries,
+                                 results);
     end_time = wtime();
     cout << "Wrote to file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";

@@ -6,6 +6,7 @@
 
 #include "common/dye_seq.h"
 #include "common/error_model.h"
+#include "common/scored_classification.h"
 #include "classifiers/fwd_alg_classifier.h"
 
 namespace fluoroseq {

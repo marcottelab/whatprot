@@ -17,7 +17,7 @@ ScoredClassification::ScoredClassification() : id(-1),
                                                score(INT_MIN),
                                                total(0.0) {}
 
-double ScoredClassification::adjusted_score() {
+double ScoredClassification::adjusted_score() const {
     return score / total;
 }
 
