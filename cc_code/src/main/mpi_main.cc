@@ -16,6 +16,7 @@
 #include "common/error_model.h"
 #include "common/radiometry.h"
 #include "common/scored_classification.h"
+#include "common/sourced_data.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -31,6 +32,8 @@ using fluoroseq::DyeSeq;
 using fluoroseq::ErrorModel;
 using fluoroseq::Radiometry;
 using fluoroseq::ScoredClassification;
+using fluoroseq::SourcedData;
+using fluoroseq::SourceWithCount;
 using std::cout;
 using std::ifstream;
 using std::ofstream;
@@ -138,11 +141,6 @@ void main_for_master(char** argv) {
                   0,  // root
                   MPI_COMM_WORLD);
     }
-    DyeSeq** dye_seqs = new DyeSeq*[num_dye_seqs];
-    for (int i = 0; i < num_dye_seqs; i++) {
-        dye_seqs[i] = new DyeSeq(num_channels,
-                                 dye_strings[i]);
-    }
     MPI_Bcast(dye_seqs_num_peptides,
               num_dye_seqs,
               MPI_INT,
@@ -153,6 +151,14 @@ void main_for_master(char** argv) {
               MPI_INT,
               0,  // root
               MPI_COMM_WORLD);
+    SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs; 
+    dye_seqs = new SourcedData<DyeSeq*, SourceWithCount<int>>*[num_dye_seqs];
+    for (int i = 0; i < num_dye_seqs; i++) {
+        dye_seqs[i] = new SourcedData<DyeSeq*, SourceWithCount<int>>(
+                              new DyeSeq(num_channels, dye_strings[i]),
+                              SourceWithCount<int>(dye_seqs_ids[i],
+                                                   dye_seqs_num_peptides[i]));
+    }
     end_time = wtime();
     cout << "Read from dye seqs file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -230,18 +236,14 @@ void main_for_master(char** argv) {
                                    error_model,
                                    approximation_model,
                                    num_dye_seqs,
-                                   dye_seqs,
-                                   dye_seqs_num_peptides,
-                                   dye_seqs_ids);
+                                   dye_seqs);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
-                                dye_seqs,
-                                dye_seqs_num_peptides,
-                                dye_seqs_ids);
+                                dye_seqs);
     #endif
     end_time = wtime();
     cout << "Constructed classifier.\n";
@@ -387,10 +389,13 @@ void main_for_slave() {
               MPI_INT,
               0,  // root
               MPI_COMM_WORLD);
-    DyeSeq** dye_seqs = new DyeSeq*[num_dye_seqs];
+    SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs; 
+    dye_seqs = new SourcedData<DyeSeq*, SourceWithCount<int>>*[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
-        dye_seqs[i] = new DyeSeq(num_channels,
-                                 dye_strings[i]);
+        dye_seqs[i] = new SourcedData<DyeSeq*, SourceWithCount<int>>(
+                              new DyeSeq(num_channels, dye_strings[i]),
+                              SourceWithCount<int>(dye_seqs_ids[i],
+                                                   dye_seqs_num_peptides[i]));
     }
 
     int num_timesteps;
@@ -443,18 +448,14 @@ void main_for_slave() {
                                    error_model,
                                    approximation_model,
                                    num_dye_seqs,
-                                   dye_seqs,
-                                   dye_seqs_num_peptides,
-                                   dye_seqs_ids);
+                                   dye_seqs);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
-                                dye_seqs,
-                                dye_seqs_num_peptides,
-                                dye_seqs_ids);
+                                dye_seqs);
     #endif
 
     ScoredClassification* results = classifier.classify(num_radiometries,

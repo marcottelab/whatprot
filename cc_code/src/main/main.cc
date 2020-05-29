@@ -10,6 +10,7 @@
 #include "common/error_model.h"
 #include "common/radiometry.h"
 #include "common/scored_classification.h"
+#include "common/sourced_data.h"
 #include "io/dye_seqs_io.h"
 #include "io/radiometries_io.h"
 #include "io/scored_classifications_io.h"
@@ -32,6 +33,8 @@ using fluoroseq::DyeSeq;
 using fluoroseq::ErrorModel;
 using fluoroseq::Radiometry;
 using fluoroseq::ScoredClassification;
+using fluoroseq::SourcedData;
+using fluoroseq::SourceWithCount;
 using std::cout;
 using std::string;
 #ifdef _OPENMP
@@ -78,15 +81,11 @@ int main(int argc, char** argv) {
     start_time = wtime();
     int num_channels;
     int num_dye_seqs;
-    DyeSeq** dye_seqs;
-    int* dye_seqs_num_peptides;
-    int* dye_seqs_ids;
+    SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs;
     read_dye_seqs(dye_seqs_filename,
                   &num_channels,
                   &num_dye_seqs,
-                  &dye_seqs,
-                  &dye_seqs_num_peptides,
-                  &dye_seqs_ids);
+                  &dye_seqs);
     end_time = wtime();
     cout << "Read from dye seqs file.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -114,18 +113,14 @@ int main(int argc, char** argv) {
                                    error_model,
                                    approximation_model,
                                    num_dye_seqs,
-                                   dye_seqs,
-                                   dye_seqs_num_peptides,
-                                   dye_seqs_ids);
+                                   dye_seqs);
     #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
-                                dye_seqs,
-                                dye_seqs_num_peptides,
-                                dye_seqs_ids);
+                                dye_seqs);
     #endif
     end_time = wtime();
     cout << "Constructed classifier.\n";
