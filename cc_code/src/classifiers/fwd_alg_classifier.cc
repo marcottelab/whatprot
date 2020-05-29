@@ -23,9 +23,7 @@ FwdAlgClassifier::FwdAlgClassifier(
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
         int num_dye_seqs,
-        DyeSeq** dye_seqs,
-        int* dye_seqs_num_peptides,
-        int* dye_seqs_ids)
+        SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           num_dye_seqs(num_dye_seqs),
@@ -39,14 +37,14 @@ FwdAlgClassifier::FwdAlgClassifier(
     for (int i = 0; i < num_dye_seqs; i++) {
         DyeTrack dye_track = DyeTrack(num_timesteps,
                                       num_channels,
-                                      *dye_seqs[i]);
+                                      *dye_seqs[i]->value);
         for (int c = 0; c < num_channels; c++) {
             if (dye_track(0, c) > max_num_dyes) {
                 max_num_dyes = dye_track(0, c);
             }
         }
         edman_transitions[i] = new EdmanTransition(error_model.p_edman_failure,
-                                                   *dye_seqs[i],
+                                                   *dye_seqs[i]->value,
                                                    dye_track,
                                                    max_failed_edmans);
         int* tensor_shape = new int[1 + num_channels];
@@ -99,13 +97,15 @@ ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
                                *bleach_transition,
                                *edman_transitions[i],
                                summation);
-        total_score += score * dye_seqs_num_peptides[i];
+        total_score += score * dye_seqs[i]->source.count;
         if (score > best_score) {
             best_score = score;
             best_i = i;
         }
     }
-    return ScoredClassification(dye_seqs_ids[best_i], best_score, total_score);
+    return ScoredClassification(dye_seqs[best_i]->source.source,
+                                best_score,
+                                total_score);
 }
 
 ScoredClassification* FwdAlgClassifier::classify(int num_radiometries,

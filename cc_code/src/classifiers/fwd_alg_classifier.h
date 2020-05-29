@@ -8,6 +8,7 @@
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/scored_classification.h"
+#include "common/sourced_data.h"
 #include "fwd_alg/binomial_transition.h"
 #include "fwd_alg/detach_transition.h"
 #include "fwd_alg/edman_transition.h"
@@ -23,9 +24,7 @@ public:
                      const ErrorModel& error_model,
                      const ApproximationModel& approximation_model,
                      int num_dye_seqs,
-                     DyeSeq** dye_seqs,
-                     int* dye_seqs_num_peptides,
-                     int* dye_seqs_ids);
+                     SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs);
     ~FwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification* classify(int num_radiometries, 
@@ -35,9 +34,7 @@ public:
     BinomialTransition* dud_transition;
     BinomialTransition* bleach_transition;
     std::function<double (double, int)> pdf;
-    DyeSeq** dye_seqs;  // not owned
-    int* dye_seqs_num_peptides;  // not owned
-    int* dye_seqs_ids;  // not owned
+    SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs;  // not owned
     EdmanTransition** edman_transitions;
     Tensor** tensors;
     int num_dye_seqs;
