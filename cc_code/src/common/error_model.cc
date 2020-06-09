@@ -29,10 +29,6 @@ ErrorModel::ErrorModel(double p_edman_failure,
                                        mu(mu),
                                        sigma(sigma) {}
 
-}  // namespace fluoroseq
-#include <iostream>
-namespace fluoroseq {
-
 function<double (double, int)> ErrorModel::pdf() const {
     switch(distribution_type) {
     case LOGNORMAL:
@@ -42,12 +38,6 @@ function<double (double, int)> ErrorModel::pdf() const {
         return [scale,
                 sigma,
                 multiplier](double observed, int state) -> double {
-            // std::cout << "scale: " << scale
-            //           << ", sigma: " << sigma
-            //           << ", multiplier: " << multiplier
-            //           << ", observed: " << observed
-            //           << ", state: " << state
-            //           << "\n";
             if (state > 0) {
                 if (observed == 0.0) {
                     return 0.0;

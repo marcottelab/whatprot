@@ -49,7 +49,7 @@ KWANNClassifier::KWANNClassifier(int num_timesteps,
                                           0.9f,  // target precision
                                           1.0f,  // build weight
                                           0.0f,  // memory weight
-                                          0.001f));  // sample fraction
+                                          0.0001f));  // sample fraction
     index->buildIndex();
 }
 

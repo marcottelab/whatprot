@@ -6,8 +6,8 @@
 from plotting.plot_pr_curve import plot_pr_curve
 from numpy import load
 
-TRUE_Y_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_3_proteins/true_pep_i.npy'
-PREDICTIONS_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_3_proteins/ann_test.csv'
+TRUE_Y_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_15_proteins/true_pep_i.npy'
+PREDICTIONS_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_15_proteins/best_hmm_results.csv'
 
 true_y = load(TRUE_Y_FILE)
 class GroundTruth:

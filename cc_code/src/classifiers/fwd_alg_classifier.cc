@@ -79,18 +79,12 @@ FwdAlgClassifier::~FwdAlgClassifier() {
     delete[] tensors;
 }
 
-}  // namespace fluoroseq
-#include <iostream>
-namespace fluoroseq {
-
 ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
     Emission emission(radiometry, max_num_dyes, pdf, max_failed_edmans);
     int best_i = -1;
     double best_score = -1.0;
     double total_score = 0.0;
-    // std::cout << "num_dye_seqs: " << num_dye_seqs << "\n";
     for (int i = 0; i < num_dye_seqs; i++) {
-        // std::cout << "i: " << i << "\n";
         Initialization initialization;
         Summation summation(max_failed_edmans);
         double score = fwd_alg(tensors[i],
@@ -103,14 +97,12 @@ ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
                                *bleach_transition,
                                *edman_transitions[i],
                                summation);
-        // std::cout << "score: " << score << "\n";
         total_score += score * dye_seqs[i]->source->count;
         if (score > best_score) {
             best_score = score;
             best_i = i;
         }
     }
-    // std::cout << "best_i: " << best_i << "\n";
     auto a = dye_seqs[best_i];
     auto b = dye_seqs[best_i]->source;
     auto c = dye_seqs[best_i]->source->source;
