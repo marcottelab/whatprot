@@ -6,11 +6,11 @@
 from common.peptide import Peptide
 from simulate.label_peptides import label_peptides
 
-NUM_PEPTIDES = 705
+NUM_PEPTIDES = 4
 NUM_CHANNELS = 3
 LABEL_SET = ['DE','Y','C']
-PEPTIDE_FILE = 'analytic_probability/control_15_proteins/peps.csv'
-OUTPUT_FILE = 'analytic_probability/control_15_proteins/dye_seqs.tsv'
+PEPTIDE_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_tiny/peps.csv'
+OUTPUT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_tiny/dye_seqs.tsv'
 
 f = open(PEPTIDE_FILE, 'r')
 f.readline()  # header

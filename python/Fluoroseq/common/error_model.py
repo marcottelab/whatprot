@@ -24,3 +24,13 @@ class ErrorModel:
         self.bg_lambda = bg_lambda
         self.detach_rate = detach_rate
         self.is_lognormal = is_lognormal
+
+    def copy(self):
+        return ErrorModel(self.edman_eff,
+                          self.bleach_rate,
+                          self.dud_rate,
+                          self.mu,
+                          self.sigma,
+                          self.bg_lambda,
+                          self.detach_rate,
+                          self.is_lognormal)

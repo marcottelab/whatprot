@@ -7,10 +7,10 @@ from numpy import load
 from numpy import transpose
 
 NUM_CHANNELS = 3
-NUM_CYCLES = 16
+NUM_CYCLES = 14
 MU = 7500.0
-RADMAT_FILE = 'analytic_probability/control_15_proteins/radmat.npy'
-OUTPUT_FILE = 'analytic_probability/control_15_proteins/radiometries.tsv'
+RADMAT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_tiny/radmat.npy'
+OUTPUT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_tiny/radiometries.tsv'
 
 radmat = load(RADMAT_FILE)
 
