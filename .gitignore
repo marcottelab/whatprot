@@ -1,0 +1,3 @@
+**.vscode/
+cc_code/bin/
+python/**/__pycache__
