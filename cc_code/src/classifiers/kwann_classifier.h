@@ -37,7 +37,6 @@ public:
     int num_train;
     int num_timesteps;
     int num_channels;
-    double sigma;  // Shape parameter for Gaussian weighting
     int k;  // number of approximate nearest neighbors to use
 };
 
