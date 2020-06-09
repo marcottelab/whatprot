@@ -15,7 +15,7 @@ OMPFwdAlgClassifier::OMPFwdAlgClassifier(
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
         int num_dye_seqs,
-        SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs) {
+        SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs) {
     classifiers = new FwdAlgClassifier*[omp_get_max_threads()];
     for (int i = 0; i < omp_get_max_threads(); i++) {
         classifiers[i] = new FwdAlgClassifier(num_timesteps,

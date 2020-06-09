@@ -18,7 +18,7 @@ public:
                         const ErrorModel& error_model,
                         const ApproximationModel& approximation_model,
                         int num_dye_seqs,
-                        SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs);
+                        SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs);
     ~OMPFwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification* classify(int num_radiometries, 

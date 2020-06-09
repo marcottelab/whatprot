@@ -25,6 +25,11 @@ DyeTrack::DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq)
     delete[] cs;
 }
 
+DyeTrack::DyeTrack(int num_timesteps, int num_channels)
+        : num_timesteps(num_timesteps), num_channels(num_channels) {
+    counts = new short[num_timesteps * num_channels]();
+}
+
 DyeTrack::DyeTrack(const DyeTrack& other) : num_timesteps(other.num_timesteps),
                                             num_channels(other.num_channels) {
     counts = new short[num_timesteps * num_channels];
