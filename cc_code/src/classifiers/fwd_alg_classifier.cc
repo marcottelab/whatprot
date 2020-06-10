@@ -103,9 +103,6 @@ ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
             best_i = i;
         }
     }
-    auto a = dye_seqs[best_i];
-    auto b = dye_seqs[best_i]->source;
-    auto c = dye_seqs[best_i]->source->source;
     return ScoredClassification(dye_seqs[best_i]->source->source,
                                 best_score,
                                 total_score);
