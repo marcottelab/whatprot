@@ -15,18 +15,20 @@ using std::setprecision;
 using std::string;
 }  // namespace
 
-void write_scored_classifications(const string& filename,
-                                  int num_radiometries,
-                                  const ScoredClassification* results) {
-    
-    ofstream fpred(filename);
-    fpred << "radmat_iz,best_pep_iz,best_pep_score\n";
-    for (int i = 0; i < num_radiometries; i++) {
-        fpred << i << ",";
-        fpred << results[i].id << ",";
-        fpred << setprecision(17) << results[i].adjusted_score() << "\n";
+void write_scored_classifications(
+        const string& filename,
+        int num_scored_classifications,
+        const ScoredClassification* scored_classifications) {
+    ofstream f(filename);
+    f << "radmat_iz,best_pep_iz,best_pep_score\n";
+    for (int i = 0; i < num_scored_classifications; i++) {
+        f << i << ",";
+        f << scored_classifications[i].id << ",";
+        f << setprecision(17)
+          << scored_classifications[i].adjusted_score()
+          << "\n";
     }
-    fpred.close();
+    f.close();
 }
 
 }  // namespace fluoroseq

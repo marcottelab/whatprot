@@ -5,10 +5,12 @@
 
 #include "main/ann_main.h"
 #include "main/hmm_main.h"
+#include "main/hybrid_main.h"
 
 namespace {
 using fluoroseq::ann_main;
 using fluoroseq::hmm_main;
+using fluoroseq::hybrid_main;
 using std::cout;
 }
 
@@ -22,6 +24,8 @@ int main(int argc, char** argv) {
         return hmm_main(argc, argv);
     } else if (0 == strcmp(mode, "ann")) {
         return ann_main(argc, argv);
+    } else if (0 == strcmp(mode, "hybrid")) {
+        return hybrid_main(argc, argv);
     }
     return 0;
 }

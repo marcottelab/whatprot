@@ -32,6 +32,8 @@ public:
     int id;
 };
 
+bool operator>(const ScoredClassification& x, const ScoredClassification& y);
+
 }  // namespace fluoroseq
 
 #endif  // FLUOROSEQ_COMMON_SCORED_CLASSIFICATION_H

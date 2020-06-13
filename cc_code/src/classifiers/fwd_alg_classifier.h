@@ -3,6 +3,7 @@
 #define FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
 
 #include <functional>
+#include <vector>
 
 #include "common/approximation_model.h"
 #include "common/dye_seq.h"
@@ -13,6 +14,9 @@
 #include "fwd_alg/detach_transition.h"
 #include "fwd_alg/edman_transition.h"
 #include "fwd_alg/emission.h"
+#include "fwd_alg/fwd_alg.h"
+#include "fwd_alg/initialization.h"
+#include "fwd_alg/summation.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
@@ -27,8 +31,43 @@ public:
                      SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs);
     ~FwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
+    ScoredClassification classify(const Radiometry& radiometry,
+                                  const std::vector<int>& candidate_indices);
     ScoredClassification* classify(int num_radiometries, 
                                     Radiometry** radiometries);
+
+    template<typename I>
+    ScoredClassification classify_helper(const Radiometry& radiometry,
+                                         I indices) {
+        Emission emission(radiometry, max_num_dyes, pdf, max_failed_edmans);
+        int best_i = -1;
+        double best_score = -1.0;
+        double total_score = 0.0;
+        int i = 0;
+        for (int i : indices) {
+            Initialization initialization;
+            Summation summation(max_failed_edmans);
+            double score = fwd_alg(tensors[i],
+                                   num_timesteps,
+                                   num_channels,
+                                   initialization,
+                                   emission,
+                                   *detach_transition,
+                                   *dud_transition,
+                                   *bleach_transition,
+                                   *edman_transitions[i],
+                                   summation);
+            total_score += score * dye_seqs[i]->source->count;
+            if (score > best_score) {
+                best_score = score;
+                best_i = i;
+            }
+        }
+        return ScoredClassification(dye_seqs[best_i]->source->source,
+                                    best_score,
+                                    total_score);
+
+    }
 
     DetachTransition* detach_transition;
     BinomialTransition* dud_transition;

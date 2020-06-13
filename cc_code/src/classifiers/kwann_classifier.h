@@ -4,6 +4,7 @@
 
 #include <functional>
 #include <unordered_map>
+#include <vector>
 
 #include "common/dye_track.h"
 #include "common/radiometry.h"
@@ -26,9 +27,12 @@ public:
                     int num_train,
                     SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks);
     ~KWANNClassifier();
+    std::unordered_map<int, double> classify_helper(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry);
+    std::vector<ScoredClassification> classify(const Radiometry& radiometry,
+                                               int h);
     ScoredClassification* classify(int num_radiometries, 
-                                    Radiometry** radiometries);
+                                   Radiometry** radiometries);
 
     std::function<double (double, int)> pdf;
     flann::Index<flann::L2<double>>* index;

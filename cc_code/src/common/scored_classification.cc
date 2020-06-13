@@ -21,4 +21,8 @@ double ScoredClassification::adjusted_score() const {
     return score / total;
 }
 
+bool operator>(const ScoredClassification& x, const ScoredClassification& y) {
+    return (x.score > y.score);
+}
+
 }  // namespace fluoroseq

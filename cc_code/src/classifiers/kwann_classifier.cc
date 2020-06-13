@@ -2,7 +2,9 @@
 #include "kwann_classifier.h"
 
 #include <functional>
+#include <queue>
 #include <unordered_map>
+#include <vector>
 
 #include "common/radiometry.h"
 #include "common/scored_classification.h"
@@ -17,7 +19,10 @@ using flann::L2;
 using flann::Matrix;
 using flann::SearchParams;
 using std::function;
+using std::greater;  // defined in <functional>
+using std::priority_queue;
 using std::unordered_map;
+using std::vector;
 }  // namespace
 
 namespace fluoroseq {
@@ -49,7 +54,7 @@ KWANNClassifier::KWANNClassifier(int num_timesteps,
                                           0.9f,  // target precision
                                           1.0f,  // build weight
                                           0.0f,  // memory weight
-                                          0.0001f));  // sample fraction
+                                          0.001f));  // sample fraction
     index->buildIndex();
 }
 
@@ -59,7 +64,12 @@ KWANNClassifier::~KWANNClassifier() {
     delete index;
 }
 
-ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
+}  // namespace fluoroseq
+#include <iostream>
+namespace fluoroseq {
+
+unordered_map<int, double> KWANNClassifier::classify_helper(
+        const Radiometry& radiometry) {
     Matrix<double> query(radiometry.intensities,
                          1,  // num rows (num queries)
                          num_timesteps * num_channels);  // num columns
@@ -92,6 +102,11 @@ ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
         }
     }
     delete[] indices.ptr();
+    return id_score_map;
+}
+
+ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
+    unordered_map<int, double> id_score_map = classify_helper(radiometry);
     int best_id = -1;
     double best_score = -1.0;
     double total_score = 0.0;
@@ -105,6 +120,35 @@ ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
         }
     }
     return ScoredClassification(best_id, best_score, total_score);
+}
+
+vector<ScoredClassification> KWANNClassifier::classify(
+        const Radiometry& radiometry,
+        int h) {
+    unordered_map<int, double> id_score_map = classify_helper(radiometry);
+    priority_queue<ScoredClassification,
+                   vector<ScoredClassification>,
+                   greater<ScoredClassification>> pq;
+    double total_score = 0.0;
+    for (const auto& id_and_score : id_score_map) {
+        double id = id_and_score.first;
+        double score = id_and_score.second;
+        total_score += score;
+        if (pq.empty() || score > pq.top().score) {
+            pq.push(ScoredClassification(id, score, 0.0));
+            if (pq.size() > h) {
+                pq.pop();
+            }
+        }
+    }
+    vector<ScoredClassification> results;
+    results.reserve(pq.size());
+    while (!pq.empty()) {
+        results.push_back(pq.top());
+        pq.pop();
+        results.back().total = total_score;
+    }
+    return results;
 }
 
 ScoredClassification* KWANNClassifier::classify(int num_radiometries, 
