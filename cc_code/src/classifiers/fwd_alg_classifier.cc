@@ -30,7 +30,7 @@ FwdAlgClassifier::FwdAlgClassifier(
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
         int num_dye_seqs,
-        SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs)
+        SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           num_dye_seqs(num_dye_seqs),

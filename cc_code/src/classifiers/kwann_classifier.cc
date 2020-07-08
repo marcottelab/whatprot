@@ -12,9 +12,9 @@
 #include "flann/flann.hpp"
 
 namespace {
-using flann::AutotunedIndexParams;
-using flann::FLANN_CHECKS_AUTOTUNED;
+using flann::FLANN_CHECKS_UNLIMITED;
 using flann::Index;
+using flann::KDTreeIndexParams;
 using flann::L2;
 using flann::Matrix;
 using flann::SearchParams;
@@ -27,13 +27,13 @@ using std::vector;
 
 namespace fluoroseq {
 
-KWANNClassifier::KWANNClassifier(int num_timesteps,
-                                 int num_channels,
-                                 function<double (double, int)> pdf,
-                                 int k,
-                                 int num_train,
-                                 SourcedData<DyeTrack*,
-                                             SourceCountMap<int>*>** dye_tracks)
+KWANNClassifier::KWANNClassifier(
+        int num_timesteps,
+        int num_channels,
+        function<double (double, int)> pdf,
+        int k,
+        int num_train,
+        SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           pdf(pdf),
@@ -50,11 +50,7 @@ KWANNClassifier::KWANNClassifier(int num_timesteps,
     }
     dataset = new Matrix<double>(raw_dataset, num_train, stride);
     index = new Index<L2<double>>(*dataset,
-                                  AutotunedIndexParams(
-                                          0.9f,  // target precision
-                                          1.0f,  // build weight
-                                          0.0f,  // memory weight
-                                          0.001f));  // sample fraction
+                                  KDTreeIndexParams(1));  // number of kdtrees.
     index->buildIndex();
 }
 
@@ -64,12 +60,9 @@ KWANNClassifier::~KWANNClassifier() {
     delete index;
 }
 
-}  // namespace fluoroseq
-#include <iostream>
-namespace fluoroseq {
-
-unordered_map<int, double> KWANNClassifier::classify_helper(
-        const Radiometry& radiometry) {
+double KWANNClassifier::classify_helper(
+        const Radiometry& radiometry,
+        unordered_map<int, double>* id_score_map) {
     Matrix<double> query(radiometry.intensities,
                          1,  // num rows (num queries)
                          num_timesteps * num_channels);  // num columns
@@ -83,37 +76,39 @@ unordered_map<int, double> KWANNClassifier::classify_helper(
                      indices,
                      dists_sq,
                      k,
-                     SearchParams(FLANN_CHECKS_AUTOTUNED));
+                     SearchParams(FLANN_CHECKS_UNLIMITED));
     delete[] dists_sq.ptr();
-    unordered_map<int, double> id_score_map;
+    double total_score = 0.0;
+    unordered_map<int, int> id_hits_map;
     for (int i = 0; i < k; i++) {
         int index = indices[0][i];
         SourcedData<DyeTrack*,
-                    SourceCountMap<int>*>* dye_track = dye_tracks[index];
+                    SourceCountHitsList<int>*>* dye_track = dye_tracks[index];
         double weight = 1.0;
         for (int j = 0; j < num_timesteps * num_channels; j++) {
             weight *= pdf(radiometry.intensities[j],
                           dye_track->value->counts[j]);
         }
         for (int j = 0; j < dye_track->source->num_sources; j++) {
-            int id = dye_track->source->sources_with_counts[j]->source;
-            int count = dye_track->source->sources_with_counts[j]->count;
-            id_score_map[id] += weight * count;
+            int id = dye_track->source->sources[j]->source;
+            double count = (double) dye_track->source->sources[j]->count;
+            double hits = (double) dye_track->source->sources[j]->hits;
+            total_score += weight * hits;
+            (*id_score_map)[id] += weight * hits / count;
         }
     }
     delete[] indices.ptr();
-    return id_score_map;
+    return total_score;
 }
 
 ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
-    unordered_map<int, double> id_score_map = classify_helper(radiometry);
+    unordered_map<int, double> id_score_map;
+    double total_score = classify_helper(radiometry, &id_score_map);
     int best_id = -1;
     double best_score = -1.0;
-    double total_score = 0.0;
     for (const auto& id_and_score : id_score_map) {
         double id = id_and_score.first;
         double score = id_and_score.second;
-        total_score += score;
         if (score > best_score) {
             best_id = id;
             best_score = score;
@@ -125,20 +120,19 @@ ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
 vector<ScoredClassification> KWANNClassifier::classify(
         const Radiometry& radiometry,
         int h) {
-    unordered_map<int, double> id_score_map = classify_helper(radiometry);
+    unordered_map<int, double> id_score_map;
+    double total_score = classify_helper(radiometry, &id_score_map);
     priority_queue<ScoredClassification,
                    vector<ScoredClassification>,
                    greater<ScoredClassification>> pq;
-    double total_score = 0.0;
     for (const auto& id_and_score : id_score_map) {
         double id = id_and_score.first;
         double score = id_and_score.second;
-        total_score += score;
-        if (pq.empty() || score > pq.top().score) {
-            pq.push(ScoredClassification(id, score, 0.0));
-            if (pq.size() > h) {
-                pq.pop();
-            }
+        if (pq.size() < h) {
+            pq.push(ScoredClassification(id, score, total_score));
+        } else if (score > pq.top().score) {
+            pq.push(ScoredClassification(id, score, total_score));
+            pq.pop();
         }
     }
     vector<ScoredClassification> results;
@@ -146,7 +140,6 @@ vector<ScoredClassification> KWANNClassifier::classify(
     while (!pq.empty()) {
         results.push_back(pq.top());
         pq.pop();
-        results.back().total = total_score;
     }
     return results;
 }

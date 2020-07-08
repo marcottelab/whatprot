@@ -58,7 +58,7 @@ int ann_main(int argc, char** argv) {
     int num_timesteps;
     int num_channels;
     int num_dye_tracks;
-    SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks;
+    SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks;
     read_dye_tracks(dye_tracks_filename,
                     &num_timesteps,
                     &num_channels,
@@ -88,7 +88,7 @@ int ann_main(int argc, char** argv) {
     KWANNClassifier classifier(num_timesteps,
                                num_channels,
                                error_model.pdf(),
-                               1000,  // k
+                               10000,  // k
                                num_dye_tracks,
                                dye_tracks);
     end_time = wall_time();

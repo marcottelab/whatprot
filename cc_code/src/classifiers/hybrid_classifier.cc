@@ -1,6 +1,7 @@
 // Author: Matthew Beauregard Smith (UT Austin)
 #include "hybrid_classifier.h"
 
+#include <cmath>
 #include <vector>
 
 #include "classifiers/fwd_alg_classifier.h"
@@ -16,6 +17,7 @@
 namespace fluoroseq {
 
 namespace {
+using std::isnan;
 using std::vector;
 }
 
@@ -26,10 +28,10 @@ HybridClassifier::HybridClassifier(
         const ApproximationModel& approximation_model,
         int k,
         int num_train,
-        SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks,
+        SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks,
         int h,
         int num_dye_seqs,
-        SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs) : h(h) {
+        SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs) : h(h) {
     kwann_classifier = new KWANNClassifier(num_timesteps,
                                            num_channels,
                                            error_model.pdf(),
@@ -53,29 +55,33 @@ HybridClassifier::~HybridClassifier() {
     delete fwd_alg_classifier;
 }
 
-}  // namespace_fluoroseq
-#include <iostream>
-namespace fluoroseq {
-
 ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     vector<ScoredClassification> candidates;
     candidates = kwann_classifier->classify(radiometry, h);
-    std::cout << "candidates.size(): " << candidates.size() << "\n";
     double total = candidates[0].total;
-    double subtotal = 0.0;
+    double subfraction = 0.0;
     vector<int> candidate_indices;
     candidate_indices.reserve(candidates.size());
     for (ScoredClassification& candidate : candidates) {
-        subtotal += candidate.score * id_count_map[candidate.id];
+        subfraction += candidate.adjusted_score()
+                       * (double) id_count_map[candidate.id];
         candidate_indices.push_back(id_index_map[candidate.id]);
     }
-    double total_correction_ratio = total / subtotal;
     ScoredClassification result;
     result = fwd_alg_classifier->classify(radiometry, candidate_indices);
     if (result.id == -1) {
         result = candidates.back();
     } else {
-        result.total *= total_correction_ratio;
+        result.score *= subfraction;
+    }
+    // This next thing is a bit of a hack. Sometimes the candidates have a total
+    // score of 0.0, which causes the adjusted score to be nan. This can mess
+    // things up for us later. The best way to deal with it is to just set the
+    // score to 0.0 when this happens. It might be better though to find a way
+    // to avoid this situation.
+    if (isnan(result.adjusted_score())) {
+        result.score = 0.0;
+        result.total = 1.0;
     }
     return result;
 }

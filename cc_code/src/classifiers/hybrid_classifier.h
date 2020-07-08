@@ -18,16 +18,17 @@ namespace fluoroseq {
 
 class HybridClassifier {
 public:
-    HybridClassifier(int num_timesteps,
-                     int num_channels,
-                     const ErrorModel& error_model,
-                     const ApproximationModel& approximation_model,
-                     int k,
-                     int num_train,
-                     SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks,
-                     int h,
-                     int num_dye_seqs,
-                     SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs);
+    HybridClassifier(
+            int num_timesteps,
+            int num_channels,
+            const ErrorModel& error_model,
+            const ApproximationModel& approximation_model,
+            int k,
+            int num_train,
+            SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks,
+            int h,
+            int num_dye_seqs,
+            SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs);
     ~HybridClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification* classify(int num_radiometries, 

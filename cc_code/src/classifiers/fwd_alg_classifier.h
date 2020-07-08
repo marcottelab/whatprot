@@ -28,7 +28,7 @@ public:
                      const ErrorModel& error_model,
                      const ApproximationModel& approximation_model,
                      int num_dye_seqs,
-                     SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs);
+                     SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs);
     ~FwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
@@ -73,7 +73,7 @@ public:
     BinomialTransition* dud_transition;
     BinomialTransition* bleach_transition;
     std::function<double (double, int)> pdf;
-    SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs;  // not owned
+    SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs;  // not owned
     EdmanTransition** edman_transitions;
     Tensor** tensors;
     int num_dye_seqs;

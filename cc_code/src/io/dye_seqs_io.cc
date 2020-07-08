@@ -16,11 +16,11 @@ using std::string;
 void read_dye_seqs(const string& filename,
                    int* num_channels,
                    int* num_dye_seqs,
-                   SourcedData<DyeSeq*, SourceWithCount<int>*>*** dye_seqs) {
+                   SourcedData<DyeSeq*, SourceCount<int>*>*** dye_seqs) {
     ifstream f(filename);
     f >> *num_channels;
     f >> *num_dye_seqs;
-    *dye_seqs = new SourcedData<DyeSeq*, SourceWithCount<int>*>*[*num_dye_seqs];
+    *dye_seqs = new SourcedData<DyeSeq*, SourceCount<int>*>*[*num_dye_seqs];
     for (int i = 0; i < *num_dye_seqs; i++) {
         string dye_string;
         f >> dye_string;
@@ -28,9 +28,9 @@ void read_dye_seqs(const string& filename,
         f >> count;
         int id;
         f >> id;
-        (*dye_seqs)[i] = new SourcedData<DyeSeq*, SourceWithCount<int>*>(
+        (*dye_seqs)[i] = new SourcedData<DyeSeq*, SourceCount<int>*>(
             new DyeSeq(*num_channels, dye_string),
-            new SourceWithCount<int>(id, count));
+            new SourceCount<int>(id, count));
     }
     f.close();
 }

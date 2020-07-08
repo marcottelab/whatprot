@@ -44,35 +44,68 @@ public:
 };
 
 template<typename S>
-class SourceWithCount {
+class SourceCount {
 public:
-    SourceWithCount(S source, int count) : source(source), count(count) {}
+    SourceCount(S source, int count) : source(source), count(count) {}
 
-    ~SourceWithCount() {
+    ~SourceCount() {
         if (std::is_pointer<S>::value) {
             delete source;
         }
     }
 
     S source;  // if S is a pointer type then source is owned.
-    int count;
+    int count;  // A count of the number of sources.
 };
 
 template<typename S>
-class SourceCountMap {
+class SourceCountList {
 public:
-    SourceCountMap(int num_sources, SourceWithCount<S>** sources_with_counts)
-            : num_sources(num_sources),
-              sources_with_counts(sources_with_counts) {}
+    SourceCountList(int num_sources, SourceCount<S>** sources)
+            : num_sources(num_sources), sources(sources) {}
     
-    ~SourceCountMap() {
+    ~SourceCountList() {
         for (int i = 0; i < num_sources; i++) {
-            delete sources_with_counts[i];
+            delete sources[i];
         }
-        delete[] sources_with_counts;
+        delete[] sources;
     }
 
-    SourceWithCount<S>** sources_with_counts;  // owned.
+    SourceCount<S>** sources;  // owned.
+    int num_sources;
+};
+
+template<typename S>
+class SourceCountHits {
+public:
+    SourceCountHits(S source, int count, int hits)
+            : source(source), count(count), hits(hits) {}
+
+    ~SourceCountHits() {
+        if (std::is_pointer<S>::value) {
+            delete source;
+        }
+    }
+
+    S source;  // if S is a pointer type then source is owned.
+    int count;  // A count of the number of sources.
+    int hits;  // A count of the number of hits in a simulation.
+};
+
+template<typename S>
+class SourceCountHitsList {
+public:
+    SourceCountHitsList(int num_sources, SourceCountHits<S>** sources)
+            : num_sources(num_sources), sources(sources) {}
+    
+    ~SourceCountHitsList() {
+        for (int i = 0; i < num_sources; i++) {
+            delete sources[i];
+        }
+        delete[] sources;
+    }
+
+    SourceCountHits<S>** sources;
     int num_sources;
 };
 

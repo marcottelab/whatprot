@@ -65,7 +65,7 @@ int hmm_main(int argc, char** argv) {
     start_time = wall_time();
     int num_channels;
     int num_dye_seqs;
-    SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs;
+    SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs;
     read_dye_seqs(dye_seqs_filename,
                   &num_channels,
                   &num_dye_seqs,

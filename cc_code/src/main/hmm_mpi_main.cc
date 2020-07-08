@@ -34,7 +34,7 @@ using fluoroseq::ErrorModel;
 using fluoroseq::Radiometry;
 using fluoroseq::ScoredClassification;
 using fluoroseq::SourcedData;
-using fluoroseq::SourceWithCount;
+using fluoroseq::SourceCount;
 using std::cout;
 using std::ifstream;
 using std::ofstream;
@@ -151,12 +151,12 @@ void main_for_master(char** argv) {
               MPI_INT,
               0,  // root
               MPI_COMM_WORLD);
-    SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs; 
-    dye_seqs = new SourcedData<DyeSeq*, SourceWithCount<int>>*[num_dye_seqs];
+    SourcedData<DyeSeq*, SourceCount<int>>** dye_seqs; 
+    dye_seqs = new SourcedData<DyeSeq*, SourceCount<int>>*[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
-        dye_seqs[i] = new SourcedData<DyeSeq*, SourceWithCount<int>>(
+        dye_seqs[i] = new SourcedData<DyeSeq*, SourceCount<int>>(
                               new DyeSeq(num_channels, dye_strings[i]),
-                              SourceWithCount<int>(dye_seqs_ids[i],
+                              SourceCount<int>(dye_seqs_ids[i],
                                                    dye_seqs_num_peptides[i]));
     }
     end_time = wall_time();
@@ -389,12 +389,12 @@ void main_for_slave() {
               MPI_INT,
               0,  // root
               MPI_COMM_WORLD);
-    SourcedData<DyeSeq*, SourceWithCount<int>>** dye_seqs; 
-    dye_seqs = new SourcedData<DyeSeq*, SourceWithCount<int>>*[num_dye_seqs];
+    SourcedData<DyeSeq*, SourceCount<int>>** dye_seqs; 
+    dye_seqs = new SourcedData<DyeSeq*, SourceCount<int>>*[num_dye_seqs];
     for (int i = 0; i < num_dye_seqs; i++) {
-        dye_seqs[i] = new SourcedData<DyeSeq*, SourceWithCount<int>>(
+        dye_seqs[i] = new SourcedData<DyeSeq*, SourceCount<int>>(
                               new DyeSeq(num_channels, dye_strings[i]),
-                              SourceWithCount<int>(dye_seqs_ids[i],
+                              SourceCount<int>(dye_seqs_ids[i],
                                                    dye_seqs_num_peptides[i]));
     }
 

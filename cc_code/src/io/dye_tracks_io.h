@@ -14,7 +14,7 @@ void read_dye_tracks(const std::string& filename,
                      int* num_channels,
                      int* num_dye_tracks,
                      SourcedData<DyeTrack*,
-                                 SourceCountMap<int>*>*** dye_tracks);
+                                 SourceCountHitsList<int>*>*** dye_tracks);
 
 }  // namespace fluoroseq
 

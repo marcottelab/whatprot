@@ -20,14 +20,16 @@ namespace fluoroseq {
 // Nearest Neighbors) library (see extern/flann-*).
 class KWANNClassifier {
 public:
-    KWANNClassifier(int num_timesteps,
-                    int num_channels,
-                    std::function<double (double, int)> pdf,
-                    int k,
-                    int num_train,
-                    SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks);
+    KWANNClassifier(
+            int num_timesteps,
+            int num_channels,
+            std::function<double (double, int)> pdf,
+            int k,
+            int num_train,
+            SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks);
     ~KWANNClassifier();
-    std::unordered_map<int, double> classify_helper(const Radiometry& radiometry);
+    double classify_helper(const Radiometry& radiometry,
+                           std::unordered_map<int, double>* id_score_map);
     ScoredClassification classify(const Radiometry& radiometry);
     std::vector<ScoredClassification> classify(const Radiometry& radiometry,
                                                int h);
@@ -37,7 +39,7 @@ public:
     std::function<double (double, int)> pdf;
     flann::Index<flann::L2<double>>* index;
     flann::Matrix<double>* dataset;
-    SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks;  // not owned
+    SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks;  // not owned
     int num_train;
     int num_timesteps;
     int num_channels;

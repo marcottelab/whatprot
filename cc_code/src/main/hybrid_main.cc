@@ -60,7 +60,7 @@ int hybrid_main(int argc, char** argv) {
     start_time = wall_time();
     int num_channels;
     int num_dye_seqs;
-    SourcedData<DyeSeq*, SourceWithCount<int>*>** dye_seqs;
+    SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs;
     read_dye_seqs(dye_seqs_filename,
                   &num_channels,
                   &num_dye_seqs,
@@ -74,7 +74,7 @@ int hybrid_main(int argc, char** argv) {
     int num_timesteps;
     int duplicate_num_channels;  // also get this from dye seqs file
     int num_dye_tracks;
-    SourcedData<DyeTrack*, SourceCountMap<int>*>** dye_tracks;
+    SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks;
     read_dye_tracks(dye_tracks_filename,
                     &num_timesteps,
                     &duplicate_num_channels,
@@ -108,7 +108,7 @@ int hybrid_main(int argc, char** argv) {
                                 1000,  // k
                                 num_dye_tracks,
                                 dye_tracks,
-                                100,  // h
+                                1,  // h
                                 num_dye_seqs,
                                 dye_seqs);
     end_time = wall_time();
