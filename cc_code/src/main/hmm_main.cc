@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 
+#include "classifiers/fwd_alg_classifier.h"
 #include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
@@ -16,12 +17,6 @@
 #include "io/radiometries_io.h"
 #include "io/scored_classifications_io.h"
 #include "util/time.h"
-
-#ifdef _OPENMP
-#include "classifiers/omp_fwd_alg_classifier.h"
-#else
-#include "classifiers/fwd_alg_classifier.h"
-#endif
 
 namespace fluoroseq {
 
@@ -43,11 +38,6 @@ int hmm_main(int argc, char** argv) {
 
     double start_time;
     double end_time;
-
-    #ifdef _OPENMP
-    cout << "Using OpenMP\n";
-    cout << "    Number of threads: " << omp_get_max_threads() << "\n";
-    #endif
 
     start_time = wall_time();
     ErrorModel error_model(.06,  // p_edman_failure
@@ -91,21 +81,12 @@ int hmm_main(int argc, char** argv) {
     cout << "    Number of radiometries: " << num_radiometries << "\n";
 
     start_time = wall_time();
-    #ifdef _OPENMP
-    OMPFwdAlgClassifier classifier(num_timesteps,
-                                   num_channels,
-                                   error_model,
-                                   approximation_model,
-                                   num_dye_seqs,
-                                   dye_seqs);
-    #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
                                 dye_seqs);
-    #endif
     end_time = wall_time();
     cout << "Constructed classifier.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";

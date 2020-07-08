@@ -39,11 +39,6 @@ int hybrid_main(int argc, char** argv) {
     double start_time;
     double end_time;
 
-    #ifdef _OPENMP
-    cout << "Using OpenMP\n";
-    cout << "    Number of threads: " << omp_get_max_threads() << "\n";
-    #endif
-
     start_time = wall_time();
     ErrorModel error_model(.06,  // p_edman_failure
                            .05,  // p_detach

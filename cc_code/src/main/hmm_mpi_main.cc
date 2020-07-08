@@ -11,6 +11,7 @@
 // Not a standard c++ library. Must have installed MPI to build.
 #include <mpi.h>
 
+#include "classifiers/fwd_alg_classifier.h"
 #include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
@@ -18,12 +19,6 @@
 #include "common/scored_classification.h"
 #include "common/sourced_data.h"
 #include "util/time.h"
-
-#ifdef _OPENMP
-#include "classifiers/omp_fwd_alg_classifier.h"
-#else
-#include "classifiers/fwd_alg_classifier.h"
-#endif
 
 namespace {
 using fluoroseq::wall_time;
@@ -40,11 +35,7 @@ using std::ifstream;
 using std::ofstream;
 using std::setprecision;
 using std::string;
-#ifdef _OPENMP
-using fluoroseq::OMPFwdAlgClassifier;
-#else
 using fluoroseq::FwdAlgClassifier;
-#endif
 }
 
 void main_for_master(char** argv);
@@ -79,11 +70,6 @@ void main_for_master(char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     cout << "Using MPI\n";
     cout << "    Number of processes: " << mpi_size << "\n";
-
-    #ifdef _OPENMP
-    cout << "Using OpenMP\n";
-    cout << "    Threads per process: " << omp_get_max_threads() << "\n";
-    #endif
 
     char* dye_seqs_filename = argv[1];
     char* radiometries_filename = argv[2];
@@ -230,21 +216,12 @@ void main_for_master(char** argv) {
     cout << "    Number of radiometries: " << num_radiometries << "\n";
 
     start_time = wall_time();
-    #ifdef _OPENMP
-    OMPFwdAlgClassifier classifier(num_timesteps,
-                                   num_channels,
-                                   error_model,
-                                   approximation_model,
-                                   num_dye_seqs,
-                                   dye_seqs);
-    #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
                                 dye_seqs);
-    #endif
     end_time = wall_time();
     cout << "Constructed classifier.\n";
     cout << "    Time in seconds: " << end_time - start_time << "\n";
@@ -442,21 +419,12 @@ void main_for_slave() {
         }
     }
 
-    #ifdef _OPENMP
-    OMPFwdAlgClassifier classifier(num_timesteps,
-                                   num_channels,
-                                   error_model,
-                                   approximation_model,
-                                   num_dye_seqs,
-                                   dye_seqs);
-    #else
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
                                 approximation_model,
                                 num_dye_seqs,
                                 dye_seqs);
-    #endif
 
     ScoredClassification* results = classifier.classify(num_radiometries,
                                                         radiometries);
