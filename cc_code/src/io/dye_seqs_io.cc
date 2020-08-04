@@ -5,6 +5,7 @@
 #include <string>
 
 #include "common/dye_seq.h"
+#include "common/sourced_data.h"
 
 namespace fluoroseq {
 
