@@ -114,7 +114,17 @@ ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
             best_score = score;
         }
     }
-    return ScoredClassification(best_id, best_score, total_score);
+    ScoredClassification result(best_id, best_score, total_score);
+    // This next thing is a bit of a hack. Sometimes the candidates have a total
+    // score of 0.0, which causes the adjusted score to be nan. This can mess
+    // things up for us later. The best way to deal with it is to just set the
+    // score to 0.0 when this happens. It might be better though to find a way
+    // to avoid this situation.
+    if (isnan(result.adjusted_score())) {
+        result.score = 0.0;
+        result.total = 1.0;
+    }
+    return result;
 }
 
 vector<ScoredClassification> KWANNClassifier::classify(
