@@ -12,13 +12,13 @@ def generate_dye_tracks(error_model,
                         n_channels,
                         n_timesteps,
                         dye_seqs,
-                        n_samples_per_dye_seq):
+                        n_samples_per_peptide):
     em = error_model.copy()
     em.sigma = 0
     em.bg_lambda = 0
     dtdict = defaultdict(list)
     for i in range(len(dye_seqs)):
-        for j in range(n_samples_per_dye_seq):
+        for j in range(n_samples_per_peptide * len(dye_seqs[i].src_peptides)):
             radiometry = simulate_sequencing(em,
                                              n_channels,
                                              n_timesteps,

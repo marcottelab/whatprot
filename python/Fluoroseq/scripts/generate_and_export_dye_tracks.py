@@ -11,10 +11,10 @@ from simulate.generate_dye_tracks import generate_dye_tracks
 NUM_PEPTIDES = 705
 NUM_CHANNELS = 3
 NUM_CYCLES = 16
-NUM_SAMPLES_PER_DYE_SEQ = 10000
+NUM_SAMPLES_PER_PEPTIDE = 1000
 LABEL_SET = ['DE','Y','C']
 PEPTIDE_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_15_proteins/peps.csv'
-OUTPUT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_15_proteins/dye_tracks.tsv'
+OUTPUT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_15_proteins/dye_tracks_small.tsv'
 
 f = open(PEPTIDE_FILE, 'r')
 f.readline()  # header
@@ -37,11 +37,11 @@ dye_tracks = generate_dye_tracks(em,
                                  NUM_CHANNELS,
                                  NUM_CYCLES,
                                  dye_seqs,
-                                 NUM_SAMPLES_PER_DYE_SEQ)
+                                 NUM_SAMPLES_PER_PEPTIDE)
 
 f = open(OUTPUT_FILE, 'w')
-f.write(str(NUM_CHANNELS) + "\n")
 f.write(str(NUM_CYCLES) + "\n")
+f.write(str(NUM_CHANNELS) + "\n")
 f.write(str(len(dye_tracks)) + "\n")
 for dye_track in dye_tracks:
     f.write(str(dye_track.feature_vector()[0]))
@@ -50,6 +50,7 @@ for dye_track in dye_tracks:
     f.write("\t" + str(len(dye_track.src_dye_seq)))
     for (key, value) in dye_track.src_dye_seq.items():
         f.write("\t" + str(key.src_peptides[0].pep_id))
+        f.write("\t" + str(len(key.src_peptides)))
         f.write("\t" + str(value))
     f.write("\n")
 f.close()
