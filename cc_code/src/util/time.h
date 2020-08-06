@@ -1,27 +1,23 @@
 // Author: Matthew Beauregard Smith (UT Austin)
 //
-// IF USING MPI, YOU MUST INCLUDE <mpi.h> BEFORE INCLUDING THIS FILE.
+// For MPI version, define compiler macro USE_MPI before including this header.
 #ifndef FLUOROSEQ_UTIL_TIME_H
 #define FLUOROSEQ_UTIL_TIME_H
 
-// Technically including mpi.h again for the "mpi.h has been included" case is
-// redundant, since MPI_VERSION is included in mpi.h, so it must already be
-// present, however this may make the file easier to handle in some code
-// editors.
-#ifdef MPI_VERSION  // if mpi.h has been included.
+#ifdef USE_MPI
 #include <mpi.h>
-#else  // if mpi.h has not been included
+#else  // USE_MPI
 #include <ctime>
-#endif  // MPI_VERSION
+#endif  // USE_MPI
 
 namespace fluoroseq {
 
 double wall_time() {
-#ifdef MPI_VERSION  // if mpi.h has been included.
+#ifdef USE_MPI
     return MPI_Wtime();
-#else  // if mpi.h has not been included.
+#else  // USE_MPI
     return (double) clock() / (double) CLOCKS_PER_SEC;
-#endif  // MPI_VERSION
+#endif  // USE_MPI
 }
 
 }  // namespace fluoroseq
