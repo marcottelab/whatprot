@@ -1,6 +1,8 @@
 // Author: Matthew Beauregard Smith (UT Austin)
 // Simple application to read in a TSV file of dye seqs, a TSV file of
 // radiometries, and write predicted classifications to a TSV file.
+//
+// For MPI version, define compiler macro USE_MPI when building.
 #include "hmm_main.h"
 
 #include <iostream>
@@ -16,12 +18,12 @@
 #include "io/dye_seqs_io.h"
 #include "io/radiometries_io.h"
 #include "io/scored_classifications_io.h"
+#include "main/cmd_line_out.h"
 #include "util/time.h"
 
 namespace fluoroseq {
 
 namespace {
-using std::cout;
 using std::string;
 }
 
@@ -29,7 +31,7 @@ int hmm_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
     if (argc != 5) {
-        cout << "wrong number of inputs\n";
+        print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
     char* dye_seqs_filename = argv[2];
@@ -49,8 +51,7 @@ int hmm_main(int argc, char** argv) {
                            .16);  // sigma
     ApproximationModel approximation_model(16);
     end_time = wall_time();
-    cout << "Built error model and approximation model.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
+    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     int num_channels;
@@ -61,24 +62,22 @@ int hmm_main(int argc, char** argv) {
                   &num_dye_seqs,
                   &dye_seqs);
     end_time = wall_time();
-    cout << "Read from dye seqs file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Number of dye seqs: " << num_dye_seqs << "\n";
+    print_read_dye_seqs(num_dye_seqs, end_time - start_time);
 
     start_time = wall_time();
     int num_timesteps;
     int duplicate_num_channels;  // also get this from dye seq file.
-    int num_radiometries;
+    int total_num_radiometries;  // number of radiometries across all procs.
+    int num_radiometries;  // number of radiometries in this proc.
     Radiometry** radiometries;
     read_radiometries(radiometries_filename,
                       &num_timesteps,
                       &duplicate_num_channels,
+                      &total_num_radiometries,
                       &num_radiometries,
                       &radiometries);
     end_time = wall_time();
-    cout << "Read from radiometries file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Number of radiometries: " << num_radiometries << "\n";
+    print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
     FwdAlgClassifier classifier(num_timesteps,
@@ -88,42 +87,24 @@ int hmm_main(int argc, char** argv) {
                                 num_dye_seqs,
                                 dye_seqs);
     end_time = wall_time();
-    cout << "Constructed classifier.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
+    print_built_classifier(end_time - start_time);
 
     start_time = wall_time();
     ScoredClassification* results = classifier.classify(num_radiometries,
                                                          radiometries);
     end_time = wall_time();
-    cout << "Got results.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Total number of runs: "
-         << num_dye_seqs * num_radiometries
-         << "\n";
-    cout << "    Time per run in seconds: "
-         << (end_time - start_time) / (num_dye_seqs * num_radiometries)
-         << "\n";
+    print_finished_classification(end_time - start_time);
     
     start_time = wall_time();
     write_scored_classifications(predictions_filename,
+                                 total_num_radiometries,
                                  num_radiometries,
                                  results);
     end_time = wall_time();
-    cout << "Wrote to file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
+    print_finished_saving_results(end_time - start_time);
 
     double total_end_time = wall_time();
-    cout << "Totals:\n";
-    cout << "    Time in seconds: "
-         << total_end_time - total_start_time
-         << "\n";
-    cout << "    Total number of runs: "
-         << num_dye_seqs * num_radiometries
-         << "\n";
-    cout << "    Time per run in seconds: "
-         << (total_end_time - total_start_time)
-            / (num_dye_seqs * num_radiometries)
-         << "\n";
+    print_total_time(total_end_time - total_start_time);
 
     return 0;
 }

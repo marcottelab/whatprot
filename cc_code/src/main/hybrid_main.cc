@@ -1,4 +1,6 @@
 // Author: Matthew Beauregard Smith (UT Austin)
+//
+// For MPI version, define compiler macro USE_MPI when building.
 #include "hybrid_main.h"
 
 #include <iostream>
@@ -15,12 +17,12 @@
 #include "io/dye_tracks_io.h"
 #include "io/radiometries_io.h"
 #include "io/scored_classifications_io.h"
+#include "main/cmd_line_out.h"
 #include "util/time.h"
 
 namespace fluoroseq {
 
 namespace {
-using std::cout;
 using std::string;
 }  // namespace
 
@@ -28,7 +30,7 @@ int hybrid_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
     if (argc != 6) {
-        cout << "wrong number of inputs\n";
+        print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
     char* dye_seqs_filename = argv[2];
@@ -49,8 +51,7 @@ int hybrid_main(int argc, char** argv) {
                            .16);  // sigma
     ApproximationModel approximation_model(16);
     end_time = wall_time();
-    cout << "Built error model and approximation model.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
+    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     int num_channels;
@@ -61,9 +62,7 @@ int hybrid_main(int argc, char** argv) {
                   &num_dye_seqs,
                   &dye_seqs);
     end_time = wall_time();
-    cout << "Read from dye seqs file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Number of dye seqs: " << num_dye_seqs << "\n";
+    print_read_dye_seqs(num_dye_seqs, end_time - start_time);
 
     start_time = wall_time();
     int num_timesteps;
@@ -76,24 +75,22 @@ int hybrid_main(int argc, char** argv) {
                     &num_dye_tracks,
                     &dye_tracks);
     end_time = wall_time();
-    cout << "Read from dye tracks file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Number of dye seqs: " << num_dye_tracks << "\n";
+    print_read_dye_tracks(num_dye_tracks, end_time - start_time);
 
     start_time = wall_time();
     int duplicate_num_timesteps;  // also get this from dye track file.
     int triplicate_num_channels;  // also in dye tracks and dye seqs files.
-    int num_radiometries;
+    int total_num_radiometries;  // number of radiometries across all procs.
+    int num_radiometries;  // number of radiometries in this proc.
     Radiometry** radiometries;
     read_radiometries(radiometries_filename,
                       &duplicate_num_timesteps,
                       &triplicate_num_channels,
+                      &total_num_radiometries,
                       &num_radiometries,
                       &radiometries);
     end_time = wall_time();
-    cout << "Read from radiometries file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Number of radiometries: " << num_radiometries << "\n";
+    print_read_radiometries(num_radiometries, end_time - start_time);
 
     start_time = wall_time();
     HybridClassifier classifier(num_timesteps,
@@ -103,46 +100,28 @@ int hybrid_main(int argc, char** argv) {
                                 1000,  // k
                                 num_dye_tracks,
                                 dye_tracks,
-                                1,  // h
+                                10,  // h
                                 num_dye_seqs,
                                 dye_seqs);
     end_time = wall_time();
-    cout << "Constructed classifier.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
+    print_built_classifier(end_time - start_time);
 
     start_time = wall_time();
     ScoredClassification* results = classifier.classify(num_radiometries,
                                                         radiometries);
     end_time = wall_time();
-    cout << "Got results.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
-    cout << "    Total number of runs: "
-         << num_dye_tracks * num_radiometries
-         << "\n";
-    cout << "    Time per run in seconds: "
-         << (end_time - start_time) / (num_dye_tracks * num_radiometries)
-         << "\n";
+    print_finished_classification(end_time - start_time);
     
     start_time = wall_time();
     write_scored_classifications(predictions_filename,
+                                 total_num_radiometries,
                                  num_radiometries,
                                  results);
     end_time = wall_time();
-    cout << "Wrote to file.\n";
-    cout << "    Time in seconds: " << end_time - start_time << "\n";
+    print_finished_saving_results(end_time - start_time);
 
     double total_end_time = wall_time();
-    cout << "Totals:\n";
-    cout << "    Time in seconds: "
-         << total_end_time - total_start_time
-         << "\n";
-    cout << "    Total number of runs: "
-         << num_dye_tracks * num_radiometries
-         << "\n";
-    cout << "    Time per run in seconds: "
-         << (total_end_time - total_start_time)
-            / (num_dye_tracks * num_radiometries)
-         << "\n";
+    print_total_time(total_end_time - total_start_time);
 
     return 0;
 }
