@@ -79,7 +79,7 @@ int ann_main(int argc, char** argv) {
     KWANNClassifier classifier(num_timesteps,
                                num_channels,
                                error_model.pdf(),
-                               10000,  // k
+                               1000,  // k
                                num_dye_tracks,
                                dye_tracks);
     end_time = wall_time();
@@ -98,6 +98,13 @@ int ann_main(int argc, char** argv) {
                                  results);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
+
+    start_time = wall_time();
+    delete_array(num_dye_tracks, dye_tracks);
+    delete_array(num_radiometries, radiometries);
+    delete_array(num_radiometries, results);
+    end_time = wall_time();
+    print_finished_freeing_memory(end_time - start_time);
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);

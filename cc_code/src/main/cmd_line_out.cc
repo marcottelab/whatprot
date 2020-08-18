@@ -59,6 +59,17 @@ void print_finished_classification(double time) {
     cout << "Finished classification (" << time << " seconds).\n";
 }
 
+void print_finished_freeing_memory(double time) {
+#ifdef USE_MPI
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    cout << "Finished freeing memory (" << time << " seconds).\n";
+}
+
 void print_finished_saving_results(double time) {
 #ifdef USE_MPI
     int mpi_rank;

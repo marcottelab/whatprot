@@ -18,6 +18,7 @@
 #include "io/radiometries_io.h"
 #include "io/scored_classifications_io.h"
 #include "main/cmd_line_out.h"
+#include "util/delete.h"
 #include "util/time.h"
 
 namespace fluoroseq {
@@ -119,6 +120,14 @@ int hybrid_main(int argc, char** argv) {
                                  results);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
+
+    start_time = wall_time();
+    delete_array(num_dye_tracks, dye_tracks);
+    delete_array(num_dye_seqs, dye_seqs);
+    delete_array(num_radiometries, radiometries);
+    delete_array(num_radiometries, results);
+    end_time = wall_time();
+    print_finished_freeing_memory(end_time - start_time);
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);

@@ -2,7 +2,7 @@
 #ifndef FLUOROSEQ_COMMON_SOURCED_DATA_H
 #define FLUOROSEQ_COMMON_SOURCED_DATA_H
 
-#include <type_traits>
+#include "util/delete.h"
 
 namespace fluoroseq {
 
@@ -12,12 +12,8 @@ public:
     SourcedData(V value, S source) : value(value), source(source) {}
 
     ~SourcedData() {
-        if (std::is_pointer<V>::value) {
-            delete value;
-        }
-        if (std::is_pointer<S>::value) {
-            delete source;
-        }
+        delete_if_pointer(value);
+        delete_if_pointer(source);
     }
 
     V value;  // if D is a pointer type then value is owned.
@@ -31,12 +27,7 @@ public:
               S* sources) : num_sources(num_sources), sources(sources) {}
 
     ~SourceSet() {
-        if (std::is_pointer<S>::value) {
-            for (int i = 0; i < num_sources; i++) {
-                delete sources[i];
-            }
-        }
-        delete[] sources;
+        delete_array(num_sources, sources);
     }
 
     S* sources;  // owned.
@@ -49,9 +40,7 @@ public:
     SourceCount(S source, int count) : source(source), count(count) {}
 
     ~SourceCount() {
-        if (std::is_pointer<S>::value) {
-            delete source;
-        }
+        delete_if_pointer(source);
     }
 
     S source;  // if S is a pointer type then source is owned.
@@ -65,10 +54,7 @@ public:
             : num_sources(num_sources), sources(sources) {}
     
     ~SourceCountList() {
-        for (int i = 0; i < num_sources; i++) {
-            delete sources[i];
-        }
-        delete[] sources;
+        delete_array(num_sources, sources);
     }
 
     SourceCount<S>** sources;  // owned.
@@ -82,9 +68,7 @@ public:
             : source(source), count(count), hits(hits) {}
 
     ~SourceCountHits() {
-        if (std::is_pointer<S>::value) {
-            delete source;
-        }
+        delete_if_pointer(source);
     }
 
     S source;  // if S is a pointer type then source is owned.
@@ -99,10 +83,7 @@ public:
             : num_sources(num_sources), sources(sources) {}
     
     ~SourceCountHitsList() {
-        for (int i = 0; i < num_sources; i++) {
-            delete sources[i];
-        }
-        delete[] sources;
+        delete_array(num_sources, sources);
     }
 
     SourceCountHits<S>** sources;
