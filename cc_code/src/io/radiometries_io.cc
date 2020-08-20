@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 
 #ifdef USE_MPI
 #include <mpi.h>
@@ -20,33 +21,34 @@ namespace fluoroseq {
 namespace {
 using std::ifstream;
 using std::string;
+using std::vector;
 }  // namespace
 
 void read_radiometries(const string& filename,
                        int* num_timesteps,
                        int* num_channels,
                        int* total_num_radiometries,
-                       int* num_radiometries,
-                       Radiometry*** radiometries) {
+                       vector<Radiometry>* radiometries) {
+    int num_radiometries;
     double* intensities;
     read_radiometries_raw(filename,
                           num_timesteps,
                           num_channels,
                           total_num_radiometries,
-                          num_radiometries,
+                          &num_radiometries,
                           &intensities);
 #ifdef USE_MPI
     scatter_radiometries(num_timesteps,
                          num_channels,
                          total_num_radiometries,
-                         num_radiometries,
+                         &num_radiometries,
                          &intensities);
 #else  // USE_MPI
-    *num_radiometries = *total_num_radiometries;
+    num_radiometries = *total_num_radiometries;
 #endif  // USE_MPI
     convert_radiometries_from_raw(*num_timesteps,
                                   *num_channels,
-                                  *num_radiometries,
+                                  num_radiometries,
                                   intensities,
                                   radiometries);
     delete[] intensities;
@@ -142,12 +144,12 @@ void convert_radiometries_from_raw(int num_timesteps,
                                    int num_channels,
                                    int num_radiometries,
                                    double* intensities,
-                                   Radiometry*** radiometries) {
-    *radiometries = new Radiometry*[num_radiometries];
+                                   vector<Radiometry>* radiometries) {
+    radiometries->reserve(num_radiometries);
     for (int i = 0; i < num_radiometries; i++) {
-        (*radiometries)[i] = new Radiometry(num_timesteps, num_channels);
+        radiometries->push_back(Radiometry(num_timesteps, num_channels));
         for (int j = 0; j < num_timesteps * num_channels; j++) {
-            (*radiometries)[i]->intensities[j] = intensities[
+            radiometries->back().intensities[j] = intensities[
                     i * (num_timesteps * num_channels) + j];
         }
     }

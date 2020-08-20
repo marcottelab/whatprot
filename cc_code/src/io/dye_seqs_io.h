@@ -5,6 +5,7 @@
 #define FLUOROSEQ_IO_DYE_SEQS_IO_H
 
 #include <string>
+#include <vector>
 
 #ifdef USE_MPI
 #include <mpi.h>
@@ -15,10 +16,10 @@
 
 namespace fluoroseq {
 
-void read_dye_seqs(const std::string& filename,
-                   int* num_channels,
-                   int* num_dye_seqs,
-                   SourcedData<DyeSeq*, SourceCount<int>*>*** dye_seqs);
+void read_dye_seqs(
+        const std::string& filename,
+        int* num_channels,
+        std::vector<SourcedData<DyeSeq, SourceCount<int>>>* dye_seqs);
 
 void read_dye_seqs_raw(const std::string& filename,
                        int* num_channels,
@@ -44,7 +45,7 @@ void convert_dye_seqs_from_raw(
         char** dye_strings,
         int* dye_seqs_num_peptides,
         int* dye_seqs_ids,
-        SourcedData<DyeSeq*, SourceCount<int>*>*** dye_seqs);
+        std::vector<SourcedData<DyeSeq, SourceCount<int>>>* dye_seqs);
 
 }  // namespace fluoroseq
 

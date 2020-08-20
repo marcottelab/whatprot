@@ -3,6 +3,7 @@
 #define FLUOROSEQ_IO_RADIOMETRIES_IO_H
 
 #include <string>
+#include <vector>
 
 #include "common/radiometry.h"
 
@@ -12,8 +13,7 @@ void read_radiometries(const std::string& filename,
                        int* num_timesteps,
                        int* num_channels,
                        int* total_num_radiometries,
-                       int* num_radiometries,
-                       Radiometry*** radiometries);
+                       std::vector<Radiometry>* radiometries);
 
 void read_radiometries_raw(const std::string& filename,
                            int* num_timesteps,
@@ -34,7 +34,7 @@ void convert_radiometries_from_raw(int num_timesteps,
                                    int num_channels,
                                    int num_radiometries,
                                    double* intensities,
-                                   Radiometry*** radiometries);
+                                   std::vector<Radiometry>* radiometries);
 
 }  // namespace fluoroseq
 

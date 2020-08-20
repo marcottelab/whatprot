@@ -28,26 +28,26 @@ void read_dye_tracks(
         const string& filename,
         int* num_timesteps,
         int* num_channels,
-        int* num_dye_tracks,
-        SourcedData<DyeTrack*, SourceCountHitsList<int>*>*** dye_tracks) {
+        vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks) {
+    int num_dye_tracks;
     int f_ints_size;
     int* f_ints;
     read_dye_tracks_raw(filename,
                         num_timesteps,
                         num_channels,
-                        num_dye_tracks,
+                        &num_dye_tracks,
                         &f_ints_size,
                         &f_ints);
 #ifdef USE_MPI
     broadcast_dye_tracks(num_timesteps,
                          num_channels,
-                         num_dye_tracks,
+                         &num_dye_tracks,
                          &f_ints_size,
                          &f_ints);
 #endif  // USE_MPI
     convert_dye_tracks_from_raw(*num_timesteps,
                                 *num_channels,
-                                *num_dye_tracks,
+                                num_dye_tracks,
                                 f_ints,
                                 dye_tracks);
     delete[] f_ints;
@@ -128,14 +128,13 @@ void convert_dye_tracks_from_raw(
         int num_channels,
         int num_dye_tracks,
         int* f_ints,
-        SourcedData<DyeTrack*, SourceCountHitsList<int>*>*** dye_tracks) {
+        vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks) {
     int index = 0;
-    *dye_tracks = new SourcedData<
-            DyeTrack*, SourceCountHitsList<int>*>*[num_dye_tracks];
+    dye_tracks->reserve(num_dye_tracks);
     for (int i = 0; i < num_dye_tracks; i++) {
-        DyeTrack* dye_track = new DyeTrack(num_timesteps, num_channels);
+        DyeTrack dye_track(num_timesteps, num_channels);
         for (int j = 0; j < num_timesteps * num_channels; j++) {
-            dye_track->counts[j] = f_ints[index];
+            dye_track.counts[j] = f_ints[index];
             index++;
         }
         int num_sources = f_ints[index];
@@ -150,10 +149,8 @@ void convert_dye_tracks_from_raw(
             index++;
             sources[j] = new SourceCountHits<int>(id, count, hits);
         }
-        (*dye_tracks)[i] = new SourcedData<
-                DyeTrack*, SourceCountHitsList<int>*>(
-                        dye_track,
-                        new SourceCountHitsList<int>(num_sources, sources));
+        dye_tracks->push_back(SourcedData<DyeTrack, SourceCountHitsList<int>>(
+                dye_track, SourceCountHitsList<int>(num_sources, sources)));
     }
 }
 

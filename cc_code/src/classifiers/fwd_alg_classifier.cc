@@ -29,11 +29,10 @@ FwdAlgClassifier::FwdAlgClassifier(
         int num_channels,
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
-        int num_dye_seqs,
-        SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs)
+        const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
-          num_dye_seqs(num_dye_seqs),
+          num_dye_seqs(dye_seqs.size()),
           dye_seqs(dye_seqs),
           max_failed_edmans(approximation_model.max_failed_edmans) {
     detach_transition = new DetachTransition(error_model.p_detach,
@@ -44,14 +43,14 @@ FwdAlgClassifier::FwdAlgClassifier(
     for (int i = 0; i < num_dye_seqs; i++) {
         DyeTrack dye_track = DyeTrack(num_timesteps,
                                       num_channels,
-                                      *dye_seqs[i]->value);
+                                      dye_seqs[i].value);
         for (int c = 0; c < num_channels; c++) {
             if (dye_track(0, c) > max_num_dyes) {
                 max_num_dyes = dye_track(0, c);
             }
         }
         edman_transitions[i] = new EdmanTransition(error_model.p_edman_failure,
-                                                   *dye_seqs[i]->value,
+                                                   dye_seqs[i].value,
                                                    dye_track,
                                                    max_failed_edmans);
         int* tensor_shape = new int[1 + num_channels];
@@ -96,13 +95,14 @@ ScoredClassification FwdAlgClassifier::classify(
     return classify_helper<const vector<int>&>(radiometry, candidate_indices);
 }
 
-ScoredClassification* FwdAlgClassifier::classify(int num_radiometries,
-                                                 Radiometry** radiometries) {
-    ScoredClassification* result = new ScoredClassification[num_radiometries];
-    for (int i = 0; i < num_radiometries; i++) {
-        result[i] = classify(*radiometries[i]);
+vector<ScoredClassification> FwdAlgClassifier::classify(
+        const vector<Radiometry>& radiometries) {
+    vector<ScoredClassification> results;
+    results.reserve(radiometries.size());
+    for (int i = 0; i < radiometries.size(); i++) {
+        results.push_back(classify(radiometries[i]));
     }
-    return result;
+    return results;
 }
 
 }  // namespace fluoroseq

@@ -25,21 +25,23 @@ public:
             int num_channels,
             std::function<double (double, int)> pdf,
             int k,
-            int num_train,
-            SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks);
+            const std::vector<
+                    SourcedData<DyeTrack,
+                                SourceCountHitsList<int>>>& dye_tracks);
     ~KWANNClassifier();
     double classify_helper(const Radiometry& radiometry,
                            std::unordered_map<int, double>* id_score_map);
     ScoredClassification classify(const Radiometry& radiometry);
     std::vector<ScoredClassification> classify(const Radiometry& radiometry,
                                                int h);
-    ScoredClassification* classify(int num_radiometries, 
-                                   Radiometry** radiometries);
+    std::vector<ScoredClassification> classify(
+            const std::vector<Radiometry>& radiometries);
 
     std::function<double (double, int)> pdf;
     flann::Index<flann::L2<double>>* index;
     flann::Matrix<double>* dataset;
-    SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks;  // not owned
+    const std::vector<
+            SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks;
     int num_train;
     int num_timesteps;
     int num_channels;

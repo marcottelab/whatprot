@@ -32,8 +32,8 @@ KWANNClassifier::KWANNClassifier(
         int num_channels,
         function<double (double, int)> pdf,
         int k,
-        int num_train,
-        SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks)
+        const vector<
+                SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           pdf(pdf),
@@ -44,7 +44,7 @@ KWANNClassifier::KWANNClassifier(
     double* raw_dataset = new double[num_train * stride];
     for (int i = 0; i < num_train; i++) {
         for (int j = 0; j < stride; j++) {
-            double count = (double) dye_tracks[i]->value->counts[j];
+            double count = (double) dye_tracks[i].value.counts[j];
             raw_dataset[i * stride + j] = count;
         }
     }
@@ -82,17 +82,18 @@ double KWANNClassifier::classify_helper(
     unordered_map<int, int> id_hits_map;
     for (int i = 0; i < k; i++) {
         int index = indices[0][i];
-        SourcedData<DyeTrack*,
-                    SourceCountHitsList<int>*>* dye_track = dye_tracks[index];
+        const SourcedData<
+                DyeTrack,
+                SourceCountHitsList<int>>& dye_track = dye_tracks[index];
         double weight = 1.0;
         for (int j = 0; j < num_timesteps * num_channels; j++) {
             weight *= pdf(radiometry.intensities[j],
-                          dye_track->value->counts[j]);
+                          dye_track.value.counts[j]);
         }
-        for (int j = 0; j < dye_track->source->num_sources; j++) {
-            int id = dye_track->source->sources[j]->source;
-            double count = (double) dye_track->source->sources[j]->count;
-            double hits = (double) dye_track->source->sources[j]->hits;
+        for (int j = 0; j < dye_track.source.num_sources; j++) {
+            int id = dye_track.source.sources[j]->source;
+            double count = (double) dye_track.source.sources[j]->count;
+            double hits = (double) dye_track.source.sources[j]->hits;
             total_score += weight * hits;
             (*id_score_map)[id] += weight * hits / count;
         }
@@ -154,11 +155,12 @@ vector<ScoredClassification> KWANNClassifier::classify(
     return results;
 }
 
-ScoredClassification* KWANNClassifier::classify(int num_radiometries, 
-                                                Radiometry** radiometries) {
-    ScoredClassification* results = new ScoredClassification[num_radiometries];
-    for (int i = 0; i < num_radiometries; i++) {
-        results[i] = classify(*radiometries[i]);
+vector<ScoredClassification> KWANNClassifier::classify(
+        const vector<Radiometry>& radiometries) {
+    vector<ScoredClassification> results;
+    results.reserve(radiometries.size());
+    for (int i = 0; i < radiometries.size(); i++) {
+        results.push_back(classify(radiometries[i]));
     }
     return results;
 }

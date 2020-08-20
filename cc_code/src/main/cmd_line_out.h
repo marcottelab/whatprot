@@ -8,7 +8,6 @@ void print_bad_inputs();
 void print_built_classifier(double time);
 void print_finished_basic_setup(double time);
 void print_finished_classification(double time);
-void print_finished_freeing_memory(double time);
 void print_finished_saving_results(double time);
 void print_invalid_classifier();
 void print_mpi_info();

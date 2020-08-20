@@ -3,6 +3,7 @@
 #define FLUOROSEQ_CLASSIFIERS_HYBRID_CLASSIFIER_H
 
 #include <unordered_map>
+#include <vector>
 
 #include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/kwann_classifier.h"
@@ -24,15 +25,15 @@ public:
             const ErrorModel& error_model,
             const ApproximationModel& approximation_model,
             int k,
-            int num_train,
-            SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks,
+            const std::vector<
+                    SourcedData<DyeTrack,
+                                SourceCountHitsList<int>>>& dye_tracks,
             int h,
-            int num_dye_seqs,
-            SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs);
+            const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ~HybridClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
-    ScoredClassification* classify(int num_radiometries, 
-                                    Radiometry** radiometries);
+    std::vector<ScoredClassification> classify(
+            const std::vector<Radiometry>& radiometries);
 
     FwdAlgClassifier* fwd_alg_classifier;
     KWANNClassifier* kwann_classifier;

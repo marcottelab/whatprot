@@ -23,18 +23,18 @@ namespace fluoroseq {
 
 class FwdAlgClassifier {
 public:
-    FwdAlgClassifier(int num_timesteps,
-                     int num_channels,
-                     const ErrorModel& error_model,
-                     const ApproximationModel& approximation_model,
-                     int num_dye_seqs,
-                     SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs);
+    FwdAlgClassifier(
+            int num_timesteps,
+            int num_channels,
+            const ErrorModel& error_model,
+            const ApproximationModel& approximation_model,
+            const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ~FwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
                                   const std::vector<int>& candidate_indices);
-    ScoredClassification* classify(int num_radiometries, 
-                                    Radiometry** radiometries);
+    std::vector<ScoredClassification> classify(
+            const std::vector<Radiometry>& radiometries);
 
     template<typename I>
     ScoredClassification classify_helper(const Radiometry& radiometry,
@@ -57,13 +57,13 @@ public:
                                    *bleach_transition,
                                    *edman_transitions[i],
                                    summation);
-            total_score += score * dye_seqs[i]->source->count;
+            total_score += score * dye_seqs[i].source.count;
             if (score > best_score) {
                 best_score = score;
                 best_i = i;
             }
         }
-        return ScoredClassification(dye_seqs[best_i]->source->source,
+        return ScoredClassification(dye_seqs[best_i].source.source,
                                     best_score,
                                     total_score);
 
@@ -73,7 +73,7 @@ public:
     BinomialTransition* dud_transition;
     BinomialTransition* bleach_transition;
     std::function<double (double, int)> pdf;
-    SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs;  // not owned
+    const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
     EdmanTransition** edman_transitions;
     Tensor** tensors;
     int num_dye_seqs;

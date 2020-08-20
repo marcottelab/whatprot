@@ -27,26 +27,23 @@ HybridClassifier::HybridClassifier(
         const ErrorModel& error_model,
         const ApproximationModel& approximation_model,
         int k,
-        int num_train,
-        SourcedData<DyeTrack*, SourceCountHitsList<int>*>** dye_tracks,
+        const vector<
+                SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks,
         int h,
-        int num_dye_seqs,
-        SourcedData<DyeSeq*, SourceCount<int>*>** dye_seqs) : h(h) {
+        const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs) : h(h) {
     kwann_classifier = new KWANNClassifier(num_timesteps,
                                            num_channels,
                                            error_model.pdf(),
                                            k,
-                                           num_train,
                                            dye_tracks);
     fwd_alg_classifier = new FwdAlgClassifier(num_timesteps,
                                               num_channels,
                                               error_model,
                                               approximation_model,
-                                              num_dye_seqs,
                                               dye_seqs);
-    for (int i = 0; i < num_dye_seqs; i++) {
-        id_index_map[dye_seqs[i]->source->source] = i;
-        id_count_map[dye_seqs[i]->source->source] = dye_seqs[i]->source->count;
+    for (int i = 0; i < dye_seqs.size(); i++) {
+        id_index_map[dye_seqs[i].source.source] = i;
+        id_count_map[dye_seqs[i].source.source] = dye_seqs[i].source.count;
     }
 }
 
@@ -86,11 +83,12 @@ ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     return result;
 }
 
-ScoredClassification* HybridClassifier::classify(int num_radiometries, 
-                                                 Radiometry** radiometries) {
-    ScoredClassification* results = new ScoredClassification[num_radiometries];
-    for (int i = 0; i < num_radiometries; i++) {
-        results[i] = classify(*radiometries[i]);
+vector<ScoredClassification> HybridClassifier::classify(
+        const vector<Radiometry>& radiometries) {
+    vector<ScoredClassification> results;
+    results.reserve(radiometries.size());
+    for (int i = 0; i < radiometries.size(); i++) {
+        results.push_back(classify(radiometries[i]));
     }
     return results;
 }

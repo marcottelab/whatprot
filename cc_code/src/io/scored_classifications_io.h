@@ -3,6 +3,7 @@
 #define FLUOROSEQ_IO_SCORED_CLASSIFICATIONS_IO_H
 
 #include <string>
+#include <vector>
 
 #include "common/scored_classification.h"
 
@@ -11,12 +12,10 @@ namespace fluoroseq {
 void write_scored_classifications(
         const std::string& filename,
         int total_num_scored_classifications,
-        int num_scored_classifications,
-        const ScoredClassification* scored_classifications);
+        const std::vector<ScoredClassification>& scored_classifications);
 
 void convert_raw_from_scored_classifications(
-        int num_scored_classifications,
-        const ScoredClassification* scored_classifications,
+        const std::vector<ScoredClassification>& scored_classifications,
         int** ids,
         double** scores);
 

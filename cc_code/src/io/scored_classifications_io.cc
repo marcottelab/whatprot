@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>  // for std::setprecision
 #include <string>
+#include <vector>
 
 #ifdef USE_MPI
 #include <mpi.h>
@@ -22,17 +23,17 @@ namespace {
 using std::ofstream;
 using std::setprecision;
 using std::string;
+using std::vector;
 }  // namespace
 
 void write_scored_classifications(
         const string& filename,
         int total_num_scored_classifications,
-        int num_scored_classifications,
-        const ScoredClassification* scored_classifications) {
+        const vector<ScoredClassification>& scored_classifications) {
+    int num_scored_classifications = scored_classifications.size();
     int* ids;
     double* scores;
-    convert_raw_from_scored_classifications(num_scored_classifications,
-                                            scored_classifications,
+    convert_raw_from_scored_classifications(scored_classifications,
                                             &ids,
                                             &scores);
 #ifdef USE_MPI
@@ -48,13 +49,12 @@ void write_scored_classifications(
 }
 
 void convert_raw_from_scored_classifications(
-        int num_scored_classifications,
-        const ScoredClassification* scored_classifications,
+        const vector<ScoredClassification>& scored_classifications,
         int** ids,
         double** scores) {
-    *ids = new int[num_scored_classifications];
-    *scores = new double[num_scored_classifications];
-    for (int i = 0; i < num_scored_classifications; i++) {
+    *ids = new int[scored_classifications.size()];
+    *scores = new double[scored_classifications.size()];
+    for (int i = 0; i < scored_classifications.size(); i++) {
         (*ids)[i] = scored_classifications[i].id;
         (*scores)[i] = scored_classifications[i].adjusted_score();
     }
