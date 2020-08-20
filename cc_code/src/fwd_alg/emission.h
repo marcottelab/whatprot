@@ -3,6 +3,7 @@
 #define FLUOROSEQ_FWD_ALG_EMISSION
 
 #include <functional>
+#include <vector>
 
 #include "common/radiometry.h"
 #include "tensor/tensor.h"
@@ -15,12 +16,11 @@ public:
              int max_num_dyes,
              std::function<double (double, int)> pdf,
              int max_edman_failures);
-    ~Emission();
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
     void operator()(Tensor* tensor, int timestep) const;
 
-    double* values;
+    std::vector<double> values;
     int num_timesteps;
     int num_channels;
     int max_num_dyes;

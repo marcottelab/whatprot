@@ -34,11 +34,12 @@ FwdAlgClassifier::FwdAlgClassifier(
           num_channels(num_channels),
           num_dye_seqs(dye_seqs.size()),
           dye_seqs(dye_seqs),
-          max_failed_edmans(approximation_model.max_failed_edmans) {
-    detach_transition = new DetachTransition(error_model.p_detach,
-                                             max_failed_edmans);
-    edman_transitions = new EdmanTransition*[num_dye_seqs]();
-    tensors = new Tensor*[num_dye_seqs]();
+          max_failed_edmans(approximation_model.max_failed_edmans),
+          detach_transition(error_model.p_detach, max_failed_edmans),
+          dud_transition(error_model.p_bleach, max_failed_edmans),
+          bleach_transition(error_model.p_bleach, max_failed_edmans) {
+    edman_transitions.reserve(num_dye_seqs);
+    tensors.reserve(num_dye_seqs);
     max_num_dyes = 0;
     for (int i = 0; i < num_dye_seqs; i++) {
         DyeTrack dye_track = DyeTrack(num_timesteps,
@@ -49,40 +50,22 @@ FwdAlgClassifier::FwdAlgClassifier(
                 max_num_dyes = dye_track(0, c);
             }
         }
-        edman_transitions[i] = new EdmanTransition(error_model.p_edman_failure,
-                                                   dye_seqs[i].value,
-                                                   dye_track,
-                                                   max_failed_edmans);
+        edman_transitions.push_back(EdmanTransition(error_model.p_edman_failure,
+                                                    dye_seqs[i].value,
+                                                    dye_track,
+                                                    max_failed_edmans));
         int* tensor_shape = new int[1 + num_channels];
         tensor_shape[0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {
             int num_dyes = dye_track(0, c);
             tensor_shape[1 + c] = num_dyes + 1;
         }
-        tensors[i] = new Tensor(1 + num_channels, tensor_shape);
+        tensors.push_back(Tensor(1 + num_channels, tensor_shape));
         delete[] tensor_shape;
     }
-    dud_transition = new BinomialTransition(max_num_dyes,
-                                            error_model.p_dud,
-                                            max_failed_edmans);
-    bleach_transition = new BinomialTransition(max_num_dyes,
-                                               error_model.p_bleach,
-                                               max_failed_edmans);
+    dud_transition.reserve(max_num_dyes);
+    bleach_transition.reserve(max_num_dyes);
     pdf = error_model.pdf();
-}
-
-FwdAlgClassifier::~FwdAlgClassifier() {
-    delete detach_transition;
-    delete dud_transition;
-    delete bleach_transition;
-    for (int i = 0; i < num_dye_seqs; i++) {
-        delete edman_transitions[i];
-    }
-    delete[] edman_transitions;
-    for (int i = 0; i < num_dye_seqs; i++) {
-        delete tensors[i];
-    }
-    delete[] tensors;
 }
 
 ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {

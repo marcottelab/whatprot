@@ -30,31 +30,27 @@ HybridClassifier::HybridClassifier(
         const vector<
                 SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks,
         int h,
-        const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs) : h(h) {
-    kwann_classifier = new KWANNClassifier(num_timesteps,
-                                           num_channels,
-                                           error_model.pdf(),
-                                           k,
-                                           dye_tracks);
-    fwd_alg_classifier = new FwdAlgClassifier(num_timesteps,
-                                              num_channels,
-                                              error_model,
-                                              approximation_model,
-                                              dye_seqs);
+        const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
+        : h(h),
+          kwann_classifier(num_timesteps,
+                           num_channels,
+                           error_model.pdf(),
+                           k,
+                           dye_tracks),
+          fwd_alg_classifier(num_timesteps,
+                             num_channels,
+                             error_model,
+                             approximation_model,
+                             dye_seqs) {
     for (int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;
         id_count_map[dye_seqs[i].source.source] = dye_seqs[i].source.count;
     }
 }
 
-HybridClassifier::~HybridClassifier() {
-    delete kwann_classifier;
-    delete fwd_alg_classifier;
-}
-
 ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     vector<ScoredClassification> candidates;
-    candidates = kwann_classifier->classify(radiometry, h);
+    candidates = kwann_classifier.classify(radiometry, h);
     double total = candidates[0].total;
     double subfraction = 0.0;
     vector<int> candidate_indices;
@@ -65,7 +61,7 @@ ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
         candidate_indices.push_back(id_index_map[candidate.id]);
     }
     ScoredClassification result;
-    result = fwd_alg_classifier->classify(radiometry, candidate_indices);
+    result = fwd_alg_classifier.classify(radiometry, candidate_indices);
     if (result.id == -1) {
         result = candidates.back();
     } else {

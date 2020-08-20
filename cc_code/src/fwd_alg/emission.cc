@@ -23,7 +23,7 @@ Emission::Emission(const Radiometry& radiometry,
           num_channels(radiometry.num_channels),
           max_num_dyes(max_num_dyes),
           max_edman_failures(max_edman_failures) {
-    values = new double[num_timesteps * num_channels * max_num_dyes];
+    values.reserve(num_timesteps * num_channels * max_num_dyes);
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             for (int d = 0; d < max_num_dyes; d++) {
@@ -31,10 +31,6 @@ Emission::Emission(const Radiometry& radiometry,
             }
         }
     }
-}
-
-Emission::~Emission() {
-    delete[] values;
 }
 
 double& Emission::prob(int t, int c, int d) {

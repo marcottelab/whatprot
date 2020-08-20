@@ -39,7 +39,8 @@ KWANNClassifier::KWANNClassifier(
           pdf(pdf),
           k(k),
           num_train(num_train),
-          dye_tracks(dye_tracks) {
+          dye_tracks(dye_tracks),
+          index(KDTreeIndexParams(1)) {  // number of KD-trees.
     int stride = num_timesteps * num_channels;
     double* raw_dataset = new double[num_train * stride];
     for (int i = 0; i < num_train; i++) {
@@ -48,16 +49,12 @@ KWANNClassifier::KWANNClassifier(
             raw_dataset[i * stride + j] = count;
         }
     }
-    dataset = new Matrix<double>(raw_dataset, num_train, stride);
-    index = new Index<L2<double>>(*dataset,
-                                  KDTreeIndexParams(1));  // number of kdtrees.
-    index->buildIndex();
+    dataset = Matrix<double>(raw_dataset, num_train, stride);
+    index.buildIndex(dataset);
 }
 
 KWANNClassifier::~KWANNClassifier() {
-    delete[] dataset->ptr();
-    delete dataset;
-    delete index;
+    delete[] dataset.ptr();
 }
 
 double KWANNClassifier::classify_helper(
@@ -72,11 +69,11 @@ double KWANNClassifier::classify_helper(
     Matrix<double> dists_sq(new double[k],
                             1,  // num rows (num queries)
                             k);  // num results per query
-    index->knnSearch(query,
-                     indices,
-                     dists_sq,
-                     k,
-                     SearchParams(FLANN_CHECKS_UNLIMITED));
+    index.knnSearch(query,
+                    indices,
+                    dists_sq,
+                    k,
+                    SearchParams(FLANN_CHECKS_UNLIMITED));
     delete[] dists_sq.ptr();
     double total_score = 0.0;
     unordered_map<int, int> id_hits_map;

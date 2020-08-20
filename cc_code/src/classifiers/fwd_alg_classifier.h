@@ -29,7 +29,6 @@ public:
             const ErrorModel& error_model,
             const ApproximationModel& approximation_model,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
-    ~FwdAlgClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
                                   const std::vector<int>& candidate_indices);
@@ -47,15 +46,15 @@ public:
         for (int i : indices) {
             Initialization initialization;
             Summation summation(max_failed_edmans);
-            double score = fwd_alg(tensors[i],
+            double score = fwd_alg(&tensors[i],
                                    num_timesteps,
                                    num_channels,
                                    initialization,
                                    emission,
-                                   *detach_transition,
-                                   *dud_transition,
-                                   *bleach_transition,
-                                   *edman_transitions[i],
+                                   detach_transition,
+                                   dud_transition,
+                                   bleach_transition,
+                                   edman_transitions[i],
                                    summation);
             total_score += score * dye_seqs[i].source.count;
             if (score > best_score) {
@@ -69,13 +68,13 @@ public:
 
     }
 
-    DetachTransition* detach_transition;
-    BinomialTransition* dud_transition;
-    BinomialTransition* bleach_transition;
+    DetachTransition detach_transition;
+    BinomialTransition dud_transition;
+    BinomialTransition bleach_transition;
     std::function<double (double, int)> pdf;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
-    EdmanTransition** edman_transitions;
-    Tensor** tensors;
+    std::vector<EdmanTransition> edman_transitions;
+    std::vector<Tensor> tensors;
     int num_dye_seqs;
     int num_timesteps;
     int num_channels;

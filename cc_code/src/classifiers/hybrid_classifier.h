@@ -30,13 +30,12 @@ public:
                                 SourceCountHitsList<int>>>& dye_tracks,
             int h,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
-    ~HybridClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
-    FwdAlgClassifier* fwd_alg_classifier;
-    KWANNClassifier* kwann_classifier;
+    FwdAlgClassifier fwd_alg_classifier;
+    KWANNClassifier kwann_classifier;
     std::unordered_map<int, int> id_index_map;
     std::unordered_map<int, int> id_count_map;
     int h;

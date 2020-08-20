@@ -38,8 +38,8 @@ public:
             const std::vector<Radiometry>& radiometries);
 
     std::function<double (double, int)> pdf;
-    flann::Index<flann::L2<double>>* index;
-    flann::Matrix<double>* dataset;
+    flann::Index<flann::L2<double>> index;
+    flann::Matrix<double> dataset;
     const std::vector<
             SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks;
     int num_train;
