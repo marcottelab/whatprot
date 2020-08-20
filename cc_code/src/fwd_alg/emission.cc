@@ -23,7 +23,7 @@ Emission::Emission(const Radiometry& radiometry,
           num_channels(radiometry.num_channels),
           max_num_dyes(max_num_dyes),
           max_edman_failures(max_edman_failures) {
-    values.reserve(num_timesteps * num_channels * max_num_dyes);
+    values.resize(num_timesteps * num_channels * max_num_dyes);
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             for (int d = 0; d < max_num_dyes; d++) {

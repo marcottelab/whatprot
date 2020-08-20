@@ -16,7 +16,7 @@ BinomialTransition::BinomialTransition(double q, int max_failed_edmans)
             : q(q), max_failed_edmans(max_failed_edmans) {
     length = 1;
     size = 1;
-    values.reserve(size);
+    values.resize(size);
     values[0] = 1.0;
 }
 
@@ -24,7 +24,7 @@ void BinomialTransition::reserve(int max_n) const {
     int prev_length = length;
     length = max_n + 1;
     size = length * (length + 1) / 2;
-    values.reserve(size);
+    values.resize(size);
     double p = (double) 1 - q;
     for (int i = prev_length; i < length; i++) {
         prob(i, 0) = prob(i - 1, 0) * q;
