@@ -21,6 +21,9 @@ BinomialTransition::BinomialTransition(double q, int max_failed_edmans)
 }
 
 void BinomialTransition::reserve(int max_n) const {
+    if (max_n + 1 <= length) {
+        return;
+    }
     int prev_length = length;
     length = max_n + 1;
     size = length * (length + 1) / 2;
