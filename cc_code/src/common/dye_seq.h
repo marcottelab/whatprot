@@ -21,6 +21,7 @@ public:
     DyeSeq(const DyeSeq& other);
     ~DyeSeq();
     short operator[](int i) const;
+    short& operator[](int i);
 
     short* seq;
     int length;

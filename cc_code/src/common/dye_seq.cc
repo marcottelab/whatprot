@@ -47,4 +47,8 @@ short DyeSeq::operator[](int i) const {
     }
 }
 
+short& DyeSeq::operator[](int i) {
+    return seq[i];
+}
+
 }  // namespace fluoroseq

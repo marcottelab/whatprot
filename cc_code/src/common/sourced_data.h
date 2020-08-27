@@ -38,6 +38,9 @@ template<typename S>
 class SourceCount {
 public:
     SourceCount(S source, int count) : source(source), count(count) {}
+    
+    SourceCount(const SourceCount& other) : source(other.source),
+                                            count(other.count) {}
 
     ~SourceCount() {
         delete_if_pointer(source);
