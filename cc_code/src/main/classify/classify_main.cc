@@ -8,10 +8,10 @@
 #include <mpi.h>
 #endif  // USE_MPI
 
-#include "main/ann_main.h"
+#include "main/classify/ann_main.h"
+#include "main/classify/hmm_main.h"
+#include "main/classify/hybrid_main.h"
 #include "main/cmd_line_out.h"
-#include "main/hmm_main.h"
-#include "main/hybrid_main.h"
 
 namespace {
 using fluoroseq::ann_main;
