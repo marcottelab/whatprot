@@ -59,6 +59,18 @@ void print_finished_classification(double time) {
     cout << "Finished classification (" << time << " seconds).\n";
 }
 
+void print_finished_generating_radiometries(int num, double time) {
+#ifdef USE_MPI
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    cout << "Finished generating " << num << " radiometries (" << time
+         << "seconds).\n";
+}
+
 void print_finished_saving_results(double time) {
 #ifdef USE_MPI
     int mpi_rank;

@@ -5,6 +5,8 @@
 namespace fluoroseq {
 
 double wall_time();
+double wall_tick();
+unsigned int time_based_seed();
 
 }  // namespace fluoroseq
 

@@ -7,6 +7,7 @@ namespace fluoroseq {
 class Radiometry {
 public:
     Radiometry(int num_timesteps, int num_channels);
+    Radiometry(const Radiometry& other);
     ~Radiometry();
     double& operator()(int t, int c);
     double operator()(int t, int c) const;

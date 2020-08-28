@@ -177,9 +177,9 @@ void write_radiometries(
             &intensities);
 #endif  // USE_MPI
     write_radiometries_raw(filename,
-                           total_num_groups * group_size,  // num radiometries
                            num_timesteps,
                            num_channels,
+                           total_num_groups * group_size,  // num radiometries
                            intensities);
 }
 
