@@ -207,7 +207,7 @@ void gather_radiometries(int total_num_blocks,
     mpi_counts_displs(total_num_blocks, block_size, &mpi_counts, &mpi_displs);
     double* intensities_recv_buf;
     if (mpi_rank == 0) {
-        intensities_recv_buf = new int[total_num_blocks * block_size];
+        intensities_recv_buf = new double[total_num_blocks * block_size];
     }
     MPI_Gatherv(*intensities,
                 mpi_counts[mpi_rank],  // sendcount
@@ -231,7 +231,7 @@ void write_radiometries_raw(const std::string& filename,
                             int num_radiometries,
                             double* intensities) {
 #ifdef USE_MPI
-    int mpi_rank
+    int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     if (mpi_rank != 0) {
         return;

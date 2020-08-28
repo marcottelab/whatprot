@@ -58,11 +58,13 @@ int hybrid_main(int argc, char** argv) {
 
     start_time = wall_time();
     int num_channels;
-    int num_dye_seqs;
+    int total_num_dye_seqs;  // redundant, not needed.
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
     read_dye_seqs(dye_seqs_filename,
                   &num_channels,
-                  &dye_seqs);
+                  &total_num_dye_seqs,
+                  &dye_seqs,
+                  MpiReadMode::BROADCAST);
     end_time = wall_time();
     print_read_dye_seqs(dye_seqs.size(), end_time - start_time);
 

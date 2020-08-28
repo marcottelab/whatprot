@@ -14,6 +14,9 @@
 
 #include "common/dye_seq.h"
 #include "common/sourced_data.h"
+#ifdef USE_MPI
+#include "io/mpi_counts_displs.h"
+#endif  // USE_MPI
 
 namespace fluoroseq {
 
@@ -239,7 +242,8 @@ void scatter_dye_seqs(int* num_channels,
                      MPI_CHAR,
                      0,  // source
                      0,  // tag
-                     MPI_COMM_WORLD);
+                     MPI_COMM_WORLD,
+                     MPI_STATUS_IGNORE);
         }
     }
     int* num_peptides_recv = new int[*num_dye_seqs];
