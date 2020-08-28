@@ -4,6 +4,7 @@
 #include "radiometries_io.h"
 
 #include <fstream>
+#include <iomanip>  // for std::setprecision
 #include <string>
 #include <vector>
 
@@ -20,6 +21,8 @@ namespace fluoroseq {
 
 namespace {
 using std::ifstream;
+using std::ofstream;
+using std::setprecision;
 using std::string;
 using std::vector;
 }  // namespace
@@ -153,6 +156,103 @@ void convert_radiometries_from_raw(int num_timesteps,
                     i * (num_timesteps * num_channels) + j];
         }
     }
+}
+
+void write_radiometries(
+        const string& filename,
+        int num_timesteps,
+        int num_channels,
+        int total_num_groups,
+        int group_size,
+        const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries) {
+    double* intensities;
+    convert_raw_from_radiometries(
+            radiometries,
+            num_timesteps * num_channels,  // radiometry size
+            &intensities);
+#ifdef USE_MPI
+    gather_radiometries(
+            total_num_groups,  // num radiometry groups (for counts, displs)
+            group_size * num_timesteps * num_channels,  // block size
+            &intensities);
+#endif  // USE_MPI
+    write_radiometries_raw(filename,
+                           total_num_groups * group_size,  // num radiometries
+                           num_timesteps,
+                           num_channels,
+                           intensities);
+}
+
+void convert_raw_from_radiometries(
+        const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries,
+        int radiometry_size,
+        double** intensities) {
+    *intensities = new double[radiometries.size() * radiometry_size];
+    for (int i = 0; i < radiometries.size(); i++) {
+        for (int j = 0; j < radiometry_size; j++) {
+            (*intensities)[i * radiometry_size + j] =
+                    radiometries[i].value.intensities[j];
+        }
+    }
+}
+
+#ifdef USE_MPI
+void gather_radiometries(int total_num_blocks,
+                         int block_size,
+                         double** intensities) {
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int* mpi_counts;
+    int* mpi_displs;
+    mpi_counts_displs(total_num_blocks, block_size, &mpi_counts, &mpi_displs);
+    double* intensities_recv_buf;
+    if (mpi_rank == 0) {
+        intensities_recv_buf = new int[total_num_blocks * block_size];
+    }
+    MPI_Gatherv(*intensities,
+                mpi_counts[mpi_rank],  // sendcount
+                MPI_DOUBLE,
+                intensities_recv_buf,
+                mpi_counts,
+                mpi_displs,
+                MPI_DOUBLE,
+                0,  // root
+                MPI_COMM_WORLD);
+    delete[] *intensities;
+    if (mpi_rank == 0) {
+        *intensities = intensities_recv_buf;
+    }
+}
+#endif  // USE_MPI
+
+void write_radiometries_raw(const std::string& filename,
+                            int num_timesteps,
+                            int num_channels,
+                            int num_radiometries,
+                            double* intensities) {
+#ifdef USE_MPI
+    int mpi_rank
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    ofstream f(filename);
+    f << num_timesteps << "\t\n";
+    f << num_channels << "\t\n";
+    f << num_radiometries << "\t\n";
+    for (int i = 0; i < num_radiometries; i++) {
+        for (int j = 0; j < num_timesteps * num_channels; j++) {
+            if (j != 0) {
+                f << "\t";
+            }
+            f << setprecision(17)
+              << intensities[i * num_timesteps * num_channels + j];
+        }
+        f << "\n";
+    }
+    f.close();
+    delete[] intensities;
 }
 
 }  // namespace fluoroseq
