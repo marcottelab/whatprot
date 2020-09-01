@@ -217,13 +217,12 @@ void scatter_dye_seqs(int* num_channels,
                  MPI_INT,  // recvtype
                  0,  // root
                  MPI_COMM_WORLD);
-    if (mpi_rank == 0) {
-        delete[] *dye_string_lengths;
+    if (mpi_rank != 0) {
+        *dye_string_lengths = string_lengths_recv;
     }
-    *dye_string_lengths = string_lengths_recv;
     if (mpi_rank == 0) {
         for (int r = 1; r < mpi_size; r++) {
-            for (int i = 0; i < *num_dye_seqs; i++) {
+            for (int i = 0; i < mpi_counts[r]; i++) {
                 int index = mpi_displs[r] + i;
                 MPI_Send((*dye_strings)[index],  // buf
                          (*dye_string_lengths)[index],  // count
@@ -245,6 +244,10 @@ void scatter_dye_seqs(int* num_channels,
                      MPI_COMM_WORLD,
                      MPI_STATUS_IGNORE);
         }
+    }
+    if (mpi_rank == 0) {
+        delete[] *dye_string_lengths;
+        *dye_string_lengths = string_lengths_recv;
     }
     int* num_peptides_recv = new int[*num_dye_seqs];
     MPI_Scatterv(*dye_seqs_num_peptides,  // sendbuf

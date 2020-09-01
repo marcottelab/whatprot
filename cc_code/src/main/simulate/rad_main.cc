@@ -62,7 +62,7 @@ int rad_main(int argc, char** argv) {
                   &dye_seqs,
                   MpiReadMode::SCATTER);
     end_time = wall_time();
-    print_read_dye_seqs(dye_seqs.size(), end_time - start_time);
+    print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
 
     start_time = wall_time();
     default_random_engine generator(time_based_seed());
@@ -76,7 +76,8 @@ int rad_main(int argc, char** argv) {
                           &radiometries);
     end_time = wall_time();
     print_finished_generating_radiometries(
-            dye_seqs.size() * radiometries_per_dye_seq, end_time - start_time);
+            total_num_dye_seqs * radiometries_per_dye_seq,
+            end_time - start_time);
 
     start_time = wall_time();
     write_radiometries(radiometries_filename,

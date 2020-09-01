@@ -238,9 +238,9 @@ void write_radiometries_raw(const std::string& filename,
     }
 #endif  // USE_MPI
     ofstream f(filename);
-    f << num_timesteps << "\t\n";
-    f << num_channels << "\t\n";
-    f << num_radiometries << "\t\n";
+    f << num_timesteps << "\n";
+    f << num_channels << "\n";
+    f << num_radiometries << "\n";
     for (int i = 0; i < num_radiometries; i++) {
         for (int j = 0; j < num_timesteps * num_channels; j++) {
             if (j != 0) {
