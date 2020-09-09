@@ -36,7 +36,7 @@ struct hash<fluoroseq::DyeTrack> {
 public:
     size_t operator()(const fluoroseq::DyeTrack& dye_track) const;
 
-    const hash<vector<short>> vector_hash;
+    hash<vector<short>> vector_hash;
 };
 
 }  // namespace std
