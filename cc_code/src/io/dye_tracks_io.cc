@@ -20,6 +20,7 @@ namespace fluoroseq {
 namespace {
 using std::copy;
 using std::ifstream;
+using std::ofstream;
 using std::string;
 using std::vector;
 }  // namespace
@@ -152,6 +153,75 @@ void convert_dye_tracks_from_raw(
         dye_tracks->push_back(SourcedData<DyeTrack, SourceCountHitsList<int>>(
                 dye_track, SourceCountHitsList<int>(num_sources, sources)));
     }
+}
+
+void write_dye_tracks(
+        const string& filename,
+        int num_timesteps,
+        int num_channels,
+        const vector<SourcedData<DyeTrack,
+                                 SourceCountHitsList<int>>>& dye_tracks) {
+// #ifdef USE_MPI
+//     int f_ints_size;
+//     int* f_ints;
+//     convert_raw_from_dye_tracks(num_timesteps,
+//                                 num_channels,
+//                                 dye_tracks,
+//                                 &f_ints_size,
+//                                 &f_ints);
+//     int num_dye_tracks = dye_tracks.size();
+//     gather_dye_tracks(&num_dye_tracks, &f_ints_size, &f_ints);
+//     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> new_dye_tracks;
+//     convert_dye_tracks_from_raw(num_timesteps,
+//                                 num_channels,
+//                                 num_dye_tracks,
+//                                 f_ints,
+//                                 &new_dye_tracks);
+//     delete[] f_ints;
+// #else
+    const vector<
+            SourcedData<DyeTrack,
+                        SourceCountHitsList<int>>>& new_dye_tracks = dye_tracks;
+// #endif  // USE_MPI
+    write_dye_tracks_helper(filename,
+                            num_timesteps,
+                            num_channels,
+                            new_dye_tracks);
+}
+
+void write_dye_tracks_helper(
+        const string& filename,
+        int num_timesteps,
+        int num_channels,
+        const vector<SourcedData<DyeTrack,
+                                 SourceCountHitsList<int>>>& dye_tracks) {
+#ifdef USE_MPI
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    ofstream f(filename);
+    f << num_timesteps << "\n";
+    f << num_channels << "\n";
+    f << dye_tracks.size() << "\n";
+    for (const auto& dye_track : dye_tracks) {
+        for (int i = 0; i < num_timesteps * num_channels; i++) {
+            f << dye_track.value.counts[i] << "\t";
+        }
+        f << dye_track.source.num_sources << "\t";
+        for (int i = 0; i < dye_track.source.num_sources; i++) {
+            f << dye_track.source.sources[i]->source << "\t";
+            f << dye_track.source.sources[i]->count << "\t";
+            f << dye_track.source.sources[i]->hits;
+            if (i < dye_track.source.num_sources - 1) {
+                f << "\t";
+            }
+        }
+        f << "\n";
+    }
+    f.close();
 }
 
 }  // namespace fluoroseq

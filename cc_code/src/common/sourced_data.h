@@ -84,9 +84,26 @@ class SourceCountHitsList {
 public:
     SourceCountHitsList(int num_sources, SourceCountHits<S>** sources)
             : num_sources(num_sources), sources(sources) {}
+
+    SourceCountHitsList(const SourceCountHitsList& other)
+            : num_sources(other.num_sources) {
+        sources = new SourceCountHits<S>*[num_sources];
+        for (int i = 0; i < num_sources; i++) {
+            sources[i] = new SourceCountHits<S>(other.sources[i]->source,
+                                                other.sources[i]->count,
+                                                other.sources[i]->hits);
+        }
+    }
+
+    SourceCountHitsList(SourceCountHitsList&& other) 
+            : num_sources(other.num_sources), sources(other.sources) {
+        other.sources = NULL;
+    }
     
     ~SourceCountHitsList() {
-        delete_array(num_sources, sources);
+        if (sources != NULL) {
+            delete_array(num_sources, sources);
+        }
     }
 
     SourceCountHits<S>** sources;

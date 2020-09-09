@@ -9,9 +9,11 @@
 #endif  // USE_MPI
 
 #include "main/cmd_line_out.h"
+#include "main/simulate/dt_main.h"
 #include "main/simulate/rad_main.h"
 
 namespace {
+using fluoroseq::dt_main;
 using fluoroseq::print_bad_inputs;
 using fluoroseq::print_invalid_classifier;
 using fluoroseq::print_mpi_info;
@@ -31,6 +33,8 @@ int main(int argc, char** argv) {
     int return_code;
     if (0 == strcmp(mode, "rad")) {
         return_code = rad_main(argc, argv);
+    } else if (0 == strcmp(mode, "dt")) {
+        return_code = dt_main(argc, argv);
     } else {
         print_invalid_classifier();
     }

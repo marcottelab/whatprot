@@ -42,6 +42,38 @@ void convert_dye_tracks_from_raw(
         std::vector<SourcedData<DyeTrack,
                                 SourceCountHitsList<int>>>* dye_tracks);
 
+void write_dye_tracks(
+        const string& filename,
+        int num_timesteps,
+        int num_channels,
+        const std::vector<SourcedData<DyeTrack,
+                                      SourceCountHitsList<int>>>& dye_tracks);
+
+// #ifdef USE_MPI
+
+// void convert_raw_from_dye_tracks(
+//         int num_timesteps,
+//         int num_channels,
+//         const std::vector<SourcedData<DyeTrack,
+//                                       SourceCountHitsList<int>>>& dye_tracks,
+//         int* f_ints_size,
+//         int** f_ints);
+
+// void gather_dye_tracks(int* num_dye_tracks, int* f_ints_size, int** f_ints);
+
+// void merge_duplicate_dye_tracks(
+//         std::vector<SourcedData<DyeTrack,
+//                                 SourceCountHitsList<int>>>* dye_tracks);
+
+// #endif  // USE_MPI
+
+void write_dye_tracks_helper(
+        const string& filename,
+        int num_timesteps,
+        int num_channels,
+        const std::vector<SourcedData<DyeTrack,
+                                      SourceCountHitsList<int>>>& dye_tracks);
+
 }  // namespace fluoroseq
 
 #endif  // FLUOROSEQ_IO_DYE_TRACKS_IO_H
