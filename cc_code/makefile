@@ -9,6 +9,7 @@ INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
 FLANN = -L ./extern/flann-1.9.1/build/lib/ -lflann_cpp_s
+MRMPI = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_mpicc
 
 ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN)
 MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN)
