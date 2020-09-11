@@ -67,8 +67,11 @@ public:
 template<typename S>
 class SourceCountHits {
 public:
+    SourceCountHits() : source(-1), count(-1), hits(-1) {}
     SourceCountHits(S source, int count, int hits)
             : source(source), count(count), hits(hits) {}
+    SourceCountHits(const SourceCountHits<S>& other)
+            : source(other.source), count(other.count), hits(other.hits) {}
 
     ~SourceCountHits() {
         delete_if_pointer(source);

@@ -15,6 +15,7 @@
 #include "io/dye_seqs_io.h"
 #include "io/dye_tracks_io.h"
 #include "main/cmd_line_out.h"
+#include "simulation/dedup_dye_tracks.h"
 #include "simulation/generate_dye_tracks.h"
 #include "util/time.h"
 
@@ -66,7 +67,7 @@ int dt_main(int argc, char** argv) {
 
     start_time = wall_time();
     default_random_engine generator(time_based_seed());
-    vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> dye_tracks;
+    vector<SourcedData<DyeTrack, SourceCount<int>>> dye_tracks;
     generate_dye_tracks(error_model,
                         dye_seqs,
                         num_timesteps,
@@ -75,15 +76,21 @@ int dt_main(int argc, char** argv) {
                         &generator,
                         &dye_tracks);
     end_time = wall_time();
-    print_finished_generating_dye_tracks(
-            dye_tracks.size(),
-            end_time - start_time);
+    print_finished_generating_dye_tracks(dye_tracks.size(),
+                                         end_time - start_time);
+
+    start_time = wall_time();
+    vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> deduped_dye_tracks;
+    dedup_dye_tracks(&dye_tracks, &deduped_dye_tracks);
+    end_time = wall_time();
+    print_finished_deduping_dye_tracks(deduped_dye_tracks.size(),
+                                       end_time - start_time);
 
     start_time = wall_time();
     write_dye_tracks(dye_tracks_filename,
                      num_timesteps,
                      num_channels,
-                     dye_tracks);
+                     deduped_dye_tracks);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 

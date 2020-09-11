@@ -20,8 +20,7 @@ void generate_dye_tracks(
         int num_channels,
         int dye_tracks_per_dye_seq,
         std::default_random_engine* generator,
-        std::vector<
-                SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks);
+        std::vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks);
 
 }  // namespace fluoroseq
 

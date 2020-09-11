@@ -59,6 +59,18 @@ void print_finished_classification(double time) {
     cout << "Finished classification (" << time << " seconds).\n";
 }
 
+void print_finished_deduping_dye_tracks(int num, double time) {
+#ifdef USE_MPI
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    cout << "Finished deduping " << num << " unique dye tracks (" << time
+         << "seconds).\n";
+}
+
 void print_finished_generating_dye_tracks(int num, double time) {
 #ifdef USE_MPI
     int mpi_rank;
@@ -67,7 +79,7 @@ void print_finished_generating_dye_tracks(int num, double time) {
         return;
     }
 #endif  // USE_MPI
-    cout << "Finished generating " << num << " unique dye tracks (" << time
+    cout << "Finished generating " << num << " dye tracks (" << time
          << "seconds).\n";
 }
 
