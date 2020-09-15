@@ -10,7 +10,7 @@ INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Ap
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
 FLANN = -L ./extern/flann-1.9.1/build/lib/ -lflann_cpp_s
 MRMPI = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_mpicc
-MRMPI_SERIAL =  -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_serial
+MRMPI_SERIAL = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_serial -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
 
 ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL)
 MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI)
