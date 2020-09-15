@@ -13,6 +13,7 @@ namespace fluoroseq {
 class DyeTrack {
 public:
     DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq);
+    DyeTrack(int num_timesteps, int num_channels, short* counts);
     DyeTrack(int num_timesteps, int num_channels);
     DyeTrack(const DyeTrack& other);
     DyeTrack(DyeTrack&& other);

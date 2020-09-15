@@ -5,16 +5,17 @@ OFLAG = -O2
 CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd_alg/*.cc ./src/io/*.cc ./src/main/*.cc ./src/simulation/*.cc ./src/tensor/*.cc ./src/util/*.cc
 CC_DEPS_CLASSIFY = $(CC_DEPS_SHARED) ./src/main/classify/*.cc
 CC_DEPS_SIMULATE = $(CC_DEPS_SHARED) ./src/main/simulate/*.cc
-INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/
+INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Apr14/src/
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
 FLANN = -L ./extern/flann-1.9.1/build/lib/ -lflann_cpp_s
 MRMPI = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_mpicc
+MRMPI_SERIAL =  -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_serial
 
-ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN)
-MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN)
-ARGS_SIMULATE = $(OFLAG) $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN)
-MPI_ARGS_SIMULATE = $(OFLAG) -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN)
+ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL)
+MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI)
+ARGS_SIMULATE = $(OFLAG) $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL)
+MPI_ARGS_SIMULATE = $(OFLAG) -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI)
 
 all: x64 skx
 x64: classify classify_mpi simulate simulate_mpi

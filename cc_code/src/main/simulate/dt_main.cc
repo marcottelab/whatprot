@@ -81,7 +81,10 @@ int dt_main(int argc, char** argv) {
 
     start_time = wall_time();
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> deduped_dye_tracks;
-    dedup_dye_tracks(&dye_tracks, &deduped_dye_tracks);
+    dedup_dye_tracks(num_timesteps,
+                     num_channels,
+                     &dye_tracks,
+                     &deduped_dye_tracks);
     end_time = wall_time();
     print_finished_deduping_dye_tracks(deduped_dye_tracks.size(),
                                        end_time - start_time);

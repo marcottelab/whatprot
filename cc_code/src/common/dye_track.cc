@@ -30,6 +30,12 @@ DyeTrack::DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq)
     }
 }
 
+DyeTrack::DyeTrack(int num_timesteps, int num_channels, short* counts)
+        : num_timesteps(num_timesteps), num_channels(num_channels) {
+    this->counts.resize(num_timesteps * num_channels);
+    copy(counts, &counts[num_timesteps * num_channels], this->counts.begin());
+}
+
 DyeTrack::DyeTrack(int num_timesteps, int num_channels)
         : num_timesteps(num_timesteps), num_channels(num_channels) {
     counts.resize(num_timesteps * num_channels);
