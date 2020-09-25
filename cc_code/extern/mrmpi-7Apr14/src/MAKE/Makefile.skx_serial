@@ -1,4 +1,4 @@
-# serial = stand-alone code for serial execution, g++, no MPI
+# serial = Compiles with icc for serial execution on TACC skylake nodes.
 
 SHELL = /bin/sh
 
