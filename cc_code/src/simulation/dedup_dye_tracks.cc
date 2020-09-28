@@ -39,8 +39,6 @@ void dedup_dye_tracks(
     int mpi_size = 1;
 #endif  // USE_MPI
     MapReduce mr(MPI_COMM_WORLD);
-    mr.freepage = 0;  // Do not free memory.
-    mr.outofcore = -1;  // Do not write to disk.
     // map function puts key/value pairs into MapReduce system.
     mr.map(mpi_size,  // nmap - this ensures one callback per process.
            &map_dye_tracks,  // callback function

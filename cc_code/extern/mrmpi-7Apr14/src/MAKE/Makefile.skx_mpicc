@@ -9,7 +9,7 @@ SHELL = /bin/sh
 # specify flags and libraries needed for your compiler and MPI installation
 
 CC =		mpicc
-CCFLAGS =	-O2 -xCORE-AVX512 -D MRMPI_MEMSIZE=256
+CCFLAGS =	-O2 -xCORE-AVX512
 SHFLAGS =	-fPIC
 DEPFLAGS =	-M
 
