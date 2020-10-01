@@ -29,7 +29,7 @@ using std::vector;
 int rad_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 6) {
+    if (argc != 7) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
@@ -37,6 +37,7 @@ int rad_main(int argc, char** argv) {
     int radiometries_per_dye_seq = atoi(argv[3]);
     char* dye_seqs_filename = argv[4];
     char* radiometries_filename = argv[5];
+    char* ys_filename = argv[6];
 
     double start_time;
     double end_time;
@@ -86,6 +87,10 @@ int rad_main(int argc, char** argv) {
                        total_num_dye_seqs,  // num groups
                        radiometries_per_dye_seq,  // group size
                        radiometries);
+    write_ys(ys_filename,
+             total_num_dye_seqs,  // num groups
+             radiometries_per_dye_seq,  // group size
+             radiometries);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 

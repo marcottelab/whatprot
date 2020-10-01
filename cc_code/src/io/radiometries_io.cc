@@ -255,4 +255,78 @@ void write_radiometries_raw(const std::string& filename,
     delete[] intensities;
 }
 
+void write_ys(
+        const string& filename,
+        int total_num_groups,
+        int group_size,
+        const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries) {
+    int* ys;
+    get_raw_ys(radiometries, &ys);
+#ifdef USE_MPI
+    gather_ys(total_num_groups,  // num radiometry groups (for counts, displs)
+              group_size,  // block size
+              &ys);
+#endif  // USE_MPI
+    write_ys_raw(filename,
+                 total_num_groups * group_size,  // num radiometries
+                 ys);
+}
+
+void get_raw_ys(
+        const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries,
+        int** ys) {
+    *ys = new int[radiometries.size()];
+    for (int i = 0; i < radiometries.size(); i++) {
+        (*ys)[i] = radiometries[i].source.source;
+    }
+}
+
+#ifdef USE_MPI
+void gather_ys(int total_num_blocks,
+               int block_size,
+               int** ys) {
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int* mpi_counts;
+    int* mpi_displs;
+    mpi_counts_displs(total_num_blocks, block_size, &mpi_counts, &mpi_displs);
+    int* ys_recv_buf;
+    if (mpi_rank == 0) {
+        ys_recv_buf = new int[total_num_blocks * block_size];
+    }
+    MPI_Gatherv(*ys,
+                mpi_counts[mpi_rank],  // sendcount
+                MPI_INT,
+                ys_recv_buf,
+                mpi_counts,
+                mpi_displs,
+                MPI_INT,
+                0,  // root
+                MPI_COMM_WORLD);
+    delete[] *ys;
+    if (mpi_rank == 0) {
+        *ys = ys_recv_buf;
+    }
+}
+#endif  // USE_MPI
+
+void write_ys_raw(const string& filename,
+                            int num_radiometries,
+                            int* ys) {
+#ifdef USE_MPI
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    ofstream f(filename);
+    f << num_radiometries << "\n";
+    for (int i = 0; i < num_radiometries; i++) {
+        f << ys[i] << "\n";
+    }
+    f.close();
+    delete[] ys;
+}
+
 }  // namespace fluoroseq

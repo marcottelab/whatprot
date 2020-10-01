@@ -64,6 +64,24 @@ void write_radiometries_raw(const std::string& filename,
                             int num_radiometries,
                             double* intensities);
 
+void write_ys(
+        const std::string& filename,
+        int total_num_groups,
+        int group_size,
+        const std::vector<
+                SourcedData<Radiometry, SourceCount<int>>>& radiometries);
+
+void get_raw_ys(
+        const std::vector<
+                SourcedData<Radiometry, SourceCount<int>>>& radiometries,
+        int** ys);
+
+#ifdef USE_MPI
+void gather_ys(int total_num_blocks, int block_size, int** ys);
+#endif  // USE_MPI
+
+void write_ys_raw(const std::string& filename, int num_radiometries, int* ys);
+
 }  // namespace fluoroseq
 
 #endif  // FLUOROSEQ_IO_RADIOMETRIES_IO_H
