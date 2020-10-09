@@ -38,7 +38,7 @@ KWANNClassifier::KWANNClassifier(
           num_channels(num_channels),
           pdf(pdf),
           k(k),
-          num_train(num_train),
+          num_train(dye_tracks.size()),
           dye_tracks(dye_tracks),
           index(KDTreeIndexParams(1)) {  // number of KD-trees.
     int stride = num_timesteps * num_channels;
