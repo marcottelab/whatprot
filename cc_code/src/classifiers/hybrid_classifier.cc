@@ -34,7 +34,7 @@ HybridClassifier::HybridClassifier(
         : h(h),
           kwann_classifier(num_timesteps,
                            num_channels,
-                           error_model.pdf(),
+                           error_model,
                            k,
                            dye_tracks),
           fwd_alg_classifier(num_timesteps,

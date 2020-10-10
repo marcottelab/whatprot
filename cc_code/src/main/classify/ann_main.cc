@@ -79,8 +79,8 @@ int ann_main(int argc, char** argv) {
     start_time = wall_time();
     KWANNClassifier classifier(num_timesteps,
                                num_channels,
-                               error_model.pdf(),
-                               1000,  // k
+                               error_model,
+                               10,  // k
                                dye_tracks);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);

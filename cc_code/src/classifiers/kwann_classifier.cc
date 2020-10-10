@@ -1,11 +1,13 @@
 // Author: Matthew Beauregard Smith (UT Austin)
 #include "kwann_classifier.h"
 
+#include <cmath>
 #include <functional>
 #include <queue>
 #include <unordered_map>
 #include <vector>
 
+#include "common/error_model.h"
 #include "common/radiometry.h"
 #include "common/scored_classification.h"
 #include "common/sourced_data.h"
@@ -18,11 +20,15 @@ using flann::KDTreeIndexParams;
 using flann::L2;
 using flann::Matrix;
 using flann::SearchParams;
+using std::exp;
 using std::function;
 using std::greater;  // defined in <functional>
 using std::priority_queue;
+using std::sqrt;
 using std::unordered_map;
 using std::vector;
+
+double PI = 3.141592653589793238;
 }  // namespace
 
 namespace fluoroseq {
@@ -30,13 +36,12 @@ namespace fluoroseq {
 KWANNClassifier::KWANNClassifier(
         int num_timesteps,
         int num_channels,
-        function<double (double, int)> pdf,
+        const ErrorModel& error_model,
         int k,
         const vector<
                 SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
-          pdf(pdf),
           k(k),
           num_train(dye_tracks.size()),
           dye_tracks(dye_tracks),
@@ -51,6 +56,17 @@ KWANNClassifier::KWANNClassifier(
     }
     dataset = Matrix<double>(raw_dataset, num_train, stride);
     index.buildIndex(dataset);
+    double scale = error_model.mu;
+    double sigma = 0.5;
+    double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
+    kernel = [scale,
+              sigma,
+              multiplier](double observed, int state) -> double {
+                  double unit_obs = observed / scale;
+                  double offset = unit_obs - (double) state;
+                  return multiplier * exp(-(offset * offset)
+                                          / (2.0 * sigma * sigma));
+              };
 }
 
 KWANNClassifier::~KWANNClassifier() {
@@ -84,8 +100,10 @@ double KWANNClassifier::classify_helper(
                 SourceCountHitsList<int>>& dye_track = dye_tracks[index];
         double weight = 1.0;
         for (int j = 0; j < num_timesteps * num_channels; j++) {
-            weight *= pdf(radiometry.intensities[j],
-                          dye_track.value.counts[j]);
+            double offset = radiometry.intensities[j]
+                            - (double) dye_track.value.counts[j];
+            weight *= kernel(radiometry.intensities[j],
+                             dye_track.value.counts[j]);
         }
         for (int j = 0; j < dye_track.source.num_sources; j++) {
             int id = dye_track.source.sources[j]->source;

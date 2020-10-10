@@ -98,7 +98,7 @@ int hybrid_main(int argc, char** argv) {
                                 num_channels,
                                 error_model,
                                 approximation_model,
-                                1000,  // k
+                                10,  // k
                                 dye_tracks,
                                 10,  // h
                                 dye_seqs);

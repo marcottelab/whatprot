@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "common/dye_track.h"
+#include "common/error_model.h"
 #include "common/radiometry.h"
 #include "common/scored_classification.h"
 #include "common/sourced_data.h"
@@ -23,7 +24,7 @@ public:
     KWANNClassifier(
             int num_timesteps,
             int num_channels,
-            std::function<double (double, int)> pdf,
+            const ErrorModel& error_model,
             int k,
             const std::vector<
                     SourcedData<DyeTrack,
@@ -37,7 +38,7 @@ public:
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
-    std::function<double (double, int)> pdf;
+    std::function<double (double, int)> kernel;
     flann::Index<flann::L2<double>> index;
     flann::Matrix<double> dataset;
     const std::vector<
