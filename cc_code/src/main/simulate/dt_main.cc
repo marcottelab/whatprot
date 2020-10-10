@@ -35,7 +35,7 @@ int dt_main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     int num_timesteps = atoi(argv[2]);
-    int dye_tracks_per_dye_seq = atoi(argv[3]);
+    int dye_tracks_per_peptide = atoi(argv[3]);
     char* dye_seqs_filename = argv[4];
     char* dye_tracks_filename = argv[5];
 
@@ -72,7 +72,7 @@ int dt_main(int argc, char** argv) {
                         dye_seqs,
                         num_timesteps,
                         num_channels,
-                        dye_tracks_per_dye_seq,
+                        dye_tracks_per_peptide,
                         &generator,
                         &dye_tracks);
     end_time = wall_time();

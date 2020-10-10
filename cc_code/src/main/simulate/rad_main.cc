@@ -34,7 +34,7 @@ int rad_main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     int num_timesteps = atoi(argv[2]);
-    int radiometries_per_dye_seq = atoi(argv[3]);
+    int radiometries_per_peptide = atoi(argv[3]);
     char* dye_seqs_filename = argv[4];
     char* radiometries_filename = argv[5];
     char* ys_filename = argv[6];
@@ -72,25 +72,20 @@ int rad_main(int argc, char** argv) {
                           dye_seqs,
                           num_timesteps,
                           num_channels,
-                          radiometries_per_dye_seq,
+                          radiometries_per_peptide,
                           &generator,
                           &radiometries);
     end_time = wall_time();
     print_finished_generating_radiometries(
-            total_num_dye_seqs * radiometries_per_dye_seq,
+            radiometries.size(),
             end_time - start_time);
 
     start_time = wall_time();
     write_radiometries(radiometries_filename,
                        num_timesteps,
                        num_channels,
-                       total_num_dye_seqs,  // num groups
-                       radiometries_per_dye_seq,  // group size
                        radiometries);
-    write_ys(ys_filename,
-             total_num_dye_seqs,  // num groups
-             radiometries_per_dye_seq,  // group size
-             radiometries);
+    write_ys(ys_filename, radiometries);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 

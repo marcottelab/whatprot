@@ -75,11 +75,23 @@ void print_finished_generating_dye_tracks(int num, double time) {
 #ifdef USE_MPI
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int mpi_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+    int total_num;
+    MPI_Reduce(&num,  // send_data
+               &total_num,  // recv_data
+               1,  // count
+               MPI_INT,
+               MPI_SUM,
+               0,  // root
+               MPI_COMM_WORLD);
     if (mpi_rank != 0) {
         return;
     }
+#else  // USE_MPI
+    int total_num = num;
 #endif  // USE_MPI
-    cout << "Finished generating " << num << " dye tracks (" << time
+    cout << "Finished generating " << total_num << " dye tracks (" << time
          << "seconds).\n";
 }
 
@@ -87,11 +99,23 @@ void print_finished_generating_radiometries(int num, double time) {
 #ifdef USE_MPI
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int mpi_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+    int total_num;
+    MPI_Reduce(&num,  // send_data
+               &total_num,  // recv_data
+               1,  // count
+               MPI_INT,
+               MPI_SUM,
+               0,  // root
+               MPI_COMM_WORLD);
     if (mpi_rank != 0) {
         return;
     }
+#else  // USE_MPI
+    int total_num = num;
 #endif  // USE_MPI
-    cout << "Finished generating " << num << " radiometries (" << time
+    cout << "Finished generating " << total_num << " radiometries (" << time
          << "seconds).\n";
 }
 

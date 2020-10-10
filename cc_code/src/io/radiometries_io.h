@@ -41,8 +41,6 @@ void write_radiometries(
         const std::string& filename,
         int num_timesteps,
         int num_channels,
-        int total_num_groups,
-        int group_size,
         const std::vector<
                 SourcedData<Radiometry, SourceCount<int>>>& radiometries);
 
@@ -53,9 +51,10 @@ void convert_raw_from_radiometries(
         double** intensities);
 
 #ifdef USE_MPI
-void gather_radiometries(int total_num_blocks,
-                         int block_size,
-                         double** intensities);
+void gather_radiometries(int num_radiometries,
+                         int radiometry_size,
+                         double** intensities,
+                         int* total_num_radiometries);
 #endif  // USE_MPI
 
 void write_radiometries_raw(const std::string& filename,
@@ -66,8 +65,6 @@ void write_radiometries_raw(const std::string& filename,
 
 void write_ys(
         const std::string& filename,
-        int total_num_groups,
-        int group_size,
         const std::vector<
                 SourcedData<Radiometry, SourceCount<int>>>& radiometries);
 
@@ -77,7 +74,7 @@ void get_raw_ys(
         int** ys);
 
 #ifdef USE_MPI
-void gather_ys(int total_num_blocks, int block_size, int** ys);
+void gather_ys(int num_radiometries, int** ys, int* total_num_radiometries);
 #endif  // USE_MPI
 
 void write_ys_raw(const std::string& filename, int num_radiometries, int* ys);

@@ -162,8 +162,6 @@ void write_radiometries(
         const string& filename,
         int num_timesteps,
         int num_channels,
-        int total_num_groups,
-        int group_size,
         const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries) {
     double* intensities;
     convert_raw_from_radiometries(
@@ -171,15 +169,19 @@ void write_radiometries(
             num_timesteps * num_channels,  // radiometry size
             &intensities);
 #ifdef USE_MPI
+    int total_num_radiometries;
     gather_radiometries(
-            total_num_groups,  // num radiometry groups (for counts, displs)
-            group_size * num_timesteps * num_channels,  // block size
-            &intensities);
+            radiometries.size(),  // number of radiometries
+            num_timesteps * num_channels,  // radiometry size
+            &intensities,
+            &total_num_radiometries);
+#else  // USE_MPI
+    int total_num_radiometries = radiometries.size();
 #endif  // USE_MPI
     write_radiometries_raw(filename,
                            num_timesteps,
                            num_channels,
-                           total_num_groups * group_size,  // num radiometries
+                           total_num_radiometries,
                            intensities);
 }
 
@@ -197,22 +199,46 @@ void convert_raw_from_radiometries(
 }
 
 #ifdef USE_MPI
-void gather_radiometries(int total_num_blocks,
-                         int block_size,
-                         double** intensities) {
+void gather_radiometries(int num_radiometries,
+                         int radiometry_size,
+                         double** intensities,
+                         int* total_num_radiometries) {
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int mpi_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     int* mpi_counts;
+    if (mpi_rank == 0) {
+        mpi_counts = new int[mpi_size];
+    }
+    MPI_Gather(&num_radiometries,  // sendbuf
+               1,  // sendcount
+               MPI_INT,
+               mpi_counts,  // recvbuf
+               1,  // recvcount, this is PER PROCESS
+               MPI_INT,
+               0,  // root
+               MPI_COMM_WORLD);
     int* mpi_displs;
-    mpi_counts_displs(total_num_blocks, block_size, &mpi_counts, &mpi_displs);
+    if (mpi_rank == 0) {
+        mpi_displs = new int[mpi_size];
+        int tally = 0;
+        for (int i = 0; i < mpi_size; i++) {
+            mpi_displs[i] = tally * radiometry_size;
+            tally += mpi_counts[i];
+            mpi_counts[i] *= radiometry_size;
+        }
+        *total_num_radiometries = tally;
+    }
     double* intensities_recv_buf;
     if (mpi_rank == 0) {
-        intensities_recv_buf = new double[total_num_blocks * block_size];
+        intensities_recv_buf = new double[(*total_num_radiometries)
+                                          * radiometry_size];
     }
-    MPI_Gatherv(*intensities,
-                mpi_counts[mpi_rank],  // sendcount
+    MPI_Gatherv(*intensities,  // sendbuf
+                num_radiometries * radiometry_size,  // sendcount
                 MPI_DOUBLE,
-                intensities_recv_buf,
+                intensities_recv_buf,  // recvbuf
                 mpi_counts,
                 mpi_displs,
                 MPI_DOUBLE,
@@ -221,6 +247,8 @@ void gather_radiometries(int total_num_blocks,
     delete[] *intensities;
     if (mpi_rank == 0) {
         *intensities = intensities_recv_buf;
+        delete[] mpi_counts;
+        delete[] mpi_displs;
     }
 }
 #endif  // USE_MPI
@@ -257,18 +285,19 @@ void write_radiometries_raw(const std::string& filename,
 
 void write_ys(
         const string& filename,
-        int total_num_groups,
-        int group_size,
         const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries) {
     int* ys;
     get_raw_ys(radiometries, &ys);
 #ifdef USE_MPI
-    gather_ys(total_num_groups,  // num radiometry groups (for counts, displs)
-              group_size,  // block size
-              &ys);
+    int total_num_radiometries;
+    gather_ys(radiometries.size(),
+              &ys,
+              &total_num_radiometries);
+#else  // USE_MPI
+    int total_num_radiometries = radiometries.size();
 #endif  // USE_MPI
     write_ys_raw(filename,
-                 total_num_groups * group_size,  // num radiometries
+                 total_num_radiometries,  // num radiometries
                  ys);
 }
 
@@ -282,20 +311,39 @@ void get_raw_ys(
 }
 
 #ifdef USE_MPI
-void gather_ys(int total_num_blocks,
-               int block_size,
-               int** ys) {
+void gather_ys(int num_radiometries, int** ys, int* total_num_radiometries) {
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int mpi_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     int* mpi_counts;
+    if (mpi_rank == 0) {
+        mpi_counts = new int[mpi_size];
+    }
+    MPI_Gather(&num_radiometries,  // sendbuf
+               1,  // sendcount
+               MPI_INT,
+               mpi_counts,  // recvbuf
+               1,  // recvcount, this is PER PROCESS
+               MPI_INT,
+               0,  // root
+               MPI_COMM_WORLD);
     int* mpi_displs;
-    mpi_counts_displs(total_num_blocks, block_size, &mpi_counts, &mpi_displs);
+    if (mpi_rank == 0) {
+        mpi_displs = new int[mpi_size];
+        int tally = 0;
+        for (int i = 0; i < mpi_size; i++) {
+            mpi_displs[i] = tally;
+            tally += mpi_counts[i];
+        }
+        *total_num_radiometries = tally;
+    }
     int* ys_recv_buf;
     if (mpi_rank == 0) {
-        ys_recv_buf = new int[total_num_blocks * block_size];
+        ys_recv_buf = new int[*total_num_radiometries];
     }
     MPI_Gatherv(*ys,
-                mpi_counts[mpi_rank],  // sendcount
+                num_radiometries,  // sendcount
                 MPI_INT,
                 ys_recv_buf,
                 mpi_counts,
@@ -306,6 +354,8 @@ void gather_ys(int total_num_blocks,
     delete[] *ys;
     if (mpi_rank == 0) {
         *ys = ys_recv_buf;
+        delete[] mpi_counts;
+        delete[] mpi_displs;
     }
 }
 #endif  // USE_MPI
