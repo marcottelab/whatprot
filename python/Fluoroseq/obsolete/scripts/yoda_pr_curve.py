@@ -13,14 +13,6 @@ print("from " + PREDICTIONS_FILE.split("/")[-2] + "/"
               + PREDICTIONS_FILE.split("/")[-1])
 
 true_y = load(TRUE_Y_FILE)
-class GroundTruth:
-    def __init__(self, value):
-        self.value = value
-    def class_index(self):
-        return self.value
-ground_truth = [0] * len(true_y)
-for i in range(0, len(true_y)):
-    ground_truth[i] = GroundTruth(true_y[i])
 
 f = open(PREDICTIONS_FILE, "r")
 csv = f.readlines()
@@ -31,4 +23,4 @@ for i in range(0, len(csv)):
     predictions[i] = (int(cells[1]), float(cells[2]))
 f.close()
 
-plot_pr_curve(predictions, ground_truth)
+plot_pr_curve(predictions, true_y)

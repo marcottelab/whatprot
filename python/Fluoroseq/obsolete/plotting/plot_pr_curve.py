@@ -11,7 +11,7 @@ def plot_pr_curve(predictions, ground_truth):
     correct = 0
     incorrect = 0
     for i in range(len(ground_truth)):
-        if predictions[i][0] == ground_truth[i].class_index():
+        if predictions[i][0] == ground_truth[i]:
             is_correct_and_score[i] = (True, predictions[i][1])
             correct += 1
         else:
@@ -41,7 +41,7 @@ def plot_pr_curve(predictions, ground_truth):
         if entry[1] != next_entry[1]:
             precision.append(correct / (correct + incorrect))
             recall.append(correct / total)
-    plt.plot(recall, precision, 'o-')
+    plt.plot(recall, precision, '-')
     plt.xlabel('recall')
     plt.ylabel('precision')
     plt.xlim(0, 1)

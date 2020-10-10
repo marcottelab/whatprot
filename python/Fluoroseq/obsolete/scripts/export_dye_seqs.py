@@ -6,11 +6,11 @@
 from common.peptide import Peptide
 from simulate.label_peptides import label_peptides
 
-NUM_PEPTIDES = 4
+NUM_PEPTIDES = 70263
 NUM_CHANNELS = 3
 LABEL_SET = ['DE','Y','C']
-PEPTIDE_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_tiny/peps.csv'
-OUTPUT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/control_tiny/dye_seqs.tsv'
+PEPTIDE_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/n2000_proteins_trypsin/human_random_2000_proteins_trypsin.csv'
+OUTPUT_FILE = 'C:/Users/Matthew/ICES/MarcotteLab/data/classification/n2000_proteins_trypsin/dye_seqs.tsv'
 
 f = open(PEPTIDE_FILE, 'r')
 f.readline()  # header
