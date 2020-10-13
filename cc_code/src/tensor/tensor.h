@@ -9,6 +9,7 @@ namespace fluoroseq {
 class Tensor {
 public:
     Tensor(int order, int* shape);
+    Tensor(Tensor&& other);
     ~Tensor();
     double& operator[](int* loc);
     // IMPORTANT: There is ONE TensorIterator. Never try to hold multiple

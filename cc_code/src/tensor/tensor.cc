@@ -24,11 +24,32 @@ Tensor::Tensor(int order, int* shape) : order(order) {
     tensor_iterator = new TensorIterator(order, this->shape, size, values);
 }
 
+Tensor::Tensor(Tensor&& other)
+        : tensor_iterator(other.tensor_iterator),
+          values(other.values),
+          shape(other.shape),
+          strides(other.strides),
+          size(other.size),
+          order(other.order) {
+    other.tensor_iterator = NULL;
+    other.values = NULL;
+    other.shape = NULL;
+    other.strides = NULL;
+}
+
 Tensor::~Tensor() {
-    delete[] shape;
-    delete[] strides;
-    delete[] values;
-    delete tensor_iterator;
+    if (shape != NULL) {
+        delete[] shape;
+    }
+    if (strides != NULL) {
+        delete[] strides;
+    }
+    if (values != NULL) {
+        delete[] values;
+    }
+    if (tensor_iterator != NULL) {
+        delete tensor_iterator;
+    }
 }
 
 double& Tensor::operator[](int* loc) {

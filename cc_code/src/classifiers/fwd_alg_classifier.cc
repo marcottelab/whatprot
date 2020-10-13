@@ -2,6 +2,7 @@
 #include "fwd_alg_classifier.h"
 
 #include <functional>
+#include <utility>
 #include <vector>
 
 #include "common/dye_seq.h"
@@ -21,6 +22,7 @@ namespace fluoroseq {
 
 namespace {
 using std::function;
+using std::move;
 using std::vector;
 }
 
@@ -50,17 +52,18 @@ FwdAlgClassifier::FwdAlgClassifier(
                 max_num_dyes = dye_track(0, c);
             }
         }
-        edman_transitions.push_back(EdmanTransition(error_model.p_edman_failure,
-                                                    dye_seqs[i].value,
-                                                    dye_track,
-                                                    max_failed_edmans));
+        edman_transitions.push_back(
+                move(EdmanTransition(error_model.p_edman_failure,
+                                     dye_seqs[i].value,
+                                     dye_track,
+                                     max_failed_edmans)));
         int* tensor_shape = new int[1 + num_channels];
         tensor_shape[0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {
             int num_dyes = dye_track(0, c);
             tensor_shape[1 + c] = num_dyes + 1;
         }
-        tensors.push_back(Tensor(1 + num_channels, tensor_shape));
+        tensors.push_back(move(Tensor(1 + num_channels, tensor_shape)));
         delete[] tensor_shape;
     }
     dud_transition.reserve(max_num_dyes);
