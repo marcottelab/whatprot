@@ -74,14 +74,13 @@ int hybrid_main(int argc, char** argv) {
     start_time = wall_time();
     int num_timesteps;
     int duplicate_num_channels;  // also get this from dye seqs file
-    int num_dye_tracks;
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> dye_tracks;
     read_dye_tracks(dye_tracks_filename,
                     &num_timesteps,
                     &duplicate_num_channels,
                     &dye_tracks);
     end_time = wall_time();
-    print_read_dye_tracks(num_dye_tracks, end_time - start_time);
+    print_read_dye_tracks(dye_tracks.size(), end_time - start_time);
 
     start_time = wall_time();
     int duplicate_num_timesteps;  // also get this from dye track file.
