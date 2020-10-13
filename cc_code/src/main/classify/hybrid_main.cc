@@ -34,7 +34,7 @@ using std::vector;
 int hybrid_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 6) {
+    if (argc != 7) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
