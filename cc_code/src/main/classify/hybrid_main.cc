@@ -3,6 +3,7 @@
 // For MPI version, define compiler macro USE_MPI when building.
 #include "hybrid_main.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@
 namespace fluoroseq {
 
 namespace {
+using std::atoi;
 using std::string;
 using std::vector;
 }  // namespace
@@ -36,10 +38,11 @@ int hybrid_main(int argc, char** argv) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    char* dye_seqs_filename = argv[2];
-    char* dye_tracks_filename = argv[3];
-    char* radiometries_filename = argv[4];
-    char* predictions_filename = argv[5];
+    int h = atoi(argv[2]);
+    char* dye_seqs_filename = argv[3];
+    char* dye_tracks_filename = argv[4];
+    char* radiometries_filename = argv[5];
+    char* predictions_filename = argv[6];
 
     double start_time;
     double end_time;
@@ -100,7 +103,7 @@ int hybrid_main(int argc, char** argv) {
                                 approximation_model,
                                 10,  // k
                                 dye_tracks,
-                                10,  // h
+                                h,
                                 dye_seqs);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);
