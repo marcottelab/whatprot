@@ -11,7 +11,7 @@ namespace fluoroseq {
 
 class BinomialTransition {
 public:
-    BinomialTransition(double q, int max_failed_edmans);
+    BinomialTransition(double q);
     void reserve(int max_n) const;
     double& prob(int from, int to) const;
     void operator()(Tensor* tensor, int channel, int edmans) const;
@@ -21,7 +21,6 @@ public:
     const double q;
     mutable int length;  // length of array in one dimension.
     mutable int size;  // length of values.
-    const int max_failed_edmans;
 };
 
 }  // namespace fluoroseq

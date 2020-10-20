@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "classifiers/kwann_classifier.h"
-#include "common/approximation_model.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
@@ -48,7 +47,6 @@ int ann_main(int argc, char** argv) {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
-    ApproximationModel approximation_model(0);
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 

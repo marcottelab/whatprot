@@ -1,32 +1,23 @@
 // Author: Matthew Beauregard Smith
 #include "edman_transition.h"
 
-#include <algorithm>
-
 #include "common/dye_track.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
 namespace fluoroseq {
 
-namespace {
-using std::max;
-}  // namespace
-
 EdmanTransition::EdmanTransition(double p_edman_failure,
                                  const DyeSeq& dye_seq,
-                                 const DyeTrack& dye_track,
-                                 int max_failed_edmans)
+                                 const DyeTrack& dye_track)
         : p_edman_failure(p_edman_failure),
           dye_seq(dye_seq),
-          dye_track(dye_track),
-          max_failed_edmans(max_failed_edmans) {}
+          dye_track(dye_track) {}
 
 void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
     int t_stride = tensor->strides[0];
-    int t_min = max(0, timestep - max_failed_edmans);
-    bool removing_lowest = (timestep >= max_failed_edmans);
-    for (int i = t_stride * (1 + timestep) - 1; i >= t_min * t_stride; i--) {
+    bool removing_lowest = (timestep >= 0);
+    for (int i = t_stride * (1 + timestep) - 1; i >= 0; i--) {
         tensor->values[i + t_stride] = tensor->values[i];
     }
     if (!removing_lowest) {
@@ -34,8 +25,8 @@ void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
             tensor->values[i] *= p_edman_failure;
         }
     }
-    for (int t = t_min; t < timestep + 1; t++) {
-        if (t > t_min) {
+    for (int t = 0; t < timestep + 1; t++) {
+        if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
                 tensor->values[i] += p_edman_failure
                                      * tensor->values[i + t_stride];

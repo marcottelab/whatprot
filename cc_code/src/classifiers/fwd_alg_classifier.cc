@@ -30,16 +30,14 @@ FwdAlgClassifier::FwdAlgClassifier(
         int num_timesteps,
         int num_channels,
         const ErrorModel& error_model,
-        const ApproximationModel& approximation_model,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           num_dye_seqs(dye_seqs.size()),
           dye_seqs(dye_seqs),
-          max_failed_edmans(approximation_model.max_failed_edmans),
-          detach_transition(error_model.p_detach, max_failed_edmans),
-          dud_transition(error_model.p_bleach, max_failed_edmans),
-          bleach_transition(error_model.p_bleach, max_failed_edmans) {
+          detach_transition(error_model.p_detach),
+          dud_transition(error_model.p_bleach),
+          bleach_transition(error_model.p_bleach) {
     edman_transitions.reserve(num_dye_seqs);
     tensors.reserve(num_dye_seqs);
     max_num_dyes = 0;
@@ -55,8 +53,7 @@ FwdAlgClassifier::FwdAlgClassifier(
         edman_transitions.push_back(
                 move(EdmanTransition(error_model.p_edman_failure,
                                      dye_seqs[i].value,
-                                     dye_track,
-                                     max_failed_edmans)));
+                                     dye_track)));
         int* tensor_shape = new int[1 + num_channels];
         tensor_shape[0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {

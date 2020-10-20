@@ -5,7 +5,6 @@
 #include <functional>
 #include <vector>
 
-#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/scored_classification.h"
@@ -27,7 +26,6 @@ public:
             int num_timesteps,
             int num_channels,
             const ErrorModel& error_model,
-            const ApproximationModel& approximation_model,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
@@ -38,14 +36,14 @@ public:
     template<typename I>
     ScoredClassification classify_helper(const Radiometry& radiometry,
                                          I indices) {
-        Emission emission(radiometry, max_num_dyes, pdf, max_failed_edmans);
+        Emission emission(radiometry, max_num_dyes, pdf);
         int best_i = -1;
         double best_score = -1.0;
         double total_score = 0.0;
         int i = 0;
         for (int i : indices) {
             Initialization initialization;
-            Summation summation(max_failed_edmans);
+            Summation summation;
             double score = fwd_alg(&tensors[i],
                                    num_timesteps,
                                    num_channels,
@@ -79,7 +77,6 @@ public:
     int num_timesteps;
     int num_channels;
     int max_num_dyes;
-    int max_failed_edmans;
 };
 
 }  // namespace fluoroseq

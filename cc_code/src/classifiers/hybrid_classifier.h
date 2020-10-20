@@ -7,7 +7,6 @@
 
 #include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/kwann_classifier.h"
-#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
@@ -23,7 +22,6 @@ public:
             int num_timesteps,
             int num_channels,
             const ErrorModel& error_model,
-            const ApproximationModel& approximation_model,
             int k,
             const std::vector<
                     SourcedData<DyeTrack,

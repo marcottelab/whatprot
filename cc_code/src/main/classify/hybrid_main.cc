@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "classifiers/hybrid_classifier.h"
-#include "common/approximation_model.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
@@ -55,7 +54,6 @@ int hybrid_main(int argc, char** argv) {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
-    ApproximationModel approximation_model(16);
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 
@@ -99,7 +97,6 @@ int hybrid_main(int argc, char** argv) {
     HybridClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
-                                approximation_model,
                                 10,  // k
                                 dye_tracks,
                                 h,

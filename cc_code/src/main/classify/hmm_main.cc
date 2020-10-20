@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "classifiers/fwd_alg_classifier.h"
-#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
@@ -52,7 +51,6 @@ int hmm_main(int argc, char** argv) {
                            DistributionType::LOGNORMAL,
                            1.0,  // mu
                            .16);  // sigma
-    ApproximationModel approximation_model(16);
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 
@@ -85,7 +83,6 @@ int hmm_main(int argc, char** argv) {
     FwdAlgClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
-                                approximation_model,
                                 dye_seqs);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);

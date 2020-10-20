@@ -6,7 +6,6 @@
 
 #include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/kwann_classifier.h"
-#include "common/approximation_model.h"
 #include "common/dye_seq.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
@@ -25,7 +24,6 @@ HybridClassifier::HybridClassifier(
         int num_timesteps,
         int num_channels,
         const ErrorModel& error_model,
-        const ApproximationModel& approximation_model,
         int k,
         const vector<
                 SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks,
@@ -40,7 +38,6 @@ HybridClassifier::HybridClassifier(
           fwd_alg_classifier(num_timesteps,
                              num_channels,
                              error_model,
-                             approximation_model,
                              dye_seqs) {
     for (int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;
