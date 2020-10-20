@@ -23,6 +23,7 @@ public:
         for (const K& k : v) {
             seed ^= hash_k(k) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
+        return seed;
     }
 };
 

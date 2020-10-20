@@ -32,6 +32,7 @@ ErrorModel::ErrorModel(double p_edman_failure,
 function<double (double, int)> ErrorModel::pdf() const {
     switch(distribution_type) {
     case LOGNORMAL:
+    default:
         double scale = mu;
         double sigma = this->sigma;
         double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
