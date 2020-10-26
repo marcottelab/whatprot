@@ -25,7 +25,7 @@ DyeTrack::DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq)
             cs[dye]++;
         }
         if (t < num_timesteps) {
-            copy(cs.begin(), cs.end(), counts.begin());
+            copy(cs.begin(), cs.end(), &counts[t * num_channels]);
         }
     }
 }
