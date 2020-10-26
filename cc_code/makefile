@@ -5,6 +5,7 @@ OFLAG = -O2
 CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd_alg/*.cc ./src/io/*.cc ./src/main/*.cc ./src/simulation/*.cc ./src/tensor/*.cc ./src/util/*.cc
 CC_DEPS_CLASSIFY = $(CC_DEPS_SHARED) ./src/main/classify/*.cc
 CC_DEPS_SIMULATE = $(CC_DEPS_SHARED) ./src/main/simulate/*.cc
+CC_DEPS_TEST = $(CC_DEPS_SHARED) ./test/test_module.cc ./test/*/*.cc
 INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Apr14/src/
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
@@ -13,6 +14,7 @@ MRMPI = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_mpicc
 MRMPI_SERIAL = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_serial -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
 MRMPI_SKX = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_skx_mpicc
 MRMPI_SKX_SERIAL = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_skx_serial -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
+BOOST_TEST = -I ./extern/boost_1_73_0_subset/
 
 ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL)
 MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI)
@@ -22,6 +24,7 @@ ARGS_CLASSIFY_SKX = $(OFLAG) -wd3180 $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(
 MPI_ARGS_CLASSIFY_SKX = $(OFLAG) -wd3180 -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
 ARGS_SIMULATE_SKX = $(OFLAG) -wd3180 $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL)
 MPI_ARGS_SIMULATE_SKX = $(OFLAG) -wd3180 -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
+ARGS_TEST = -Og -ggdb $(CC_DEPS_TEST) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL) $(BOOST_TEST)
 
 all: x64 skx
 x64: classify classify_mpi simulate simulate_mpi
@@ -42,5 +45,7 @@ simulate_skx: ./src/*/*
 	icc -xCORE-AVX512 $(ARGS_SIMULATE_SKX) -o ./bin/simulate_skx
 simulate_mpi_skx: ./src/*/*
 	mpicc -xCORE-AVX512 $(MPI_ARGS_SIMULATE_SKX) -o ./bin/simulate_mpi_skx
+test: ./src/*/* ./test/**
+	g++ $(ARGS_TEST) -o ./bin/test
 clean:
 	rm -f ./bin/*
