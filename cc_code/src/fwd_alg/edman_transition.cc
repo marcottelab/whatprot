@@ -16,14 +16,11 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
 
 void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
     int t_stride = tensor->strides[0];
-    bool removing_lowest = (timestep >= 0);
     for (int i = t_stride * (1 + timestep) - 1; i >= 0; i--) {
         tensor->values[i + t_stride] = tensor->values[i];
     }
-    if (!removing_lowest) {
-        for (int i = 0; i < t_stride; i++) {
-            tensor->values[i] *= p_edman_failure;
-        }
+    for (int i = 0; i < t_stride; i++) {
+        tensor->values[i] *= p_edman_failure;
     }
     for (int t = 0; t < timestep + 1; t++) {
         if (t > 0) {
