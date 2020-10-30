@@ -25,6 +25,7 @@ MPI_ARGS_CLASSIFY_SKX = $(OFLAG) -wd3180 -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUD
 ARGS_SIMULATE_SKX = $(OFLAG) -wd3180 $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL)
 MPI_ARGS_SIMULATE_SKX = $(OFLAG) -wd3180 -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
 ARGS_TEST = -Og -ggdb $(CC_DEPS_TEST) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL) $(BOOST_TEST)
+ARGS_TEST_SKX = -Og -ggdb $(CC_DEPS_TEST) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL) $(BOOST_TEST)
 
 all: x64 skx
 x64: classify classify_mpi simulate simulate_mpi
@@ -47,5 +48,7 @@ simulate_mpi_skx: ./src/*/*
 	mpicc -xCORE-AVX512 $(MPI_ARGS_SIMULATE_SKX) -o ./bin/simulate_mpi_skx
 test: ./src/*/* ./test/**
 	g++ $(ARGS_TEST) -o ./bin/test
+test_skx: ./src/*/* ./test/**
+	icc -xCORE-AVX512 $(ARGS_TEST) -o ./bin/test_skx
 clean:
 	rm -f ./bin/*
