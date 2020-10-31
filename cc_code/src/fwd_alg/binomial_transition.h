@@ -13,7 +13,9 @@ class BinomialTransition {
 public:
     BinomialTransition(double q);
     void reserve(int max_n) const;
-    double& prob(int from, int to) const;
+    void reserve(int max_n);
+    double prob(int from, int to) const;
+    double& prob(int from, int to);
     void operator()(Tensor* tensor, int channel, int edmans) const;
     void operator()(Vector* v) const;
 
