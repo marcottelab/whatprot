@@ -14,23 +14,6 @@ BinomialTransition::BinomialTransition(double q) : q(q) {
 }
 
 void BinomialTransition::reserve(int max_n) const {
-    // This is a dirty hack. Generally const_cast<>() should be avoided in C++
-    // code. However, we require compatibility with the Intel C++ compiler
-    // (icc/icpc). The Intel C++ compiler seems to have a bug when dealing with
-    // mutables. Mutable members are the standard way of dealing with cases
-    // where the class should be const but some of the data shouldn't. However,
-    // trying to return a mutable reference to a mutable member variable from a
-    // const function appears to fail with the Intel C++ compiler. It was
-    // unfortunately necessary to return a mutable reference from the const
-    // prob() function. It was cleaner to hack around this in the reserve()
-    // function than in the prob() function. I've left the affected variables
-    // marked as mutable, even though this is technically no longer necessary,
-    // to make the code clearer.
-    BinomialTransition* self = const_cast<BinomialTransition*>(this);
-    self->reserve(max_n);
-}
-
-void BinomialTransition::reserve(int max_n) {
     if (max_n + 1 <= length) {
         return;
     }
@@ -48,11 +31,7 @@ void BinomialTransition::reserve(int max_n) {
     }
 }
 
-double BinomialTransition::prob(int from, int to) const {
-    return values[from * (from + 1) / 2 + to];
-}
-
-double& BinomialTransition::prob(int from, int to) {
+double& BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
