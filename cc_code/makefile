@@ -49,6 +49,6 @@ simulate_mpi_skx: ./src/*/*
 test: ./src/*/* ./test/**
 	g++ $(ARGS_TEST) -o ./bin/test
 test_skx: ./src/*/* ./test/**
-	icc -xCORE-AVX512 $(ARGS_TEST) -o ./bin/test_skx
+	icc -xCORE-AVX512 $(ARGS_TEST_SKX) -o ./bin/test_skx
 clean:
 	rm -f ./bin/*
