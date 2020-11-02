@@ -13,7 +13,7 @@ BinomialTransition::BinomialTransition(double q) : q(q) {
     values[0] = 1.0;
 }
 
-void BinomialTransition::reserve(int max_n) {
+void BinomialTransition::reserve(int max_n) const {
     if (max_n + 1 <= length) {
         return;
     }
@@ -31,13 +31,13 @@ void BinomialTransition::reserve(int max_n) {
     }
 }
 
-double& BinomialTransition::prob(int from, int to) {
+double& BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
 void BinomialTransition::operator()(Tensor* tensor,
                                     int channel,
-                                    int edmans) {
+                                    int edmans) const {
     int vector_stride = tensor->strides[1 + channel];
     int vector_length = tensor->shape[1 + channel];
     reserve(vector_length);
@@ -53,7 +53,7 @@ void BinomialTransition::operator()(Tensor* tensor,
     }
 }
 
-void BinomialTransition::operator()(Vector* v) {
+void BinomialTransition::operator()(Vector* v) const {
     for (int to = 0; to < v->length; to++) {
         double v_to = 0.0;
         for (int from = to; from < v->length; from++) {

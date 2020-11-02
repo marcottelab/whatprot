@@ -17,8 +17,8 @@ double fwd_alg(Tensor* states,
                const Initialization& initialization,
                const Emission& emission,
                const DetachTransition& detach_transition,
-               BinomialTransition& dud_transition,
-               BinomialTransition& bleach_transition,
+               const BinomialTransition& dud_transition,
+               const BinomialTransition& bleach_transition,
                const EdmanTransition& edman_transition,
                const Summation& summation) {
     initialization(states);
