@@ -2,8 +2,6 @@
 
 OFLAG = -O2
 # OFLAG = -Og -ggdb
-OFLAG_SKX = -O1  # Anything beyond -O2 is broken for this application, reason unknown.
-# OFLAG_SKX = -O0 -g
 CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd_alg/*.cc ./src/io/*.cc ./src/main/*.cc ./src/simulation/*.cc ./src/tensor/*.cc ./src/util/*.cc
 CC_DEPS_CLASSIFY = $(CC_DEPS_SHARED) ./src/main/classify/*.cc
 CC_DEPS_SIMULATE = $(CC_DEPS_SHARED) ./src/main/simulate/*.cc
@@ -22,12 +20,12 @@ ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL
 MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI)
 ARGS_SIMULATE = $(OFLAG) $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL)
 MPI_ARGS_SIMULATE = $(OFLAG) -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI)
-ARGS_CLASSIFY_SKX = $(OFLAG_SKX) -wd3180 $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL)
-MPI_ARGS_CLASSIFY_SKX = $(OFLAG_SKX) -wd3180 -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
-ARGS_SIMULATE_SKX = $(OFLAG_SKX) -wd3180 $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL)
-MPI_ARGS_SIMULATE_SKX = $(OFLAG_SKX) -wd3180 -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
+ARGS_CLASSIFY_SKX = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL)
+MPI_ARGS_CLASSIFY_SKX = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
+ARGS_SIMULATE_SKX = $(OFLAG) $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL)
+MPI_ARGS_SIMULATE_SKX = $(OFLAG) -D USE_MPI $(CC_DEPS_SIMULATE) $(INCLUDES) $(FLANN) $(MRMPI_SKX)
 ARGS_TEST = -Og -ggdb $(CC_DEPS_TEST) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL) $(BOOST_TEST)
-ARGS_TEST_SKX = $(OFLAG_SKX) -wd3180 $(CC_DEPS_TEST) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL) $(BOOST_TEST)
+ARGS_TEST_SKX = -Og -ggdb $(CC_DEPS_TEST) $(INCLUDES) $(FLANN) $(MRMPI_SKX_SERIAL) $(BOOST_TEST)
 
 all: x64 skx
 x64: classify classify_mpi simulate simulate_mpi
@@ -37,20 +35,20 @@ classify: ./src/*/*
 classify_mpi: ./src/*/*
 	mpic++ $(MPI_ARGS_CLASSIFY) -o ./bin/classify_mpi
 classify_skx: ./src/*/*
-	icc -xCORE-AVX512 $(ARGS_CLASSIFY_SKX) -o ./bin/classify_skx
+	g++ -march=skylake-avx512 $(ARGS_CLASSIFY_SKX) -o ./bin/classify_skx
 classify_mpi_skx: ./src/*/*
-	mpicc -xCORE-AVX512 $(MPI_ARGS_CLASSIFY_SKX) -o ./bin/classify_mpi_skx
+	mpicxx -march=skylake-avx512 $(MPI_ARGS_CLASSIFY_SKX) -o ./bin/classify_mpi_skx
 simulate: ./src/*/*
 	g++ $(ARGS_SIMULATE) -o ./bin/simulate
 simulate_mpi: ./src/*/*
 	mpic++ $(MPI_ARGS_SIMULATE) -o ./bin/simulate_mpi
 simulate_skx: ./src/*/*
-	icc -xCORE-AVX512 $(ARGS_SIMULATE_SKX) -o ./bin/simulate_skx
+	g++ -march=skylake-avx512 $(ARGS_SIMULATE_SKX) -o ./bin/simulate_skx
 simulate_mpi_skx: ./src/*/*
-	mpicc -xCORE-AVX512 $(MPI_ARGS_SIMULATE_SKX) -o ./bin/simulate_mpi_skx
+	mpicxx -march=skylake-avx512 $(MPI_ARGS_SIMULATE_SKX) -o ./bin/simulate_mpi_skx
 test: ./src/*/* ./test/**
 	g++ $(ARGS_TEST) -o ./bin/test
 test_skx: ./src/*/* ./test/**
-	icc -xCORE-AVX512 $(ARGS_TEST_SKX) -o ./bin/test_skx
+	g++ -march=skylake-avx512 $(ARGS_TEST_SKX) -o ./bin/test_skx
 clean:
 	rm -f ./bin/*
