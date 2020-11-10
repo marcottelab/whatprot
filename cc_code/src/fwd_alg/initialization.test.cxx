@@ -9,7 +9,6 @@ namespace fluoroseq {
 
 namespace {
 using boost::unit_test::tolerance;
-using std::function;
 const double TOL = 0.000000001;
 }
 
