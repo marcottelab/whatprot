@@ -38,6 +38,7 @@ KWANNClassifier::KWANNClassifier(
         int num_channels,
         const ErrorModel& error_model,
         int k,
+        double sigma,
         const vector<
                 SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks)
         : num_timesteps(num_timesteps),
@@ -57,15 +58,15 @@ KWANNClassifier::KWANNClassifier(
     dataset = Matrix<double>(raw_dataset, num_train, stride);
     index.buildIndex(dataset);
     double scale = error_model.mu;
-    double sigma = 0.5;
+    double sig = sigma;
     double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
     kernel = [scale,
-              sigma,
+              sig,
               multiplier](double observed, int state) -> double {
                   double unit_obs = observed / scale;
                   double offset = unit_obs - (double) state;
                   return multiplier * exp(-(offset * offset)
-                                          / (2.0 * sigma * sigma));
+                                          / (2.0 * sig * sig));
               };
 }
 

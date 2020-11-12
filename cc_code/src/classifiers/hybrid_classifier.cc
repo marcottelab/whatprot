@@ -25,6 +25,7 @@ HybridClassifier::HybridClassifier(
         int num_channels,
         const ErrorModel& error_model,
         int k,
+        double sigma,
         const vector<
                 SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks,
         int h,
@@ -34,6 +35,7 @@ HybridClassifier::HybridClassifier(
                            num_channels,
                            error_model,
                            k,
+                           sigma,
                            dye_tracks),
           fwd_alg_classifier(num_timesteps,
                              num_channels,

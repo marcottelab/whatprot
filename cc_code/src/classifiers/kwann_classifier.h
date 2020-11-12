@@ -26,6 +26,7 @@ public:
             int num_channels,
             const ErrorModel& error_model,
             int k,
+            double sigma,
             const std::vector<
                     SourcedData<DyeTrack,
                                 SourceCountHitsList<int>>>& dye_tracks);

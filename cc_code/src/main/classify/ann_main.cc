@@ -23,6 +23,7 @@
 namespace fluoroseq {
 
 namespace {
+using std::atof;
 using std::atoi;
 using std::vector;
 }  // namespace
@@ -30,14 +31,15 @@ using std::vector;
 int ann_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 6) {
+    if (argc != 7) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
     int k = atoi(argv[2]);
-    char* dye_tracks_filename = argv[3];
-    char* radiometries_filename = argv[4];
-    char* predictions_filename = argv[5];
+    double sigma = atof(argv[3]);
+    char* dye_tracks_filename = argv[4];
+    char* radiometries_filename = argv[5];
+    char* predictions_filename = argv[6];
 
     double start_time;
     double end_time;
@@ -82,6 +84,7 @@ int ann_main(int argc, char** argv) {
                                num_channels,
                                error_model,
                                k,
+                               sigma,
                                dye_tracks);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);

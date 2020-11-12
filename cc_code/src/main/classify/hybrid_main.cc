@@ -25,6 +25,7 @@
 namespace fluoroseq {
 
 namespace {
+using std::atof;
 using std::atoi;
 using std::string;
 using std::vector;
@@ -33,16 +34,17 @@ using std::vector;
 int hybrid_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 8) {
+    if (argc != 9) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
     int k = atoi(argv[2]);
-    int h = atoi(argv[3]);
-    char* dye_seqs_filename = argv[4];
-    char* dye_tracks_filename = argv[5];
-    char* radiometries_filename = argv[6];
-    char* predictions_filename = argv[7];
+    double sigma = atof(argv[3]);
+    int h = atoi(argv[4]);
+    char* dye_seqs_filename = argv[5];
+    char* dye_tracks_filename = argv[6];
+    char* radiometries_filename = argv[7];
+    char* predictions_filename = argv[8];
 
     double start_time;
     double end_time;
@@ -99,6 +101,7 @@ int hybrid_main(int argc, char** argv) {
                                 num_channels,
                                 error_model,
                                 k,
+                                sigma,
                                 dye_tracks,
                                 h,
                                 dye_seqs);
