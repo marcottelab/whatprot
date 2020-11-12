@@ -3,6 +3,7 @@
 // For MPI version, define compiler macro USE_MPI when building.
 #include "ann_main.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,19 +23,21 @@
 namespace fluoroseq {
 
 namespace {
+using std::atoi;
 using std::vector;
 }  // namespace
 
 int ann_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 5) {
+    if (argc != 6) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    char* dye_tracks_filename = argv[2];
-    char* radiometries_filename = argv[3];
-    char* predictions_filename = argv[4];
+    int k = atoi(argv[2]);
+    char* dye_tracks_filename = argv[3];
+    char* radiometries_filename = argv[4];
+    char* predictions_filename = argv[5];
 
     double start_time;
     double end_time;
@@ -78,7 +81,7 @@ int ann_main(int argc, char** argv) {
     KWANNClassifier classifier(num_timesteps,
                                num_channels,
                                error_model,
-                               10,  // k
+                               k,
                                dye_tracks);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);

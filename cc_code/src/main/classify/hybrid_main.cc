@@ -33,15 +33,16 @@ using std::vector;
 int hybrid_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 7) {
+    if (argc != 8) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    int h = atoi(argv[2]);
-    char* dye_seqs_filename = argv[3];
-    char* dye_tracks_filename = argv[4];
-    char* radiometries_filename = argv[5];
-    char* predictions_filename = argv[6];
+    int k = atoi(argv[2]);
+    int h = atoi(argv[3]);
+    char* dye_seqs_filename = argv[4];
+    char* dye_tracks_filename = argv[5];
+    char* radiometries_filename = argv[6];
+    char* predictions_filename = argv[7];
 
     double start_time;
     double end_time;
@@ -97,7 +98,7 @@ int hybrid_main(int argc, char** argv) {
     HybridClassifier classifier(num_timesteps,
                                 num_channels,
                                 error_model,
-                                10,  // k
+                                k,
                                 dye_tracks,
                                 h,
                                 dye_seqs);
