@@ -13,7 +13,7 @@
 #include <algorithm>  // needed for std::copy
 
 // Local project headers:
-#include "tensor/tensor_iterator.h"
+#include "tensor/tensor-iterator.h"
 
 namespace fluoroseq {
 

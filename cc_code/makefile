@@ -2,10 +2,10 @@
 
 OFLAG = -O2
 # OFLAG = -Og -ggdb
-CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd_alg/*.cc ./src/io/*.cc ./src/main/*.cc ./src/simulation/*.cc ./src/tensor/*.cc ./src/util/*.cc
+CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd-alg/*.cc ./src/io/*.cc ./src/main/*.cc ./src/simulation/*.cc ./src/tensor/*.cc ./src/util/*.cc
 CC_DEPS_CLASSIFY = $(CC_DEPS_SHARED) ./src/main/classify/*.cc
 CC_DEPS_SIMULATE = $(CC_DEPS_SHARED) ./src/main/simulate/*.cc
-CC_DEPS_TEST = $(CC_DEPS_SHARED) ./test/test_module.cc ./src/*/*.test.cxx
+CC_DEPS_TEST = $(CC_DEPS_SHARED) ./test/test-module.cc ./src/*/*.test.cxx
 INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Apr14/src/
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
