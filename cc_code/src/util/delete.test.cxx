@@ -1,9 +1,18 @@
-// Author: Matthew Beauregard Smith
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // The tests in this file may need to be run with valgrind to detect errors.
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "util/delete.h"
+// File under test:
+#include "delete.h"
 
 namespace fluoroseq {
 

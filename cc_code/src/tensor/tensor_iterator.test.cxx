@@ -1,7 +1,16 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "tensor/tensor_iterator.h"
+// File under test:
+#include "tensor_iterator.h"
 
 namespace fluoroseq {
 

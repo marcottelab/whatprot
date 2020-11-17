@@ -1,12 +1,22 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "generate_radiometries.h"
 
+// Standard C++ library headers:
 #include <random>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
-#include "common/radiometry.h"
 #include "common/error_model.h"
+#include "common/radiometry.h"
 #include "simulation/generate_radiometry.h"
 
 namespace fluoroseq {

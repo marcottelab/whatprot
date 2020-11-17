@@ -1,10 +1,20 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "fwd_alg_classifier.h"
 
+// Standard C++ library headers:
 #include <functional>
 #include <utility>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
@@ -24,7 +34,7 @@ namespace {
 using std::function;
 using std::move;
 using std::vector;
-}
+}  // namespace
 
 FwdAlgClassifier::FwdAlgClassifier(
         int num_timesteps,
@@ -42,18 +52,15 @@ FwdAlgClassifier::FwdAlgClassifier(
     tensors.reserve(num_dye_seqs);
     max_num_dyes = 0;
     for (int i = 0; i < num_dye_seqs; i++) {
-        DyeTrack dye_track = DyeTrack(num_timesteps,
-                                      num_channels,
-                                      dye_seqs[i].value);
+        DyeTrack dye_track =
+                DyeTrack(num_timesteps, num_channels, dye_seqs[i].value);
         for (int c = 0; c < num_channels; c++) {
             if (dye_track(0, c) > max_num_dyes) {
                 max_num_dyes = dye_track(0, c);
             }
         }
-        edman_transitions.push_back(
-                move(EdmanTransition(error_model.p_edman_failure,
-                                     dye_seqs[i].value,
-                                     dye_track)));
+        edman_transitions.push_back(move(EdmanTransition(
+                error_model.p_edman_failure, dye_seqs[i].value, dye_track)));
         int* tensor_shape = new int[1 + num_channels];
         tensor_shape[0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {
@@ -73,8 +80,7 @@ ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
 }
 
 ScoredClassification FwdAlgClassifier::classify(
-        const Radiometry& radiometry,
-        const vector<int>& candidate_indices) {
+        const Radiometry& radiometry, const vector<int>& candidate_indices) {
     return classify_helper<const vector<int>&>(radiometry, candidate_indices);
 }
 

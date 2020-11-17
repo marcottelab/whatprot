@@ -1,11 +1,22 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "fwd_alg/fwd_alg.h"
+// File under test:
+#include "fwd_alg.h"
 
+// Standard C++ library headers:
 #include <cmath>
 #include <functional>
 
+// Local project headers:
 #include "fwd_alg/binomial_transition.h"
 #include "fwd_alg/detach_transition.h"
 #include "fwd_alg/edman_transition.h"
@@ -24,12 +35,12 @@ using std::log;
 using std::sqrt;
 const double PI = 3.141592653589793238;
 const double TOL = 0.000000001;
-}
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
 
-BOOST_AUTO_TEST_CASE(trivial_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 0;
     int order = 1 + num_channels;
@@ -40,8 +51,8 @@ BOOST_AUTO_TEST_CASE(trivial_test, * tolerance(TOL)) {
     Initialization init;
     Radiometry rad(num_timesteps, num_channels);
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return 1.0;
     };
     Emission emit(rad, max_num_dyes, pdf);
@@ -65,10 +76,11 @@ BOOST_AUTO_TEST_CASE(trivial_test, * tolerance(TOL)) {
                        dud,
                        bleach,
                        edman,
-                       sum) == 1.0);
+                       sum)
+               == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(sum_to_one_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(sum_to_one_test, *tolerance(TOL)) {
     // The idea here is that if the emission just causes a multiplication by one
     // no matter what, then the transitions shouldn't matter; they should just
     // be reallocating a probability of one between different states.
@@ -90,8 +102,8 @@ BOOST_AUTO_TEST_CASE(sum_to_one_test, * tolerance(TOL)) {
     rad(2, 0) = 2.0;
     rad(2, 1) = 2.1;
     int max_num_dyes = 5;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return 1.0;
     };
     Emission emit(rad, max_num_dyes, pdf);
@@ -115,10 +127,11 @@ BOOST_AUTO_TEST_CASE(sum_to_one_test, * tolerance(TOL)) {
                        dud,
                        bleach,
                        edman,
-                       sum) == 1.0);
+                       sum)
+               == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(more_involved_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(more_involved_test, *tolerance(TOL)) {
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on November 10, 2020.
     int num_timesteps = 3;
@@ -139,17 +152,17 @@ BOOST_AUTO_TEST_CASE(more_involved_test, * tolerance(TOL)) {
     rad(2, 0) = 4.0;
     rad(2, 1) = 1.0;
     int max_num_dyes = 5;
-    function<double (double, int)> pdf = [](double observed,
-                                            int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         double sigma = 0.16;
         if (state > 0) {
             if (observed == 0.0) {
                 return 0.0;
             } else {
                 double unit_obs = observed;
-                double offset = log(unit_obs) - log((double) state);
+                double offset = log(unit_obs) - log((double)state);
                 return (1.0 / (sigma * sqrt(2.0 * PI)) / unit_obs)
-                        * exp(-(offset * offset) / (2.0 * sigma * sigma));
+                       * exp(-(offset * offset) / (2.0 * sigma * sigma));
             }
         } else {
             if (observed == 0.0) {
@@ -180,7 +193,8 @@ BOOST_AUTO_TEST_CASE(more_involved_test, * tolerance(TOL)) {
                        dud,
                        bleach,
                        edman,
-                       sum) == 3.2324422559808915e-23);
+                       sum)
+               == 3.2324422559808915e-23);
 }
 
 BOOST_AUTO_TEST_SUITE_END();  // fwd_alg_suite

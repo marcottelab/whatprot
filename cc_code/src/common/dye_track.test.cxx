@@ -1,10 +1,21 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "common/dye_track.h"
+// File under test:
+#include "dye_track.h"
 
+// Standard C++ library headers:
 #include <utility>
 
+// Local project headers:
 #include "common/dye_seq.h"
 
 namespace fluoroseq {

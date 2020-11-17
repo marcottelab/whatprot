@@ -1,14 +1,22 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_COMMON_SOURCED_DATA_H
 #define FLUOROSEQ_COMMON_SOURCED_DATA_H
 
+// Local project headers:
 #include "util/delete.h"
 
 namespace fluoroseq {
 
-template<typename V, typename S>
+template <typename V, typename S>
 class SourcedData {
-public:
+  public:
     SourcedData(V value, S source) : value(value), source(source) {}
 
     ~SourcedData() {
@@ -20,11 +28,11 @@ public:
     S source;  // if S is a pointer type then source is owned.
 };
 
-template<typename S>
+template <typename S>
 class SourceSet {
-public:
-    SourceSet(int num_sources,
-              S* sources) : num_sources(num_sources), sources(sources) {}
+  public:
+    SourceSet(int num_sources, S* sources)
+            : num_sources(num_sources), sources(sources) {}
 
     ~SourceSet() {
         delete_array(num_sources, sources);
@@ -34,13 +42,13 @@ public:
     int num_sources;
 };
 
-template<typename S>
+template <typename S>
 class SourceCount {
-public:
+  public:
     SourceCount(S source, int count) : source(source), count(count) {}
-    
-    SourceCount(const SourceCount& other) : source(other.source),
-                                            count(other.count) {}
+
+    SourceCount(const SourceCount& other)
+            : source(other.source), count(other.count) {}
 
     ~SourceCount() {
         delete_if_pointer(source);
@@ -50,12 +58,12 @@ public:
     int count;  // A count of the number of sources.
 };
 
-template<typename S>
+template <typename S>
 class SourceCountList {
-public:
+  public:
     SourceCountList(int num_sources, SourceCount<S>** sources)
             : num_sources(num_sources), sources(sources) {}
-    
+
     ~SourceCountList() {
         delete_array(num_sources, sources);
     }
@@ -64,9 +72,9 @@ public:
     int num_sources;
 };
 
-template<typename S>
+template <typename S>
 class SourceCountHits {
-public:
+  public:
     SourceCountHits() : source(-1), count(-1), hits(-1) {}
     SourceCountHits(S source, int count, int hits)
             : source(source), count(count), hits(hits) {}
@@ -82,9 +90,9 @@ public:
     int hits;  // A count of the number of hits in a simulation.
 };
 
-template<typename S>
+template <typename S>
 class SourceCountHitsList {
-public:
+  public:
     SourceCountHitsList(int num_sources, SourceCountHits<S>** sources)
             : num_sources(num_sources), sources(sources) {}
 
@@ -98,11 +106,11 @@ public:
         }
     }
 
-    SourceCountHitsList(SourceCountHitsList&& other) 
+    SourceCountHitsList(SourceCountHitsList&& other)
             : num_sources(other.num_sources), sources(other.sources) {
         other.sources = NULL;
     }
-    
+
     ~SourceCountHitsList() {
         if (sources != NULL) {
             delete_array(num_sources, sources);

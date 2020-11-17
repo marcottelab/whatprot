@@ -1,20 +1,30 @@
-// Author: Matthew Beauregard Smith
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // Yes these tests can fail for valid reasons, but it is highly unlikely. These
 // tests still serve as a good sanity check that things are working correctly.
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "util/vector_hash.h"
+// File under test:
+#include "vector_hash.h"
 
+// Standard C++ library headers:
 #include <functional>
 #include <vector>
 
 namespace fluoroseq {
 
 namespace {
-using std::vector;
 using std::hash;
-}
+using std::vector;
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(util_suite);
 BOOST_AUTO_TEST_SUITE(vector_hash_suite);

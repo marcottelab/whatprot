@@ -1,10 +1,19 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
 #define FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
 
+// Standard C++ library headers:
 #include <functional>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/scored_classification.h"
@@ -21,7 +30,7 @@
 namespace fluoroseq {
 
 class FwdAlgClassifier {
-public:
+  public:
     FwdAlgClassifier(
             int num_timesteps,
             int num_channels,
@@ -33,7 +42,7 @@ public:
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
-    template<typename I>
+    template <typename I>
     ScoredClassification classify_helper(const Radiometry& radiometry,
                                          I indices) {
         Emission emission(radiometry, max_num_dyes, pdf);
@@ -60,16 +69,14 @@ public:
                 best_i = i;
             }
         }
-        return ScoredClassification(dye_seqs[best_i].source.source,
-                                    best_score,
-                                    total_score);
-
+        return ScoredClassification(
+                dye_seqs[best_i].source.source, best_score, total_score);
     }
 
     DetachTransition detach_transition;
     BinomialTransition dud_transition;
     BinomialTransition bleach_transition;
-    std::function<double (double, int)> pdf;
+    std::function<double(double, int)> pdf;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
     std::vector<EdmanTransition> edman_transitions;
     std::vector<Tensor> tensors;

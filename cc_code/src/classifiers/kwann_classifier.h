@@ -1,11 +1,20 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_CLASSIFIERS_KWANN_CLASSIFIER_H
 #define FLUOROSEQ_CLASSIFIERS_KWANN_CLASSIFIER_H
 
+// Standard C++ library headers:
 #include <functional>
 #include <unordered_map>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_track.h"
 #include "common/error_model.h"
 #include "common/radiometry.h"
@@ -20,16 +29,15 @@ namespace fluoroseq {
 // find approximate nearest neighbors we use the FLANN (Fast Linear Approximate
 // Nearest Neighbors) library (see extern/flann-*).
 class KWANNClassifier {
-public:
+  public:
     KWANNClassifier(
             int num_timesteps,
             int num_channels,
             const ErrorModel& error_model,
             int k,
             double sigma,
-            const std::vector<
-                    SourcedData<DyeTrack,
-                                SourceCountHitsList<int>>>& dye_tracks);
+            const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
+                    dye_tracks);
     ~KWANNClassifier();
     double classify_helper(const Radiometry& radiometry,
                            std::unordered_map<int, double>* id_score_map);
@@ -39,11 +47,11 @@ public:
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
-    std::function<double (double, int)> kernel;
+    std::function<double(double, int)> kernel;
     flann::Index<flann::L2<double>> index;
     flann::Matrix<double> dataset;
-    const std::vector<
-            SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks;
+    const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
+            dye_tracks;
     int num_train;
     int num_timesteps;
     int num_channels;

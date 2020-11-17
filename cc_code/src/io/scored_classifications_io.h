@@ -1,10 +1,19 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_IO_SCORED_CLASSIFICATIONS_IO_H
 #define FLUOROSEQ_IO_SCORED_CLASSIFICATIONS_IO_H
 
+// Standard C++ library headers:
 #include <string>
 #include <vector>
 
+// Local project headers:
 #include "common/scored_classification.h"
 
 namespace fluoroseq {

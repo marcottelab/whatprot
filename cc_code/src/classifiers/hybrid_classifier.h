@@ -1,10 +1,19 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_CLASSIFIERS_HYBRID_CLASSIFIER_H
 #define FLUOROSEQ_CLASSIFIERS_HYBRID_CLASSIFIER_H
 
+// Standard C++ library headers:
 #include <unordered_map>
 #include <vector>
 
+// Local project headers:
 #include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/kwann_classifier.h"
 #include "common/dye_seq.h"
@@ -17,16 +26,15 @@
 namespace fluoroseq {
 
 class HybridClassifier {
-public:
+  public:
     HybridClassifier(
             int num_timesteps,
             int num_channels,
             const ErrorModel& error_model,
             int k,
             double sigma,
-            const std::vector<
-                    SourcedData<DyeTrack,
-                                SourceCountHitsList<int>>>& dye_tracks,
+            const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
+                    dye_tracks,
             int h,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ScoredClassification classify(const Radiometry& radiometry);

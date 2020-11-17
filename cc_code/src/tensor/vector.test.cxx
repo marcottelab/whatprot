@@ -1,7 +1,16 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "tensor/vector.h"
+// File under test:
+#include "vector.h"
 
 namespace fluoroseq {
 
@@ -15,7 +24,7 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     Vector v(length, stride, values);
     BOOST_TEST(v.length == 1);
     BOOST_TEST(v.stride == 1);
-    BOOST_TEST(v.values != (void *) NULL);
+    BOOST_TEST(v.values != (void*)NULL);
     delete[] values;
 }
 

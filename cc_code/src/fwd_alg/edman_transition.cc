@@ -1,6 +1,15 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "edman_transition.h"
 
+// Local project headers:
 #include "common/dye_track.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
@@ -25,8 +34,8 @@ void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
     for (int t = 0; t < timestep + 1; t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                tensor->values[i] += p_edman_failure
-                                     * tensor->values[i + t_stride];
+                tensor->values[i] +=
+                        p_edman_failure * tensor->values[i + t_stride];
             }
         }
         short channel = dye_seq[t];
@@ -37,15 +46,14 @@ void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
             int outer_stride = vector_stride * vector_length;
             int outer_min = (t + 1) * t_stride;
             int outer_max = (t + 2) * t_stride;
-            for (int outer = outer_min;
-                     outer < outer_max;
-                     outer += outer_stride) {
+            for (int outer = outer_min; outer < outer_max;
+                 outer += outer_stride) {
                 for (int inner = 0; inner < vector_stride; inner++) {
                     Vector v(vector_length,
                              vector_stride,
-                             &tensor->values[outer+inner]);
+                             &tensor->values[outer + inner]);
                     for (int i = 1; i <= amt; i++) {
-                        double ratio = (double) i / (double) amt;
+                        double ratio = (double)i / (double)amt;
                         v[i - 1] += v[i] * ratio;
                         v[i] *= 1 - ratio;
                     }

@@ -1,21 +1,24 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "scored_classification.h"
 
+// Standard C++ library headers:
 #include <climits>
-
-#include "common/dye_seq.h"
 
 namespace fluoroseq {
 
-ScoredClassification::ScoredClassification(int id,
-                                           double score,
-                                           double total) : id(id),
-                                                           score(score),
-                                                           total(total) {}
+ScoredClassification::ScoredClassification(int id, double score, double total)
+        : id(id), score(score), total(total) {}
 
-ScoredClassification::ScoredClassification() : id(-1),
-                                               score(INT_MIN),
-                                               total(0.0) {}
+ScoredClassification::ScoredClassification()
+        : id(-1), score(INT_MIN), total(0.0) {}
 
 double ScoredClassification::adjusted_score() const {
     return score / total;

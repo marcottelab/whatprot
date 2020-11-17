@@ -1,8 +1,18 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "emission.h"
 
+// Standard C++ library headers:
 #include <functional>
 
+// Local project headers:
 #include "common/radiometry.h"
 #include "tensor/tensor.h"
 #include "tensor/tensor_iterator.h"
@@ -15,7 +25,7 @@ using std::function;
 
 Emission::Emission(const Radiometry& radiometry,
                    int max_num_dyes,
-                   function<double (double, int)> pdf)
+                   function<double(double, int)> pdf)
         : num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
           max_num_dyes(max_num_dyes) {

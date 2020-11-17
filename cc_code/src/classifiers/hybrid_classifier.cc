@@ -1,9 +1,19 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "hybrid_classifier.h"
 
+// Standard C++ library headers:
 #include <cmath>
 #include <vector>
 
+// Local project headers:
 #include "classifiers/fwd_alg_classifier.h"
 #include "classifiers/kwann_classifier.h"
 #include "common/dye_seq.h"
@@ -18,7 +28,7 @@ namespace fluoroseq {
 namespace {
 using std::isnan;
 using std::vector;
-}
+}  // namespace
 
 HybridClassifier::HybridClassifier(
         int num_timesteps,
@@ -26,8 +36,8 @@ HybridClassifier::HybridClassifier(
         const ErrorModel& error_model,
         int k,
         double sigma,
-        const vector<
-                SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks,
+        const vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
+                dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : h(h),
@@ -37,10 +47,8 @@ HybridClassifier::HybridClassifier(
                            k,
                            sigma,
                            dye_tracks),
-          fwd_alg_classifier(num_timesteps,
-                             num_channels,
-                             error_model,
-                             dye_seqs) {
+          fwd_alg_classifier(
+                  num_timesteps, num_channels, error_model, dye_seqs) {
     for (int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;
         id_count_map[dye_seqs[i].source.source] = dye_seqs[i].source.count;
@@ -55,8 +63,8 @@ ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     vector<int> candidate_indices;
     candidate_indices.reserve(candidates.size());
     for (ScoredClassification& candidate : candidates) {
-        subfraction += candidate.adjusted_score()
-                       * (double) id_count_map[candidate.id];
+        subfraction +=
+                candidate.adjusted_score() * (double)id_count_map[candidate.id];
         candidate_indices.push_back(id_index_map[candidate.id]);
     }
     ScoredClassification result;

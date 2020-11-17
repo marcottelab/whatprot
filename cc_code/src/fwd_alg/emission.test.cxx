@@ -1,14 +1,25 @@
-// Author: Matthew Beauregard Smith
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // These tests may benefit from using a mocking framework. If a mocking
 // framework is added to this code base in the future many of these tests should
 // be revisited with that in mind.
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "fwd_alg/emission.h"
+// File under test:
+#include "emission.h"
 
+// Standard C++ library headers:
 #include <functional>
 
+// Local project headers:
 #include "common/radiometry.h"
 #include "tensor/tensor.h"
 
@@ -18,19 +29,19 @@ namespace {
 using boost::unit_test::tolerance;
 using std::function;
 const double TOL = 0.000000001;
-}
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
 BOOST_AUTO_TEST_SUITE(emission_suite);
 
-BOOST_AUTO_TEST_CASE(constructor_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return 0.5;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -42,7 +53,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, * tolerance(TOL)) {
     BOOST_TEST(e.values[0] == 0.5);
 }
 
-BOOST_AUTO_TEST_CASE(multiple_timesteps_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_timesteps_test, *tolerance(TOL)) {
     int num_timesteps = 3;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -50,8 +61,8 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_test, * tolerance(TOL)) {
     rad(1, 0) = 1.0;
     rad(2, 0) = 2.0;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return observed + 0.042;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -63,7 +74,7 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_test, * tolerance(TOL)) {
     BOOST_TEST(e.prob(2, 0, 0) == pdf(2.0, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, *tolerance(TOL)) {
     int num_timesteps = 3;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -71,8 +82,8 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, * tolerance(TOL)) {
     rad(1, 0) = 1.0;
     rad(2, 0) = 2.0;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return observed + 0.042;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -85,7 +96,7 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, * tolerance(TOL)) {
     BOOST_TEST(ce.prob(2, 0, 0) == pdf(2.0, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_channels_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_channels_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -93,8 +104,8 @@ BOOST_AUTO_TEST_CASE(multiple_channels_test, * tolerance(TOL)) {
     rad(0, 1) = 0.1;
     rad(0, 2) = 0.2;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return observed + 0.042;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -106,7 +117,7 @@ BOOST_AUTO_TEST_CASE(multiple_channels_test, * tolerance(TOL)) {
     BOOST_TEST(e.prob(0, 2, 0) == pdf(0.2, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_channels_const_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_channels_const_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -114,8 +125,8 @@ BOOST_AUTO_TEST_CASE(multiple_channels_const_test, * tolerance(TOL)) {
     rad(0, 1) = 0.1;
     rad(0, 2) = 0.2;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return observed + 0.042;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -128,15 +139,15 @@ BOOST_AUTO_TEST_CASE(multiple_channels_const_test, * tolerance(TOL)) {
     BOOST_TEST(ce.prob(0, 2, 0) == pdf(0.2, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_dye_counts_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_dye_counts_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     int max_num_dyes = 2;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
-        return 1.0 / (double) (state + 7);
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return 1.0 / (double)(state + 7);
     };
     Emission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
@@ -147,15 +158,15 @@ BOOST_AUTO_TEST_CASE(multiple_dye_counts_test, * tolerance(TOL)) {
     BOOST_TEST(e.prob(0, 0, 2) == pdf(0.0, 2));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_dye_counts_const_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_dye_counts_const_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     int max_num_dyes = 2;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
-        return 1.0 / (double) (state + 7);
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return 1.0 / (double)(state + 7);
     };
     Emission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
@@ -167,7 +178,7 @@ BOOST_AUTO_TEST_CASE(multiple_dye_counts_const_test, * tolerance(TOL)) {
     BOOST_TEST(ce.prob(0, 0, 2) == pdf(0.0, 2));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_everything_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_everything_test, *tolerance(TOL)) {
     int num_timesteps = 2;
     int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -176,9 +187,9 @@ BOOST_AUTO_TEST_CASE(multiple_everything_test, * tolerance(TOL)) {
     rad(1, 0) = 1.0;
     rad(1, 1) = 1.1;
     int max_num_dyes = 1;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
-        return (observed + 0.042) / (double) (state + 7);
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return (observed + 0.042) / (double)(state + 7);
     };
     Emission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
@@ -194,7 +205,7 @@ BOOST_AUTO_TEST_CASE(multiple_everything_test, * tolerance(TOL)) {
     BOOST_TEST(e.prob(1, 1, 1) == pdf(1.1, 1));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_everything_const_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(multiple_everything_const_test, *tolerance(TOL)) {
     int num_timesteps = 2;
     int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -203,9 +214,9 @@ BOOST_AUTO_TEST_CASE(multiple_everything_const_test, * tolerance(TOL)) {
     rad(1, 0) = 1.0;
     rad(1, 1) = 1.1;
     int max_num_dyes = 1;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
-        return (observed + 0.042) / (double) (state + 7);
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return (observed + 0.042) / (double)(state + 7);
     };
     Emission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
@@ -222,14 +233,14 @@ BOOST_AUTO_TEST_CASE(multiple_everything_const_test, * tolerance(TOL)) {
     BOOST_TEST(ce.prob(1, 1, 1) == pdf(1.1, 1));
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_trivial_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_trivial_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return 0.5;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -249,14 +260,14 @@ BOOST_AUTO_TEST_CASE(paren_op_trivial_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_tensor_reuse_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_tensor_reuse_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return 0.5;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -277,7 +288,7 @@ BOOST_AUTO_TEST_CASE(paren_op_tensor_reuse_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, *tolerance(TOL)) {
     int num_timesteps = 3;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -285,8 +296,8 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, * tolerance(TOL)) {
     rad(1, 0) = 1.0;
     rad(2, 0) = 2.0;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return observed + 0.042;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -315,7 +326,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_channels_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_multiple_channels_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -323,8 +334,8 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_channels_test, * tolerance(TOL)) {
     rad(0, 1) = 0.1;
     rad(0, 2) = 0.2;
     int max_num_dyes = 0;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
         return observed + 0.042;
     };
     Emission e(rad, max_num_dyes, pdf);
@@ -349,15 +360,15 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_channels_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_counts_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_counts_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     int max_num_dyes = 2;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
-        return 1.0 / (double) (state + 7);
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return 1.0 / (double)(state + 7);
     };
     Emission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
@@ -386,7 +397,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_counts_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_everything_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_multiple_everything_test, *tolerance(TOL)) {
     int num_timesteps = 2;
     int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -395,9 +406,9 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_everything_test, * tolerance(TOL)) {
     rad(1, 0) = 1.0;
     rad(1, 1) = 1.1;
     int max_num_dyes = 1;
-    function<double (double, int)> pdf = [](
-            double observed, int state) -> double {
-        return (observed + 0.042) / (double) (state + 7);
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return (observed + 0.042) / (double)(state + 7);
     };
     Emission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;

@@ -1,12 +1,22 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "kwann_classifier.h"
 
+// Standard C++ library headers:
 #include <cmath>
 #include <functional>
 #include <queue>
 #include <unordered_map>
 #include <vector>
 
+// Local project headers:
 #include "common/error_model.h"
 #include "common/radiometry.h"
 #include "common/scored_classification.h"
@@ -27,7 +37,6 @@ using std::priority_queue;
 using std::sqrt;
 using std::unordered_map;
 using std::vector;
-
 double PI = 3.141592653589793238;
 }  // namespace
 
@@ -39,8 +48,8 @@ KWANNClassifier::KWANNClassifier(
         const ErrorModel& error_model,
         int k,
         double sigma,
-        const vector<
-                SourcedData<DyeTrack, SourceCountHitsList<int>>>& dye_tracks)
+        const vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
+                dye_tracks)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           k(k),
@@ -51,7 +60,7 @@ KWANNClassifier::KWANNClassifier(
     double* raw_dataset = new double[num_train * stride];
     for (int i = 0; i < num_train; i++) {
         for (int j = 0; j < stride; j++) {
-            double count = (double) dye_tracks[i].value.counts[j];
+            double count = (double)dye_tracks[i].value.counts[j];
             raw_dataset[i * stride + j] = count;
         }
     }
@@ -60,14 +69,11 @@ KWANNClassifier::KWANNClassifier(
     double scale = error_model.mu;
     double sig = sigma;
     double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
-    kernel = [scale,
-              sig,
-              multiplier](double observed, int state) -> double {
-                  double unit_obs = observed / scale;
-                  double offset = unit_obs - (double) state;
-                  return multiplier * exp(-(offset * offset)
-                                          / (2.0 * sig * sig));
-              };
+    kernel = [scale, sig, multiplier](double observed, int state) -> double {
+        double unit_obs = observed / scale;
+        double offset = unit_obs - (double)state;
+        return multiplier * exp(-(offset * offset) / (2.0 * sig * sig));
+    };
 }
 
 KWANNClassifier::~KWANNClassifier() {
@@ -86,30 +92,26 @@ double KWANNClassifier::classify_helper(
     Matrix<double> dists_sq(new double[k],
                             1,  // num rows (num queries)
                             k);  // num results per query
-    index.knnSearch(query,
-                    indices,
-                    dists_sq,
-                    k,
-                    SearchParams(FLANN_CHECKS_UNLIMITED));
+    index.knnSearch(
+            query, indices, dists_sq, k, SearchParams(FLANN_CHECKS_UNLIMITED));
     delete[] dists_sq.ptr();
     double total_score = 0.0;
     unordered_map<int, int> id_hits_map;
     for (int i = 0; i < k; i++) {
         int index = indices[0][i];
-        const SourcedData<
-                DyeTrack,
-                SourceCountHitsList<int>>& dye_track = dye_tracks[index];
+        const SourcedData<DyeTrack, SourceCountHitsList<int>>& dye_track =
+                dye_tracks[index];
         double weight = 1.0;
         for (int j = 0; j < num_timesteps * num_channels; j++) {
             double offset = radiometry.intensities[j]
-                            - (double) dye_track.value.counts[j];
+                            - (double)dye_track.value.counts[j];
             weight *= kernel(radiometry.intensities[j],
                              dye_track.value.counts[j]);
         }
         for (int j = 0; j < dye_track.source.num_sources; j++) {
             int id = dye_track.source.sources[j]->source;
-            double count = (double) dye_track.source.sources[j]->count;
-            double hits = (double) dye_track.source.sources[j]->hits;
+            double count = (double)dye_track.source.sources[j]->count;
+            double hits = (double)dye_track.source.sources[j]->hits;
             total_score += weight * hits;
             (*id_score_map)[id] += weight * hits / count;
         }
@@ -145,13 +147,13 @@ ScoredClassification KWANNClassifier::classify(const Radiometry& radiometry) {
 }
 
 vector<ScoredClassification> KWANNClassifier::classify(
-        const Radiometry& radiometry,
-        int h) {
+        const Radiometry& radiometry, int h) {
     unordered_map<int, double> id_score_map;
     double total_score = classify_helper(radiometry, &id_score_map);
     priority_queue<ScoredClassification,
                    vector<ScoredClassification>,
-                   greater<ScoredClassification>> pq;
+                   greater<ScoredClassification>>
+            pq;
     for (const auto& id_and_score : id_score_map) {
         double id = id_and_score.first;
         double score = id_and_score.second;

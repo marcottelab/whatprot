@@ -1,19 +1,28 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "fwd_alg/edman_transition.h"
+// File under test:
+#include "edman_transition.h"
 
 namespace fluoroseq {
 
 namespace {
 using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
-}
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
 BOOST_AUTO_TEST_SUITE(edman_transition_suite);
 
-BOOST_AUTO_TEST_CASE(constructor_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 1;
@@ -27,7 +36,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, * tolerance(TOL)) {
     // write right now. Anyways this should be covered by the paren_op tests.
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_trivial_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 1;
@@ -57,7 +66,7 @@ BOOST_AUTO_TEST_CASE(paren_op_trivial_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_basic_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_basic_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 1;
@@ -97,7 +106,7 @@ BOOST_AUTO_TEST_CASE(paren_op_basic_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_more_edmans_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_more_edmans_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 3;
@@ -135,7 +144,7 @@ BOOST_AUTO_TEST_CASE(paren_op_more_edmans_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_colors_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_colors_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 1;
@@ -200,7 +209,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_colors_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_irrelevant_dye_seq_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_irrelevant_dye_seq_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 1;
@@ -240,7 +249,7 @@ BOOST_AUTO_TEST_CASE(paren_op_irrelevant_dye_seq_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_one_dye_first_edman_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_one_dye_first_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 1;
@@ -280,7 +289,7 @@ BOOST_AUTO_TEST_CASE(paren_op_one_dye_first_edman_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_two_dyes_second_edman_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_two_dyes_second_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 2;
@@ -344,7 +353,7 @@ BOOST_AUTO_TEST_CASE(paren_op_two_dyes_second_edman_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_three_dyes_first_edman_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_three_dyes_first_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 3;
@@ -402,7 +411,7 @@ BOOST_AUTO_TEST_CASE(paren_op_three_dyes_first_edman_test, * tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(paren_op_two_dye_colors_second_edman_test,
-                     * tolerance(TOL)) {
+                     *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     int num_timesteps = 2;

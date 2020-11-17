@@ -1,8 +1,18 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "common/scored_classification.h"
+// File under test:
+#include "scored_classification.h"
 
+// Standard C++ library headers:
 #include <climits>
 
 namespace fluoroseq {
@@ -10,7 +20,7 @@ namespace fluoroseq {
 namespace {
 using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
-}
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(common_suite);
 BOOST_AUTO_TEST_SUITE(scored_classification_suite);
@@ -32,7 +42,7 @@ BOOST_AUTO_TEST_CASE(constructor_default_test) {
     BOOST_TEST(sc.total == 0.0);
 }
 
-BOOST_AUTO_TEST_CASE(adjusted_score_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(adjusted_score_test, *tolerance(TOL)) {
     int id = 42;
     double score = 0.9;
     double total = 3.14;

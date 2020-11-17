@@ -1,7 +1,16 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "common/radiometry.h"
+// File under test:
+#include "radiometry.h"
 
 namespace fluoroseq {
 
@@ -14,7 +23,7 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     Radiometry r(num_timesteps, num_channels);
     BOOST_TEST(r.num_timesteps = num_timesteps);
     BOOST_TEST(r.num_channels = num_channels);
-    BOOST_TEST(r.intensities != (void*) NULL);
+    BOOST_TEST(r.intensities != (void*)NULL);
 }
 
 BOOST_AUTO_TEST_CASE(copy_constructor_test) {
@@ -30,7 +39,7 @@ BOOST_AUTO_TEST_CASE(copy_constructor_test) {
     Radiometry r2(r1);
     BOOST_TEST(r1.num_timesteps = num_timesteps);
     BOOST_TEST(r1.num_channels = num_channels);
-    BOOST_TEST(r1.intensities != (void*) NULL);
+    BOOST_TEST(r1.intensities != (void*)NULL);
     BOOST_TEST(r1.intensities[0] == 60);
     BOOST_TEST(r1.intensities[1] == 61);
     BOOST_TEST(r1.intensities[2] == 62);
@@ -39,7 +48,7 @@ BOOST_AUTO_TEST_CASE(copy_constructor_test) {
     BOOST_TEST(r1.intensities[5] == 65);
     BOOST_TEST(r2.num_timesteps = num_timesteps);
     BOOST_TEST(r2.num_channels = num_channels);
-    BOOST_TEST(r2.intensities != (void*) NULL);
+    BOOST_TEST(r2.intensities != (void*)NULL);
     BOOST_TEST(r2.intensities[0] == 60);
     BOOST_TEST(r2.intensities[1] == 61);
     BOOST_TEST(r2.intensities[2] == 62);

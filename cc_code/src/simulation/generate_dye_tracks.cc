@@ -1,11 +1,21 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "generate_dye_tracks.h"
 
+// Standard C++ library headers:
 #include <random>
 #include <unordered_map>
 #include <utility>  // for std::move
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
@@ -38,11 +48,11 @@ void generate_dye_tracks(
             for (int j = 0; j < dye_tracks_per_peptide; j++) {
                 DyeTrack dye_track(num_timesteps, num_channels);
                 generate_dye_track(error_model,
-                                dye_seq.value,
-                                num_timesteps,
-                                num_channels,
-                                generator,
-                                &dye_track);
+                                   dye_seq.value,
+                                   num_timesteps,
+                                   num_channels,
+                                   generator,
+                                   &dye_track);
                 // Ignore any DyeTrack with all 0s because it wouldn't be
                 // detectable. Any DyeTrack with all 0s at the 0th timestep will
                 // have all 0s throughout.

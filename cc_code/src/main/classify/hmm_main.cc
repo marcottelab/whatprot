@@ -1,14 +1,22 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-// Simple application to read in a TSV file of dye seqs, a TSV file of
-// radiometries, and write predicted classifications to a TSV file.
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "hmm_main.h"
 
+// Standard C++ library headers:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Local project headers:
 #include "classifiers/fwd_alg_classifier.h"
 #include "common/dye_seq.h"
 #include "common/error_model.h"
@@ -27,7 +35,7 @@ namespace fluoroseq {
 namespace {
 using std::string;
 using std::vector;
-}
+}  // namespace
 
 int hmm_main(int argc, char** argv) {
     double total_start_time = wall_time();
@@ -80,10 +88,8 @@ int hmm_main(int argc, char** argv) {
     print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
-    FwdAlgClassifier classifier(num_timesteps,
-                                num_channels,
-                                error_model,
-                                dye_seqs);
+    FwdAlgClassifier classifier(
+            num_timesteps, num_channels, error_model, dye_seqs);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);
 
@@ -91,11 +97,10 @@ int hmm_main(int argc, char** argv) {
     vector<ScoredClassification> results = classifier.classify(radiometries);
     end_time = wall_time();
     print_finished_classification(end_time - start_time);
-    
+
     start_time = wall_time();
-    write_scored_classifications(predictions_filename,
-                                 total_num_radiometries,
-                                 results);
+    write_scored_classifications(
+            predictions_filename, total_num_radiometries, results);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 

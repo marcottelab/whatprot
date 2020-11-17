@@ -1,9 +1,19 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "generate_radiometry.h"
 
+// Standard C++ library headers:
 #include <cmath>
 #include <random>
 
+// Local project headers:
 #include "simulation/generate_dye_track.h"
 
 namespace fluoroseq {
@@ -30,7 +40,7 @@ void generate_radiometry(const ErrorModel& error_model,
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             lognormal_distribution<double> lognormal(
-                    log(error_model.mu * (double) dye_track(t, c)),
+                    log(error_model.mu * (double)dye_track(t, c)),
                     error_model.sigma);
             (*radiometry)(t, c) = lognormal(*generator);
         }

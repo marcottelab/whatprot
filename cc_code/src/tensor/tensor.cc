@@ -1,8 +1,18 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// File under test:
 #include "tensor.h"
 
+// Standard C++ library headers:
 #include <algorithm>  // needed for std::copy
 
+// Local project headers:
 #include "tensor/tensor_iterator.h"
 
 namespace fluoroseq {

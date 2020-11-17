@@ -1,10 +1,21 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "tensor/tensor.h"
+// File under test:
+#include "tensor.h"
 
+// Standard C++ library headers:
 #include <utility>
 
+// Local project headers:
 #include "tensor/tensor_iterator.h"
 
 namespace fluoroseq {
@@ -22,7 +33,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     shape[0] = 1;
     Tensor t(order, shape);
     delete[] shape;
-    BOOST_TEST(t.tensor_iterator != (void *) NULL);
+    BOOST_TEST(t.tensor_iterator != (void*)NULL);
     BOOST_TEST(t.order == order);
     BOOST_TEST(t.shape[0] == 1);
     BOOST_TEST(t.strides[0] == 1);
@@ -35,7 +46,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test) {
     shape[0] = 10;
     Tensor t(order, shape);
     delete[] shape;
-    BOOST_TEST(t.tensor_iterator != (void *) NULL);
+    BOOST_TEST(t.tensor_iterator != (void*)NULL);
     BOOST_TEST(t.order == order);
     BOOST_TEST(t.shape[0] == 10);
     BOOST_TEST(t.strides[0] == 1);
@@ -49,7 +60,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
     shape[1] = 5;
     Tensor t(order, shape);
     delete[] shape;
-    BOOST_TEST(t.tensor_iterator != (void *) NULL);
+    BOOST_TEST(t.tensor_iterator != (void*)NULL);
     BOOST_TEST(t.order == order);
     BOOST_TEST(t.shape[0] == 3);
     BOOST_TEST(t.shape[1] == 5);
@@ -66,7 +77,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     shape[2] = 7;
     Tensor t(order, shape);
     delete[] shape;
-    BOOST_TEST(t.tensor_iterator != (void *) NULL);
+    BOOST_TEST(t.tensor_iterator != (void*)NULL);
     BOOST_TEST(t.order == order);
     BOOST_TEST(t.shape[0] == 3);
     BOOST_TEST(t.shape[1] == 5);
@@ -86,10 +97,10 @@ BOOST_AUTO_TEST_CASE(move_constructor_test) {
     Tensor t1(order, shape);
     delete[] shape;
     Tensor t2(move(t1));
-    BOOST_TEST(t1.tensor_iterator == (void *) NULL);
-    BOOST_TEST(t1.values == (void *) NULL);
-    BOOST_TEST(t1.shape == (void *) NULL);
-    BOOST_TEST(t1.strides == (void *) NULL);
+    BOOST_TEST(t1.tensor_iterator == (void*)NULL);
+    BOOST_TEST(t1.values == (void*)NULL);
+    BOOST_TEST(t1.shape == (void*)NULL);
+    BOOST_TEST(t1.strides == (void*)NULL);
     BOOST_TEST(t2.order == order);
     BOOST_TEST(t2.shape[0] == 3);
     BOOST_TEST(t2.shape[1] == 5);

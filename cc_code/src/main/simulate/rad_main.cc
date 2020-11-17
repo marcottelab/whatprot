@@ -1,14 +1,24 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "rad_main.h"
 
+// Standard C++ library headers:
 #include <cstdlib>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/sourced_data.h"
@@ -76,15 +86,12 @@ int rad_main(int argc, char** argv) {
                           &generator,
                           &radiometries);
     end_time = wall_time();
-    print_finished_generating_radiometries(
-            radiometries.size(),
-            end_time - start_time);
+    print_finished_generating_radiometries(radiometries.size(),
+                                           end_time - start_time);
 
     start_time = wall_time();
-    write_radiometries(radiometries_filename,
-                       num_timesteps,
-                       num_channels,
-                       radiometries);
+    write_radiometries(
+            radiometries_filename, num_timesteps, num_channels, radiometries);
     write_ys(ys_filename, radiometries);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);

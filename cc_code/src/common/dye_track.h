@@ -1,17 +1,26 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_COMMON_DYE_TRACK_H
 #define FLUOROSEQ_COMMON_DYE_TRACK_H
 
+// Standard C++ library headers:
 #include <functional>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "util/vector_hash.h"
 
 namespace fluoroseq {
 
 class DyeTrack {
-public:
+  public:
     DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq);
     DyeTrack(int num_timesteps, int num_channels, short* counts);
     DyeTrack(int num_timesteps, int num_channels);
@@ -32,9 +41,9 @@ public:
 // function.
 namespace std {
 
-template<>
+template <>
 struct hash<fluoroseq::DyeTrack> {
-public:
+  public:
     size_t operator()(const fluoroseq::DyeTrack& dye_track) const;
 
     hash<vector<short>> vector_hash;

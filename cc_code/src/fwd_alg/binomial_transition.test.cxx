@@ -1,32 +1,41 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "fwd_alg/binomial_transition.h"
+// File under test:
+#include "binomial_transition.h"
 
 namespace fluoroseq {
 
 namespace {
 using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
-}
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
 BOOST_AUTO_TEST_SUITE(binomial_transition_suite);
 
-BOOST_AUTO_TEST_CASE(constructor_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     double q = 0.2;
     BinomialTransition bt(q);
     BOOST_TEST(bt.q == q);
 }
 
-BOOST_AUTO_TEST_CASE(reserve_zero_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(reserve_zero_test, *tolerance(TOL)) {
     double q = 0.2;
     BinomialTransition bt(q);
     bt.reserve(0);
     BOOST_TEST(bt.prob(0, 0) == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(reserve_one_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(reserve_one_test, *tolerance(TOL)) {
     double q = 0.2;
     double p = 0.8;
     BinomialTransition bt(q);
@@ -36,7 +45,7 @@ BOOST_AUTO_TEST_CASE(reserve_one_test, * tolerance(TOL)) {
     BOOST_TEST(bt.prob(1, 1) == p);
 }
 
-BOOST_AUTO_TEST_CASE(reserve_two_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(reserve_two_test, *tolerance(TOL)) {
     double q = 0.2;
     double p = 0.8;
     BinomialTransition bt(q);
@@ -49,7 +58,7 @@ BOOST_AUTO_TEST_CASE(reserve_two_test, * tolerance(TOL)) {
     BOOST_TEST(bt.prob(2, 2) == p * p);
 }
 
-BOOST_AUTO_TEST_CASE(reserve_three_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(reserve_three_test, *tolerance(TOL)) {
     double q = 0.2;
     double p = 0.8;
     BinomialTransition bt(q);
@@ -66,7 +75,7 @@ BOOST_AUTO_TEST_CASE(reserve_three_test, * tolerance(TOL)) {
     BOOST_TEST(bt.prob(3, 3) == p * p * p);
 }
 
-BOOST_AUTO_TEST_CASE(reserve_no_shrink_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(reserve_no_shrink_test, *tolerance(TOL)) {
     double q = 0.2;
     double p = 0.8;
     BinomialTransition bt(q);
@@ -84,7 +93,7 @@ BOOST_AUTO_TEST_CASE(reserve_no_shrink_test, * tolerance(TOL)) {
     BOOST_TEST(bt.prob(3, 3) == p * p * p);
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_trivial_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
@@ -105,7 +114,7 @@ BOOST_AUTO_TEST_CASE(paren_op_trivial_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_basic_transition_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_basic_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
@@ -132,7 +141,7 @@ BOOST_AUTO_TEST_CASE(paren_op_basic_transition_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_bigger_transition_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_bigger_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
@@ -163,7 +172,7 @@ BOOST_AUTO_TEST_CASE(paren_op_bigger_transition_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_edmans_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
@@ -210,7 +219,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_edmans_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_other_dye_colors_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(paren_op_other_dye_colors_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);

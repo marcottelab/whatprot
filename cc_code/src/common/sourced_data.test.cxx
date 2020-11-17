@@ -1,14 +1,23 @@
-// Author: Matthew Beauregard Smith
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // Don't put too much faith in these tests. The "sourced_data.h" file contains
 // a lot of bad code and needs to be ripped out and replaced. To the best of my
 // knowledge, none of the broken things are being used by other pieces of code.
 // I plan to test that these other pieces of code work as expected, which should
 // cover the most important things in "sourced_data.h". Nevertheless, it should
 // be a priority to get rid of this file.
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "common/sourced_data.h"
+// File under test:
+#include "sourced_data.h"
 
 namespace fluoroseq {
 

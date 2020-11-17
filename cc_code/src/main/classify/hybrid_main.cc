@@ -1,13 +1,23 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "hybrid_main.h"
 
+// Standard C++ library headers:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Local project headers:
 #include "classifiers/hybrid_classifier.h"
 #include "common/dye_track.h"
 #include "common/error_model.h"
@@ -112,11 +122,10 @@ int hybrid_main(int argc, char** argv) {
     vector<ScoredClassification> results = classifier.classify(radiometries);
     end_time = wall_time();
     print_finished_classification(end_time - start_time);
-    
+
     start_time = wall_time();
-    write_scored_classifications(predictions_filename,
-                                 total_num_radiometries,
-                                 results);
+    write_scored_classifications(
+            predictions_filename, total_num_radiometries, results);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 

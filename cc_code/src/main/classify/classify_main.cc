@@ -1,13 +1,22 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
 
+// Standard C++ library headers:
 #include <cstring>
 
+// MPI header:
 #ifdef USE_MPI
 #include <mpi.h>
 #endif  // USE_MPI
 
+// Local project headers:
 #include "main/classify/ann_main.h"
 #include "main/classify/hmm_main.h"
 #include "main/classify/hybrid_main.h"

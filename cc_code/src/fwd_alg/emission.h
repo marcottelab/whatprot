@@ -1,20 +1,29 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_FWD_ALG_EMISSION
 #define FLUOROSEQ_FWD_ALG_EMISSION
 
+// Standard C++ library headers:
 #include <functional>
 #include <vector>
 
+// Local project headers:
 #include "common/radiometry.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
 class Emission {
-public:
+  public:
     Emission(const Radiometry& radiometry,
              int max_num_dyes,
-             std::function<double (double, int)> pdf);
+             std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
     void operator()(Tensor* tensor, int timestep) const;

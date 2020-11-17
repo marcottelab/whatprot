@@ -1,6 +1,15 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "binomial_transition.h"
 
+// Local project headers:
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
@@ -21,7 +30,7 @@ void BinomialTransition::reserve(int max_n) const {
     length = max_n + 1;
     size = length * (length + 1) / 2;
     values.resize(size);
-    double p = (double) 1 - q;
+    double p = (double)1 - q;
     for (int i = prev_length; i < length; i++) {
         prob(i, 0) = prob(i - 1, 0) * q;
         for (int j = 1; j < i; j++) {

@@ -1,17 +1,28 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "scored_classifications_io.h"
 
+// Standard C++ library headers:
 #include <fstream>
 #include <iomanip>  // for std::setprecision
 #include <string>
 #include <vector>
 
+// MPI header:
 #ifdef USE_MPI
 #include <mpi.h>
 #endif  // USE_MPI
 
+// Local project headers:
 #include "common/scored_classification.h"
 #ifdef USE_MPI
 #include "io/mpi_counts_displs.h"
@@ -33,19 +44,16 @@ void write_scored_classifications(
     int num_scored_classifications = scored_classifications.size();
     int* ids;
     double* scores;
-    convert_raw_from_scored_classifications(scored_classifications,
-                                            &ids,
-                                            &scores);
+    convert_raw_from_scored_classifications(
+            scored_classifications, &ids, &scores);
 #ifdef USE_MPI
     gather_scored_classifications(total_num_scored_classifications,
                                   num_scored_classifications,
                                   &ids,
                                   &scores);
 #endif  // USE_MPI
-    write_scored_classifications_raw(filename,
-                                     total_num_scored_classifications,
-                                     ids,
-                                     scores);
+    write_scored_classifications_raw(
+            filename, total_num_scored_classifications, ids, scores);
 }
 
 void convert_raw_from_scored_classifications(
@@ -98,8 +106,8 @@ void gather_scored_classifications(int total_num_scored_classifications,
                 MPI_DOUBLE,
                 0,  // root
                 MPI_COMM_WORLD);
-    delete[] *ids;
-    delete[] *scores;
+    delete[] * ids;
+    delete[] * scores;
     if (mpi_rank == 0) {
         *ids = ids_recv_buf;
         *scores = scores_recv_buf;

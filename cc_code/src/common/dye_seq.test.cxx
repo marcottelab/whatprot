@@ -1,7 +1,16 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "common/dye_seq.h"
+// File under test:
+#include "dye_seq.h"
 
 namespace fluoroseq {
 
@@ -14,7 +23,7 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     DyeSeq ds(num_channels, s);
     BOOST_TEST(ds.length == 1);
     BOOST_TEST(ds.num_channels == 2);
-    BOOST_TEST(ds.seq != (void *) NULL);
+    BOOST_TEST(ds.seq != (void*)NULL);
     BOOST_TEST(ds.seq[0] == 0);
 }
 
@@ -32,7 +41,7 @@ BOOST_AUTO_TEST_CASE(constructor_trailing_dots_test) {
     DyeSeq ds(num_channels, s);
     BOOST_TEST(ds.length == 1);
     BOOST_TEST(ds.num_channels == 2);
-    BOOST_TEST(ds.seq != (void *) NULL);
+    BOOST_TEST(ds.seq != (void*)NULL);
     BOOST_TEST(ds.seq[0] == 0);
 }
 
@@ -43,11 +52,11 @@ BOOST_AUTO_TEST_CASE(copy_constructor_test) {
     DyeSeq ds2(ds1);
     BOOST_TEST(ds1.length == 1);
     BOOST_TEST(ds1.num_channels == 2);
-    BOOST_TEST(ds1.seq != (void *) NULL);
+    BOOST_TEST(ds1.seq != (void*)NULL);
     BOOST_TEST(ds1.seq[0] == 0);
     BOOST_TEST(ds2.length == 1);
     BOOST_TEST(ds2.num_channels == 2);
-    BOOST_TEST(ds2.seq != (void *) NULL);
+    BOOST_TEST(ds2.seq != (void*)NULL);
     BOOST_TEST(ds2.seq[0] == 0);
 }
 

@@ -1,8 +1,18 @@
-// Author: Matthew Beauregard Smith
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
-#include "fwd_alg/summation.h"
+// File under test:
+#include "summation.h"
 
+// Local project headers:
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
@@ -10,12 +20,12 @@ namespace fluoroseq {
 namespace {
 using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
-}
+}  // namespace
 
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
 BOOST_AUTO_TEST_SUITE(summation_suite);
 
-BOOST_AUTO_TEST_CASE(trivial_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     Summation sum;
     int order = 1;
     int* shape = new int[order];
@@ -30,7 +40,7 @@ BOOST_AUTO_TEST_CASE(trivial_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(bigger_size_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(bigger_size_test, *tolerance(TOL)) {
     Summation sum;
     int order = 1;
     int* shape = new int[order];
@@ -49,7 +59,7 @@ BOOST_AUTO_TEST_CASE(bigger_size_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(more_dimensions_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(more_dimensions_test, *tolerance(TOL)) {
     Summation sum;
     int order = 3;
     int* shape = new int[order];
@@ -68,7 +78,7 @@ BOOST_AUTO_TEST_CASE(more_dimensions_test, * tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(more_dimensions_big_test, * tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(more_dimensions_big_test, *tolerance(TOL)) {
     Summation sum;
     int order = 2;
     int* shape = new int[order];

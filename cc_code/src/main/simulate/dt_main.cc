@@ -1,14 +1,24 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "dt_main.h"
 
+// Standard C++ library headers:
 #include <cstdlib>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "common/error_model.h"
 #include "common/sourced_data.h"
@@ -81,10 +91,8 @@ int dt_main(int argc, char** argv) {
 
     start_time = wall_time();
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> deduped_dye_tracks;
-    dedup_dye_tracks(num_timesteps,
-                     num_channels,
-                     &dye_tracks,
-                     &deduped_dye_tracks);
+    dedup_dye_tracks(
+            num_timesteps, num_channels, &dye_tracks, &deduped_dye_tracks);
     end_time = wall_time();
     print_finished_deduping_dye_tracks(deduped_dye_tracks.size(),
                                        end_time - start_time);

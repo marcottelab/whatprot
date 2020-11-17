@@ -1,8 +1,13 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_COMMON_SCORED_CLASSIFICATION_H
 #define FLUOROSEQ_COMMON_SCORED_CLASSIFICATION_H
-
-#include "common/dye_seq.h"
 
 namespace fluoroseq {
 
@@ -22,7 +27,7 @@ namespace fluoroseq {
 //     * has no base classes of the same type as its first non-static data
 //       member.
 class ScoredClassification {
-public:
+  public:
     ScoredClassification(int id, double score, double total);
     ScoredClassification();
     double adjusted_score() const;

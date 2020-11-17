@@ -1,17 +1,28 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "radiometries_io.h"
 
+// Standard C++ library headers:
 #include <fstream>
 #include <iomanip>  // for std::setprecision
 #include <string>
 #include <vector>
 
+// MPI header:
 #ifdef USE_MPI
 #include <mpi.h>
 #endif  // USE_MPI
 
+// Local project headers:
 #include "common/radiometry.h"
 #ifdef USE_MPI
 #include "io/mpi_counts_displs.h"
@@ -75,12 +86,11 @@ void read_radiometries_raw(const string& filename,
     f >> *num_channels;
     f >> *total_num_radiometries;
     *num_radiometries = *total_num_radiometries;
-    *intensities = new double[(*total_num_radiometries)
-                              * (*num_timesteps)
+    *intensities = new double[(*total_num_radiometries) * (*num_timesteps)
                               * (*num_channels)];
-    for (   int i = 0;
-            i < (*total_num_radiometries) * (*num_timesteps) * (*num_channels);
-            i++) {
+    for (int i = 0;
+         i < (*total_num_radiometries) * (*num_timesteps) * (*num_channels);
+         i++) {
         f >> (*intensities)[i];
     }
     f.close();
@@ -137,7 +147,7 @@ void scatter_radiometries(int* num_timesteps,
     delete[] mpi_num_radiometries;
     delete[] mpi_dummy_var;
     if (mpi_rank == 0) {
-        delete[] *intensities;
+        delete[] * intensities;
     }
     *intensities = recv_buffer;
 }
@@ -152,8 +162,8 @@ void convert_radiometries_from_raw(int num_timesteps,
     for (int i = 0; i < num_radiometries; i++) {
         radiometries->push_back(Radiometry(num_timesteps, num_channels));
         for (int j = 0; j < num_timesteps * num_channels; j++) {
-            radiometries->back().intensities[j] = intensities[
-                    i * (num_timesteps * num_channels) + j];
+            radiometries->back().intensities[j] =
+                    intensities[i * (num_timesteps * num_channels) + j];
         }
     }
 }
@@ -170,11 +180,10 @@ void write_radiometries(
             &intensities);
 #ifdef USE_MPI
     int total_num_radiometries;
-    gather_radiometries(
-            radiometries.size(),  // number of radiometries
-            num_timesteps * num_channels,  // radiometry size
-            &intensities,
-            &total_num_radiometries);
+    gather_radiometries(radiometries.size(),  // number of radiometries
+                        num_timesteps * num_channels,  // radiometry size
+                        &intensities,
+                        &total_num_radiometries);
 #else  // USE_MPI
     int total_num_radiometries = radiometries.size();
 #endif  // USE_MPI
@@ -232,8 +241,8 @@ void gather_radiometries(int num_radiometries,
     }
     double* intensities_recv_buf;
     if (mpi_rank == 0) {
-        intensities_recv_buf = new double[(*total_num_radiometries)
-                                          * radiometry_size];
+        intensities_recv_buf =
+                new double[(*total_num_radiometries) * radiometry_size];
     }
     MPI_Gatherv(*intensities,  // sendbuf
                 num_radiometries * radiometry_size,  // sendcount
@@ -244,7 +253,7 @@ void gather_radiometries(int num_radiometries,
                 MPI_DOUBLE,
                 0,  // root
                 MPI_COMM_WORLD);
-    delete[] *intensities;
+    delete[] * intensities;
     if (mpi_rank == 0) {
         *intensities = intensities_recv_buf;
         delete[] mpi_counts;
@@ -290,9 +299,7 @@ void write_ys(
     get_raw_ys(radiometries, &ys);
 #ifdef USE_MPI
     int total_num_radiometries;
-    gather_ys(radiometries.size(),
-              &ys,
-              &total_num_radiometries);
+    gather_ys(radiometries.size(), &ys, &total_num_radiometries);
 #else  // USE_MPI
     int total_num_radiometries = radiometries.size();
 #endif  // USE_MPI
@@ -351,7 +358,7 @@ void gather_ys(int num_radiometries, int** ys, int* total_num_radiometries) {
                 MPI_INT,
                 0,  // root
                 MPI_COMM_WORLD);
-    delete[] *ys;
+    delete[] * ys;
     if (mpi_rank == 0) {
         *ys = ys_recv_buf;
         delete[] mpi_counts;
@@ -360,9 +367,7 @@ void gather_ys(int num_radiometries, int** ys, int* total_num_radiometries) {
 }
 #endif  // USE_MPI
 
-void write_ys_raw(const string& filename,
-                            int num_radiometries,
-                            int* ys) {
+void write_ys_raw(const string& filename, int num_radiometries, int* ys) {
 #ifdef USE_MPI
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);

@@ -1,6 +1,15 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
+// Defining symbols from header:
 #include "dye_seq.h"
 
+// Standard C++ library headers:
 #include <algorithm>  // needed for std::copy
 #include <string>
 
@@ -23,14 +32,14 @@ DyeSeq::DyeSeq(int num_channels, const string& s) : num_channels(num_channels) {
             seq[i] = -1;
         } else if (c >= '0' and c <= '9') {
             // This is a clever trick to convert ASCII code to integer value.
-            short sc = (short) (c - '0');
+            short sc = (short)(c - '0');
             seq[i] = sc;
         }
     }
 }
 
-DyeSeq::DyeSeq(const DyeSeq& other) : num_channels(other.num_channels),
-                                      length(other.length) {
+DyeSeq::DyeSeq(const DyeSeq& other)
+        : num_channels(other.num_channels), length(other.length) {
     seq = new short[length];
     copy(other.seq, &other.seq[length], seq);
 }

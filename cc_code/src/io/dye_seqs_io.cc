@@ -1,17 +1,28 @@
-// Author: Matthew Beauregard Smith (UT Austin)
-//
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 // For MPI version, define compiler macro USE_MPI when building.
+
+// Defining symbols from header:
 #include "dye_seqs_io.h"
 
+// Standard C++ library headers:
 #include <algorithm>
 #include <fstream>
 #include <string>
 #include <vector>
 
+// MPI header:
 #ifdef USE_MPI
 #include <mpi.h>
 #endif  // USE_MPI
 
+// Local project headers:
 #include "common/dye_seq.h"
 #include "common/sourced_data.h"
 #ifdef USE_MPI
@@ -54,7 +65,7 @@ void read_dye_seqs(const string& filename,
                                &dye_seqs_num_peptides,
                                &dye_seqs_ids);
             num_dye_seqs = *total_num_dye_seqs;
-        break;
+            break;
         case SCATTER:
             scatter_dye_seqs(num_channels,
                              total_num_dye_seqs,
@@ -63,7 +74,7 @@ void read_dye_seqs(const string& filename,
                              &dye_strings,
                              &dye_seqs_num_peptides,
                              &dye_seqs_ids);
-        break;
+            break;
     }
 #endif  // USE_MPI
     convert_dye_seqs_from_raw(*num_channels,
@@ -230,7 +241,7 @@ void scatter_dye_seqs(int* num_channels,
                          r,  // dest
                          0,  // tag
                          MPI_COMM_WORLD);
-                delete[] (*dye_strings)[index];
+                delete[](*dye_strings)[index];
             }
         }
     } else {
@@ -246,7 +257,7 @@ void scatter_dye_seqs(int* num_channels,
         }
     }
     if (mpi_rank == 0) {
-        delete[] *dye_string_lengths;
+        delete[] * dye_string_lengths;
         *dye_string_lengths = string_lengths_recv;
     }
     int* num_peptides_recv = new int[*num_dye_seqs];
@@ -260,7 +271,7 @@ void scatter_dye_seqs(int* num_channels,
                  0,  // root
                  MPI_COMM_WORLD);
     if (mpi_rank == 0) {
-        delete[] *dye_seqs_num_peptides;
+        delete[] * dye_seqs_num_peptides;
     }
     *dye_seqs_num_peptides = num_peptides_recv;
     int* ids_recv = new int[*num_dye_seqs];
@@ -274,7 +285,7 @@ void scatter_dye_seqs(int* num_channels,
                  0,  // root
                  MPI_COMM_WORLD);
     if (mpi_rank == 0) {
-        delete[] *dye_seqs_ids;
+        delete[] * dye_seqs_ids;
     }
     *dye_seqs_ids = ids_recv;
     delete[] mpi_counts;
@@ -294,11 +305,9 @@ void convert_dye_seqs_from_raw(
     dye_seqs->reserve(num_dye_seqs);
     for (int i = 0; i < num_dye_seqs; i++) {
         string dye_string(dye_strings[i], dye_string_lengths[i]);
-        dye_seqs->push_back(
-                SourcedData<DyeSeq, SourceCount<int>>(
-                        DyeSeq(num_channels, dye_string),
-                        SourceCount<int>(dye_seqs_ids[i],
-                                         dye_seqs_num_peptides[i])));
+        dye_seqs->push_back(SourcedData<DyeSeq, SourceCount<int>>(
+                DyeSeq(num_channels, dye_string),
+                SourceCount<int>(dye_seqs_ids[i], dye_seqs_num_peptides[i])));
     }
 }
 

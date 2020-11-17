@@ -1,13 +1,21 @@
-// Author: Matthew Beauregard Smith (UT Austin)
+/******************************************************************************\
+* Author: Matthew Beauregard Smith                                             *
+* Affiliation: The University of Texas at Austin                               *
+* Department: Oden Institute and Institute for Cellular and Molecular Biology  *
+* PI: Edward Marcotte                                                          *
+* Project: Protein Fluorosequencing                                            *
+\******************************************************************************/
+
 #ifndef FLUOROSEQ_TENSOR_TENSOR_H
 #define FLUOROSEQ_TENSOR_TENSOR_H
 
+// Local project headers:
 #include "tensor/tensor_iterator.h"
 
 namespace fluoroseq {
 
 class Tensor {
-public:
+  public:
     Tensor(int order, int* shape);
     Tensor(Tensor&& other);
     ~Tensor();
