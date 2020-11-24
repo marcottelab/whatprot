@@ -21,11 +21,13 @@
 #include <mpi.h>
 #endif  // USE_MPI
 
+// External headers:
+#include "keyvalue.h"
+#include "mapreduce.h"
+
 // Local project headers:
 #include "common/dye-track.h"
 #include "common/sourced-data.h"
-#include "keyvalue.h"
-#include "mapreduce.h"
 
 namespace fluoroseq {
 

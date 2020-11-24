@@ -15,10 +15,12 @@
 #include <unordered_map>
 #include <vector>
 
+// External headers:
+#include "keyvalue.h"
+
 // Local project headers:
 #include "common/dye-track.h"
 #include "common/sourced-data.h"
-#include "keyvalue.h"
 
 namespace fluoroseq {
 
