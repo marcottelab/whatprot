@@ -16,12 +16,14 @@
 #include <unordered_map>
 #include <vector>
 
+// External headers:
+#include "flann/flann.hpp"
+
 // Local project headers:
 #include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
-#include "flann/flann.hpp"
 
 namespace {
 using flann::FLANN_CHECKS_UNLIMITED;
