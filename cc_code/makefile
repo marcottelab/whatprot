@@ -6,7 +6,7 @@ CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd-alg/*.cc ./s
 CC_DEPS_CLASSIFY = $(CC_DEPS_SHARED) ./src/main/classify/*.cc
 CC_DEPS_SIMULATE = $(CC_DEPS_SHARED) ./src/main/simulate/*.cc
 CC_DEPS_TEST = $(CC_DEPS_SHARED) ./test/test-module.cc ./src/*/*.test.cxx
-INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Apr14/src/
+INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Apr14/src/ -I ./extern/FakeIt/single_header/boost/
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
 FLANN = -L ./extern/flann-1.9.1/build/lib/ -lflann_cpp_s
@@ -31,24 +31,24 @@ all: x64 skx
 x64: classify classify_mpi simulate simulate_mpi
 skx: classify_skx classify_mpi_skx simulate_skx simulate_mpi_skx
 classify: ./src/*/*
-	g++ $(ARGS_CLASSIFY) -o ./bin/classify
+	g++ -std=c++17 $(ARGS_CLASSIFY) -o ./bin/classify
 classify_mpi: ./src/*/*
-	mpic++ $(MPI_ARGS_CLASSIFY) -o ./bin/classify_mpi
+	mpic++ -std=c++17 $(MPI_ARGS_CLASSIFY) -o ./bin/classify_mpi
 classify_skx: ./src/*/*
-	g++ -march=skylake-avx512 $(ARGS_CLASSIFY_SKX) -o ./bin/classify_skx
+	g++ -std=c++17 -march=skylake-avx512 $(ARGS_CLASSIFY_SKX) -o ./bin/classify_skx
 classify_mpi_skx: ./src/*/*
-	mpicxx -march=skylake-avx512 $(MPI_ARGS_CLASSIFY_SKX) -o ./bin/classify_mpi_skx
+	mpicxx -std=c++17 -march=skylake-avx512 $(MPI_ARGS_CLASSIFY_SKX) -o ./bin/classify_mpi_skx
 simulate: ./src/*/*
-	g++ $(ARGS_SIMULATE) -o ./bin/simulate
+	g++ -std=c++17 $(ARGS_SIMULATE) -o ./bin/simulate
 simulate_mpi: ./src/*/*
-	mpic++ $(MPI_ARGS_SIMULATE) -o ./bin/simulate_mpi
+	mpic++ -std=c++17 $(MPI_ARGS_SIMULATE) -o ./bin/simulate_mpi
 simulate_skx: ./src/*/*
-	g++ -march=skylake-avx512 $(ARGS_SIMULATE_SKX) -o ./bin/simulate_skx
+	g++ -std=c++17 -march=skylake-avx512 $(ARGS_SIMULATE_SKX) -o ./bin/simulate_skx
 simulate_mpi_skx: ./src/*/*
-	mpicxx -march=skylake-avx512 $(MPI_ARGS_SIMULATE_SKX) -o ./bin/simulate_mpi_skx
+	mpicxx -std=c++17 -march=skylake-avx512 $(MPI_ARGS_SIMULATE_SKX) -o ./bin/simulate_mpi_skx
 test: ./src/*/* ./test/**
-	g++ $(ARGS_TEST) -o ./bin/test
+	g++ -std=c++17 $(ARGS_TEST) -o ./bin/test
 test_skx: ./src/*/* ./test/**
-	g++ -march=skylake-avx512 $(ARGS_TEST_SKX) -o ./bin/test_skx
+	g++ -std=c++17 -march=skylake-avx512 $(ARGS_TEST_SKX) -o ./bin/test_skx
 clean:
 	rm -f ./bin/*
