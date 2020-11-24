@@ -14,8 +14,8 @@
 
 // Local project headers:
 #include "common/radiometry.h"
-#include "tensor/tensor.h"
 #include "tensor/tensor-iterator.h"
+#include "tensor/tensor.h"
 
 namespace fluoroseq {
 
