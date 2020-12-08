@@ -8,12 +8,18 @@ from numpy import load
 
 def plot_pr_curve(predictions_file,
                   true_y_file,
+                  dye_seqs_file,
                   directory = "",
                   title = "Precision / Recall"):
-    plot_pr_curves([predictions_file], true_y_file, directory, title)
+    plot_pr_curves([predictions_file],
+                   true_y_file,
+                   dye_seqs_file,
+                   directory,
+                   title)
 
 def plot_pr_curves(predictions_files,
                    true_y_file,
+                   dye_seqs_file,
                    directory = "",
                    title = "Precision / Recall",
                    labels = []):
@@ -30,6 +36,7 @@ def plot_pr_curves(predictions_files,
         plot_pr_curve_noshow(ax,
                              predictions_file,
                              true_y_file,
+                             dye_seqs_file,
                              directory = directory,
                              label = label)
     ax.set_xlim(left = 0)
@@ -55,6 +62,7 @@ def plot_pr_curves(predictions_files,
 def plot_pr_curve_noshow(ax,
                          predictions_file,
                          true_y_file,
+                         dye_seqs_file,
                          directory = "",
                          label = None):
     true_y = None
@@ -65,6 +73,18 @@ def plot_pr_curve_noshow(ax,
         tsv = f.readlines()
         tsv = tsv[1:]
         true_y = [int(x) for x in tsv]
+        f.close()
+    f = open(directory + dye_seqs_file, "r")
+    f.readline()  # number of channels
+    f.readline()  # number of dye seqs
+    weightmap = {}
+    while (True):
+        line = f.readline()
+        if (line == ""):
+            break
+        ltabs = line.split("\t")
+        weightmap[int(ltabs[2])] = int(ltabs[1])
+    f.close()
     f = open(directory + predictions_file, "r")
     csv = f.readlines()
     csv = csv[1:]
@@ -73,21 +93,23 @@ def plot_pr_curve_noshow(ax,
         cells = csv[i].split(",")
         predictions[i] = (int(cells[1]), float(cells[2]))
     f.close()
-    precision, recall = compute_pr_curve(predictions, true_y)
+    precision, recall = compute_pr_curve(predictions, true_y, weightmap)
     ax.plot(recall, precision, '-', label = label, linewidth = 2)
 
-def compute_pr_curve(predictions, ground_truth):
-    is_correct_and_score = [(False, 0.0)] * len(predictions)
+def compute_pr_curve(predictions, ground_truth, weightmap):
+    amt_correct_and_score = [(0.0, 0.0)] * len(predictions)
 
-    correct = 0
-    incorrect = 0
+    correct = 0.0
+    incorrect = 0.0
     for i in range(len(ground_truth)):
         if predictions[i][0] == ground_truth[i]:
-            is_correct_and_score[i] = (True, predictions[i][1])
-            correct += 1
+            amt_correct = 1.0 / weightmap[predictions[i][0]]
+            amt_correct_and_score[i] = (amt_correct, predictions[i][1])
+            correct += amt_correct
+            incorrect += 1.0 - amt_correct
         else:
-            is_correct_and_score[i] = (False, predictions[i][1])
-            incorrect += 1
+            amt_correct_and_score[i] = (0.0, predictions[i][1])
+            incorrect += 1.0
 #    print('precision at highest recall: ' + str(correct) + '/'
 #          + str(correct + incorrect) + ', or '
 #          + str(correct / (correct + incorrect)))
@@ -97,18 +119,16 @@ def compute_pr_curve(predictions, ground_truth):
     total = len(predictions)
     precision = []
     recall = []
-    is_correct_and_score.sort(key = lambda entry: entry[1], reverse = True)
-    for i in range(len(is_correct_and_score)):
-        entry = is_correct_and_score[i]
+    amt_correct_and_score.sort(key = lambda entry: entry[1], reverse = True)
+    for i in range(len(amt_correct_and_score)):
+        entry = amt_correct_and_score[i]
         next_entry = 0
-        if i + 1 < len(is_correct_and_score):
-            next_entry = is_correct_and_score[i + 1]
+        if i + 1 < len(amt_correct_and_score):
+            next_entry = amt_correct_and_score[i + 1]
         else:
-            next_entry = (False, -1)
-        if entry[0] == True:
-            correct += 1
-        else:
-            incorrect += 1
+            next_entry = (0.0, -1)
+        correct += entry[0]
+        incorrect += 1.0 - entry[0]
         if entry[1] != next_entry[1]:
             if len(precision) == 0:
                 precision.append([correct / (correct + incorrect)])
