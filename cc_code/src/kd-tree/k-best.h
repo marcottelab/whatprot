@@ -18,24 +18,24 @@
 namespace fluoroseq {
 namespace kd_tree {
 
-template <typename T>
+template <typename E>
 class KBest {
   public:
     KBest(int k) : k(k), kth_distance(DBL_MAX) {}
 
-    virtual void consider(double d, T* t) {
+    virtual void consider(double d, E* t) {
         if (d < kth_distance) {
             if (pq.size() == k) {
                 pq.pop();
             }
-            pq.push(std::pair<double, T*>(d, t));
+            pq.push(std::pair<double, E*>(d, t));
             if (pq.size() == k) {
                 kth_distance = pq.top().first;
             }
         }
     }
 
-    virtual void fill(std::vector<T*>* k_nearest,
+    virtual void fill(std::vector<E*>* k_nearest,
                       std::vector<double>* dists_sq) {
         k_nearest->reserve(pq.size());
         dists_sq->reserve(pq.size());
@@ -48,7 +48,7 @@ class KBest {
 
     int k;
     double kth_distance;
-    std::priority_queue<std::pair<double, T*>> pq;
+    std::priority_queue<std::pair<double, E*>> pq;
 };
 
 }  // namespace kd_tree

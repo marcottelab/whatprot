@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(leaf_node_test, *tolerance(TOL)) {
     vecs[1][0] = 1.0;
     vecs[1][1] = 20.0;
     vecs[1][2] = 1.2;
-    Node<vector<double>>* node = make_node(k, d, &vecs[0], &vecs[2]);
-    BOOST_REQUIRE(typeid(*node) == typeid(LeafNode<vector<double>>));
-    LeafNode<vector<double>>* leaf_node;
-    leaf_node = dynamic_cast<LeafNode<vector<double>>*>(node);
+    Node<vector<double>, vector<double>>* node = make_node<vector<double>, vector<double>>(k, d, &vecs[0], &vecs[2]);
+    BOOST_REQUIRE(typeid(*node) == typeid(LeafNode<vector<double>, vector<double>>));
+    LeafNode<vector<double>, vector<double>>* leaf_node;
+    leaf_node = dynamic_cast<LeafNode<vector<double>, vector<double>>*>(node);
     BOOST_TEST(leaf_node->d == d);
     BOOST_TEST(leaf_node->begin == &vecs[0]);
     BOOST_TEST(leaf_node->end == &vecs[2]);
@@ -70,19 +70,19 @@ BOOST_AUTO_TEST_CASE(internal_node_test, *tolerance(TOL)) {
     vecs[3][0] = 3.0;
     vecs[3][1] = 40.0;
     vecs[3][2] = 3.2;
-    Node<vector<double>>* node = make_node(k, d, &vecs[0], &vecs[4]);
-    BOOST_REQUIRE(typeid(*node) == typeid(InternalNode<vector<double>>));
-    InternalNode<vector<double>>* internal_node;
-    internal_node = dynamic_cast<InternalNode<vector<double>>*>(node);
+    Node<vector<double>, vector<double>>* node = make_node<vector<double>, vector<double>>(k, d, &vecs[0], &vecs[4]);
+    BOOST_REQUIRE(typeid(*node) == typeid(InternalNode<vector<double>, vector<double>>));
+    InternalNode<vector<double>, vector<double>>* internal_node;
+    internal_node = dynamic_cast<InternalNode<vector<double>, vector<double>>*>(node);
     BOOST_TEST(internal_node->max_left == 20.0);
     BOOST_TEST(internal_node->min_right == 30.0);
     BOOST_TEST(internal_node->split_value == 25.0);
     BOOST_TEST(internal_node->s == 1);
     BOOST_REQUIRE(typeid(*internal_node->left_child)
-                  == typeid(LeafNode<vector<double>>));
-    LeafNode<vector<double>>* left_child;
+                  == typeid(LeafNode<vector<double>, vector<double>>));
+    LeafNode<vector<double>, vector<double>>* left_child;
     left_child =
-            dynamic_cast<LeafNode<vector<double>>*>(internal_node->left_child);
+            dynamic_cast<LeafNode<vector<double>, vector<double>>*>(internal_node->left_child);
     BOOST_TEST(left_child->d == d);
     BOOST_TEST(left_child->begin == &vecs[0]);
     BOOST_TEST(left_child->end == &vecs[2]);
@@ -97,10 +97,10 @@ BOOST_AUTO_TEST_CASE(internal_node_test, *tolerance(TOL)) {
     v1[2] = 1.2;
     BOOST_TEST(((left_child->begin[0] == v1) || (left_child->begin[1] == v1)));
     BOOST_REQUIRE(typeid(*internal_node->right_child)
-                  == typeid(LeafNode<vector<double>>));
-    LeafNode<vector<double>>* right_child;
+                  == typeid(LeafNode<vector<double>, vector<double>>));
+    LeafNode<vector<double>, vector<double>>* right_child;
     right_child =
-            dynamic_cast<LeafNode<vector<double>>*>(internal_node->right_child);
+            dynamic_cast<LeafNode<vector<double>, vector<double>>*>(internal_node->right_child);
     BOOST_TEST(right_child->d == d);
     BOOST_TEST(right_child->begin == &vecs[2]);
     BOOST_TEST(right_child->end == &vecs[4]);
@@ -135,19 +135,19 @@ BOOST_AUTO_TEST_CASE(internal_node_reordering_test, *tolerance(TOL)) {
     vecs[3][0] = 3.0;
     vecs[3][1] = 11.0;
     vecs[3][2] = 3.2;
-    Node<vector<double>>* node = make_node(k, d, &vecs[0], &vecs[4]);
-    BOOST_REQUIRE(typeid(*node) == typeid(InternalNode<vector<double>>));
-    InternalNode<vector<double>>* internal_node;
-    internal_node = dynamic_cast<InternalNode<vector<double>>*>(node);
+    Node<vector<double>, vector<double>>* node = make_node<vector<double>, vector<double>>(k, d, &vecs[0], &vecs[4]);
+    BOOST_REQUIRE(typeid(*node) == typeid(InternalNode<vector<double>, vector<double>>));
+    InternalNode<vector<double>, vector<double>>* internal_node;
+    internal_node = dynamic_cast<InternalNode<vector<double>, vector<double>>*>(node);
     BOOST_TEST(internal_node->max_left == 21.0);
     BOOST_TEST(internal_node->min_right == 31.0);
     BOOST_TEST(internal_node->split_value == 26.0);
     BOOST_TEST(internal_node->s == 1);
     BOOST_REQUIRE(typeid(*internal_node->left_child)
-                  == typeid(LeafNode<vector<double>>));
-    LeafNode<vector<double>>* left_child;
+                  == typeid(LeafNode<vector<double>, vector<double>>));
+    LeafNode<vector<double>, vector<double>>* left_child;
     left_child =
-            dynamic_cast<LeafNode<vector<double>>*>(internal_node->left_child);
+            dynamic_cast<LeafNode<vector<double>, vector<double>>*>(internal_node->left_child);
     BOOST_TEST(left_child->d == d);
     BOOST_TEST(left_child->begin == &vecs[0]);
     BOOST_TEST(left_child->end == &vecs[2]);
@@ -162,10 +162,10 @@ BOOST_AUTO_TEST_CASE(internal_node_reordering_test, *tolerance(TOL)) {
     v1[2] = 1.2;
     BOOST_TEST(((left_child->begin[0] == v1) || (left_child->begin[1] == v1)));
     BOOST_REQUIRE(typeid(*internal_node->right_child)
-                  == typeid(LeafNode<vector<double>>));
-    LeafNode<vector<double>>* right_child;
+                  == typeid(LeafNode<vector<double>, vector<double>>));
+    LeafNode<vector<double>, vector<double>>* right_child;
     right_child =
-            dynamic_cast<LeafNode<vector<double>>*>(internal_node->right_child);
+            dynamic_cast<LeafNode<vector<double>, vector<double>>*>(internal_node->right_child);
     BOOST_TEST(right_child->d == d);
     BOOST_TEST(right_child->begin == &vecs[2]);
     BOOST_TEST(right_child->end == &vecs[4]);

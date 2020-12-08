@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(big_test, *tolerance(TOL)) {
     vecs[10][1] = 2.0;
     vecs[11][0] = 2.0;
     vecs[11][1] = 3.0;
-    KDTree<vector<double>> kdt(k, d, move(vecs));
+    KDTree<vector<double>, vector<double>> kdt(k, d, move(vecs));
     vector<double> query(2, 0);
     query[0] = .9;
     query[1] = .8;

@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_SUITE(leaf_node_suite);
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int d = 3;
     vector<vector<double>> vecs(2, vector<double>(3, 0));
-    LeafNode<vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     BOOST_TEST(leaf.d == d);
     BOOST_TEST(leaf.begin == &vecs[0]);
     BOOST_TEST(leaf.end == &vecs[2]);
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(distance_test, *tolerance(TOL)) {
     int d = 3;
     vector<vector<double>> vecs(2, vector<double>(3, 0));
-    LeafNode<vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     vector<double> t1(3, 0);
     t1[0] = 1.0;
     t1[1] = 1.1;
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(search_test, *tolerance(TOL)) {
     query[0] = 0.2;
     query[1] = 0.3;
     query[2] = 0.5;
-    LeafNode<vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     Mock<KBest<vector<double>>> k_best_mock;
     Fake(Method(k_best_mock, consider));
     leaf.search(query, &k_best_mock.get());

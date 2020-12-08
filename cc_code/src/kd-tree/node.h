@@ -18,10 +18,10 @@
 namespace fluoroseq {
 namespace kd_tree {
 
-template <typename T>
+template <typename E, typename Q>
 class Node {
   public:
-    virtual void search(const T& query, KBest<T>* k_best) const = 0;
+    virtual void search(const Q& query, KBest<E>* k_best) const = 0;
     virtual ~Node(){};
 };
 

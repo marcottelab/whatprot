@@ -16,31 +16,31 @@
 namespace fluoroseq {
 namespace kd_tree {
 
-template <typename T>
-class LeafNode : public Node<T> {
+template <typename E, typename Q>
+class LeafNode : public Node<E, Q> {
   public:
-    LeafNode(int d, T* begin, T* end) : d(d), begin(begin), end(end) {}
+    LeafNode(int d, E* begin, E* end) : d(d), begin(begin), end(end) {}
     virtual ~LeafNode() {}
 
-    virtual void search(const T& query, KBest<T>* k_best) const {
-        for (T* t = begin; t < end; t++) {
+    virtual void search(const Q& query, KBest<E>* k_best) const {
+        for (E* t = begin; t < end; t++) {
             double dist = distance(query, *t);
             k_best->consider(dist, t);
         }
     }
 
-    double distance(const T& t1, const T& t2) const {
+    double distance(const Q& query, const E& entry) const {
         double dist = 0.0;
         for (int i = 0; i < d; i++) {
-            double diff = t2[i] - t1[i];
+            double diff = query[i] - entry[i];
             dist += diff * diff;
         }
         return dist;
     }
 
     int d;
-    T* begin;
-    T* end;
+    E* begin;
+    E* end;
 };
 
 }  // namespace kd_tree

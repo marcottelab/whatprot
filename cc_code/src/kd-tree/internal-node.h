@@ -16,11 +16,11 @@
 namespace fluoroseq {
 namespace kd_tree {
 
-template <typename T>
-class InternalNode : public Node<T> {
+template <typename E, typename Q>
+class InternalNode : public Node<E, Q> {
   public:
-    InternalNode(Node<T>* left_child,
-                 Node<T>* right_child,
+    InternalNode(Node<E, Q>* left_child,
+                 Node<E, Q>* right_child,
                  double max_left,
                  double min_right,
                  int s)
@@ -36,7 +36,7 @@ class InternalNode : public Node<T> {
         delete right_child;
     }
 
-    virtual void search(const T& query, KBest<T>* k_best) const {
+    virtual void search(const Q& query, KBest<E>* k_best) const {
         double query_value = query[s];
         if (query_value < split_value) {
             left_child->search(query, k_best);
@@ -51,8 +51,8 @@ class InternalNode : public Node<T> {
         }
     }
 
-    Node<T>* left_child;
-    Node<T>* right_child;
+    Node<E, Q>* left_child;
+    Node<E, Q>* right_child;
     double max_left;
     double min_right;
     double split_value;

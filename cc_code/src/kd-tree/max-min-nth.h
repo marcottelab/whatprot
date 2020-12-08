@@ -16,11 +16,11 @@
 namespace fluoroseq {
 namespace kd_tree {
 
-template <typename T>
-T* partition(T* begin, T* end, int s, T* pivot_ptr, int* num_eq_to_pivot) {
+template <typename E>
+E* partition(E* begin, E* end, int s, E* pivot_ptr, int* num_eq_to_pivot) {
     *num_eq_to_pivot = 0;
-    T* left_ptr = begin;
-    T* right_ptr = end - 1;
+    E* left_ptr = begin;
+    E* right_ptr = end - 1;
     double pivot_val = (*pivot_ptr)[s];
     std::swap(*pivot_ptr, *right_ptr);
     while (left_ptr < right_ptr) {
@@ -52,10 +52,10 @@ T* partition(T* begin, T* end, int s, T* pivot_ptr, int* num_eq_to_pivot) {
     return left_ptr;
 }
 
-template <typename T>
-void partition_alternate(T* begin, T* end, int s) {
-    T* left_ptr = begin;
-    T* right_ptr = end - 1;
+template <typename E>
+void partition_alternate(E* begin, E* end, int s) {
+    E* left_ptr = begin;
+    E* right_ptr = end - 1;
     double pivot_val = (*right_ptr)[s];
     while (left_ptr < right_ptr) {
         while (left_ptr < right_ptr) {
@@ -85,12 +85,12 @@ void partition_alternate(T* begin, T* end, int s) {
 // the pointer for nth. It will try to do this in the way that moves nth the
 // least it can from its original position, while still satisfying the
 // conditions.
-template <typename T>
-T* nth_element(T* begin, T* end, int s, T* nth) {
+template <typename E>
+E* nth_element(E* begin, E* end, int s, E* nth) {
     int num_eq_to_pivot;
-    T* pivot_ptr = partition(begin, end, s, nth, &num_eq_to_pivot);
-    T* right_ptr = pivot_ptr;
-    T* left_ptr = pivot_ptr - num_eq_to_pivot;
+    E* pivot_ptr = partition(begin, end, s, nth, &num_eq_to_pivot);
+    E* right_ptr = pivot_ptr;
+    E* left_ptr = pivot_ptr - num_eq_to_pivot;
     if (left_ptr <= nth && nth <= right_ptr) {
         int num_pivots_to_right = right_ptr - nth;
         int num_pivots_to_left = nth - left_ptr;
@@ -109,19 +109,19 @@ T* nth_element(T* begin, T* end, int s, T* nth) {
     return nth;
 }
 
-template <typename T>
-double max_element(T* begin, T* end, int s) {
+template <typename E>
+double max_element(E* begin, E* end, int s) {
     double max = DBL_MIN;
-    for (T* ptr = begin; ptr < end; ptr++) {
+    for (E* ptr = begin; ptr < end; ptr++) {
         max = std::max(max, (*ptr)[s]);
     }
     return max;
 }
 
-template <typename T>
-double min_element(T* begin, T* end, int s) {
+template <typename E>
+double min_element(E* begin, E* end, int s) {
     double min = DBL_MAX;
-    for (T* ptr = begin; ptr < end; ptr++) {
+    for (E* ptr = begin; ptr < end; ptr++) {
         min = std::min(min, (*ptr)[s]);
     }
     return min;

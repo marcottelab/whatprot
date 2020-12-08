@@ -40,14 +40,14 @@ BOOST_AUTO_TEST_SUITE(kd_tree_suite);
 BOOST_AUTO_TEST_SUITE(internal_node_suite);
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
-    Mock<Node<vector<double>>> left_mock;
+    Mock<Node<vector<double>, vector<double>>> left_mock;
     Fake(Method(left_mock, search));
-    Mock<Node<vector<double>>> right_mock;
+    Mock<Node<vector<double>, vector<double>>> right_mock;
     Fake(Method(right_mock, search));
     double max_left = 1.1;
     double min_right = 3.3;
     int s = 1;
-    InternalNode<vector<double>> node(
+    InternalNode<vector<double>, vector<double>> node(
             &left_mock.get(), &right_mock.get(), max_left, min_right, s);
     BOOST_TEST(node.left_child == &left_mock.get());
     BOOST_TEST(node.right_child == &right_mock.get());
@@ -58,17 +58,17 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(search_left_only_test, *tolerance(TOL)) {
-    Mock<Node<vector<double>>> left_mock;
+    Mock<Node<vector<double>, vector<double>>> left_mock;
     When(Method(left_mock, search))
             .Do([](const vector<double>& query, KBest<vector<double>>* k_best) {
                 k_best->kth_distance = 1.0;
             });
-    Mock<Node<vector<double>>> right_mock;
+    Mock<Node<vector<double>, vector<double>>> right_mock;
     Fake(Method(right_mock, search));
     double max_left = 1.1;
     double min_right = 3.3;
     int s = 1;
-    InternalNode<vector<double>> node(
+    InternalNode<vector<double>, vector<double>> node(
             &left_mock.get(), &right_mock.get(), max_left, min_right, s);
     vector<double> query(3, 0);
     query[0] = 30;
@@ -82,17 +82,17 @@ BOOST_AUTO_TEST_CASE(search_left_only_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(search_left_then_right_test, *tolerance(TOL)) {
-    Mock<Node<vector<double>>> left_mock;
+    Mock<Node<vector<double>, vector<double>>> left_mock;
     When(Method(left_mock, search))
             .Do([](const vector<double>& query, KBest<vector<double>>* k_best) {
                 k_best->kth_distance = 2.0;
             });
-    Mock<Node<vector<double>>> right_mock;
+    Mock<Node<vector<double>, vector<double>>> right_mock;
     Fake(Method(right_mock, search));
     double max_left = 1.1;
     double min_right = 3.3;
     int s = 1;
-    InternalNode<vector<double>> node(
+    InternalNode<vector<double>, vector<double>> node(
             &left_mock.get(), &right_mock.get(), max_left, min_right, s);
     vector<double> query(3, 0);
     query[0] = 30;
@@ -108,9 +108,9 @@ BOOST_AUTO_TEST_CASE(search_left_then_right_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(search_right_only_test, *tolerance(TOL)) {
-    Mock<Node<vector<double>>> left_mock;
+    Mock<Node<vector<double>, vector<double>>> left_mock;
     Fake(Method(left_mock, search));
-    Mock<Node<vector<double>>> right_mock;
+    Mock<Node<vector<double>, vector<double>>> right_mock;
     When(Method(right_mock, search))
             .Do([](const vector<double>& query, KBest<vector<double>>* k_best) {
                 k_best->kth_distance = 1.0;
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(search_right_only_test, *tolerance(TOL)) {
     double max_left = 1.1;
     double min_right = 3.3;
     int s = 1;
-    InternalNode<vector<double>> node(
+    InternalNode<vector<double>, vector<double>> node(
             &left_mock.get(), &right_mock.get(), max_left, min_right, s);
     vector<double> query(3, 0);
     query[0] = 30;
@@ -132,9 +132,9 @@ BOOST_AUTO_TEST_CASE(search_right_only_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(search_right_then_left_test, *tolerance(TOL)) {
-    Mock<Node<vector<double>>> left_mock;
+    Mock<Node<vector<double>, vector<double>>> left_mock;
     Fake(Method(left_mock, search));
-    Mock<Node<vector<double>>> right_mock;
+    Mock<Node<vector<double>, vector<double>>> right_mock;
     When(Method(right_mock, search))
             .Do([](const vector<double>& query, KBest<vector<double>>* k_best) {
                 k_best->kth_distance = 2.0;
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(search_right_then_left_test, *tolerance(TOL)) {
     double max_left = 1.1;
     double min_right = 3.3;
     int s = 1;
-    InternalNode<vector<double>> node(
+    InternalNode<vector<double>, vector<double>> node(
             &left_mock.get(), &right_mock.get(), max_left, min_right, s);
     vector<double> query(3, 0);
     query[0] = 30;

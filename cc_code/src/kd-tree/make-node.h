@@ -24,14 +24,14 @@
 namespace fluoroseq {
 namespace kd_tree {
 
-template <typename T>
-Node<T>* make_node(int k, int d, T* begin, T* end) {
+template <typename E, typename Q>
+Node<E, Q>* make_node(int k, int d, E* begin, E* end) {
     // We want to split on the dimension with the biggest range. To do that, we
     // find the minimums and maximums of every dimension, which we can later use
     // to find the range of every dimension and take the max.
     std::vector<double> mins(d, DBL_MAX);
     std::vector<double> maxes(d, DBL_MIN);
-    for (T* t = begin; t < end; t++) {
+    for (E* t = begin; t < end; t++) {
         for (int i = 0; i < d; i++) {
             mins[i] = std::min(mins[i], (*t)[i]);
             maxes[i] = std::max(maxes[i], (*t)[i]);
@@ -49,7 +49,7 @@ Node<T>* make_node(int k, int d, T* begin, T* end) {
     }
     // Now we find the middle using reference math with begin and end. This is
     // what we will use as the "nth_element" below.
-    T* nth = &begin[(size_t)(end - begin) / 2];
+    E* nth = &begin[(size_t)(end - begin) / 2];
     // nth_element()
     //   * guarantees that every element to the left of the nth element will be
     //     strictly less the nth element and every element to its right.
@@ -68,13 +68,13 @@ Node<T>* make_node(int k, int d, T* begin, T* end) {
     int left_size = (int)(nth - begin);
     int right_size = (int)(end - nth);
     if (left_size < k || right_size < k) {
-        return new LeafNode<T>(d, begin, end);
+        return new LeafNode<E, Q>(d, begin, end);
     } else {
         double max_left = max_element(begin, nth, s);
         double min_right = min_element(nth, end, s);
-        Node<T>* left_child = make_node(k, d, begin, nth);
-        Node<T>* right_child = make_node(k, d, nth, end);
-        return new InternalNode<T>(
+        Node<E, Q>* left_child = make_node<E, Q>(k, d, begin, nth);
+        Node<E, Q>* right_child = make_node<E, Q>(k, d, nth, end);
+        return new InternalNode<E, Q>(
                 left_child, right_child, max_left, min_right, s);
     }
 }

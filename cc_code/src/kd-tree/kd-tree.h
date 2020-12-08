@@ -21,30 +21,30 @@
 
 namespace fluoroseq {
 
-template <typename T>
+template <typename E, typename Q>
 class KDTree {
   public:
-    KDTree(int k, int d, std::vector<T>&& v)
+    KDTree(int k, int d, std::vector<E>&& v)
             : k(k),
               values(std::move(v)),
-              root(kd_tree::make_node(
+              root(kd_tree::make_node<E, Q>(
                       k, d, &values[0], &values[values.size()])) {}
 
     ~KDTree() {
         delete root;
     }
 
-    void search(const T& query,
-                std::vector<T*>* k_nearest,
+    void search(const Q& query,
+                std::vector<E*>* k_nearest,
                 std::vector<double>* dists_sq) const {
-        kd_tree::KBest<T> k_best(k);
+        kd_tree::KBest<E> k_best(k);
         root->search(query, &k_best);
         k_best.fill(k_nearest, dists_sq);
     }
 
     int k;
-    std::vector<T> values;
-    kd_tree::Node<T>* root;
+    std::vector<E> values;
+    kd_tree::Node<E, Q>* root;
 };
 
 }  // namespace fluoroseq
