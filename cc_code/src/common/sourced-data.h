@@ -9,6 +9,9 @@
 #ifndef FLUOROSEQ_COMMON_SOURCED_DATA_H
 #define FLUOROSEQ_COMMON_SOURCED_DATA_H
 
+// Standard C++ library headers:
+#include <utility>
+
 // Local project headers:
 #include "util/delete.h"
 
@@ -18,6 +21,15 @@ template <typename V, typename S>
 class SourcedData {
   public:
     SourcedData(V value, S source) : value(value), source(source) {}
+
+    SourcedData(SourcedData&& other) : value(std::move(other.value)),
+                                       source(std::move(other.source)) {}
+
+    SourcedData& operator=(SourcedData&& other) {
+        value = std::move(other.value);
+        source = std::move(other.source);
+        return *this;
+    }
 
     ~SourcedData() {
         delete_if_pointer(value);
@@ -109,6 +121,13 @@ class SourceCountHitsList {
     SourceCountHitsList(SourceCountHitsList&& other)
             : num_sources(other.num_sources), sources(other.sources) {
         other.sources = NULL;
+    }
+
+    SourceCountHitsList& operator=(SourceCountHitsList&& other) {
+        num_sources = other.num_sources;
+        sources = other.sources;
+        other.sources = NULL;
+        return *this;
     }
 
     ~SourceCountHitsList() {

@@ -26,6 +26,7 @@ class DyeTrack {
     DyeTrack(int num_timesteps, int num_channels);
     DyeTrack(const DyeTrack& other);
     DyeTrack(DyeTrack&& other);
+    DyeTrack& operator=(DyeTrack&& other);
     bool operator==(const DyeTrack& other) const;
     short& operator()(int t, int c);
     short operator()(int t, int c) const;

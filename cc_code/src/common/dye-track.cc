@@ -60,6 +60,13 @@ DyeTrack::DyeTrack(DyeTrack&& other)
           num_channels(other.num_channels),
           counts(move(other.counts)) {}
 
+DyeTrack& DyeTrack::operator=(DyeTrack&& other) {
+    num_timesteps = other.num_timesteps;
+    num_channels = other.num_channels;
+    counts = move(other.counts);
+    return *this;
+}
+
 bool DyeTrack::operator==(const DyeTrack& other) const {
     return num_timesteps == other.num_timesteps
            && num_channels == other.num_channels && counts == other.counts;
