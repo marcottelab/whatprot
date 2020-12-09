@@ -21,15 +21,15 @@ namespace kd_tree {
 template <typename E>
 class KBest {
   public:
-    KBest(int k) : k(k), kth_distance(DBL_MAX) {}
+    KBest(int k) : k(k), kth_dist_sq(DBL_MAX) {}
 
     virtual void insert(double d, E* t) {
         pq.push(std::pair<double, E*>(d, t));
         if (pq.size() > k) {
             pq.pop();
-            kth_distance = pq.top().first;
+            kth_dist_sq = pq.top().first;
         } else if (pq.size() == k) {
-            kth_distance = pq.top().first;
+            kth_dist_sq = pq.top().first;
         }
     }
 
@@ -45,7 +45,7 @@ class KBest {
     }
 
     int k;
-    double kth_distance;
+    double kth_dist_sq;
     std::priority_queue<std::pair<double, E*>> pq;
 };
 

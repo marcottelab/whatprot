@@ -40,12 +40,16 @@ class InternalNode : public Node<E, Q> {
         double query_value = query[s];
         if (query_value < split_value) {
             left_child->search(query, k_best);
-            if (query_value + k_best->kth_distance > min_right) {
+            double right_dist = min_right - query_value;
+            double right_dist_sq = right_dist * right_dist;
+            if (k_best->kth_dist_sq > right_dist_sq) {
                 right_child->search(query, k_best);
             }
         } else {
             right_child->search(query, k_best);
-            if (query_value - k_best->kth_distance < max_left) {
+            double left_dist = query_value - max_left;
+            double left_dist_sq = left_dist * left_dist;
+            if (k_best->kth_dist_sq > left_dist_sq) {
                 left_child->search(query, k_best);
             }
         }
