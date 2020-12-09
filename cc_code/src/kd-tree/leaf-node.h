@@ -24,18 +24,41 @@ class LeafNode : public Node<E, Q> {
 
     virtual void search(const Q& query, KBest<E>* k_best) const {
         for (E* t = begin; t < end; t++) {
-            double dist = distance(query, *t);
-            k_best->consider(dist, t);
+            try_to_add(query, t, k_best);
         }
     }
 
-    double distance(const Q& query, const E& entry) const {
+    void try_to_add(const Q& query, E* entry, KBest<E>* k_best) const {
+        double kth_distance = k_best->kth_distance;
         double dist = 0.0;
-        for (int i = 0; i < d; i++) {
-            double diff = query[i] - entry[i];
-            dist += diff * diff;
+        // This is called loop unrolling. We stretch out a loop in order to
+        // check the loop condition less frequently, which is more efficient.
+        // This is particularly important because of the (dist > kth_distance)
+        // condition, which is expensive because the computation can't start
+        // until the computation for dist is finished.
+        int i = 0;
+        while (i < d - 3) {
+            double x1 = query[i] - (*entry)[i];
+            double x2 = query[i + 1] - (*entry)[i + 1];
+            double x3 = query[i + 2] - (*entry)[i + 2];
+            double x4 = query[i + 3] - (*entry)[i + 3];
+            dist += x1 * x1 + x2 * x2 + x3 * x3 + x4 * x4;
+            // Here we consider returning early to avoid unnecessary additional
+            // calculation.
+            if (dist > kth_distance) {
+                return;
+            }
+            i += 4;
         }
-        return dist;
+        while (i < d) {
+            double x = query[i] - (*entry)[i];
+            dist += x * x;
+            i++;
+        }
+        if (dist > kth_distance) {
+            return;
+        }
+        k_best->insert(dist, entry);
     }
 
     int d;

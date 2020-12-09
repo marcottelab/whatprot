@@ -23,15 +23,13 @@ class KBest {
   public:
     KBest(int k) : k(k), kth_distance(DBL_MAX) {}
 
-    virtual void consider(double d, E* t) {
-        if (d < kth_distance) {
-            if (pq.size() == k) {
-                pq.pop();
-            }
-            pq.push(std::pair<double, E*>(d, t));
-            if (pq.size() == k) {
-                kth_distance = pq.top().first;
-            }
+    virtual void insert(double d, E* t) {
+        pq.push(std::pair<double, E*>(d, t));
+        if (pq.size() > k) {
+            pq.pop();
+            kth_distance = pq.top().first;
+        } else if (pq.size() == k) {
+            kth_distance = pq.top().first;
         }
     }
 
