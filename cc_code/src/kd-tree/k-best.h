@@ -23,8 +23,8 @@ class KBest {
 public:
     KBest(int k) : k(k), kth_dist_sq(DBL_MAX) {}
 
-    virtual void insert(double d, E* t) {
-        pq.push(std::pair<double, E*>(d, t));
+    virtual void insert(double d, E* entry) {
+        pq.push(std::pair<double, E*>(d, entry));
         if (pq.size() > k) {
             pq.pop();
             kth_dist_sq = pq.top().first;

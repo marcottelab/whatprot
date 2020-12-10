@@ -31,10 +31,10 @@ Node<E, Q>* make_node(int k, int d, E* begin, E* end) {
     // to find the range of every dimension and take the max.
     std::vector<double> mins(d, DBL_MAX);
     std::vector<double> maxes(d, DBL_MIN);
-    for (E* t = begin; t < end; t++) {
+    for (E* entry = begin; entry < end; entry++) {
         for (int i = 0; i < d; i++) {
-            mins[i] = std::min(mins[i], (*t)[i]);
-            maxes[i] = std::max(maxes[i], (*t)[i]);
+            mins[i] = std::min(mins[i], (*entry)[i]);
+            maxes[i] = std::max(maxes[i], (*entry)[i]);
         }
     }
     // Take largest range, computing using mins and maxes.

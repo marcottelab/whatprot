@@ -23,8 +23,8 @@ public:
     virtual ~LeafNode() {}
 
     virtual void search(const Q& query, KBest<E>* k_best) const {
-        for (E* t = begin; t < end; t++) {
-            consider(query, t, k_best);
+        for (E* entry = begin; entry < end; entry++) {
+            consider(query, entry, k_best);
         }
     }
 
