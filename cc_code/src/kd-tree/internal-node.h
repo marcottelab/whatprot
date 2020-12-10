@@ -18,7 +18,7 @@ namespace kd_tree {
 
 template <typename E, typename Q>
 class InternalNode : public Node<E, Q> {
-  public:
+public:
     InternalNode(Node<E, Q>* left_child,
                  Node<E, Q>* right_child,
                  double max_left,

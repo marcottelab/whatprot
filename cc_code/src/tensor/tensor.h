@@ -15,7 +15,7 @@
 namespace fluoroseq {
 
 class Tensor {
-  public:
+public:
     Tensor(int order, int* shape);
     Tensor(Tensor&& other);
     ~Tensor();

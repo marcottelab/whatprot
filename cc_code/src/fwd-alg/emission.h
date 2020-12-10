@@ -20,7 +20,7 @@
 namespace fluoroseq {
 
 class Emission {
-  public:
+public:
     Emission(const Radiometry& radiometry,
              int max_num_dyes,
              std::function<double(double, int)> pdf);

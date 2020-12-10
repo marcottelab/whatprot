@@ -20,7 +20,7 @@
 namespace fluoroseq {
 
 class DyeTrack {
-  public:
+public:
     DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq);
     DyeTrack(int num_timesteps, int num_channels, short* counts);
     DyeTrack(int num_timesteps, int num_channels);
@@ -44,7 +44,7 @@ namespace std {
 
 template <>
 struct hash<fluoroseq::DyeTrack> {
-  public:
+public:
     size_t operator()(const fluoroseq::DyeTrack& dye_track) const;
 
     hash<vector<short>> vector_hash;

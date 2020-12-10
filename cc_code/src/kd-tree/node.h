@@ -20,7 +20,7 @@ namespace kd_tree {
 
 template <typename E, typename Q>
 class Node {
-  public:
+public:
     virtual void search(const Q& query, KBest<E>* k_best) const = 0;
     virtual ~Node(){};
 };

@@ -26,7 +26,7 @@
 namespace fluoroseq {
 
 class HybridClassifier {
-  public:
+public:
     HybridClassifier(
             int num_timesteps,
             int num_channels,

@@ -20,7 +20,7 @@ namespace kd_tree {
 
 template <typename E>
 class KBest {
-  public:
+public:
     KBest(int k) : k(k), kth_dist_sq(DBL_MAX) {}
 
     virtual void insert(double d, E* t) {

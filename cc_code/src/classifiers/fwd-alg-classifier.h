@@ -30,7 +30,7 @@
 namespace fluoroseq {
 
 class FwdAlgClassifier {
-  public:
+public:
     FwdAlgClassifier(
             int num_timesteps,
             int num_channels,

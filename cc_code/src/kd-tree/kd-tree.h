@@ -23,7 +23,7 @@ namespace fluoroseq {
 
 template <typename E, typename Q>
 class KDTree {
-  public:
+public:
     KDTree(int k, int d, std::vector<E>&& v)
             : k(k),
               values(std::move(v)),

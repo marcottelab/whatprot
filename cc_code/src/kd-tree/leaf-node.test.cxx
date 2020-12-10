@@ -167,8 +167,8 @@ BOOST_AUTO_TEST_CASE(consider_barely_failure_big_d_test, *tolerance(TOL)) {
     Mock<KBest<vector<double>>> k_best_mock;
     Fake(Method(k_best_mock, insert));
     KBest<vector<double>>* k_best = &k_best_mock.get();
-    k_best->kth_dist_sq = 1.0 * 1.0 + 1.01 * 1.01 + 1.02 * 1.02 + 1.03 * 1.03
-                          - 1e-7;
+    k_best->kth_dist_sq =
+            1.0 * 1.0 + 1.01 * 1.01 + 1.02 * 1.02 + 1.03 * 1.03 - 1e-7;
     leaf.consider(query, &entry, k_best);
     VerifyNoOtherInvocations(k_best_mock);
 }

@@ -26,8 +26,8 @@
 namespace fluoroseq {
 
 class KDTEntry {
-  public:
-    KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&&  dye_track);
+public:
+    KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track);
     KDTEntry(KDTEntry&& other);
     KDTEntry& operator=(KDTEntry&& other);
     double operator[](int i) const;
@@ -44,22 +44,21 @@ void swap(fluoroseq::KDTEntry& e1, fluoroseq::KDTEntry& e2);
 namespace fluoroseq {
 
 class KDTQuery {
-  public:
+public:
     KDTQuery(const Radiometry& rad);
     double operator[](int i) const;
     Radiometry rad;
 };
 
 class NNClassifier {
-  public:
-    NNClassifier(
-            int num_timesteps,
-            int num_channels,
-            const ErrorModel& error_model,
-            int k,
-            double sigma,
-            std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
-                    dye_tracks);
+public:
+    NNClassifier(int num_timesteps,
+                 int num_channels,
+                 const ErrorModel& error_model,
+                 int k,
+                 double sigma,
+                 std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
+                         dye_tracks);
     ~NNClassifier();
     double classify_helper(const Radiometry& radiometry,
                            std::unordered_map<int, double>* id_score_map);

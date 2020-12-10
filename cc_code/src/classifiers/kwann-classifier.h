@@ -31,7 +31,7 @@ namespace fluoroseq {
 // find approximate nearest neighbors we use the FLANN (Fast Linear Approximate
 // Nearest Neighbors) library (see extern/flann-*).
 class KWANNClassifier {
-  public:
+public:
     KWANNClassifier(
             int num_timesteps,
             int num_channels,

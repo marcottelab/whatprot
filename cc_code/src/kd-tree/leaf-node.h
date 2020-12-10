@@ -18,7 +18,7 @@ namespace kd_tree {
 
 template <typename E, typename Q>
 class LeafNode : public Node<E, Q> {
-  public:
+public:
     LeafNode(int d, E* begin, E* end) : d(d), begin(begin), end(end) {}
     virtual ~LeafNode() {}
 

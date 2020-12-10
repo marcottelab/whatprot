@@ -12,7 +12,7 @@
 namespace fluoroseq {
 
 class TensorIterator {
-  public:
+public:
     TensorIterator(int order, int* shape, int size, double* values);
     ~TensorIterator();
     void reset();

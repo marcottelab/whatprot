@@ -19,7 +19,7 @@
 namespace fluoroseq {
 
 class BinomialTransition {
-  public:
+public:
     BinomialTransition(double q);
     void reserve(int max_n) const;
     double& prob(int from, int to) const;

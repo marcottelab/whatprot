@@ -50,7 +50,7 @@ KDTEntry& KDTEntry::operator=(KDTEntry&& other) {
 }
 
 double KDTEntry::operator[](int i) const {
-    return (double) dye_track.value.counts[i];
+    return (double)dye_track.value.counts[i];
 }
 
 }  // namespace fluoroseq
@@ -67,11 +67,10 @@ void swap(KDTEntry& e1, KDTEntry& e2) {
 
 namespace fluoroseq {
 
-KDTQuery::KDTQuery(const Radiometry& rad)
-        : rad(rad) {}
+KDTQuery::KDTQuery(const Radiometry& rad) : rad(rad) {}
 
 double KDTQuery::operator[](int i) const {
-        return rad.intensities[i];
+    return rad.intensities[i];
 }
 
 NNClassifier::NNClassifier(
@@ -93,8 +92,8 @@ NNClassifier::NNClassifier(
         kdt_entries.push_back(move(kdt_convert));
     }
     kd_tree = new KDTree<KDTEntry, KDTQuery>(k,
-                                     num_timesteps * num_channels,  // d
-                                     move(kdt_entries));
+                                             num_timesteps * num_channels,  // d
+                                             move(kdt_entries));
     double scale = error_model.mu;
     double sig = sigma;
     double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
@@ -109,9 +108,8 @@ NNClassifier::~NNClassifier() {
     delete kd_tree;
 }
 
-double NNClassifier::classify_helper(
-        const Radiometry& radiometry,
-        unordered_map<int, double>* id_score_map) {
+double NNClassifier::classify_helper(const Radiometry& radiometry,
+                                     unordered_map<int, double>* id_score_map) {
     KDTQuery query(radiometry);
     vector<KDTEntry*> k_nearest;
     vector<double> dists_sq;

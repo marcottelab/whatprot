@@ -20,7 +20,7 @@ enum DistributionType {
 };
 
 class ErrorModel {
-  public:
+public:
     ErrorModel(double p_edman_failure,
                double p_detach,
                double p_bleach,

@@ -12,7 +12,7 @@
 namespace fluoroseq {
 
 class Radiometry {
-  public:
+public:
     Radiometry(int num_timesteps, int num_channels);
     Radiometry(const Radiometry& other);
     ~Radiometry();

@@ -15,7 +15,7 @@
 namespace fluoroseq {
 
 class DetachTransition {
-  public:
+public:
     DetachTransition(double p_detach);
     void operator()(Tensor* tensor, int edmans) const;
 

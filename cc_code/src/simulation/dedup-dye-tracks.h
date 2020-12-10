@@ -47,7 +47,7 @@ void reduce_dye_tracks_helper(
         std::unordered_map<int, SourceCountHits<int>>* source_map);
 
 class OutputInfo {
-  public:
+public:
     OutputInfo(int num_timesteps,
                int num_channels,
                std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*

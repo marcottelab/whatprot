@@ -12,7 +12,7 @@
 namespace fluoroseq {
 
 class Vector {
-  public:
+public:
     Vector(int length, int stride, double* values);
     double& operator[](int i);
 

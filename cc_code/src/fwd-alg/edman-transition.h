@@ -16,7 +16,7 @@
 namespace fluoroseq {
 
 class EdmanTransition {
-  public:
+public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);

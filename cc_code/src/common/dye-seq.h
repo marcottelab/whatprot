@@ -19,7 +19,7 @@ using std::string;
 }  // namespace
 
 class DyeSeq {
-  public:
+public:
     // Parameters:
     //     -- num_channels is a 1 digit positive non-zero integer.
     //     -- s is a string representation of the dye sequence, and should

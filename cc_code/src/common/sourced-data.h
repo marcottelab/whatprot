@@ -19,11 +19,11 @@ namespace fluoroseq {
 
 template <typename V, typename S>
 class SourcedData {
-  public:
+public:
     SourcedData(V value, S source) : value(value), source(source) {}
 
-    SourcedData(SourcedData&& other) : value(std::move(other.value)),
-                                       source(std::move(other.source)) {}
+    SourcedData(SourcedData&& other)
+            : value(std::move(other.value)), source(std::move(other.source)) {}
 
     SourcedData& operator=(SourcedData&& other) {
         value = std::move(other.value);
@@ -42,7 +42,7 @@ class SourcedData {
 
 template <typename S>
 class SourceSet {
-  public:
+public:
     SourceSet(int num_sources, S* sources)
             : num_sources(num_sources), sources(sources) {}
 
@@ -56,7 +56,7 @@ class SourceSet {
 
 template <typename S>
 class SourceCount {
-  public:
+public:
     SourceCount(S source, int count) : source(source), count(count) {}
 
     SourceCount(const SourceCount& other)
@@ -72,7 +72,7 @@ class SourceCount {
 
 template <typename S>
 class SourceCountList {
-  public:
+public:
     SourceCountList(int num_sources, SourceCount<S>** sources)
             : num_sources(num_sources), sources(sources) {}
 
@@ -86,7 +86,7 @@ class SourceCountList {
 
 template <typename S>
 class SourceCountHits {
-  public:
+public:
     SourceCountHits() : source(-1), count(-1), hits(-1) {}
     SourceCountHits(S source, int count, int hits)
             : source(source), count(count), hits(hits) {}
@@ -104,7 +104,7 @@ class SourceCountHits {
 
 template <typename S>
 class SourceCountHitsList {
-  public:
+public:
     SourceCountHitsList(int num_sources, SourceCountHits<S>** sources)
             : num_sources(num_sources), sources(sources) {}
 

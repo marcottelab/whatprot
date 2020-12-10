@@ -27,7 +27,7 @@ namespace fluoroseq {
 //     * has no base classes of the same type as its first non-static data
 //       member.
 class ScoredClassification {
-  public:
+public:
     ScoredClassification(int id, double score, double total);
     ScoredClassification();
     double adjusted_score() const;

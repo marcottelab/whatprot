@@ -14,7 +14,7 @@ namespace fluoroseq {
 class RangeIterator;
 
 class Range {
-  public:
+public:
     Range(int max);
     Range(int min, int max);
     RangeIterator begin();
@@ -25,7 +25,7 @@ class Range {
 };
 
 class RangeIterator {
-  public:
+public:
     RangeIterator(int index);
     void operator++();
     bool operator!=(const RangeIterator& other);

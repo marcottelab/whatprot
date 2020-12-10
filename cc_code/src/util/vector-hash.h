@@ -26,7 +26,7 @@ namespace std {
 //   https://stackoverflow.com/questions/4948780/magic-number-in-boosthash-combine
 template <typename K>
 struct hash<vector<K>> {
-  public:
+public:
     size_t operator()(const vector<K>& v) const {
         hash<K> hash_k;
         size_t seed = 0;
