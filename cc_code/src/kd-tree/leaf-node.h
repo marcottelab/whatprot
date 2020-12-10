@@ -24,11 +24,11 @@ class LeafNode : public Node<E, Q> {
 
     virtual void search(const Q& query, KBest<E>* k_best) const {
         for (E* t = begin; t < end; t++) {
-            try_to_add(query, t, k_best);
+            consider(query, t, k_best);
         }
     }
 
-    void try_to_add(const Q& query, E* entry, KBest<E>* k_best) const {
+    void consider(const Q& query, E* entry, KBest<E>* k_best) const {
         double kth_dist_sq = k_best->kth_dist_sq;
         double dist_sq = 0.0;
         // This is called loop unrolling. We stretch out a loop in order to
@@ -45,7 +45,7 @@ class LeafNode : public Node<E, Q> {
             dist_sq += x1 * x1 + x2 * x2 + x3 * x3 + x4 * x4;
             // Here we consider returning early to avoid unnecessary additional
             // calculation.
-            if (dist_sq > kth_dist_sq) {
+            if (dist_sq >= kth_dist_sq) {
                 return;
             }
             i += 4;
@@ -55,7 +55,7 @@ class LeafNode : public Node<E, Q> {
             dist_sq += x * x;
             i++;
         }
-        if (dist_sq > kth_dist_sq) {
+        if (dist_sq >= kth_dist_sq) {
             return;
         }
         k_best->insert(dist_sq, entry);

@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(k_best_suite);
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     KBest<string> kb(3);
     BOOST_TEST(kb.k == 3);
-    BOOST_TEST(kb.kth_distance == DBL_MAX);
+    BOOST_TEST(kb.kth_dist_sq == DBL_MAX);
 }
 
 BOOST_AUTO_TEST_CASE(empty_test, *tolerance(TOL)) {
@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE(empty_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(under_capacity_test, *tolerance(TOL)) {
     KBest<string> kb(3);
     string s_one = "one point zero";
-    kb.consider(1.0, &s_one);
-    BOOST_TEST(kb.kth_distance == DBL_MAX);
+    kb.insert(1.0, &s_one);
+    BOOST_TEST(kb.kth_dist_sq == DBL_MAX);
     vector<string*> v;
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
@@ -61,12 +61,12 @@ BOOST_AUTO_TEST_CASE(under_capacity_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(at_capacity_test, *tolerance(TOL)) {
     KBest<string> kb(3);
     string s_one = "one point zero";
-    kb.consider(1.0, &s_one);
+    kb.insert(1.0, &s_one);
     string s_three = "three point zero";
-    kb.consider(3.0, &s_three);
+    kb.insert(3.0, &s_three);
     string s_two = "two point zero";
-    kb.consider(2.0, &s_two);
-    BOOST_TEST(kb.kth_distance == 3.0);
+    kb.insert(2.0, &s_two);
+    BOOST_TEST(kb.kth_dist_sq == 3.0);
     vector<string*> v;
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
@@ -83,16 +83,16 @@ BOOST_AUTO_TEST_CASE(at_capacity_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(over_capacity_test, *tolerance(TOL)) {
     KBest<string> kb(3);
     string s_one = "one point zero";
-    kb.consider(1.0, &s_one);
+    kb.insert(1.0, &s_one);
     string s_three = "three point zero";
-    kb.consider(3.0, &s_three);
+    kb.insert(3.0, &s_three);
     string s_two = "two point zero";
-    kb.consider(2.0, &s_two);
+    kb.insert(2.0, &s_two);
     string s_first_extra = "four point four";
-    kb.consider(4.4, &s_first_extra);
+    kb.insert(4.4, &s_first_extra);
     string s_second_extra = "two point two";
-    kb.consider(2.2, &s_second_extra);
-    BOOST_TEST(kb.kth_distance == 2.2);
+    kb.insert(2.2, &s_second_extra);
+    BOOST_TEST(kb.kth_dist_sq == 2.2);
     vector<string*> v;
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
