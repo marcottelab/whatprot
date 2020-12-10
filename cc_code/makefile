@@ -6,15 +6,14 @@ CC_DEPS_SHARED = ./src/classifiers/*.cc ./src/common/*.cc ./src/fwd-alg/*.cc ./s
 CC_DEPS_CLASSIFY = $(CC_DEPS_SHARED) ./src/main/classify/*.cc
 CC_DEPS_SIMULATE = $(CC_DEPS_SHARED) ./src/main/simulate/*.cc
 CC_DEPS_TEST = $(CC_DEPS_SHARED) ./test/test-module.cc ./src/*/*.test.cxx
-INCLUDES = -iquote ./src/ -I ./extern/flann-1.9.1/src/cpp/ -I ./extern/mrmpi-7Apr14/src/ -I ./extern/FakeIt/single_header/boost/
+INCLUDES = -iquote ./src/ -I ./extern/mrmpi-7Apr14/src/
 
 # LIBRARIES MUST BE AFTER NAMING ALL C++ FILES. BE CAREFUL WITH ORDER OF ARGUMENTS.
-FLANN = -L ./extern/flann-1.9.1/build/lib/ -lflann_cpp_s
 MRMPI = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_mpicc
 MRMPI_SERIAL = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_serial -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
 MRMPI_SKX = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_skx_mpicc
 MRMPI_SKX_SERIAL = -L ./extern/mrmpi-7Apr14/src/ -lmrmpi_skx_serial -I ./extern/mrmpi-7Apr14/mpistubs/ -L ./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
-BOOST_TEST = -I ./extern/boost_1_73_0_subset/
+BOOST_TEST = -I ./extern/boost_1_73_0_subset/ -I ./extern/FakeIt/single_header/boost/
 
 ARGS_CLASSIFY = $(OFLAG) $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI_SERIAL)
 MPI_ARGS_CLASSIFY = $(OFLAG) -D USE_MPI $(CC_DEPS_CLASSIFY) $(INCLUDES) $(FLANN) $(MRMPI)

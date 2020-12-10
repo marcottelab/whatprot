@@ -15,7 +15,7 @@
 
 // Local project headers:
 #include "classifiers/fwd-alg-classifier.h"
-#include "classifiers/kwann-classifier.h"
+#include "classifiers/nn-classifier.h"
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
 #include "common/error-model.h"
@@ -36,17 +36,16 @@ HybridClassifier::HybridClassifier(
         const ErrorModel& error_model,
         int k,
         double sigma,
-        const vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
-                dye_tracks,
+        vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*   dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : h(h),
-          kwann_classifier(num_timesteps,
-                           num_channels,
-                           error_model,
-                           k,
-                           sigma,
-                           dye_tracks),
+          nn_classifier(num_timesteps,
+                        num_channels,
+                        error_model,
+                        k,
+                        sigma,
+                        dye_tracks),
           fwd_alg_classifier(
                   num_timesteps, num_channels, error_model, dye_seqs) {
     for (int i = 0; i < dye_seqs.size(); i++) {
@@ -57,7 +56,7 @@ HybridClassifier::HybridClassifier(
 
 ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     vector<ScoredClassification> candidates;
-    candidates = kwann_classifier.classify(radiometry, h);
+    candidates = nn_classifier.classify(radiometry, h);
     double total = candidates[0].total;
     double subfraction = 0.0;
     vector<int> candidate_indices;

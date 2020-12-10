@@ -112,7 +112,7 @@ int hybrid_main(int argc, char** argv) {
                                 error_model,
                                 k,
                                 sigma,
-                                dye_tracks,
+                                &dye_tracks,
                                 h,
                                 dye_seqs);
     end_time = wall_time();

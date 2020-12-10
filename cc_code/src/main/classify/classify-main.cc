@@ -17,14 +17,12 @@
 #endif  // USE_MPI
 
 // Local project headers:
-#include "main/classify/ann-main.h"
 #include "main/classify/hmm-main.h"
 #include "main/classify/hybrid-main.h"
 #include "main/classify/nn-main.h"
 #include "main/cmd-line-out.h"
 
 namespace {
-using fluoroseq::ann_main;
 using fluoroseq::hmm_main;
 using fluoroseq::hybrid_main;
 using fluoroseq::nn_main;
@@ -46,8 +44,6 @@ int main(int argc, char** argv) {
     int return_code;
     if (0 == strcmp(mode, "hmm")) {
         return_code = hmm_main(argc, argv);
-    } else if (0 == strcmp(mode, "ann")) {
-        return_code = ann_main(argc, argv);
     } else if (0 == strcmp(mode, "hybrid")) {
         return_code = hybrid_main(argc, argv);
     } else if (0 == strcmp(mode, "nn")) {
