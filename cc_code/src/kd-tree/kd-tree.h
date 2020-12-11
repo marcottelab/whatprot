@@ -21,9 +21,23 @@
 
 namespace fluoroseq {
 
+// Template requirements for KDTree to work.
+//   1. typename E must have an operator[] function which receives an int and
+//      returns a double.
+//   2. typename E must have a int member called size indicating the number of
+//      simulated elements it represents.
+//   3. typename Q must have an operator[] function which receives an int and
+//      returns a double.
 template <typename E, typename Q>
 class KDTree {
 public:
+    // At construction, you must give the following.
+    //   1. k - the number of nearest neighbors to be returned when a search is
+    //      performed.
+    //   2. d - the dimensionality of your data.
+    //   3. v - a vector of E typed elements, which must give a valid response
+    //      when called with the operator[] function for any element in the
+    //      range [0, d).
     KDTree(int k, int d, std::vector<E>&& v)
             : k(k),
               values(std::move(v)),

@@ -21,14 +21,22 @@ namespace kd_tree {
 template <typename E>
 class KBest {
 public:
-    KBest(int k) : k(k), kth_dist_sq(DBL_MAX) {}
+    KBest(int k) : k(k), size(0), kth_dist_sq(DBL_MAX) {}
 
     virtual void insert(double d, E* entry) {
+        size += entry->size;
         pq.push(std::pair<double, E*>(d, entry));
-        if (pq.size() > k) {
+        // Here we pop the top element of pq if removing it still allows us to
+        // have a size larger than k.
+        int top_size = pq.top().second->size;
+        if (size - top_size >= k) {
+            size -= top_size;
             pq.pop();
-            kth_dist_sq = pq.top().first;
-        } else if (pq.size() == k) {
+        }
+        // We only want to reset kth_dist_sq if we have enough elements. This
+        // ensures that the kth_dist_sq remains DBL_MAX so that everything tried
+        // will be added until there are enough elements.
+        if (size >= k) {
             kth_dist_sq = pq.top().first;
         }
     }
@@ -45,6 +53,7 @@ public:
     }
 
     int k;
+    int size;
     double kth_dist_sq;
     std::priority_queue<std::pair<double, E*>> pq;
 };

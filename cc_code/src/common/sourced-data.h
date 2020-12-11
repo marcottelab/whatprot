@@ -130,6 +130,13 @@ public:
         return *this;
     }
 
+    int total_hits() {
+        int total_hits = 0;
+        for (int i = 0; i < num_sources; i++) {
+            total_hits += sources[i]->hits;
+        }
+    }
+
     ~SourceCountHitsList() {
         if (sources != NULL) {
             delete_array(num_sources, sources);

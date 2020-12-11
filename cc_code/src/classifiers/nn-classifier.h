@@ -32,6 +32,7 @@ public:
     KDTEntry& operator=(KDTEntry&& other);
     double operator[](int i) const;
     SourcedData<DyeTrack, SourceCountHitsList<int>> dye_track;
+    int size;
 };
 
 }  // namespace fluoroseq

@@ -40,7 +40,9 @@ double PI = 3.141592653589793238;
 namespace fluoroseq {
 
 KDTEntry::KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
-        : dye_track(move(dye_track)) {}
+        : dye_track(move(dye_track)) {
+    size = dye_track.source.total_hits();
+}
 
 KDTEntry::KDTEntry(KDTEntry&& other) : dye_track(move(other.dye_track)) {}
 
@@ -115,7 +117,7 @@ double NNClassifier::classify_helper(const Radiometry& radiometry,
     vector<double> dists_sq;
     kd_tree->search(query, &k_nearest, &dists_sq);
     double total_score = 0.0;
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < k_nearest.size(); i++) {
         const SourcedData<DyeTrack, SourceCountHitsList<int>>& dye_track =
                 k_nearest[i]->dye_track;
         double weight = 1.0;
