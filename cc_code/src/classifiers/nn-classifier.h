@@ -69,12 +69,12 @@ public:
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
-    std::function<double(double, int)> kernel;
     KDTree<KDTEntry, KDTQuery>* kd_tree;
     int num_train;
     int num_timesteps;
     int num_channels;
     int k;  // number of nearest neighbors to use
+    double two_sigma_sq;  // sigma to use for kernel weighting
 };
 
 }  // namespace fluoroseq

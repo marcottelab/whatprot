@@ -85,7 +85,8 @@ NNClassifier::NNClassifier(
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           k(k),
-          num_train(dye_tracks->size()) {
+          num_train(dye_tracks->size()),
+          two_sigma_sq(2.0 * sigma * sigma) {
     int stride = num_timesteps * num_channels;
     vector<KDTEntry> kdt_entries;
     kdt_entries.reserve(num_train);
@@ -96,14 +97,6 @@ NNClassifier::NNClassifier(
     kd_tree = new KDTree<KDTEntry, KDTQuery>(k,
                                              num_timesteps * num_channels,  // d
                                              move(kdt_entries));
-    double scale = error_model.mu;
-    double sig = sigma;
-    double multiplier = 1.0 / (sigma * sqrt(2.0 * PI));
-    kernel = [scale, sig, multiplier](double observed, int state) -> double {
-        double unit_obs = observed / scale;
-        double offset = unit_obs - (double)state;
-        return multiplier * exp(-(offset * offset) / (2.0 * sig * sig));
-    };
 }
 
 NNClassifier::~NNClassifier() {
@@ -120,13 +113,15 @@ double NNClassifier::classify_helper(const Radiometry& radiometry,
     for (int i = 0; i < k_nearest.size(); i++) {
         const SourcedData<DyeTrack, SourceCountHitsList<int>>& dye_track =
                 k_nearest[i]->dye_track;
-        double weight = 1.0;
-        for (int j = 0; j < num_timesteps * num_channels; j++) {
-            double offset = radiometry.intensities[j]
-                            - (double)dye_track.value.counts[j];
-            weight *= kernel(radiometry.intensities[j],
-                             dye_track.value.counts[j]);
-        }
+        double dist_sq = dists_sq[i];
+        // For computing a gaussian kernel.
+        //   * The normalization factor, 1/(sigma*2*PI), is ignored here,
+        //     because it is a constant factor, so all weights should be
+        //     affected equally.
+        //   * We use the dist_sq from the KDTree. This works because a guassian
+        //     kernel is radially symmetric. It is also far more efficient to
+        //     compute it this way, which is why we do it.
+        double weight = exp(-dist_sq / two_sigma_sq);
         for (int j = 0; j < dye_track.source.num_sources; j++) {
             int id = dye_track.source.sources[j]->source;
             double count = (double)dye_track.source.sources[j]->count;
