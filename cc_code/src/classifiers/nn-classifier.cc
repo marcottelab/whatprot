@@ -44,10 +44,12 @@ KDTEntry::KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
     size = dye_track.source.total_hits();
 }
 
-KDTEntry::KDTEntry(KDTEntry&& other) : dye_track(move(other.dye_track)) {}
+KDTEntry::KDTEntry(KDTEntry&& other) : dye_track(move(other.dye_track)),
+                                       size(other.size) {}
 
 KDTEntry& KDTEntry::operator=(KDTEntry&& other) {
     dye_track = move(other.dye_track);
+    size = other.size;
     return *this;
 }
 
