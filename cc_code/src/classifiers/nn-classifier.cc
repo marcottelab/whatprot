@@ -41,7 +41,7 @@ namespace fluoroseq {
 
 KDTEntry::KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
         : dye_track(move(dye_track)) {
-    size = dye_track.source.total_hits();
+    size = this->dye_track.source.total_hits();
 }
 
 KDTEntry::KDTEntry(KDTEntry&& other) : dye_track(move(other.dye_track)),
