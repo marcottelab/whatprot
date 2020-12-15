@@ -44,8 +44,8 @@ KDTEntry::KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
     hits = this->dye_track.source.total_hits();
 }
 
-KDTEntry::KDTEntry(KDTEntry&& other) : dye_track(move(other.dye_track)),
-                                       hits(other.hits) {}
+KDTEntry::KDTEntry(KDTEntry&& other)
+        : dye_track(move(other.dye_track)), hits(other.hits) {}
 
 KDTEntry& KDTEntry::operator=(KDTEntry&& other) {
     dye_track = move(other.dye_track);

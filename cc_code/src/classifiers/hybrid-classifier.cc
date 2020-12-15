@@ -36,7 +36,7 @@ HybridClassifier::HybridClassifier(
         const ErrorModel& error_model,
         int k,
         double sigma,
-        vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*   dye_tracks,
+        vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : h(h),

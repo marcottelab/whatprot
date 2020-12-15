@@ -34,7 +34,7 @@ public:
             int k,
             double sigma,
             std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
-                         dye_tracks,
+                    dye_tracks,
             int h,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ScoredClassification classify(const Radiometry& radiometry);

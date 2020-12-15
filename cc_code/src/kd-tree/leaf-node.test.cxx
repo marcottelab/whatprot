@@ -37,13 +37,32 @@ using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
 
+// Class we can use as a template parameter for E.
+class Vec {
+public:
+    Vec(vector<double> v) : v(v), hits(1) {}
+    Vec(vector<double> v, int hits) : v(v), hits(hits) {}
+    double& operator[](int d) {
+        return v[d];
+    }
+    double operator[](int d) const {
+        return v[d];
+    }
+    // Needed to check arguments with FakeIt.
+    bool operator==(const Vec& other) const {
+        return (v == other.v) && (hits == other.hits);
+    }
+    vector<double> v;
+    int hits;
+};
+
 BOOST_AUTO_TEST_SUITE(kd_tree_suite);
 BOOST_AUTO_TEST_SUITE(leaf_node_suite);
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int d = 3;
-    vector<vector<double>> vecs(2, vector<double>(3, 0));
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    vector<Vec> vecs(2, Vec(vector<double>(3, 0)));
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     BOOST_TEST(leaf.d == d);
     BOOST_TEST(leaf.begin == &vecs[0]);
     BOOST_TEST(leaf.end == &vecs[2]);
@@ -51,19 +70,19 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(consider_success_test, *tolerance(TOL)) {
     int d = 3;
-    vector<vector<double>> vecs(2, vector<double>(3, 0));
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    vector<Vec> vecs(2, Vec(vector<double>(3, 0)));
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     vector<double> query(3, 0);
     query[0] = 1.0;
     query[1] = 1.1;
     query[2] = 1.2;
-    vector<double> entry(3, 0);
+    Vec entry(vector<double>(3, 0));
     entry[0] = 2.00;
     entry[1] = 2.11;
     entry[2] = 2.22;
-    Mock<KBest<vector<double>>> k_best_mock;
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq = 1e9;
     leaf.consider(query, &entry, k_best);
     double dist_sq = 1.0 * 1.0 + 1.01 * 1.01 + 1.02 * 1.02;
@@ -73,19 +92,19 @@ BOOST_AUTO_TEST_CASE(consider_success_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(consider_failure_test, *tolerance(TOL)) {
     int d = 3;
-    vector<vector<double>> vecs(2, vector<double>(3, 0));
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    vector<Vec> vecs(2, Vec(vector<double>(3, 0)));
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     vector<double> query(3, 0);
     query[0] = 1.0;
     query[1] = 1.1;
     query[2] = 1.2;
-    vector<double> entry(3, 0);
+    Vec entry(vector<double>(3, 0));
     entry[0] = 2.00;
     entry[1] = 2.11;
     entry[2] = 2.22;
-    Mock<KBest<vector<double>>> k_best_mock;
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq = 1e-2;
     leaf.consider(query, &entry, k_best);
     VerifyNoOtherInvocations(k_best_mock);
@@ -93,8 +112,8 @@ BOOST_AUTO_TEST_CASE(consider_failure_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(consider_success_big_d_test, *tolerance(TOL)) {
     int d = 6;
-    vector<vector<double>> vecs(2, vector<double>(6, 0));
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    vector<Vec> vecs(2, Vec(vector<double>(6, 0)));
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     vector<double> query(6, 0);
     query[0] = 1.0;
     query[1] = 1.1;
@@ -102,16 +121,16 @@ BOOST_AUTO_TEST_CASE(consider_success_big_d_test, *tolerance(TOL)) {
     query[3] = 1.3;
     query[4] = 1.4;
     query[5] = 1.5;
-    vector<double> entry(6, 0);
+    Vec entry(vector<double>(6, 0));
     entry[0] = 2.00;
     entry[1] = 2.11;
     entry[2] = 2.22;
     entry[3] = 2.33;
     entry[4] = 2.44;
     entry[5] = 2.55;
-    Mock<KBest<vector<double>>> k_best_mock;
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq = 1e9;
     leaf.consider(query, &entry, k_best);
     double dist_sq = 1.0 * 1.0 + 1.01 * 1.01 + 1.02 * 1.02 + 1.03 * 1.03
@@ -122,8 +141,8 @@ BOOST_AUTO_TEST_CASE(consider_success_big_d_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(consider_failure_big_d_test, *tolerance(TOL)) {
     int d = 6;
-    vector<vector<double>> vecs(2, vector<double>(6, 0));
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    vector<Vec> vecs(2, Vec(vector<double>(6, 0)));
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     vector<double> query(6, 0);
     query[0] = 1.0;
     query[1] = 1.1;
@@ -131,16 +150,16 @@ BOOST_AUTO_TEST_CASE(consider_failure_big_d_test, *tolerance(TOL)) {
     query[3] = 1.3;
     query[4] = 1.4;
     query[5] = 1.5;
-    vector<double> entry(6, 0);
+    Vec entry(vector<double>(6, 0));
     entry[0] = 2.00;
     entry[1] = 2.11;
     entry[2] = 2.22;
     entry[3] = 2.33;
     entry[4] = 2.44;
     entry[5] = 2.55;
-    Mock<KBest<vector<double>>> k_best_mock;
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq = 1e-2;
     leaf.consider(query, &entry, k_best);
     VerifyNoOtherInvocations(k_best_mock);
@@ -148,8 +167,8 @@ BOOST_AUTO_TEST_CASE(consider_failure_big_d_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(consider_barely_failure_big_d_test, *tolerance(TOL)) {
     int d = 6;
-    vector<vector<double>> vecs(2, vector<double>(6, 0));
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    vector<Vec> vecs(2, Vec(vector<double>(6, 0)));
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
     vector<double> query(6, 0);
     query[0] = 1.0;
     query[1] = 1.1;
@@ -157,16 +176,16 @@ BOOST_AUTO_TEST_CASE(consider_barely_failure_big_d_test, *tolerance(TOL)) {
     query[3] = 1.3;
     query[4] = 1.4;
     query[5] = 1.5;
-    vector<double> entry(6, 0);
+    Vec entry(vector<double>(6, 0));
     entry[0] = 2.00;
     entry[1] = 2.11;
     entry[2] = 2.22;
     entry[3] = 2.33;
     entry[4] = 2.44;
     entry[5] = 2.55;
-    Mock<KBest<vector<double>>> k_best_mock;
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq =
             1.0 * 1.0 + 1.01 * 1.01 + 1.02 * 1.02 + 1.03 * 1.03 - 1e-7;
     leaf.consider(query, &entry, k_best);
@@ -175,7 +194,7 @@ BOOST_AUTO_TEST_CASE(consider_barely_failure_big_d_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(search_success_test, *tolerance(TOL)) {
     int d = 3;
-    vector<vector<double>> vecs(2, vector<double>(3, 0));
+    vector<Vec> vecs(2, Vec(vector<double>(3, 0)));
     vecs[0][0] = 0.0;
     vecs[0][1] = 0.1;
     vecs[0][2] = 0.2;
@@ -186,17 +205,17 @@ BOOST_AUTO_TEST_CASE(search_success_test, *tolerance(TOL)) {
     query[0] = 0.2;
     query[1] = 0.3;
     query[2] = 0.5;
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
-    Mock<KBest<vector<double>>> k_best_mock;
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq = 1e9;
     leaf.search(query, k_best);
     double dst1 = 0.0;
     dst1 += (0.2 - 0.0) * (0.2 - 0.0);
     dst1 += (0.3 - 0.1) * (0.3 - 0.1);
     dst1 += (0.5 - 0.2) * (0.5 - 0.2);
-    vector<double> v1(3, 0);
+    Vec v1(vector<double>(3, 0));
     v1[0] = 0.0;
     v1[1] = 0.1;
     v1[2] = 0.2;
@@ -206,7 +225,7 @@ BOOST_AUTO_TEST_CASE(search_success_test, *tolerance(TOL)) {
     dst2 += (0.2 - 1.0) * (0.2 - 1.0);
     dst2 += (0.3 - 1.1) * (0.3 - 1.1);
     dst2 += (0.5 - 1.2) * (0.5 - 1.2);
-    vector<double> v2(3, 0);
+    Vec v2(vector<double>(3, 0));
     v2[0] = 1.0;
     v2[1] = 1.1;
     v2[2] = 1.2;
@@ -217,7 +236,7 @@ BOOST_AUTO_TEST_CASE(search_success_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(search_failure_test, *tolerance(TOL)) {
     int d = 3;
-    vector<vector<double>> vecs(2, vector<double>(3, 0));
+    vector<Vec> vecs(2, Vec(vector<double>(3, 0)));
     vecs[0][0] = 0.0;
     vecs[0][1] = 0.1;
     vecs[0][2] = 0.2;
@@ -228,10 +247,10 @@ BOOST_AUTO_TEST_CASE(search_failure_test, *tolerance(TOL)) {
     query[0] = 0.2;
     query[1] = 0.3;
     query[2] = 0.5;
-    LeafNode<vector<double>, vector<double>> leaf(d, &vecs[0], &vecs[2]);
-    Mock<KBest<vector<double>>> k_best_mock;
+    LeafNode<Vec, vector<double>> leaf(d, &vecs[0], &vecs[2]);
+    Mock<KBest<Vec>> k_best_mock;
     Fake(Method(k_best_mock, insert));
-    KBest<vector<double>>* k_best = &k_best_mock.get();
+    KBest<Vec>* k_best = &k_best_mock.get();
     k_best->kth_dist_sq = 1e-2;
     leaf.search(query, k_best);
     VerifyNoOtherInvocations(k_best_mock);
