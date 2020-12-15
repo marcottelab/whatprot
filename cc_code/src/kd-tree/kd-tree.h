@@ -24,8 +24,8 @@ namespace fluoroseq {
 // Template requirements for KDTree to work.
 //   * typename E must have an operator[] function which receives an int and
 //     returns a double.
-//   * typename E must have a int member called size indicating the number of
-//     simulated elements it represents.
+//   * typename E must have a int member called hits indicating the number of
+//     simulated elements hits it represents.
 //   * typename E must be able to be swapped. std::swap(E, E) needs to work.
 //     For the best performance, consider doing this through move operations.
 //   * typename Q must have an operator[] function which receives an int and
