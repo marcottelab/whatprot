@@ -23,50 +23,17 @@ CC = g++
 LDFLAGS = -L./extern/mrmpi-7Apr14/src/ -lmrmpi_serial
 LDFLAGS += -L./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
 
-# Set the source directory and find all source files.
-#   * The shell function runs the command following it in the shell.
-#   * The find command will recursively search all subdirectories of $(SRC_DIR)
-#     for files named "*.cc" and return the results.
-#   * We do similar work to set $(TEST_SRCS).
 SRC_DIR = ./src
 TEST_DIR = ./test
 MAIN = $(SRC_DIR)/main/main.cc
 TEST_MAIN = $(TEST_DIR)/test-module.cc
-ALL_SRCS = $(filter-out $(MAIN) $(TEST_MAIN), $(shell find $(SRC_DIR)/ -name '*.cc'))
-SRCS = $(filter-out %.test.cc, $(ALL_SRCS))
-TEST_SRCS = $(filter %.test.cc, $(ALL_SRCS))
+SRCS = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.cc')
 
 BUILD_DIR = ./build
 
-# Set the object file directory and define all names of .o (object) files.
-#   * We use the $(SRCS) variable to define these names.
-#   * '%' is a wildcard that can be used to capture the part of the expression
-#     we want to keep.
-#   * We replace $(SRC_DIR) with $(OBJ_DIR) and .cc with .o.
-#   * We do similarly to set $(TEST_OBJS).
-OBJ_DIR = $(BUILD_DIR)/obj/dev
-OBJS = $(SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
-MAIN_OBJ = $(BUILD_DIR)/mains/obj/main.o
-TEST_OBJ_DIR = $(BUILD_DIR)/obj/test
-TEST_OBJS = $(TEST_SRCS:$(SRC_DIR)/%.test.cc=$(TEST_OBJ_DIR)/%.o)
-TEST_MAIN_OBJ = $(BUILD_DIR)/mains/obj/test.o
-
-# Set the make dependency file directory and define all names of .d (dependency)
-# files.
-#   * The formula for $(DEPS) is very similar to the one for $(OBJS), see above.
-#   * These dependency files are included directly by the makefile to determine
-#     which dependencies are needed for each object file.
-#   * This is related to "-include $(DEPS)" below.
-#   * Here we go ahead and put both tests and non-tests into the same variable,
-#     because there is no reason we need them separate.
-DEP_DIR = $(BUILD_DIR)/autodep/dev
-TEST_DEP_DIR = $(BUILD_DIR)/autodep/test
-MAIN_DEP = $(BUILD_DIR)/mains/autodep/main.d
-TEST_MAIN_DEP = $(BUILD_DIR)/mains/autodep/test.d
-DEPS = $(SRCS:$(SRC_DIR)/%.cc=$(DEP_DIR)/%.d)
-DEPS += $(TEST_SRCS:$(SRC_DIR)/%.test.cc=$(TEST_DEP_DIR)/%.d)
-DEPS += $(MAIN_DEP)
-DEPS += $(TEST_MAIN_DEP)
+OBJS = $(SRCS:./%.cc=$(BUILD_DIR)/%.o)
+DEV_OBJS = $(filter-out %.test.cc $(MAIN:./%.cc=$(BUILD_DIR)/%.o), $(OBJS))
+TEST_OBJS = $(filter-out $(TEST_MAIN:./%.cc=$(BUILD_DIR)/%.o), $(OBJS))
 
 # Set the output directory.
 BIN_DIR = ./bin
@@ -77,9 +44,8 @@ BIN_DIR = ./bin
 INCLUDE = -iquote$(SRC_DIR)
 INCLUDE += -I./extern/mrmpi-7Apr14/src/
 INCLUDE += -I./extern/mrmpi-7Apr14/mpistubs/
-TEST_INCLUDE = $(INCLUDE)
-TEST_INCLUDE += -I./extern/boost_1_73_0_subset/
-TEST_INCLUDE += -I./extern/FakeIt/single_header/boost/
+INCLUDE += -I./extern/boost_1_73_0_subset/
+INCLUDE += -I./extern/FakeIt/single_header/boost/
 
 # Here we set any additional flags for the compiler.
 CFLAGS =
@@ -93,7 +59,7 @@ CFLAGS =
 #   * Dependencies are generated at the same time the files are compiled. That
 #     may seem wrong and weird, but it's fine. The dependencies can't change
 #     without also changing the files that were previously dependencies.
--include $(DEPS)
+-include $(OBJS:.o=.d)
 
 # Here we build the .o (object) file and generate the .d (dependency) files.
 #   * A lot of "automatic variables" and other symbols have been used. These can
@@ -141,40 +107,16 @@ CFLAGS =
 #         directories from the target name and use that. '-MT' overrides this
 #         behavior. Here we give '$@' so that the generated target has the same
 #         name as the target we are currently running.
-#   * The mv command puts the .d (dependency) file in its proper place. When
-#     building the .o (objects) and .d (dependencies) at the same time, gcc and
-#     g++ have no option to put them in different directories, so we have to
-#     manually move the file if we want it somewhere different.
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
-	@mkdir -p $(OBJ_DIR)/$(shell dirname $*)
-	@mkdir -p $(DEP_DIR)/$(shell dirname $*)
+$(OBJ_DIR)/%.o: ./%.cc
+	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ -MMD -MP -MT '$@'
-	@mv $(OBJ_DIR)/$*.d $(DEP_DIR)/$*.d
-
-$(MAIN_OBJ): $(MAIN)
-	@mkdir -p $(shell dirname $(MAIN_OBJ))
-	@mkdir -p $(shell dirname $(MAIN_DEP))
-	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ -MMD -MP -MT '$@'
-	@mv $(MAIN_OBJ:.o=.d) $(MAIN_DEP)
-
-$(TEST_OBJ_DIR)/%.o: $(SRC_DIR)/%.test.cc
-	@mkdir -p $(TEST_OBJ_DIR)/$(shell dirname $*)
-	@mkdir -p $(TEST_DEP_DIR)/$(shell dirname $*)
-	$(CC) -c $(CFLAGS) $(TEST_INCLUDE) $< -o $@ -MMD -MP -MT '$@'
-	@mv $(TEST_OBJ_DIR)/$*.d $(TEST_DEP_DIR)/$*.d
-
-$(BUILD_DIR)/mains/obj/test.o: $(TEST_MAIN)
-	@mkdir -p $(shell dirname $(TEST_MAIN_OBJ))
-	@mkdir -p $(shell dirname $(TEST_MAIN_DEP))
-	$(CC) -c $(CFLAGS) $(TEST_INCLUDE) $< -o $@ -MMD -MP -MT '$@'
-	@mv $(TEST_MAIN_OBJ:.o=.d) $(TEST_MAIN_DEP)
 
 # Generate binary.
-all: $(OBJS) $(MAIN_OBJ)
+all: $(DEV_OBJS)
 	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/classify
 
 # Compile and run tests.
-test: $(OBJS) $(TEST_OBJS) $(TEST_MAIN_OBJ)
+test: $(TEST_OBJS)
 	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/test
 	$(BIN_DIR)/test
 
