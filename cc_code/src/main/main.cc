@@ -17,30 +17,38 @@
 #endif  // USE_MPI
 
 // Local project headers:
-#include "main/classify/hmm-main.h"
-#include "main/classify/hybrid-main.h"
-#include "main/classify/nn-main.h"
+#include "main/classify/classify-main.h"
 #include "main/cmd-line-out.h"
+#include "main/simulate/simulate-main.h"
 
-namespace fluoroseq {
+namespace {
+using fluoroseq::classify_main;
+using fluoroseq::print_bad_inputs;
+using fluoroseq::print_invalid_command;
+using fluoroseq::print_mpi_info;
+using fluoroseq::simulate_main;
+}  // namespace
 
-int classify_main(int argc, char** argv) {
-    if (argc < 3) {
+int main(int argc, char** argv) {
+#ifdef USE_MPI
+    MPI_Init(&argc, &argv);
+#endif  // USE_MPI
+    print_mpi_info();
+    if (argc < 2) {
         print_bad_inputs();
         return 1;
     }
-    char* mode = argv[2];
+    char* mode = argv[1];
     int return_code;
-    if (0 == strcmp(mode, "hmm")) {
-        return_code = hmm_main(argc, argv);
-    } else if (0 == strcmp(mode, "hybrid")) {
-        return_code = hybrid_main(argc, argv);
-    } else if (0 == strcmp(mode, "nn")) {
-        return_code = nn_main(argc, argv);
+    if (0 == strcmp(mode, "classify")) {
+        return_code = classify_main(argc, argv);
+    } else if (0 == strcmp(mode, "simulate")) {
+        return_code = simulate_main(argc, argv);
     } else {
-        print_invalid_classifier();
+        print_invalid_command();
     }
+#ifdef USE_MPI
+    MPI_Finalize();
+#endif  // USE_MPI
     return return_code;
 }
-
-}  // namespace fluoroseq

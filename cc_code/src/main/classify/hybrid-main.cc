@@ -44,17 +44,17 @@ using std::vector;
 int hybrid_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 9) {
+    if (argc != 10) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    int k = atoi(argv[2]);
-    double sigma = atof(argv[3]);
-    int h = atoi(argv[4]);
-    char* dye_seqs_filename = argv[5];
-    char* dye_tracks_filename = argv[6];
-    char* radiometries_filename = argv[7];
-    char* predictions_filename = argv[8];
+    int k = atoi(argv[3]);
+    double sigma = atof(argv[4]);
+    int h = atoi(argv[5]);
+    char* dye_seqs_filename = argv[6];
+    char* dye_tracks_filename = argv[7];
+    char* radiometries_filename = argv[8];
+    char* predictions_filename = argv[9];
 
     double start_time;
     double end_time;

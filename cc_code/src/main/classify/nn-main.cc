@@ -41,15 +41,15 @@ using std::vector;
 int nn_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 7) {
+    if (argc != 8) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    int k = atoi(argv[2]);
-    double sigma = atof(argv[3]);
-    char* dye_tracks_filename = argv[4];
-    char* radiometries_filename = argv[5];
-    char* predictions_filename = argv[6];
+    int k = atoi(argv[3]);
+    double sigma = atof(argv[4]);
+    char* dye_tracks_filename = argv[5];
+    char* radiometries_filename = argv[6];
+    char* predictions_filename = argv[7];
 
     double start_time;
     double end_time;

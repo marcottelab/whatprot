@@ -21,24 +21,14 @@
 #include "main/simulate/dt-main.h"
 #include "main/simulate/rad-main.h"
 
-namespace {
-using fluoroseq::dt_main;
-using fluoroseq::print_bad_inputs;
-using fluoroseq::print_invalid_classifier;
-using fluoroseq::print_mpi_info;
-using fluoroseq::rad_main;
-}  // namespace
+namespace fluoroseq {
 
-int main(int argc, char** argv) {
-#ifdef USE_MPI
-    MPI_Init(&argc, &argv);
-#endif  // USE_MPI
-    print_mpi_info();
-    if (argc < 2) {
+int simulate_main(int argc, char** argv) {
+    if (argc < 3) {
         print_bad_inputs();
         return 1;
     }
-    char* mode = argv[1];
+    char* mode = argv[2];
     int return_code;
     if (0 == strcmp(mode, "rad")) {
         return_code = rad_main(argc, argv);
@@ -47,8 +37,7 @@ int main(int argc, char** argv) {
     } else {
         print_invalid_classifier();
     }
-#ifdef USE_MPI
-    MPI_Finalize();
-#endif  // USE_MPI
     return return_code;
 }
+
+}  // namespace fluoroseq

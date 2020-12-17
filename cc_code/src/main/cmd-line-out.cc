@@ -148,8 +148,20 @@ void print_invalid_classifier() {
         return;
     }
 #endif  // USE_MPI
-    cout << "Invalid classifier. First argument must be 'hmm', 'ann', or "
+    cout << "Invalid classifier. Second argument must be 'hmm', 'nn', or "
          << "'hybrid'.\n";
+}
+
+void print_invalid_command() {
+#ifdef USE_MPI
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    if (mpi_rank != 0) {
+        return;
+    }
+#endif  // USE_MPI
+    cout << "Invalid command. First argument must be 'classify' or "
+         << "'simulate'.\n";
 }
 
 void print_mpi_info() {

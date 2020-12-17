@@ -39,15 +39,15 @@ using std::vector;
 int rad_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 7) {
+    if (argc != 8) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    int num_timesteps = atoi(argv[2]);
-    int radiometries_per_peptide = atoi(argv[3]);
-    char* dye_seqs_filename = argv[4];
-    char* radiometries_filename = argv[5];
-    char* ys_filename = argv[6];
+    int num_timesteps = atoi(argv[3]);
+    int radiometries_per_peptide = atoi(argv[4]);
+    char* dye_seqs_filename = argv[5];
+    char* radiometries_filename = argv[6];
+    char* ys_filename = argv[7];
 
     double start_time;
     double end_time;

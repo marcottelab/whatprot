@@ -40,13 +40,13 @@ using std::vector;
 int hmm_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
-    if (argc != 5) {
+    if (argc != 6) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    char* dye_seqs_filename = argv[2];
-    char* radiometries_filename = argv[3];
-    char* predictions_filename = argv[4];
+    char* dye_seqs_filename = argv[3];
+    char* radiometries_filename = argv[4];
+    char* predictions_filename = argv[5];
 
     double start_time;
     double end_time;
