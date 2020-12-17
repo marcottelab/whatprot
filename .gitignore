@@ -1,3 +1,4 @@
 **.vscode/
 cc_code/bin/
+cc_code/build/
 python/**/__pycache__
