@@ -49,8 +49,10 @@ SRCS = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.cc')
 BUILD_DIR = ./build
 
 OBJS = $(SRCS:./%.cc=$(BUILD_DIR)/%.o)
-DEV_OBJS = $(filter-out %.test.cc $(MAIN:./%.cc=$(BUILD_DIR)/%.o), $(OBJS))
-TEST_OBJS = $(filter-out $(TEST_MAIN:./%.cc=$(BUILD_DIR)/%.o), $(OBJS))
+MAIN_OBJ = $(MAIN:./%.cc=$(BUILD_DIR)/%.o)
+TEST_MAIN_OBJ = $(TEST_MAIN:./%.cc=$(BUILD_DIR)/%.o)
+DEV_OBJS = $(filter-out %.test.o $(TEST_MAIN_OBJ), $(OBJS))
+TEST_OBJS = $(filter-out $(MAIN_OBJ), $(OBJS))
 
 # Set the output directory.
 BIN_DIR = ./bin
