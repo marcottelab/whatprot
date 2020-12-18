@@ -18,6 +18,7 @@
 # Also, knowledge of the following makefile topics will help with understanding.
 #   * macros
 #   * functions
+#   * pattern rules
 #   * automatic variables
 #
 # Explaining the above terms is beyond the scope of these comments.
@@ -109,11 +110,15 @@ all: $(DEV_OBJS)
 
 # Here we build the .o (object) file and generate the .d (dependency) files.
 $(BUILD_DIR)/%.o: ./%.cc
-	# mkdir -p makes a directory, the -p option does this recursively, and
-	# suppressed errors if the directory already exists. dirname strips off the
-	# filename.
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
+# 	@sed -i "s/\.hpp/\.hpp.gch/g" $(BUILD_DIR)/$*.d
+
+# $(BUILD_DIR)/%.hpp.gch: ./%.hpp
+# 	@mkdir -p $(shell dirname $@)
+# 	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
+# 	@sed -i "s/\.hpp/\.hpp.gch/g" $(BUILD_DIR)/$*.d
+
 
 # Compile and run tests.
 test: $(TEST_OBJS)
