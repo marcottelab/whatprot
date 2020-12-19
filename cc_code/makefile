@@ -97,6 +97,16 @@ CFLAGS =
 all: $(DEV_OBJS)
 	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/classify
 
+# Compile and run tests.
+test: $(TEST_OBJS)
+	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/test
+	$(BIN_DIR)/test
+
+# Cleanup
+clean:
+	rm -f $(BIN_DIR)/*
+	rm -rf $(BUILD_DIR)/*
+
 # "-include" includes other makefiles.
 #   * Each file included is a makefile with one rule for making a .o file with
 #     an empty recipe (no commands).
@@ -114,20 +124,3 @@ all: $(DEV_OBJS)
 $(BUILD_DIR)/%.o: ./%.cc
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
-# 	@sed -i "s/\.hpp/\.hpp.gch/g" $(BUILD_DIR)/$*.d
-
-# $(BUILD_DIR)/%.hpp.gch: ./%.hpp
-# 	@mkdir -p $(shell dirname $@)
-# 	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
-# 	@sed -i "s/\.hpp/\.hpp.gch/g" $(BUILD_DIR)/$*.d
-
-
-# Compile and run tests.
-test: $(TEST_OBJS)
-	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/test
-	$(BIN_DIR)/test
-
-# Cleanup
-clean:
-	rm -f $(BIN_DIR)/*
-	rm -rf $(BUILD_DIR)/*
