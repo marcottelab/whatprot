@@ -21,14 +21,14 @@ namespace test_util {
 
 template <typename T>
 class CloseMatcherCreator : public fakeit::TypedMatcherCreator<T> {
-  public:
+public:
     CloseMatcherCreator(const T& expected, const T& tolerance)
             : expected(expected), tolerance(tolerance) {}
 
     virtual ~CloseMatcherCreator() = default;
 
     class Matcher : public fakeit::TypedMatcher<T> {
-      public:
+    public:
         Matcher(const T& expected, const T& tolerance)
                 : expected(expected), tolerance(tolerance) {}
 
@@ -68,7 +68,7 @@ CloseMatcherCreator<T> Close(const T& expected, const T& tolerance) {
 // calls the Ptr() function below, so it's probably OK.
 template <typename T, typename P>
 class PtrMatcherCreator : public fakeit::TypedMatcherCreator<P> {
-  public:
+public:
     PtrMatcherCreator(fakeit::TypedMatcherCreator<T>* matcher_creator)
             : matcher_creator(matcher_creator) {}
 
@@ -77,7 +77,7 @@ class PtrMatcherCreator : public fakeit::TypedMatcherCreator<P> {
     }
 
     class Matcher : public fakeit::TypedMatcher<P> {
-      public:
+    public:
         Matcher(fakeit::TypedMatcher<T>* matcher) : matcher(matcher) {}
 
         virtual ~Matcher() {

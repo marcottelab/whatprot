@@ -45,6 +45,7 @@ TEST_DIR = ./test
 MAIN = $(SRC_DIR)/main/main.cc
 TEST_MAIN = $(TEST_DIR)/test-module.cc
 SRCS = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.cc')
+HEADERS = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.h')
 
 BUILD_DIR = ./build
 
@@ -53,6 +54,7 @@ MAIN_OBJ = $(MAIN:./%.cc=$(BUILD_DIR)/%.o)
 TEST_MAIN_OBJ = $(TEST_MAIN:./%.cc=$(BUILD_DIR)/%.o)
 DEV_OBJS = $(filter-out %.test.o $(TEST_MAIN_OBJ), $(OBJS))
 TEST_OBJS = $(filter-out $(MAIN_OBJ), $(OBJS))
+EXISTING_OBJS = $(shell find $(BUILD_DIR) -name '*.o')
 
 # Set the output directory.
 BIN_DIR = ./bin
@@ -106,6 +108,15 @@ test: $(TEST_OBJS)
 clean:
 	rm -f $(BIN_DIR)/*
 	rm -rf $(BUILD_DIR)/*
+
+# Cleanup just the targets with dependencies on files that have been deleted.
+prune:
+	rm -f $(filter-out $(OBJS), $(EXISTING_OBJS))
+	rm -f $(filter-out $(OBJS:.o=.d), $(EXISTING_OBJS:.o=.d))
+
+# Run clang-format
+tidy:
+	clang-format -style=file -i $(SRCS) $(HEADERS)
 
 # "-include" includes other makefiles.
 #   * Each file included is a makefile with one rule for making a .o file with
