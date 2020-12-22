@@ -28,13 +28,6 @@ void convert_raw_from_scored_classifications(
         int** ids,
         double** scores);
 
-#ifdef USE_MPI
-void gather_scored_classifications(int total_num_scored_classifications,
-                                   int num_scored_classifications,
-                                   int** ids,
-                                   double** scores);
-#endif  // USE_MPI
-
 void write_scored_classifications_raw(const std::string& filename,
                                       int num_scored_classifications,
                                       int* ids,

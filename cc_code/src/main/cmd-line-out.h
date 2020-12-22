@@ -21,7 +21,6 @@ void print_finished_generating_radiometries(int num, double time);
 void print_finished_saving_results(double time);
 void print_invalid_classifier();
 void print_invalid_command();
-void print_mpi_info();
 void print_read_dye_seqs(int num, double time);
 void print_read_dye_tracks(int num, double time);
 void print_read_radiometries(int num, double time);

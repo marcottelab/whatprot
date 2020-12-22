@@ -6,15 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
-
 // Standard C++ library headers:
 #include <cstring>
-
-// MPI header:
-#ifdef USE_MPI
-#include <mpi.h>
-#endif  // USE_MPI
 
 // Local project headers:
 #include "main/cmd-line-out.h"

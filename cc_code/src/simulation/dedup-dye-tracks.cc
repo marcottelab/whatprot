@@ -6,8 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
-
 // Defining symbols from header:
 #include "dedup-dye-tracks.h"
 
@@ -15,11 +13,6 @@
 #include <unordered_map>
 #include <utility>  // for std::move
 #include <vector>
-
-// MPI header:
-#ifdef USE_MPI
-#include <mpi.h>
-#endif  // USE_MPI
 
 // External headers:
 #include "keyvalue.h"
@@ -45,12 +38,7 @@ void dedup_dye_tracks(
         vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks_in,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                 dye_tracks_out) {
-#ifdef USE_MPI
-    int mpi_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-#else  // USE_MPI
     int mpi_size = 1;
-#endif  // USE_MPI
     MapReduce mr(MPI_COMM_WORLD);
     // map function puts key/value pairs into MapReduce system.
     mr.map(mpi_size,  // nmap - this ensures one callback per process.

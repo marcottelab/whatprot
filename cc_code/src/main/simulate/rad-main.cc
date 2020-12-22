@@ -6,8 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
-
 // Defining symbols from header:
 #include "rad-main.h"
 
@@ -67,11 +65,8 @@ int rad_main(int argc, char** argv) {
     int num_channels;
     int total_num_dye_seqs;
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
-    read_dye_seqs(dye_seqs_filename,
-                  &num_channels,
-                  &total_num_dye_seqs,
-                  &dye_seqs,
-                  MpiReadMode::SCATTER);
+    read_dye_seqs(
+            dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
     end_time = wall_time();
     print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
 

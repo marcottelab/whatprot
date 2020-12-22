@@ -6,8 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
-
 // Defining symbols from header:
 #include "nn-main.h"
 

@@ -6,8 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
-
 #ifndef FLUOROSEQ_SIMULATION_DEDUP_DYE_TRACKS_H
 #define FLUOROSEQ_SIMULATION_DEDUP_DYE_TRACKS_H
 

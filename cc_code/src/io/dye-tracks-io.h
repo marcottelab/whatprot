@@ -6,7 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
 #ifndef FLUOROSEQ_IO_DYE_TRACKS_IO_H
 #define FLUOROSEQ_IO_DYE_TRACKS_IO_H
 
@@ -34,14 +33,6 @@ void read_dye_tracks_raw(const std::string& filename,
                          int* f_ints_size,
                          int** f_ints);
 
-#ifdef USE_MPI
-void broadcast_dye_tracks(int* num_timesteps,
-                          int* num_channels,
-                          int* num_dye_tracks,
-                          int* f_ints_size,
-                          int** f_ints);
-#endif  // USE_MPI
-
 void convert_dye_tracks_from_raw(
         int num_timesteps,
         int num_channels,
@@ -56,24 +47,6 @@ void write_dye_tracks(
         int num_channels,
         const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
                 dye_tracks);
-
-// #ifdef USE_MPI
-
-// void convert_raw_from_dye_tracks(
-//         int num_timesteps,
-//         int num_channels,
-//         const std::vector<SourcedData<DyeTrack,
-//                                       SourceCountHitsList<int>>>& dye_tracks,
-//         int* f_ints_size,
-//         int** f_ints);
-
-// void gather_dye_tracks(int* num_dye_tracks, int* f_ints_size, int** f_ints);
-
-// void merge_duplicate_dye_tracks(
-//         std::vector<SourcedData<DyeTrack,
-//                                 SourceCountHitsList<int>>>* dye_tracks);
-
-// #endif  // USE_MPI
 
 void write_dye_tracks_helper(
         const string& filename,

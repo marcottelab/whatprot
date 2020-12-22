@@ -6,8 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// For MPI version, define compiler macro USE_MPI when building.
-
 // Defining symbols from header:
 #include "dye-tracks-io.h"
 
@@ -16,11 +14,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-
-// MPI header:
-#ifdef USE_MPI
-#include <mpi.h>
-#endif  // USE_MPI
 
 // Local project headers:
 #include "common/dye-track.h"
@@ -50,13 +43,6 @@ void read_dye_tracks(
                         &num_dye_tracks,
                         &f_ints_size,
                         &f_ints);
-#ifdef USE_MPI
-    broadcast_dye_tracks(num_timesteps,
-                         num_channels,
-                         &num_dye_tracks,
-                         &f_ints_size,
-                         &f_ints);
-#endif  // USE_MPI
     convert_dye_tracks_from_raw(
             *num_timesteps, *num_channels, num_dye_tracks, f_ints, dye_tracks);
     delete[] f_ints;
@@ -68,13 +54,6 @@ void read_dye_tracks_raw(const string& filename,
                          int* num_dye_tracks,
                          int* f_ints_size,
                          int** f_ints) {
-#ifdef USE_MPI
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    if (mpi_rank != 0) {
-        return;
-    }
-#endif  // USE_MPI
     ifstream f(filename);
     f >> *num_timesteps;
     f >> *num_channels;
@@ -92,45 +71,6 @@ void read_dye_tracks_raw(const string& filename,
     *f_ints = new int[*f_ints_size];
     copy(f_ints_vec.begin(), f_ints_vec.end(), *f_ints);
 }
-
-#ifdef USE_MPI
-void broadcast_dye_tracks(int* num_timesteps,
-                          int* num_channels,
-                          int* num_dye_tracks,
-                          int* f_ints_size,
-                          int** f_ints) {
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    MPI_Bcast(num_timesteps,
-              1,  // count
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
-    MPI_Bcast(num_channels,
-              1,  // count
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
-    MPI_Bcast(num_dye_tracks,
-              1,  // count
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
-    MPI_Bcast(f_ints_size,
-              1,  // count
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
-    if (mpi_rank != 0) {
-        *f_ints = new int[*f_ints_size];
-    }
-    MPI_Bcast(*f_ints,
-              *f_ints_size,
-              MPI_INT,
-              0,  // root
-              MPI_COMM_WORLD);
-}
-#endif  // USE_MPI
 
 void convert_dye_tracks_from_raw(
         int num_timesteps,
@@ -169,27 +109,8 @@ void write_dye_tracks(
         int num_channels,
         const vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
                 dye_tracks) {
-    // #ifdef USE_MPI
-    //     int f_ints_size;
-    //     int* f_ints;
-    //     convert_raw_from_dye_tracks(num_timesteps,
-    //                                 num_channels,
-    //                                 dye_tracks,
-    //                                 &f_ints_size,
-    //                                 &f_ints);
-    //     int num_dye_tracks = dye_tracks.size();
-    //     gather_dye_tracks(&num_dye_tracks, &f_ints_size, &f_ints);
-    //     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>
-    //     new_dye_tracks; convert_dye_tracks_from_raw(num_timesteps,
-    //                                 num_channels,
-    //                                 num_dye_tracks,
-    //                                 f_ints,
-    //                                 &new_dye_tracks);
-    //     delete[] f_ints;
-    // #else
     const vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
             new_dye_tracks = dye_tracks;
-    // #endif  // USE_MPI
     write_dye_tracks_helper(
             filename, num_timesteps, num_channels, new_dye_tracks);
 }
@@ -200,13 +121,6 @@ void write_dye_tracks_helper(
         int num_channels,
         const vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
                 dye_tracks) {
-#ifdef USE_MPI
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    if (mpi_rank != 0) {
-        return;
-    }
-#endif  // USE_MPI
     ofstream f(filename);
     f << num_timesteps << "\n";
     f << num_channels << "\n";
