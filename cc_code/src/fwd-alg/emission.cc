@@ -48,7 +48,7 @@ double Emission::prob(int t, int c, int d) const {
 }
 
 void Emission::operator()(Tensor* tensor, int timestep) const {
-    TensorIterator* iterator = tensor->iterator();  // not owned.
+    TensorIterator* iterator = tensor->iterator();
     iterator->loc[0] = 0;
     iterator->index = 0;
     while (iterator->index < (timestep + 1) * tensor->strides[0]) {
@@ -59,6 +59,7 @@ void Emission::operator()(Tensor* tensor, int timestep) const {
         *iterator->get() *= product;
         iterator->advance();
     }
+    delete iterator;
 }
 
 }  // namespace fluoroseq

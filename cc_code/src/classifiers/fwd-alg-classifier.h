@@ -53,7 +53,8 @@ public:
         for (int i : indices) {
             Initialization initialization;
             Summation summation;
-            double score = fwd_alg(&tensors[i],
+            Tensor tensor(tensor_shapes[i].size(), &tensor_shapes[i][0]);
+            double score = fwd_alg(&tensor,
                                    num_timesteps,
                                    num_channels,
                                    initialization,
@@ -79,7 +80,7 @@ public:
     std::function<double(double, int)> pdf;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
     std::vector<EdmanTransition> edman_transitions;
-    std::vector<Tensor> tensors;
+    std::vector<std::vector<int>> tensor_shapes;
     int num_dye_seqs;
     int num_timesteps;
     int num_channels;

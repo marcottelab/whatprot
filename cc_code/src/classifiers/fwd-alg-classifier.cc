@@ -49,7 +49,7 @@ FwdAlgClassifier::FwdAlgClassifier(
           dud_transition(error_model.p_bleach),
           bleach_transition(error_model.p_bleach) {
     edman_transitions.reserve(num_dye_seqs);
-    tensors.reserve(num_dye_seqs);
+    tensor_shapes.resize(num_dye_seqs);
     max_num_dyes = 0;
     for (int i = 0; i < num_dye_seqs; i++) {
         DyeTrack dye_track =
@@ -61,14 +61,11 @@ FwdAlgClassifier::FwdAlgClassifier(
         }
         edman_transitions.push_back(move(EdmanTransition(
                 error_model.p_edman_failure, dye_seqs[i].value, dye_track)));
-        int* tensor_shape = new int[1 + num_channels];
-        tensor_shape[0] = num_timesteps + 1;
+        tensor_shapes[i].resize(1 + num_channels);
+        tensor_shapes[i][0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {
-            int num_dyes = dye_track(0, c);
-            tensor_shape[1 + c] = num_dyes + 1;
+            tensor_shapes[i][1 + c] = dye_track(0, c);
         }
-        tensors.push_back(move(Tensor(1 + num_channels, tensor_shape)));
-        delete[] tensor_shape;
     }
     dud_transition.reserve(max_num_dyes);
     bleach_transition.reserve(max_num_dyes);

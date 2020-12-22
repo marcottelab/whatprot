@@ -31,17 +31,14 @@ Tensor::Tensor(int order, int* shape) : order(order) {
         size *= shape[i];
     }
     values = new double[size];
-    tensor_iterator = new TensorIterator(order, this->shape, size, values);
 }
 
 Tensor::Tensor(Tensor&& other)
-        : tensor_iterator(other.tensor_iterator),
-          values(other.values),
+        : values(other.values),
           shape(other.shape),
           strides(other.strides),
           size(other.size),
           order(other.order) {
-    other.tensor_iterator = NULL;
     other.values = NULL;
     other.shape = NULL;
     other.strides = NULL;
@@ -57,9 +54,6 @@ Tensor::~Tensor() {
     if (values != NULL) {
         delete[] values;
     }
-    if (tensor_iterator != NULL) {
-        delete tensor_iterator;
-    }
 }
 
 double& Tensor::operator[](int* loc) {
@@ -71,8 +65,7 @@ double& Tensor::operator[](int* loc) {
 }
 
 TensorIterator* Tensor::iterator() {
-    tensor_iterator->reset();
-    return tensor_iterator;
+    return new TensorIterator(order, shape, size, values);
 }
 
 }  // namespace fluoroseq
