@@ -48,13 +48,21 @@ SRCS = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.cc')
 HEADERS = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.h')
 
 BUILD_DIR = ./build
+BUILD_DEBUG_DIR = ./build/debug
+BUILD_RELEASE_DIR = ./build/release
 
-OBJS = $(SRCS:./%.cc=$(BUILD_DIR)/%.o)
-MAIN_OBJ = $(MAIN:./%.cc=$(BUILD_DIR)/%.o)
-TEST_MAIN_OBJ = $(TEST_MAIN:./%.cc=$(BUILD_DIR)/%.o)
-DEV_OBJS = $(filter-out %.test.o $(TEST_MAIN_OBJ), $(OBJS))
-TEST_OBJS = $(filter-out $(MAIN_OBJ), $(OBJS))
-EXISTING_OBJS = $(shell find $(BUILD_DIR) -name '*.o')
+DEBUG_OBJS = $(SRCS:./%.cc=$(BUILD_DEBUG_DIR)/%.o)
+DEBUG_MAIN_OBJ = $(MAIN:./%.cc=$(BUILD_DEBUG_DIR)/%.o)
+DEBUG_TEST_MAIN_OBJ = $(TEST_MAIN:./%.cc=$(BUILD_DEBUG_DIR)/%.o)
+DEBUG_DEV_OBJS = $(filter-out %.test.o $(DEBUG_TEST_MAIN_OBJ), $(DEBUG_OBJS))
+DEBUG_TEST_OBJS = $(filter-out $(DEBUG_MAIN_OBJ), $(DEBUG_OBJS))
+
+RELEASE_OBJS = $(SRCS:./%.cc=$(BUILD_RELEASE_DIR)/%.o)
+RELEASE_MAIN_OBJ = $(MAIN:./%.cc=$(BUILD_RELEASE_DIR)/%.o)
+RELEASE_TEST_MAIN_OBJ = $(TEST_MAIN:./%.cc=$(BUILD_RELEASE_DIR)/%.o)
+RELEASE_DEV_OBJS = $(filter-out %.test.o $(RELEASE_TEST_MAIN_OBJ), $(RELEASE_OBJS))
+
+OBJS = $(DEBUG_OBJS) $(RELEASE_OBJS)
 
 # Set the output directory.
 BIN_DIR = ./bin
@@ -96,26 +104,32 @@ GENDEPS = -MMD -MP -MT '$@'
 CFLAGS =
 
 # Generate binary. This is first so that it will be the default rule.
-all: $(DEV_OBJS)
-	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/classify
+all: CFLAGS += -Og -ggdb
+all: $(DEBUG_DEV_OBJS)
+	@mkdir -p $(BIN_DIR)/debug
+	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/debug/pfst
+
+# Generate release version.
+release: CFLAGS += -O2 -flto
+release: LDFLAGS += $(CFLAGS)
+release: $(RELEASE_DEV_OBJS)
+	@mkdir -p $(BIN_DIR)/release
+	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/release/pfst
 
 # Compile and run tests.
-test: $(TEST_OBJS)
-	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/test
-	$(BIN_DIR)/test
+test: CFLAGS += -Og -ggdb
+test: $(DEBUG_TEST_OBJS)
+	@mkdir -p $(BIN_DIR)/debug
+	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/debug/test
+	$(BIN_DIR)/debug/test
 
 # Cleanup
 clean:
-	rm -f $(BIN_DIR)/*
+	rm -rf $(BIN_DIR)/*
 	rm -rf $(BUILD_DIR)/*
 
-# Cleanup just the targets with dependencies on files that have been deleted.
-prune:
-	rm -f $(filter-out $(OBJS), $(EXISTING_OBJS))
-	rm -f $(filter-out $(OBJS:.o=.d), $(EXISTING_OBJS:.o=.d))
-
 # Run clang-format
-tidy:
+format:
 	clang-format -style=file -i $(SRCS) $(HEADERS)
 
 # "-include" includes other makefiles.
@@ -131,7 +145,7 @@ tidy:
 #     rebuilt.
 -include $(OBJS:.o=.d)
 
-# Here we build the .o (object) file and generate the .d (dependency) files.
-$(BUILD_DIR)/%.o: ./%.cc
+# Generate .o and .d files.
+$(BUILD_DEBUG_DIR)/%.o $(BUILD_RELEASE_DIR)/%.o: ./%.cc
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
