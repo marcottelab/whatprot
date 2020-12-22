@@ -68,7 +68,7 @@ FwdAlgClassifier::FwdAlgClassifier(
             //   * The first dimension of the tensor shape is always the
             //     timestep, so we need to add one to the channel to index to
             //     the correct dimension.
-            //   * The zeroth step fo the dye track gives us the maximum number
+            //   * The zeroth step for the dye track gives us the maximum number
             //     of dyes possible, but the tensor shape for that channel needs
             //     to be one bigger than that to handle all values inclusively
             //     from 0 to the number of dyes.
