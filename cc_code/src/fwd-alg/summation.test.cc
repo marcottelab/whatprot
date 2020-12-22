@@ -22,8 +22,8 @@ using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
-BOOST_AUTO_TEST_SUITE(summation_suite);
+BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
+BOOST_AUTO_TEST_SUITE(summation_suite)
 
 BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     Summation sum;
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(more_dimensions_big_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // summation_suite
-BOOST_AUTO_TEST_SUITE_END();  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // summation_suite
+BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
 }  // namespace fluoroseq

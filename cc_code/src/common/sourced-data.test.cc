@@ -21,8 +21,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(common_suite);
-BOOST_AUTO_TEST_SUITE(sourced_data_suite);
+BOOST_AUTO_TEST_SUITE(common_suite)
+BOOST_AUTO_TEST_SUITE(sourced_data_suite)
 
 BOOST_AUTO_TEST_CASE(sourced_data_value_not_ptr_source_not_ptr_test) {
     double value = 3.14;
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(source_count_source_is_ptr_test) {
     BOOST_TEST(sc.count == 88);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // sourced_data_suite
-BOOST_AUTO_TEST_SUITE_END();  // common_suite
+BOOST_AUTO_TEST_SUITE_END()  // sourced_data_suite
+BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
 }  // namespace fluoroseq

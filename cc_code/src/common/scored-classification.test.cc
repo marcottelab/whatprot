@@ -22,8 +22,8 @@ using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(common_suite);
-BOOST_AUTO_TEST_SUITE(scored_classification_suite);
+BOOST_AUTO_TEST_SUITE(common_suite)
+BOOST_AUTO_TEST_SUITE(scored_classification_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
     int id = 42;
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(gt_op_false_test) {
     BOOST_TEST(!(sc1 > sc2));
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // scored_classification_suite
-BOOST_AUTO_TEST_SUITE_END();  // common_suite
+BOOST_AUTO_TEST_SUITE_END()  // scored_classification_suite
+BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
 }  // namespace fluoroseq

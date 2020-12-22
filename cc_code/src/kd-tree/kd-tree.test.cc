@@ -41,8 +41,8 @@ public:
     int hits;
 };
 
-BOOST_AUTO_TEST_SUITE(kd_tree_suite);
-BOOST_AUTO_TEST_SUITE(kd_tree_suite);
+BOOST_AUTO_TEST_SUITE(kd_tree_suite)
+BOOST_AUTO_TEST_SUITE(kd_tree_suite)
 
 BOOST_AUTO_TEST_CASE(big_test, *tolerance(TOL)) {
     int k = 4;
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(big_hits_gt1_test, *tolerance(TOL)) {
                == (1.0 - 0.9) * (1.0 - 0.9) + (1.0 - 0.8) * (1.0 - 0.8));
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // kd_tree_suite
-BOOST_AUTO_TEST_SUITE_END();  // kd_tree_suite
+BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
+BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace fluoroseq

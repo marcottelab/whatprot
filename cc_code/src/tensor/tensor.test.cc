@@ -24,8 +24,8 @@ namespace {
 using std::move;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(tensor_suite);
-BOOST_AUTO_TEST_SUITE(tensor_suite);
+BOOST_AUTO_TEST_SUITE(tensor_suite)
+BOOST_AUTO_TEST_SUITE(tensor_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     int order = 1;
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(iterator_reuse_test) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // tensor_suite
-BOOST_AUTO_TEST_SUITE_END();  // tensor_suite
+BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
+BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
 }  // namespace fluoroseq

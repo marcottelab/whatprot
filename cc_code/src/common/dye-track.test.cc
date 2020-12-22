@@ -25,8 +25,8 @@ using std::hash;
 using std::move;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(common_suite);
-BOOST_AUTO_TEST_SUITE(dye_track_suite);
+BOOST_AUTO_TEST_SUITE(common_suite)
+BOOST_AUTO_TEST_SUITE(dye_track_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_from_dye_seq_trivial_test) {
     int num_timesteps = 1;
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(hash_different_test) {
     BOOST_TEST(hasher(dt1) != hasher(dt2));
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // dye_track_suite
-BOOST_AUTO_TEST_SUITE_END();  // common_suite
+BOOST_AUTO_TEST_SUITE_END()  // dye_track_suite
+BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
 }  // namespace fluoroseq

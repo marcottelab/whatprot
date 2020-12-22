@@ -56,8 +56,8 @@ public:
     int hits;
 };
 
-BOOST_AUTO_TEST_SUITE(kd_tree_suite);
-BOOST_AUTO_TEST_SUITE(leaf_node_suite);
+BOOST_AUTO_TEST_SUITE(kd_tree_suite)
+BOOST_AUTO_TEST_SUITE(leaf_node_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int d = 3;
@@ -256,8 +256,8 @@ BOOST_AUTO_TEST_CASE(search_failure_test, *tolerance(TOL)) {
     VerifyNoOtherInvocations(k_best_mock);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // leaf_node_suite
-BOOST_AUTO_TEST_SUITE_END();  // kd_tree_suite
+BOOST_AUTO_TEST_SUITE_END()  // leaf_node_suite
+BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
 }  // namespace fluoroseq

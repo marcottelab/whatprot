@@ -51,8 +51,8 @@ public:
     int hits;
 };
 
-BOOST_AUTO_TEST_SUITE(kd_tree_suite);
-BOOST_AUTO_TEST_SUITE(internal_node_suite);
+BOOST_AUTO_TEST_SUITE(kd_tree_suite)
+BOOST_AUTO_TEST_SUITE(internal_node_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     Mock<Node<Vec, vector<double>>> left_mock;
@@ -232,8 +232,8 @@ BOOST_AUTO_TEST_CASE(search_right_then_left_test, *tolerance(TOL)) {
     VerifyNoOtherInvocations(left_mock);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // internal_node_suite
-BOOST_AUTO_TEST_SUITE_END();  // kd_tree_suite
+BOOST_AUTO_TEST_SUITE_END()  // internal_node_suite
+BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
 }  // namespace fluoroseq

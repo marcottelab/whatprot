@@ -31,8 +31,8 @@ using std::function;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
-BOOST_AUTO_TEST_SUITE(emission_suite);
+BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
+BOOST_AUTO_TEST_SUITE(emission_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int num_timesteps = 1;
@@ -476,7 +476,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_everything_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // emission_suite
-BOOST_AUTO_TEST_SUITE_END();  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // emission_suite
+BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
 }  // namespace fluoroseq

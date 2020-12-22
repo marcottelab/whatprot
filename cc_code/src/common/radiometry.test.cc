@@ -14,8 +14,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(common_suite);
-BOOST_AUTO_TEST_SUITE(radiometry_suite);
+BOOST_AUTO_TEST_SUITE(common_suite)
+BOOST_AUTO_TEST_SUITE(radiometry_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
     int num_timesteps = 3;
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(paren_op_const_test) {
     BOOST_TEST(cr(2, 1) == 621);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // radiometry_suite
-BOOST_AUTO_TEST_SUITE_END();  // common_suite
+BOOST_AUTO_TEST_SUITE_END()  // radiometry_suite
+BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
 }  // namespace fluoroseq

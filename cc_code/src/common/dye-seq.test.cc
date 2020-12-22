@@ -14,8 +14,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(common_suite);
-BOOST_AUTO_TEST_SUITE(dye_seq_suite);
+BOOST_AUTO_TEST_SUITE(common_suite)
+BOOST_AUTO_TEST_SUITE(dye_seq_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
     int num_channels = 2;
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(bracket_op_test) {
     BOOST_TEST(ds[0] == 1);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // dye_seq_suite
-BOOST_AUTO_TEST_SUITE_END();  // common_suite
+BOOST_AUTO_TEST_SUITE_END()  // dye_seq_suite
+BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
 }  // namespace fluoroseq

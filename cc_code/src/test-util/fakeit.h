@@ -105,7 +105,7 @@ public:
 // Here we check whether we received a fakeit::TypedMatcherCreator as the
 // argument. If we did, we enable this definition. The return type of the
 // function when it's enabled is PtrMatcherCreator<T, T*>.
-template <typename T, template <typename> typename MC>
+template <typename T, template <typename> class MC>
 typename std::enable_if<
         std::is_base_of<fakeit::TypedMatcherCreator<T>, MC<T>>::value,
         PtrMatcherCreator<T, T*>>::type

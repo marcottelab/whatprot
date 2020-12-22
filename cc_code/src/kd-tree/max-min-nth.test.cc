@@ -24,8 +24,8 @@ using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(kd_tree_suite);
-BOOST_AUTO_TEST_SUITE(max_min_nth_suite);
+BOOST_AUTO_TEST_SUITE(kd_tree_suite)
+BOOST_AUTO_TEST_SUITE(max_min_nth_suite)
 
 BOOST_AUTO_TEST_CASE(partition_test, *tolerance(TOL)) {
     vector<vector<double>> vecs(5, vector<double>(2, 0));
@@ -488,8 +488,8 @@ BOOST_AUTO_TEST_CASE(min_test, *tolerance(TOL)) {
     BOOST_TEST(min == -1.1);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // max_min_nth_suite
-BOOST_AUTO_TEST_SUITE_END();  // kd_tree_suite
+BOOST_AUTO_TEST_SUITE_END()  // max_min_nth_suite
+BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
 }  // namespace fluoroseq

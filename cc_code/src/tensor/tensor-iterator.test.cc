@@ -14,8 +14,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(tensor_suite);
-BOOST_AUTO_TEST_SUITE(tensor_iterator_suite);
+BOOST_AUTO_TEST_SUITE(tensor_suite)
+BOOST_AUTO_TEST_SUITE(tensor_iterator_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     int order = 1;
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(order_three_size_one_test) {
     delete[] values;
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // tensor_iterator_suite
-BOOST_AUTO_TEST_SUITE_END();  // tensor_suite
+BOOST_AUTO_TEST_SUITE_END()  // tensor_iterator_suite
+BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
 }  // namespace fluoroseq

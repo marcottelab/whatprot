@@ -19,8 +19,8 @@ using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
-BOOST_AUTO_TEST_SUITE(edman_transition_suite);
+BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
+BOOST_AUTO_TEST_SUITE(edman_transition_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     double p_fail = 0.05;
@@ -500,7 +500,7 @@ BOOST_AUTO_TEST_CASE(paren_op_two_dye_colors_second_edman_test,
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // edman_transition_suite
-BOOST_AUTO_TEST_SUITE_END();  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // edman_transition_suite
+BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
 }  // namespace fluoroseq

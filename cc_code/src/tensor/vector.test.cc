@@ -14,8 +14,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(tensor_suite);
-BOOST_AUTO_TEST_SUITE(vector_suite);
+BOOST_AUTO_TEST_SUITE(tensor_suite)
+BOOST_AUTO_TEST_SUITE(vector_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
     int length = 1;
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(stride_two_test) {
     delete[] values;
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // vector_suite
-BOOST_AUTO_TEST_SUITE_END();  // tensor_suite
+BOOST_AUTO_TEST_SUITE_END()  // vector_suite
+BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
 }  // namespace fluoroseq

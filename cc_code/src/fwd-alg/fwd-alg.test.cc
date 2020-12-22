@@ -37,8 +37,8 @@ const double PI = 3.141592653589793238;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite);
+BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
+BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
 
 BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     int num_timesteps = 1;
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(more_involved_test, *tolerance(TOL)) {
                == 3.2324422559808915e-23);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // fwd_alg_suite
-BOOST_AUTO_TEST_SUITE_END();  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
 }  // namespace fluoroseq

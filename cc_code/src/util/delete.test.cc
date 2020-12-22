@@ -16,8 +16,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(util_suite);
-BOOST_AUTO_TEST_SUITE(delete_suite);
+BOOST_AUTO_TEST_SUITE(util_suite)
+BOOST_AUTO_TEST_SUITE(delete_suite)
 
 BOOST_AUTO_TEST_CASE(delete_if_pointer_not_pointer_test) {
     int x = 42;
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(delete_array_is_pointers_test) {
     delete_array(size, arr);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // delete_suite
-BOOST_AUTO_TEST_SUITE_END();  // util_suite
+BOOST_AUTO_TEST_SUITE_END()  // delete_suite
+BOOST_AUTO_TEST_SUITE_END()  // util_suite
 
 }  // namespace fluoroseq

@@ -37,8 +37,8 @@ public:
     string s;
 };
 
-BOOST_AUTO_TEST_SUITE(kd_tree_suite);
-BOOST_AUTO_TEST_SUITE(k_best_suite);
+BOOST_AUTO_TEST_SUITE(kd_tree_suite)
+BOOST_AUTO_TEST_SUITE(k_best_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     KBest<Str> kb(3);
@@ -185,8 +185,8 @@ BOOST_AUTO_TEST_CASE(over_capacity_hits_gt1_test, *tolerance(TOL)) {
     BOOST_TEST(dists_sq[1] == 1.0);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // k_best_suite
-BOOST_AUTO_TEST_SUITE_END();  // kd_tree_suite
+BOOST_AUTO_TEST_SUITE_END()  // k_best_suite
+BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
 }  // namespace fluoroseq

@@ -26,8 +26,8 @@ using std::hash;
 using std::vector;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(util_suite);
-BOOST_AUTO_TEST_SUITE(vector_hash_suite);
+BOOST_AUTO_TEST_SUITE(util_suite)
+BOOST_AUTO_TEST_SUITE(vector_hash_suite)
 
 BOOST_AUTO_TEST_CASE(same_num_same_hash_test) {
     vector<int> v1;
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(different_element_order_different_hash_test) {
     BOOST_TEST(hasher(v1) != hasher(v2));
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // vector_hash_suite
-BOOST_AUTO_TEST_SUITE_END();  // util_suite
+BOOST_AUTO_TEST_SUITE_END()  // vector_hash_suite
+BOOST_AUTO_TEST_SUITE_END()  // util_suite
 
 }  // namespace fluoroseq

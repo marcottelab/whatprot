@@ -14,8 +14,8 @@
 
 namespace fluoroseq {
 
-BOOST_AUTO_TEST_SUITE(util_suite);
-BOOST_AUTO_TEST_SUITE(range_suite);
+BOOST_AUTO_TEST_SUITE(util_suite)
+BOOST_AUTO_TEST_SUITE(range_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_max_only_test) {
     Range r(7);
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(itr_not_equal_op_test) {
     BOOST_TEST((r.begin() != itr));
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // range_suite
-BOOST_AUTO_TEST_SUITE_END();  // util_suite
+BOOST_AUTO_TEST_SUITE_END()  // range_suite
+BOOST_AUTO_TEST_SUITE_END()  // util_suite
 
 }  // namespace fluoroseq

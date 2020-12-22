@@ -23,8 +23,8 @@ using std::function;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(common_suite);
-BOOST_AUTO_TEST_SUITE(error_model_suite);
+BOOST_AUTO_TEST_SUITE(common_suite)
+BOOST_AUTO_TEST_SUITE(error_model_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
     double p_edman_failure = .07;
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(pdf_state_one_obs_one_test, *tolerance(TOL)) {
     BOOST_TEST(pdf(observed, state) == 2.4933892525089547);
 }
 
-BOOST_AUTO_TEST_SUITE_END();  // error_model_suite
-BOOST_AUTO_TEST_SUITE_END();  // common_suite
+BOOST_AUTO_TEST_SUITE_END()  // error_model_suite
+BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
 }  // namespace fluoroseq
