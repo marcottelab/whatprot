@@ -64,7 +64,15 @@ FwdAlgClassifier::FwdAlgClassifier(
         tensor_shapes[i].resize(1 + num_channels);
         tensor_shapes[i][0] = num_timesteps + 1;
         for (int c = 0; c < num_channels; c++) {
-            tensor_shapes[i][1 + c] = dye_track(0, c);
+            // This next line of code is a little confusing.
+            //   * The first dimension of the tensor shape is always the
+            //     timestep, so we need to add one to the channel to index to
+            //     the correct dimension.
+            //   * The zeroth step fo the dye track gives us the maximum number
+            //     of dyes possible, but the tensor shape for that channel needs
+            //     to be one bigger than that to handle all values inclusively
+            //     from 0 to the number of dyes.
+            tensor_shapes[i][1 + c] = 1 + dye_track(0, c);
         }
     }
     dud_transition.reserve(max_num_dyes);

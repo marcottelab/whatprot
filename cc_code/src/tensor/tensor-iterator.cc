@@ -14,6 +14,7 @@ namespace fluoroseq {
 TensorIterator::TensorIterator(int order, int* shape, int size, double* values)
         : order(order), shape(shape), size(size), values(values), index(0) {
     loc = new int[order]();
+    reset();
 }
 
 TensorIterator::~TensorIterator() {
