@@ -21,15 +21,16 @@ namespace fluoroseq {
 class BinomialTransition {
 public:
     BinomialTransition(double q);
-    void reserve(int max_n) const;
-    double& prob(int from, int to) const;
+    void reserve(int max_n);
+    double& prob(int from, int to);
+    double prob(int from, int to) const;
     void operator()(Tensor* tensor, int channel, int edmans) const;
     void operator()(Vector* v) const;
 
-    mutable std::vector<double> values;
+    std::vector<double> values;
     const double q;
-    mutable int length;  // length of array in one dimension.
-    mutable int size;  // length of values.
+    int length;  // length of array in one dimension.
+    int size;  // length of values.
 };
 
 }  // namespace fluoroseq

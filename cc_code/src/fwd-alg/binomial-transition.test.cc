@@ -97,6 +97,7 @@ BOOST_AUTO_TEST_CASE(paren_op_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
+    bt.reserve(0);
     int order = 2;
     int* shape = new int[order];
     shape[0] = 1;
@@ -118,6 +119,7 @@ BOOST_AUTO_TEST_CASE(paren_op_basic_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
+    bt.reserve(1);
     int order = 2;
     int* shape = new int[order];
     shape[0] = 1;
@@ -145,6 +147,7 @@ BOOST_AUTO_TEST_CASE(paren_op_bigger_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
+    bt.reserve(2);
     int order = 2;
     int* shape = new int[order];
     shape[0] = 1;
@@ -176,6 +179,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
+    bt.reserve(2);
     int order = 2;
     int* shape = new int[order];
     shape[0] = 3;
@@ -223,6 +227,7 @@ BOOST_AUTO_TEST_CASE(paren_op_other_dye_colors_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     BinomialTransition bt(q);
+    bt.reserve(1);
     int order = 4;
     int* shape = new int[order];
     shape[0] = 1;

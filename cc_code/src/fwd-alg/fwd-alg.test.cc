@@ -111,8 +111,10 @@ BOOST_AUTO_TEST_CASE(sum_to_one_test, *tolerance(TOL)) {
     DetachTransition detach(p_detach);
     double p_dud = 0.25;
     BinomialTransition dud(p_dud);
+    dud.reserve(5);
     double p_bleach = 0.35;
     BinomialTransition bleach(p_bleach);
+    bleach.reserve(5);
     double p_edman_failure = 0.45;
     DyeSeq dye_seq(num_channels, "10.01111");
     DyeTrack dye_track(num_timesteps, num_channels, dye_seq);
@@ -177,8 +179,10 @@ BOOST_AUTO_TEST_CASE(more_involved_test, *tolerance(TOL)) {
     DetachTransition detach(p_detach);
     double p_dud = 0.07;
     BinomialTransition dud(p_dud);
+    dud.reserve(5);
     double p_bleach = 0.05;
     BinomialTransition bleach(p_bleach);
+    bleach.reserve(5);
     double p_edman_failure = 0.06;
     DyeSeq dye_seq(num_channels, "10.01111");
     DyeTrack dye_track(num_timesteps, num_channels, dye_seq);
