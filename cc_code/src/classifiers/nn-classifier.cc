@@ -191,9 +191,10 @@ vector<ScoredClassification> NNClassifier::classify(
 vector<ScoredClassification> NNClassifier::classify(
         const vector<Radiometry>& radiometries) {
     vector<ScoredClassification> results;
-    results.reserve(radiometries.size());
+    results.resize(radiometries.size());
+    #pragma omp parallel for
     for (int i = 0; i < radiometries.size(); i++) {
-        results.push_back(classify(radiometries[i]));
+        results[i] = classify(radiometries[i]);
     }
     return results;
 }

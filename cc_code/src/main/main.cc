@@ -18,6 +18,7 @@ namespace {
 using fluoroseq::classify_main;
 using fluoroseq::print_bad_inputs;
 using fluoroseq::print_invalid_command;
+using fluoroseq::print_omp_info;
 using fluoroseq::simulate_main;
 }  // namespace
 
@@ -26,6 +27,7 @@ int main(int argc, char** argv) {
         print_bad_inputs();
         return 1;
     }
+    print_omp_info();
     char* mode = argv[1];
     int return_code;
     if (0 == strcmp(mode, "classify")) {

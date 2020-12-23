@@ -12,6 +12,9 @@
 // Standard C++ library headers:
 #include <iostream>
 
+// OpenMP
+#include <omp.h>
+
 namespace fluoroseq {
 
 namespace {
@@ -63,6 +66,10 @@ void print_invalid_classifier() {
 void print_invalid_command() {
     cout << "Invalid command. First argument must be 'classify' or "
          << "'simulate'.\n";
+}
+
+void print_omp_info() {
+    cout << "Using OpenMP with " << omp_get_max_threads() << " threads.\n";
 }
 
 void print_read_dye_seqs(int num, double time) {

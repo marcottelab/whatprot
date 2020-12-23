@@ -39,6 +39,7 @@ CC = g++
 # Set any flags for libraries.
 LDFLAGS = -L./extern/mrmpi-7Apr14/src/ -lmrmpi_serial
 LDFLAGS += -L./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
+LDFLAGS += -fopenmp
 
 SRC_DIR = ./src
 TEST_DIR = ./test
@@ -101,7 +102,7 @@ INCLUDE += -I./extern/FakeIt/single_header/boost/
 GENDEPS = -MMD -MP -MT '$@'
 
 # Here we set any additional flags for the compiler.
-CFLAGS = -Wpedantic -Werror
+CFLAGS = -Wpedantic -Werror -fopenmp
 
 # Generate binary. This is first so that it will be the default rule.
 all: CFLAGS += -Og -ggdb
@@ -146,6 +147,10 @@ format:
 -include $(OBJS:.o=.d)
 
 # Generate .o and .d files.
-$(BUILD_DEBUG_DIR)/%.o $(BUILD_RELEASE_DIR)/%.o: ./%.cc
+$(BUILD_DEBUG_DIR)/%.o: ./%.cc
+	@mkdir -p $(shell dirname $@)
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
+
+$(BUILD_RELEASE_DIR)/%.o: ./%.cc
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
