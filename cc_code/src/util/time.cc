@@ -9,16 +9,20 @@
 // Defining symbols from header:
 #include "time.h"
 
+// Standard c++ headers
 #include <ctime>
+
+// OpenMP
+#include <omp.h>
 
 namespace fluoroseq {
 
 double wall_time() {
-    return (double)clock() / (double)CLOCKS_PER_SEC;
+    return omp_get_wtime();
 }
 
 double wall_tick() {
-    return (double)1.0 / (double)CLOCKS_PER_SEC;
+    return omp_get_wtick();
 }
 
 unsigned int time_based_seed() {
