@@ -23,7 +23,7 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_seq(dye_seq),
           dye_track(dye_track) {}
 
-void EdmanTransition::operator()(Tensor* tensor, int timestep) const {
+void EdmanTransition::forward(Tensor* tensor, int timestep) const {
     int t_stride = tensor->strides[0];
     for (int i = t_stride * (1 + timestep) - 1; i >= 0; i--) {
         tensor->values[i + t_stride] = tensor->values[i];

@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     tsr[loc] = -1000.0;
-    init(&tsr);
+    init.forward(&tsr);
     BOOST_TEST(tsr[loc] == 1.0);
     delete[] loc;
 }
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(many_timesteps_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     tsr[loc] = -1000.0;
-    init(&tsr);
+    init.forward(&tsr);
     BOOST_TEST(tsr[loc] == 1.0);
     delete[] loc;
 }
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {0, 1}
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {0, 2}
-    init(&tsr);
+    init.forward(&tsr);
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0}
     loc[1] = 1;
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {0, 1, 0}
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
-    init(&tsr);
+    init.forward(&tsr);
     loc[1] = 0;
     loc[2] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0, 0}
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {0, 1, 0}
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
-    init(&tsr);
+    init.forward(&tsr);
     loc[1] = 0;
     loc[2] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0, 0}

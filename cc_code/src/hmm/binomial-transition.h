@@ -24,8 +24,8 @@ public:
     void reserve(int max_n);
     double& prob(int from, int to);
     double prob(int from, int to) const;
-    void operator()(Tensor* tensor, int channel, int edmans) const;
-    void operator()(Vector* v) const;
+    void forward(Tensor* tensor, int channel, int edmans) const;
+    void forward(Vector* v) const;
 
     std::vector<double> values;
     const double q;

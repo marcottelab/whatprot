@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(multiple_everything_const_test, *tolerance(TOL)) {
     BOOST_TEST(ce.prob(1, 1, 1) == pdf(1.1, 1));
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -255,12 +255,12 @@ BOOST_AUTO_TEST_CASE(paren_op_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 3.14;  // loc is {0, 0}
     int timestep = 0;
-    e(&tsr, timestep);
+    e.forward(&tsr, timestep);
     BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_tensor_reuse_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_tensor_reuse_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -282,13 +282,13 @@ BOOST_AUTO_TEST_CASE(paren_op_tensor_reuse_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 3.14;  // loc is {0, 0}
     int timestep = 0;
-    e(&tsr, timestep);
-    e(&tsr, timestep);
+    e.forward(&tsr, timestep);
+    e.forward(&tsr, timestep);
     BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     int num_timesteps = 3;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, *tolerance(TOL)) {
     loc[0] = 2;
     tsr[loc] = 13.2;  // loc is {2, 0}
     int timestep = 2;
-    e(&tsr, timestep);
+    e.forward(&tsr, timestep);
     loc[0] = 0;
     BOOST_TEST(tsr[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
     loc[0] = 1;
@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_timesteps_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_channels_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -354,13 +354,13 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_channels_test, *tolerance(TOL)) {
     loc[3] = 0;
     tsr[loc] = 13.0;  // loc is {0, 0, 0, 0}
     int timestep = 0;
-    e(&tsr, timestep);
+    e.forward(&tsr, timestep);
     // loc is {0, 0, 0, 0}
     BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_counts_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_counts_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = 13.2;  // loc is {0, 2}
     int timestep = 0;
-    e(&tsr, timestep);
+    e.forward(&tsr, timestep);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_counts_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(paren_op_multiple_everything_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     int num_timesteps = 2;
     int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_everything_test, *tolerance(TOL)) {
     loc[2] = 1;
     tsr[loc] = 7.111;  // loc is {1, 1, 1}
     int timestep = 1;
-    e(&tsr, timestep);
+    e.forward(&tsr, timestep);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;

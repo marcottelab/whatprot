@@ -16,7 +16,7 @@ namespace fluoroseq {
 
 class Initialization {
 public:
-    void operator()(Tensor* tensor) const;
+    void forward(Tensor* tensor) const;
 };
 
 }  // namespace fluoroseq

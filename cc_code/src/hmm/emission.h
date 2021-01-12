@@ -26,7 +26,7 @@ public:
              std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    void operator()(Tensor* tensor, int timestep) const;
+    void forward(Tensor* tensor, int timestep) const;
 
     std::vector<double> values;
     int num_timesteps;

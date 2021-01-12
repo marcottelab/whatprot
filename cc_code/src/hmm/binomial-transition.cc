@@ -48,7 +48,7 @@ double BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::operator()(Tensor* tensor,
+void BinomialTransition::forward(Tensor* tensor,
                                     int channel,
                                     int edmans) const {
     int vector_stride = tensor->strides[1 + channel];
@@ -60,12 +60,12 @@ void BinomialTransition::operator()(Tensor* tensor,
             Vector v(vector_length,
                      vector_stride,
                      &tensor->values[outer + inner]);
-            (*this)(&v);
+            this->forward(&v);
         }
     }
 }
 
-void BinomialTransition::operator()(Vector* v) const {
+void BinomialTransition::forward(Vector* v) const {
     for (int to = 0; to < v->length; to++) {
         double v_to = 0.0;
         for (int from = to; from < v->length; from++) {
