@@ -10,12 +10,12 @@
 #define FLUOROSEQ_HMM_SIMPLE_HMM_H
 
 // Local project headers:
-#include "fwd-alg/binomial-transition.h"
-#include "fwd-alg/detach-transition.h"
-#include "fwd-alg/edman-transition.h"
-#include "fwd-alg/emission.h"
-#include "fwd-alg/initialization.h"
-#include "fwd-alg/summation.h"
+#include "hmm/binomial-transition.h"
+#include "hmm/detach-transition.h"
+#include "hmm/edman-transition.h"
+#include "hmm/emission.h"
+#include "hmm/initialization.h"
+#include "hmm/summation.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
