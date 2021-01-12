@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
     BOOST_TEST(tsr[loc] == 0.3);  // loc is {0, 0}
     loc[1] = 1;
     // loc is {0, 1}
-    BOOST_TEST(tsr[loc] == p_detach * 0.3  + (1 - p_detach) * 0.7);
+    BOOST_TEST(tsr[loc] == p_detach * 0.3 + (1 - p_detach) * 0.7);
     delete[] loc;
 }
 

@@ -35,8 +35,8 @@ void DetachTransition::backward(const Tensor& input,
     int i_max = (edmans + 1) * input.strides[0];
     double if_detach = input.values[edmans * input.strides[0]];
     for (int i = 0; i < i_max; i++) {
-        output->values[i] = (1 - p_detach) * input.values[i]
-                            + p_detach * if_detach;
+        output->values[i] =
+                (1 - p_detach) * input.values[i] + p_detach * if_detach;
     }
 }
 
