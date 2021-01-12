@@ -13,7 +13,10 @@ namespace fluoroseq {
 
 class ConstTensorIterator {
 public:
-    ConstTensorIterator(int order, const int* shape, int size, const double* values);
+    ConstTensorIterator(int order,
+                        const int* shape,
+                        int size,
+                        const double* values);
     ~ConstTensorIterator();
     void reset();
     void advance();

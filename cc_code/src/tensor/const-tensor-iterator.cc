@@ -11,7 +11,10 @@
 
 namespace fluoroseq {
 
-ConstTensorIterator::ConstTensorIterator(int order, const int* shape, int size, const double* values)
+ConstTensorIterator::ConstTensorIterator(int order,
+                                         const int* shape,
+                                         int size,
+                                         const double* values)
         : order(order), shape(shape), size(size), values(values), index(0) {
     loc = new int[order]();
     reset();

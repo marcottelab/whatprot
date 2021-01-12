@@ -16,7 +16,9 @@ namespace fluoroseq {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(const Tensor& input, int edmans, Tensor* output) const {
+void DetachTransition::forward(const Tensor& input,
+                               int edmans,
+                               Tensor* output) const {
     int i_max = (edmans + 1) * input.strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {

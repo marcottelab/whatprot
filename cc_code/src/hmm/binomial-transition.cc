@@ -49,20 +49,20 @@ double BinomialTransition::prob(int from, int to) const {
 }
 
 void BinomialTransition::forward(const Tensor& input,
-                                    int channel,
-                                    int edmans, Tensor* output) const {
+                                 int channel,
+                                 int edmans,
+                                 Tensor* output) const {
     int vector_stride = input.strides[1 + channel];
     int vector_length = input.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
     int outer_max = input.strides[0] * (edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
-            const Vector inv(vector_length,
-                     vector_stride,
-                     &input.values[outer + inner]);
+            const Vector inv(
+                    vector_length, vector_stride, &input.values[outer + inner]);
             Vector outv(vector_length,
-                     vector_stride,
-                     &output->values[outer + inner]);
+                        vector_stride,
+                        &output->values[outer + inner]);
             this->forward(inv, &outv);
         }
     }

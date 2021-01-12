@@ -23,7 +23,9 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_seq(dye_seq),
           dye_track(dye_track) {}
 
-void EdmanTransition::forward(const Tensor& input, int timestep, Tensor* output) const {
+void EdmanTransition::forward(const Tensor& input,
+                              int timestep,
+                              Tensor* output) const {
     int t_stride = input.strides[0];
     for (int i = t_stride * (1 + timestep) - 1; i >= 0; i--) {
         output->values[i + t_stride] = input.values[i];
@@ -50,11 +52,11 @@ void EdmanTransition::forward(const Tensor& input, int timestep, Tensor* output)
                  outer += outer_stride) {
                 for (int inner = 0; inner < vector_stride; inner++) {
                     const Vector inv(vector_length,
-                             vector_stride,
-                             &input.values[outer + inner]);
+                                     vector_stride,
+                                     &input.values[outer + inner]);
                     Vector outv(vector_length,
-                            vector_stride,
-                            &output->values[outer + inner]);
+                                vector_stride,
+                                &output->values[outer + inner]);
                     for (int i = 1; i <= amt; i++) {
                         double ratio = (double)i / (double)amt;
                         outv[i - 1] += inv[i] * ratio;

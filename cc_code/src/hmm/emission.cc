@@ -47,7 +47,9 @@ double Emission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void Emission::forward(const Tensor& input, int timestep, Tensor* output) const {
+void Emission::forward(const Tensor& input,
+                       int timestep,
+                       Tensor* output) const {
     ConstTensorIterator* inputit = input.const_iterator();
     TensorIterator* outputit = output->iterator();
     while (inputit->index < (timestep + 1) * input.strides[0]) {
