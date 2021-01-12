@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_EMISSION
-#define FLUOROSEQ_FWD_ALG_EMISSION
+#ifndef FLUOROSEQ_HMM_EMISSION
+#define FLUOROSEQ_HMM_EMISSION
 
 // Standard C++ library headers:
 #include <functional>
@@ -36,4 +36,4 @@ public:
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_FWD_ALG_EMISSION
+#endif  // FLUOROSEQ_HMM_EMISSION

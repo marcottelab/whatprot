@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_DETACH_TRANSITION
-#define FLUOROSEQ_FWD_ALG_DETACH_TRANSITION
+#ifndef FLUOROSEQ_HMM_DETACH_TRANSITION
+#define FLUOROSEQ_HMM_DETACH_TRANSITION
 
 // Local project headers:
 #include "tensor/tensor.h"
@@ -24,4 +24,4 @@ public:
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_FWD_ALG_DETACH_TRANSITION
+#endif  // FLUOROSEQ_HMM_DETACH_TRANSITION

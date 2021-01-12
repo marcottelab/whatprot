@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_INITIALIZATION
-#define FLUOROSEQ_FWD_ALG_INITIALIZATION
+#ifndef FLUOROSEQ_HMM_INITIALIZATION
+#define FLUOROSEQ_HMM_INITIALIZATION
 
 // Local project headers:
 #include "tensor/tensor.h"
@@ -21,4 +21,4 @@ public:
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_FWD_ALG_INITIALIZATION
+#endif  // FLUOROSEQ_HMM_INITIALIZATION
