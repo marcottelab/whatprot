@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 1.0;  // loc is {0, 0}
     int edmans = 0;
-    dt.forward(&tsr, edmans);
+    dt.forward(tsr, edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
 }
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 0.7;  // loc is {0, 1}
     int edmans = 0;
-    dt.forward(&tsr, edmans);
+    dt.forward(tsr, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 + 0.7 * p_detach);  // loc is {0, 0}
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(forward_bigger_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = 0.1;  // loc is {0, 2}
     int edmans = 0;
-    dt.forward(&tsr, edmans);
+    dt.forward(tsr, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 0.6;  // loc is {2, 1}
     int edmans = 2;
-    dt.forward(&tsr, edmans);
+    dt.forward(tsr, edmans, &tsr);
     // Just testing the ones with at least one lit amino acid here. See below
     // for other tests.
     loc[0] = 0;
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
     loc[2] = 1;
     tsr[loc] = 0.4;  // loc is {0, 1, 1}
     int edmans = 0;
-    dt.forward(&tsr, edmans);
+    dt.forward(tsr, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;

@@ -13,6 +13,7 @@
 #include <algorithm>  // needed for std::copy
 
 // Local project headers:
+#include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
 namespace fluoroseq {
@@ -66,6 +67,10 @@ double& Tensor::operator[](int* loc) {
 
 TensorIterator* Tensor::iterator() {
     return new TensorIterator(order, shape, size, values);
+}
+
+ConstTensorIterator* Tensor::const_iterator() const {
+    return new ConstTensorIterator(order, shape, size, values);
 }
 
 }  // namespace fluoroseq

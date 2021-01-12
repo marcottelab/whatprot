@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 3.14;  // loc is {0, 0}
     int timestep = 0;
-    e.forward(&tsr, timestep);
+    e.forward(tsr, timestep, &tsr);
     BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
@@ -282,8 +282,8 @@ BOOST_AUTO_TEST_CASE(forward_tensor_reuse_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 3.14;  // loc is {0, 0}
     int timestep = 0;
-    e.forward(&tsr, timestep);
-    e.forward(&tsr, timestep);
+    e.forward(tsr, timestep, &tsr);
+    e.forward(tsr, timestep, &tsr);
     BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     loc[0] = 2;
     tsr[loc] = 13.2;  // loc is {2, 0}
     int timestep = 2;
-    e.forward(&tsr, timestep);
+    e.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     BOOST_TEST(tsr[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
     loc[0] = 1;
@@ -354,7 +354,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     loc[3] = 0;
     tsr[loc] = 13.0;  // loc is {0, 0, 0, 0}
     int timestep = 0;
-    e.forward(&tsr, timestep);
+    e.forward(tsr, timestep, &tsr);
     // loc is {0, 0, 0, 0}
     BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
     delete[] loc;
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = 13.2;  // loc is {0, 2}
     int timestep = 0;
-    e.forward(&tsr, timestep);
+    e.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     loc[2] = 1;
     tsr[loc] = 7.111;  // loc is {1, 1, 1}
     int timestep = 1;
-    e.forward(&tsr, timestep);
+    e.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;

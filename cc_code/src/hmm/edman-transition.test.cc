@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     loc[0] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
     int timestep = 0;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 1.0 * p_fail);  // loc is {0, 0}
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
     int timestep = 0;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(forward_more_edmans_test, *tolerance(TOL)) {
     loc[0] = 3;
     tsr[loc] = -1000.0;  // loc is {3, 0} -- this value should be ignored.
     int timestep = 2;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.2 * p_fail);  // loc is {0, 0}
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1, 1} -- this value should be ignored.
     int timestep = 0;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(forward_irrelevant_dye_seq_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
     int timestep = 0;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(forward_one_dye_first_edman_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
     int timestep = 0;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE(forward_two_dyes_second_edman_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
     int timestep = 1;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -387,7 +387,7 @@ BOOST_AUTO_TEST_CASE(forward_three_dyes_first_edman_test, *tolerance(TOL)) {
     loc[1] = 3;
     tsr[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
     int timestep = 0;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -461,7 +461,7 @@ BOOST_AUTO_TEST_CASE(forward_two_dye_colors_second_edman_test,
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
     int timestep = 1;
-    et.forward(&tsr, timestep);
+    et.forward(tsr, timestep, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;

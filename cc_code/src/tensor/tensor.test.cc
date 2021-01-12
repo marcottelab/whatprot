@@ -16,6 +16,7 @@
 #include <utility>
 
 // Local project headers:
+#include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
 namespace fluoroseq {
@@ -207,6 +208,66 @@ BOOST_AUTO_TEST_CASE(iterator_test) {
     BOOST_TEST(t[loc] == 611);
     loc[1] = 2;
     BOOST_TEST(t[loc] == 612);
+    delete[] loc;
+    delete itr;
+}
+
+BOOST_AUTO_TEST_CASE(const_iterator_test) {
+    int order = 2;
+    int* shape = new int[order];
+    shape[0] = 2;
+    shape[1] = 3;
+    Tensor t(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    t[loc] = 500;
+    loc[1] = 1;
+    t[loc] = 501;
+    loc[1] = 2;
+    t[loc] = 502;
+    loc[0] = 1;
+    loc[1] = 0;
+    t[loc] = 510;
+    loc[1] = 1;
+    t[loc] = 511;
+    loc[1] = 2;
+    t[loc] = 512;
+    ConstTensorIterator* itr = t.const_iterator();
+    BOOST_TEST(itr->done() == false);
+    BOOST_TEST(itr->get() == 500);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    BOOST_TEST(itr->get() == 501);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    BOOST_TEST(itr->get() == 502);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    BOOST_TEST(itr->get() == 510);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    BOOST_TEST(itr->get() == 511);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    BOOST_TEST(itr->get() == 512);
+    itr->advance();
+    BOOST_TEST(itr->done() == true);
+    loc[0] = 0;
+    loc[1] = 0;
+    BOOST_TEST(t[loc] == 500);
+    loc[1] = 1;
+    BOOST_TEST(t[loc] == 501);
+    loc[1] = 2;
+    BOOST_TEST(t[loc] == 502);
+    loc[0] = 1;
+    loc[1] = 0;
+    BOOST_TEST(t[loc] == 510);
+    loc[1] = 1;
+    BOOST_TEST(t[loc] == 511);
+    loc[1] = 2;
+    BOOST_TEST(t[loc] == 512);
     delete[] loc;
     delete itr;
 }

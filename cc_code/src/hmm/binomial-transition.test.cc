@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     tsr[loc] = 1.0;  // loc is {0, 0}
     int channel = 0;
     int edmans = 0;
-    bt.forward(&tsr, channel, edmans);
+    bt.forward(tsr, channel, edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
 }
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(forward_basic_transition_test, *tolerance(TOL)) {
     tsr[loc] = 0.7;  // loc is {0, 1}
     int channel = 0;
     int edmans = 0;
-    bt.forward(&tsr, channel, edmans);
+    bt.forward(tsr, channel, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 + 0.7 * q);  // loc is {0, 0}
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(forward_bigger_transition_test, *tolerance(TOL)) {
     tsr[loc] = 0.7;  // loc is {0, 2}
     int channel = 0;
     int edmans = 0;
-    bt.forward(&tsr, channel, edmans);
+    bt.forward(tsr, channel, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.2 + 0.3 * q + 0.7 * q * q);  // loc is {0, 0}
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
     tsr[loc] = 0.6;  // loc is {2, 1}
     int channel = 0;
     int edmans = 2;
-    bt.forward(&tsr, channel, edmans);
+    bt.forward(tsr, channel, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.2 + 0.8 * q);  // loc is {0, 0}
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(forward_other_dye_colors_test, *tolerance(TOL)) {
     tsr[loc] = 0.8;  // loc is {0, 1, 1, 1}
     int channel = 1;  // corresponds to 2nd dim of tensor
     int edmans = 0;
-    bt.forward(&tsr, channel, edmans);
+    bt.forward(tsr, channel, edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;

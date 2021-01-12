@@ -20,7 +20,7 @@ public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
-    void forward(Tensor* tensor, int timestep) const;
+    void forward(const Tensor& input, int timestep, Tensor* output) const;
 
     DyeSeq dye_seq;
     DyeTrack dye_track;

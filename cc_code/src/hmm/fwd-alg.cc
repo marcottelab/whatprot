@@ -32,18 +32,18 @@ double fwd_alg(Tensor* states,
                const Summation& summation) {
     initialization.forward(states);
     for (int c = 0; c < num_channels; c++) {
-        dud_transition.forward(states, c, 0);
+        dud_transition.forward(*states, c, 0, states);
     }
-    emission.forward(states, 0);
+    emission.forward(*states, 0, states);
     for (int t = 1; t < num_timesteps; t++) {
-        detach_transition.forward(states, t - 1);
+        detach_transition.forward(*states, t - 1, states);
         for (int c = 0; c < num_channels; c++) {
-            bleach_transition.forward(states, c, t - 1);
+            bleach_transition.forward(*states, c, t - 1, states);
         }
-        edman_transition.forward(states, t - 1);
-        emission.forward(states, t);
+        edman_transition.forward(*states, t - 1, states);
+        emission.forward(*states, t, states);
     }
-    return summation(states, num_timesteps - 1);
+    return summation(*states, num_timesteps - 1);
 }
 
 }  // namespace fluoroseq

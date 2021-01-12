@@ -48,30 +48,33 @@ double BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::forward(Tensor* tensor,
+void BinomialTransition::forward(const Tensor& input,
                                     int channel,
-                                    int edmans) const {
-    int vector_stride = tensor->strides[1 + channel];
-    int vector_length = tensor->shape[1 + channel];
+                                    int edmans, Tensor* output) const {
+    int vector_stride = input.strides[1 + channel];
+    int vector_length = input.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max = tensor->strides[0] * (edmans + 1);
+    int outer_max = input.strides[0] * (edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
-            Vector v(vector_length,
+            const Vector inv(vector_length,
                      vector_stride,
-                     &tensor->values[outer + inner]);
-            this->forward(&v);
+                     &input.values[outer + inner]);
+            Vector outv(vector_length,
+                     vector_stride,
+                     &output->values[outer + inner]);
+            this->forward(inv, &outv);
         }
     }
 }
 
-void BinomialTransition::forward(Vector* v) const {
-    for (int to = 0; to < v->length; to++) {
+void BinomialTransition::forward(const Vector& input, Vector* output) const {
+    for (int to = 0; to < output->length; to++) {
         double v_to = 0.0;
-        for (int from = to; from < v->length; from++) {
-            v_to += prob(from, to) * (*v)[from];
+        for (int from = to; from < input.length; from++) {
+            v_to += prob(from, to) * input[from];
         }
-        (*v)[to] = v_to;
+        (*output)[to] = v_to;
     }
 }
 

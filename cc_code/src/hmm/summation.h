@@ -17,7 +17,7 @@ namespace fluoroseq {
 class Summation {
 public:
     Summation();
-    double operator()(Tensor* tensor, int timestep) const;
+    double operator()(const Tensor& tensor, int timestep) const;
 };
 
 }  // namespace fluoroseq

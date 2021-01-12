@@ -10,6 +10,7 @@
 #define FLUOROSEQ_TENSOR_TENSOR_H
 
 // Local project headers:
+#include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
 namespace fluoroseq {
@@ -21,6 +22,7 @@ public:
     ~Tensor();
     double& operator[](int* loc);
     TensorIterator* iterator();
+    ConstTensorIterator* const_iterator() const;
 
     double* values;
     int* shape;

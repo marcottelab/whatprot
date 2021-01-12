@@ -16,15 +16,15 @@ namespace fluoroseq {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(Tensor* tensor, int edmans) const {
-    int i_max = (edmans + 1) * tensor->strides[0];
+void DetachTransition::forward(const Tensor& input, int edmans, Tensor* output) const {
+    int i_max = (edmans + 1) * input.strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {
-        double value = tensor->values[i];
-        tensor->values[i] = value * (1 - p_detach);
+        double value = input.values[i];
+        output->values[i] = value * (1 - p_detach);
         sum += value;
     }
-    tensor->values[edmans * tensor->strides[0]] += p_detach * sum;
+    output->values[edmans * input.strides[0]] += p_detach * sum;
 }
 
 }  // namespace fluoroseq

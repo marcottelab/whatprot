@@ -18,4 +18,8 @@ double& Vector::operator[](int i) {
     return values[i * stride];
 }
 
+double Vector::operator[](int i) const {
+    return values[i * stride];
+}
+
 }  // namespace fluoroseq

@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     loc[0] = 0;
     tsr[loc] = 3.14;
     int timestep = 0;
-    BOOST_TEST(sum(&tsr, timestep) == 3.14);
+    BOOST_TEST(sum(tsr, timestep) == 3.14);
     delete[] loc;
 }
 
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(bigger_size_test, *tolerance(TOL)) {
     loc[0] = 2;
     tsr[loc] = 7.2;
     int timestep = 2;
-    BOOST_TEST(sum(&tsr, timestep) == 7.0 + 7.1 + 7.2);
+    BOOST_TEST(sum(tsr, timestep) == 7.0 + 7.1 + 7.2);
     delete[] loc;
 }
 
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(more_dimensions_test, *tolerance(TOL)) {
     loc[2] = 0;
     tsr[loc] = 3.14;
     int timestep = 0;
-    BOOST_TEST(sum(&tsr, timestep) == 3.14);
+    BOOST_TEST(sum(tsr, timestep) == 3.14);
     delete[] loc;
 }
 
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(more_dimensions_big_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 7.11;
     int timestep = 1;
-    BOOST_TEST(sum(&tsr, timestep) == 7.00 + 7.01 + 7.10 + 7.11);
+    BOOST_TEST(sum(tsr, timestep) == 7.00 + 7.01 + 7.10 + 7.11);
     delete[] loc;
 }
 
