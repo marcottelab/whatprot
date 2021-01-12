@@ -31,7 +31,7 @@ using std::function;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
+BOOST_AUTO_TEST_SUITE(hmm_suite)
 BOOST_AUTO_TEST_SUITE(emission_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {

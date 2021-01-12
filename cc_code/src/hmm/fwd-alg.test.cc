@@ -37,7 +37,7 @@ const double PI = 3.141592653589793238;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
+BOOST_AUTO_TEST_SUITE(hmm_suite)
 BOOST_AUTO_TEST_SUITE(fwd_alg_suite)
 
 BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
