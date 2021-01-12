@@ -31,36 +31,35 @@ void EdmanTransition::forward(const Tensor& input,
         output->values[i + t_stride] = input.values[i];
     }
     for (int i = 0; i < t_stride; i++) {
-        output->values[i] *= p_edman_failure;
+        output->values[i] = input.values[i] * p_edman_failure;
     }
+    // From here on out we can operate just on output, as everything in output
+    // has been copied from input.
     for (int t = 0; t < timestep + 1; t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
                 output->values[i] +=
-                        p_edman_failure * input.values[i + t_stride];
+                        p_edman_failure * output->values[i + t_stride];
             }
         }
         short channel = dye_seq[t];
         if (channel != -1) {
             int amt = dye_track(t, channel);
-            int vector_stride = input.strides[1 + channel];
-            int vector_length = input.shape[1 + channel];
+            int vector_stride = output->strides[1 + channel];
+            int vector_length = output->shape[1 + channel];
             int outer_stride = vector_stride * vector_length;
             int outer_min = (t + 1) * t_stride;
             int outer_max = (t + 2) * t_stride;
             for (int outer = outer_min; outer < outer_max;
                  outer += outer_stride) {
                 for (int inner = 0; inner < vector_stride; inner++) {
-                    const Vector inv(vector_length,
-                                     vector_stride,
-                                     &input.values[outer + inner]);
-                    Vector outv(vector_length,
-                                vector_stride,
-                                &output->values[outer + inner]);
+                    Vector v(vector_length,
+                             vector_stride,
+                             &output->values[outer + inner]);
                     for (int i = 1; i <= amt; i++) {
                         double ratio = (double)i / (double)amt;
-                        outv[i - 1] += inv[i] * ratio;
-                        outv[i] *= 1 - ratio;
+                        v[i - 1] += v[i] * ratio;
+                        v[i] *= 1 - ratio;
                     }
                 }
             }
