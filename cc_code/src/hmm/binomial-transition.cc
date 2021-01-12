@@ -78,4 +78,34 @@ void BinomialTransition::forward(const Vector& input, Vector* output) const {
     }
 }
 
+void BinomialTransition::backward(const Tensor& input,
+                                  int channel,
+                                  int edmans,
+                                  Tensor* output) const {
+    int vector_stride = input.strides[1 + channel];
+    int vector_length = input.shape[1 + channel];
+    int outer_stride = vector_stride * vector_length;
+    int outer_max = input.strides[0] * (edmans + 1);
+    for (int outer = 0; outer < outer_max; outer += outer_stride) {
+        for (int inner = 0; inner < vector_stride; inner++) {
+            const Vector inv(
+                    vector_length, vector_stride, &input.values[outer + inner]);
+            Vector outv(vector_length,
+                        vector_stride,
+                        &output->values[outer + inner]);
+            this->backward(inv, &outv);
+        }
+    }
+}
+
+void BinomialTransition::backward(const Vector& input, Vector* output) const {
+    for (int from = output->length - 1; from >= 0; from--) {
+        double v_from = 0.0;
+        for (int to = 0; to <= from; to++) {
+            v_from += prob(from, to) * input[to];
+        }
+        (*output)[from] = v_from;
+    }
+}
+
 }  // namespace fluoroseq

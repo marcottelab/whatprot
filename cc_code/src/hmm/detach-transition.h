@@ -18,6 +18,7 @@ class DetachTransition {
 public:
     DetachTransition(double p_detach);
     void forward(const Tensor& input, int edmans, Tensor* output) const;
+    void backward(const Tensor& input, int edmans, Tensor* output) const;
 
     double p_detach;
 };

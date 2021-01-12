@@ -29,6 +29,11 @@ public:
                  int edmans,
                  Tensor* output) const;
     void forward(const Vector& input, Vector* output) const;
+    void backward(const Tensor& input,
+                  int channel,
+                  int edmans,
+                  Tensor* output) const;
+    void backward(const Vector& input, Vector* output) const;
 
     std::vector<double> values;
     const double q;
