@@ -27,6 +27,7 @@ public:
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
     void forward(const Tensor& input, int timestep, Tensor* output) const;
+    void backward(const Tensor& input, int timestep, Tensor* output) const;
 
     std::vector<double> values;
     int num_timesteps;

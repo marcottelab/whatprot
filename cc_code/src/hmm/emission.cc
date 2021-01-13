@@ -65,4 +65,10 @@ void Emission::forward(const Tensor& input,
     delete outputit;
 }
 
+void Emission::backward(const Tensor& input,
+                        int timestep,
+                        Tensor* output) const {
+    forward(input, timestep, output);
+}
+
 }  // namespace fluoroseq
