@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_SIMPLE_HMM_H
-#define FLUOROSEQ_HMM_SIMPLE_HMM_H
+#ifndef FLUOROSEQ_HMM_FWD_ALG_H
+#define FLUOROSEQ_HMM_FWD_ALG_H
 
 // Local project headers:
 #include "hmm/binomial-transition.h"
@@ -33,4 +33,4 @@ double fwd_alg(Tensor* states,
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_SIMPLE_HMM_H
+#endif  // FLUOROSEQ_HMM_FWD_ALG_H

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_BINOMIAL_TRANSITION
-#define FLUOROSEQ_HMM_BINOMIAL_TRANSITION
+#ifndef FLUOROSEQ_HMM_BINOMIAL_TRANSITION_H
+#define FLUOROSEQ_HMM_BINOMIAL_TRANSITION_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -43,4 +43,4 @@ public:
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_BINOMIAL_TRANSITION
+#endif  // FLUOROSEQ_HMM_BINOMIAL_TRANSITION_H
