@@ -21,6 +21,7 @@ public:
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
     void forward(const Tensor& input, int timestep, Tensor* output) const;
+    void backward(const Tensor& input, int timestep, Tensor* output) const;
 
     DyeSeq dye_seq;
     DyeTrack dye_track;

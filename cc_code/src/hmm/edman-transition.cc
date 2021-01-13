@@ -70,4 +70,48 @@ void EdmanTransition::forward(const Tensor& input,
     }
 }
 
+void EdmanTransition::backward(const Tensor& input,
+                               int timestep,
+                               Tensor* output) const {
+    int t_stride = input.strides[0];
+    for (int t = 0; t < timestep + 1; t++) {
+        for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
+            output->values[i] = p_edman_failure * input.values[i];
+        }
+        short channel = dye_seq[t];
+        if (channel == -1) {
+            for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
+                output->values[i] +=
+                        (1 - p_edman_failure) * input.values[i + t_stride];
+            }
+        } else {
+            int amt = dye_track(t, channel);
+            int vector_stride = output->strides[1 + channel];
+            int vector_length = output->shape[1 + channel];
+            int outer_stride = vector_stride * vector_length;
+            int outer_min = t * t_stride;
+            int outer_max = (t + 1) * t_stride;
+            for (int outer = outer_min; outer < outer_max;
+                 outer += outer_stride) {
+                for (int inner = 0; inner < vector_stride; inner++) {
+                    const Vector inv(vector_length,
+                                     vector_stride,
+                                     &input.values[outer + inner + t_stride]);
+                    Vector outv(vector_length,
+                                vector_stride,
+                                &output->values[outer + inner]);
+                    for (int i = 0; i <= amt; i++) {
+                        double ratio = (double)i / (double)amt;
+                        if (i != 0) {
+                            outv[i] +=
+                                    (1 - p_edman_failure) * ratio * inv[i - 1];
+                        }
+                        outv[i] += (1 - p_edman_failure) * (1 - ratio) * inv[i];
+                    }
+                }
+            }
+        }
+    }
+}
+
 }  // namespace fluoroseq
