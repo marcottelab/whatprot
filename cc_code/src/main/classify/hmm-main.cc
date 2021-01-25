@@ -15,7 +15,7 @@
 #include <vector>
 
 // Local project headers:
-#include "classifiers/fwd-alg-classifier.h"
+#include "classifiers/hmm-classifier.h"
 #include "common/dye-seq.h"
 #include "common/error-model.h"
 #include "common/radiometry.h"
@@ -83,7 +83,7 @@ int hmm_main(int argc, char** argv) {
     print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
-    FwdAlgClassifier classifier(
+    HMMClassifier classifier(
             num_timesteps, num_channels, error_model, dye_seqs);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);

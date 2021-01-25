@@ -24,10 +24,11 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_track(dye_track) {}
 
 void EdmanTransition::forward(const Tensor& input,
-                              int timestep,
+                              int* edmans,
                               Tensor* output) const {
+    (*edmans)++;
     int t_stride = input.strides[0];
-    for (int i = t_stride * (1 + timestep) - 1; i >= 0; i--) {
+    for (int i = t_stride * (*edmans) - 1; i >= 0; i--) {
         output->values[i + t_stride] = input.values[i];
     }
     for (int i = 0; i < t_stride; i++) {
@@ -35,7 +36,7 @@ void EdmanTransition::forward(const Tensor& input,
     }
     // From here on out we can operate just on output, as everything in output
     // has been copied from input.
-    for (int t = 0; t < timestep + 1; t++) {
+    for (int t = 0; t < *edmans; t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
                 output->values[i] +=
@@ -71,10 +72,10 @@ void EdmanTransition::forward(const Tensor& input,
 }
 
 void EdmanTransition::backward(const Tensor& input,
-                               int timestep,
+                               int* edmans,
                                Tensor* output) const {
     int t_stride = input.strides[0];
-    for (int t = 0; t < timestep + 1; t++) {
+    for (int t = 0; t < *edmans; t++) {
         for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
             output->values[i] = p_edman_failure * input.values[i];
         }
@@ -112,6 +113,7 @@ void EdmanTransition::backward(const Tensor& input,
             }
         }
     }
+    (*edmans)--;
 }
 
 }  // namespace fluoroseq

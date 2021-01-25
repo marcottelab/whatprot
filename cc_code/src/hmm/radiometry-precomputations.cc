@@ -6,20 +6,20 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_SUMMATION_H
-#define FLUOROSEQ_HMM_SUMMATION_H
+// Defining symbols from header:
+#include "radiometry-precomputations.h"
 
 // Local project headers:
-#include "tensor/tensor.h"
+#include "common/error-model.h"
+#include "common/radiometry.h"
+#include "hmm/emission.h"
 
 namespace fluoroseq {
 
-class Summation {
-public:
-    Summation();
-    double operator()(const Tensor& tensor, int timestep) const;
-};
+RadiometryPrecomputations::RadiometryPrecomputations(
+        const Radiometry& radiometry,
+        const ErrorModel& error_model,
+        int max_num_dyes)
+        : emission(radiometry, max_num_dyes, error_model.pdf()) {}
 
 }  // namespace fluoroseq
-
-#endif  // FLUOROSEQ_HMM_SUMMATION_H

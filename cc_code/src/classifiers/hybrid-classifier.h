@@ -14,7 +14,7 @@
 #include <vector>
 
 // Local project headers:
-#include "classifiers/fwd-alg-classifier.h"
+#include "classifiers/hmm-classifier.h"
 #include "classifiers/nn-classifier.h"
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
@@ -41,7 +41,7 @@ public:
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
-    FwdAlgClassifier fwd_alg_classifier;
+    HMMClassifier hmm_classifier;
     NNClassifier nn_classifier;
     std::unordered_map<int, int> id_index_map;
     std::unordered_map<int, int> id_count_map;

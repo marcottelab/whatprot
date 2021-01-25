@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
-#define FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
+#ifndef FLUOROSEQ_CLASSIFIERS_HMM_CLASSIFIER_H
+#define FLUOROSEQ_CLASSIFIERS_HMM_CLASSIFIER_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -18,20 +18,16 @@
 #include "common/error-model.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
-#include "hmm/binomial-transition.h"
-#include "hmm/detach-transition.h"
-#include "hmm/edman-transition.h"
-#include "hmm/emission.h"
-#include "hmm/fwd-alg.h"
-#include "hmm/initialization.h"
-#include "hmm/summation.h"
-#include "tensor/tensor.h"
+#include "hmm/dye-seq-precomputations.h"
+#include "hmm/hmm.h"
+#include "hmm/radiometry-precomputations.h"
+#include "hmm/universal-precomputations.h"
 
 namespace fluoroseq {
 
-class FwdAlgClassifier {
+class HMMClassifier {
 public:
-    FwdAlgClassifier(
+    HMMClassifier(
             int num_timesteps,
             int num_channels,
             const ErrorModel& error_model,
@@ -45,25 +41,19 @@ public:
     template <typename I>
     ScoredClassification classify_helper(const Radiometry& radiometry,
                                          I indices) {
-        Emission emission(radiometry, max_num_dyes, pdf);
+        RadiometryPrecomputations radiometry_precomputations(
+                radiometry, error_model, max_num_dyes);
         int best_i = -1;
         double best_score = -1.0;
         double total_score = 0.0;
         int i = 0;
         for (int i : indices) {
-            Initialization initialization;
-            Summation summation;
-            Tensor tensor(tensor_shapes[i].size(), &tensor_shapes[i][0]);
-            double score = fwd_alg(&tensor,
-                                   num_timesteps,
-                                   num_channels,
-                                   initialization,
-                                   emission,
-                                   detach_transition,
-                                   dud_transition,
-                                   bleach_transition,
-                                   edman_transitions[i],
-                                   summation);
+            HMM hmm(num_timesteps,
+                    num_channels,
+                    dye_seq_precomputations_vec[i],
+                    radiometry_precomputations,
+                    universal_precomputations);
+            double score = hmm.probability();
             total_score += score * dye_seqs[i].source.count;
             if (score > best_score) {
                 best_score = score;
@@ -74,14 +64,10 @@ public:
                 dye_seqs[best_i].source.source, best_score, total_score);
     }
 
-    DetachTransition detach_transition;
-    BinomialTransition dud_transition;
-    BinomialTransition bleach_transition;
-    std::function<double(double, int)> pdf;
+    const ErrorModel& error_model;
+    UniversalPrecomputations universal_precomputations;
+    std::vector<DyeSeqPrecomputations> dye_seq_precomputations_vec;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
-    std::vector<EdmanTransition> edman_transitions;
-    std::vector<std::vector<int>> tensor_shapes;
-    int num_dye_seqs;
     int num_timesteps;
     int num_channels;
     int max_num_dyes;
@@ -89,4 +75,4 @@ public:
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
+#endif  // FLUOROSEQ_CLASSIFIERS_HMM_CLASSIFIER_H

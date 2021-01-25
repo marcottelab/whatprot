@@ -11,17 +11,22 @@
 
 // Local project headers:
 #include "common/dye-track.h"
+#include "hmm/step.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
-class EdmanTransition {
+class EdmanTransition : public Step {
 public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
-    void forward(const Tensor& input, int timestep, Tensor* output) const;
-    void backward(const Tensor& input, int timestep, Tensor* output) const;
+    virtual void forward(const Tensor& input,
+                         int* edmans,
+                         Tensor* output) const override;
+    virtual void backward(const Tensor& input,
+                          int* edmans,
+                          Tensor* output) const override;
 
     DyeSeq dye_seq;
     DyeTrack dye_track;

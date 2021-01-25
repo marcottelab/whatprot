@@ -15,19 +15,24 @@
 
 // Local project headers:
 #include "common/radiometry.h"
+#include "hmm/step.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
-class Emission {
+class Emission : public Step {
 public:
     Emission(const Radiometry& radiometry,
              int max_num_dyes,
              std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    void forward(const Tensor& input, int timestep, Tensor* output) const;
-    void backward(const Tensor& input, int timestep, Tensor* output) const;
+    virtual void forward(const Tensor& input,
+                         int* edmans,
+                         Tensor* output) const override;
+    virtual void backward(const Tensor& input,
+                          int* edmans,
+                          Tensor* output) const override;
 
     std::vector<double> values;
     int num_timesteps;

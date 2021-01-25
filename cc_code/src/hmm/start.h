@@ -6,22 +6,25 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// Defining symbols from header:
-#include "summation.h"
+#ifndef FLUOROSEQ_HMM_START_H
+#define FLUOROSEQ_HMM_START_H
 
 // Local project headers:
+#include "hmm/step.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
-Summation::Summation() {}
-
-double Summation::operator()(const Tensor& tensor, int timestep) const {
-    double sum = 0.0;
-    for (int i = 0; i < (timestep + 1) * tensor.strides[0]; i++) {
-        sum += tensor.values[i];
-    }
-    return sum;
-}
+class Start : public Step {
+public:
+    virtual void forward(const Tensor& input,
+                         int* edmans,
+                         Tensor* output) const override;
+    virtual void backward(const Tensor& input,
+                          int* edmans,
+                          Tensor* output) const override;
+};
 
 }  // namespace fluoroseq
+
+#endif  // FLUOROSEQ_HMM_START_H

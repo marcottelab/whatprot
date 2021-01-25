@@ -6,19 +6,24 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_INITIALIZATION_H
-#define FLUOROSEQ_HMM_INITIALIZATION_H
+#ifndef FLUOROSEQ_HMM_STEP_H
+#define FLUOROSEQ_HMM_STEP_H
 
 // Local project headers:
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
-class Initialization {
+class Step {
 public:
-    void forward(Tensor* tensor) const;
+    virtual void forward(const Tensor& input,
+                         int* edmans,
+                         Tensor* output) const = 0;
+    virtual void backward(const Tensor& input,
+                          int* edmans,
+                          Tensor* output) const = 0;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_INITIALIZATION_H
+#endif  // FLUOROSEQ_HMM_STEP_H

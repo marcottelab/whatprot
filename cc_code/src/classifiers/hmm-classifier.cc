@@ -7,11 +7,10 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "fwd-alg-classifier.h"
+#include "hmm-classifier.h"
 
 // Standard C++ library headers:
 #include <functional>
-#include <utility>
 #include <vector>
 
 // Local project headers:
@@ -19,77 +18,61 @@
 #include "common/dye-track.h"
 #include "common/error-model.h"
 #include "common/scored-classification.h"
-#include "hmm/binomial-transition.h"
-#include "hmm/detach-transition.h"
-#include "hmm/edman-transition.h"
-#include "hmm/emission.h"
-#include "hmm/fwd-alg.h"
-#include "hmm/initialization.h"
-#include "hmm/summation.h"
+#include "hmm/dye-seq-precomputations.h"
+#include "hmm/hmm.h"
+#include "hmm/radiometry-precomputations.h"
+#include "hmm/universal-precomputations.h"
 #include "util/range.h"
 
 namespace fluoroseq {
 
 namespace {
 using std::function;
-using std::move;
 using std::vector;
 }  // namespace
 
-FwdAlgClassifier::FwdAlgClassifier(
+HMMClassifier::HMMClassifier(
         int num_timesteps,
         int num_channels,
         const ErrorModel& error_model,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
-          num_dye_seqs(dye_seqs.size()),
+          error_model(error_model),
           dye_seqs(dye_seqs),
-          detach_transition(error_model.p_detach),
-          dud_transition(error_model.p_bleach),
-          bleach_transition(error_model.p_bleach) {
-    edman_transitions.reserve(num_dye_seqs);
-    tensor_shapes.resize(num_dye_seqs);
+          universal_precomputations(error_model, num_channels) {
     max_num_dyes = 0;
-    for (int i = 0; i < num_dye_seqs; i++) {
-        DyeTrack dye_track =
-                DyeTrack(num_timesteps, num_channels, dye_seqs[i].value);
+    for (const SourcedData<DyeSeq, SourceCount<int>>& dye_seq : dye_seqs) {
+        dye_seq_precomputations_vec.emplace_back(
+                dye_seq.value, error_model, num_timesteps, num_channels);
+        const DyeSeqPrecomputations& back = dye_seq_precomputations_vec.back();
         for (int c = 0; c < num_channels; c++) {
-            if (dye_track(0, c) > max_num_dyes) {
-                max_num_dyes = dye_track(0, c);
-            }
-        }
-        edman_transitions.push_back(move(EdmanTransition(
-                error_model.p_edman_failure, dye_seqs[i].value, dye_track)));
-        tensor_shapes[i].resize(1 + num_channels);
-        tensor_shapes[i][0] = num_timesteps + 1;
-        for (int c = 0; c < num_channels; c++) {
-            // This next line of code is a little confusing.
+            // Two things to be aware of for the next line of code.
             //   * The first dimension of the tensor shape is always the
             //     timestep, so we need to add one to the channel to index to
             //     the correct dimension.
-            //   * The zeroth step for the dye track gives us the maximum number
-            //     of dyes possible, but the tensor shape for that channel needs
-            //     to be one bigger than that to handle all values inclusively
-            //     from 0 to the number of dyes.
-            tensor_shapes[i][1 + c] = 1 + dye_track(0, c);
+            //   * We subtract one from the tensor shape because the tensor
+            //     shape for the channel is one larger than the number of dyes,
+            //     as it needs to go from 0 to the number of dyes, inclusively.
+            int num_dyes = back.tensor_shape[1 + c] - 1;
+            if (num_dyes > max_num_dyes) {
+                max_num_dyes = num_dyes;
+            }
         }
     }
-    dud_transition.reserve(max_num_dyes);
-    bleach_transition.reserve(max_num_dyes);
-    pdf = error_model.pdf();
+    universal_precomputations.set_max_num_dyes(max_num_dyes);
 }
 
-ScoredClassification FwdAlgClassifier::classify(const Radiometry& radiometry) {
-    return classify_helper<Range>(radiometry, Range(num_dye_seqs));
+ScoredClassification HMMClassifier::classify(const Radiometry& radiometry) {
+    return classify_helper<Range>(radiometry, Range(dye_seqs.size()));
 }
 
-ScoredClassification FwdAlgClassifier::classify(
+ScoredClassification HMMClassifier::classify(
         const Radiometry& radiometry, const vector<int>& candidate_indices) {
     return classify_helper<const vector<int>&>(radiometry, candidate_indices);
 }
 
-vector<ScoredClassification> FwdAlgClassifier::classify(
+vector<ScoredClassification> HMMClassifier::classify(
         const vector<Radiometry>& radiometries) {
     vector<ScoredClassification> results;
     results.resize(radiometries.size());

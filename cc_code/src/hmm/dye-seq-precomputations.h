@@ -6,28 +6,29 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_DETACH_TRANSITION_H
-#define FLUOROSEQ_HMM_DETACH_TRANSITION_H
+#ifndef FLUOROSEQ_HMM_DYE_SEQ_PRECOMPUTATIONS_H
+#define FLUOROSEQ_HMM_DYE_SEQ_PRECOMPUTATIONS_H
+
+// Standard C++ library headers:
+#include <vector>
 
 // Local project headers:
-#include "hmm/step.h"
-#include "tensor/tensor.h"
+#include "common/dye-seq.h"
+#include "common/error-model.h"
+#include "hmm/edman-transition.h"
 
 namespace fluoroseq {
 
-class DetachTransition : public Step {
+class DyeSeqPrecomputations {
 public:
-    DetachTransition(double p_detach);
-    virtual void forward(const Tensor& input,
-                         int* edmans,
-                         Tensor* output) const override;
-    virtual void backward(const Tensor& input,
-                          int* edmans,
-                          Tensor* output) const override;
-
-    double p_detach;
+    DyeSeqPrecomputations(const DyeSeq& dye_seq,
+                          const ErrorModel& error_model,
+                          int num_timesteps,
+                          int num_channels);
+    std::vector<int> tensor_shape;
+    EdmanTransition edman_transition;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_DETACH_TRANSITION_H
+#endif  // FLUOROSEQ_HMM_DYE_SEQ_PRECOMPUTATIONS_H

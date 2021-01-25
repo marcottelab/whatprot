@@ -15,7 +15,8 @@
 
 namespace fluoroseq {
 
-BinomialTransition::BinomialTransition(double q) : q(q) {
+BinomialTransition::BinomialTransition(double q, int channel)
+        : q(q), channel(channel) {
     length = 1;
     size = 1;
     values.resize(size);
@@ -49,13 +50,12 @@ double BinomialTransition::prob(int from, int to) const {
 }
 
 void BinomialTransition::forward(const Tensor& input,
-                                 int channel,
-                                 int edmans,
+                                 int* edmans,
                                  Tensor* output) const {
     int vector_stride = input.strides[1 + channel];
     int vector_length = input.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max = input.strides[0] * (edmans + 1);
+    int outer_max = input.strides[0] * (*edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
             const Vector inv(
@@ -79,13 +79,12 @@ void BinomialTransition::forward(const Vector& input, Vector* output) const {
 }
 
 void BinomialTransition::backward(const Tensor& input,
-                                  int channel,
-                                  int edmans,
+                                  int* edmans,
                                   Tensor* output) const {
     int vector_stride = input.strides[1 + channel];
     int vector_length = input.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max = input.strides[0] * (edmans + 1);
+    int outer_max = input.strides[0] * (*edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
             const Vector inv(

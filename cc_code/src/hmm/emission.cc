@@ -47,15 +47,13 @@ double Emission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void Emission::forward(const Tensor& input,
-                       int timestep,
-                       Tensor* output) const {
+void Emission::forward(const Tensor& input, int* edmans, Tensor* output) const {
     ConstTensorIterator* inputit = input.const_iterator();
     TensorIterator* outputit = output->iterator();
-    while (inputit->index < (timestep + 1) * input.strides[0]) {
+    while (inputit->index < (*edmans + 1) * input.strides[0]) {
         double product = 1.0;
         for (int c = 0; c < num_channels; c++) {
-            product *= prob(timestep, c, inputit->loc[1 + c]);
+            product *= prob(*edmans, c, inputit->loc[1 + c]);
         }
         *outputit->get() = inputit->get() * product;
         inputit->advance();
@@ -66,9 +64,9 @@ void Emission::forward(const Tensor& input,
 }
 
 void Emission::backward(const Tensor& input,
-                        int timestep,
+                        int* edmans,
                         Tensor* output) const {
-    forward(input, timestep, output);
+    forward(input, edmans, output);
 }
 
 }  // namespace fluoroseq

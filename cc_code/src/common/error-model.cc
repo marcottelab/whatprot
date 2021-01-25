@@ -41,6 +41,11 @@ ErrorModel::ErrorModel(double p_edman_failure,
 
 function<double(double, int)> ErrorModel::pdf() const {
     switch (distribution_type) {
+        case OVERRIDE:
+            return [](double observed, int state) -> double {
+                return 1.0;
+            };
+            break;
         case LOGNORMAL:
         default:
             double scale = mu;

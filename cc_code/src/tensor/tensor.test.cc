@@ -22,13 +22,15 @@
 namespace fluoroseq {
 
 namespace {
+using boost::unit_test::tolerance;
 using std::move;
+const double TOL = 0.000000001;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(tensor_suite)
 
-BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
+BOOST_AUTO_TEST_CASE(constructor_order_one_test, *tolerance(TOL)) {
     int order = 1;
     int* shape = new int[order];
     shape[0] = 1;
@@ -40,7 +42,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     BOOST_TEST(t.size == 1);
 }
 
-BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test) {
+BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test, *tolerance(TOL)) {
     int order = 1;
     int* shape = new int[order];
     shape[0] = 10;
@@ -52,7 +54,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test) {
     BOOST_TEST(t.size == 10);
 }
 
-BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
+BOOST_AUTO_TEST_CASE(constructor_order_two_test, *tolerance(TOL)) {
     int order = 2;
     int* shape = new int[order];
     shape[0] = 3;
@@ -67,7 +69,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
     BOOST_TEST(t.size == 3 * 5);
 }
 
-BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
+BOOST_AUTO_TEST_CASE(constructor_order_three_test, *tolerance(TOL)) {
     int order = 3;
     int* shape = new int[order];
     shape[0] = 3;
@@ -85,7 +87,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     BOOST_TEST(t.size == 3 * 5 * 7);
 }
 
-BOOST_AUTO_TEST_CASE(move_constructor_test) {
+BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
     int order = 3;
     int* shape = new int[order];
     shape[0] = 3;
@@ -107,7 +109,7 @@ BOOST_AUTO_TEST_CASE(move_constructor_test) {
     BOOST_TEST(t2.size == 3 * 5 * 7);
 }
 
-BOOST_AUTO_TEST_CASE(bracket_op_test) {
+BOOST_AUTO_TEST_CASE(bracket_op_test, *tolerance(TOL)) {
     int order = 2;
     int* shape = new int[order];
     shape[0] = 2;
@@ -146,7 +148,7 @@ BOOST_AUTO_TEST_CASE(bracket_op_test) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(iterator_test) {
+BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     int order = 2;
     int* shape = new int[order];
     shape[0] = 2;
@@ -212,7 +214,7 @@ BOOST_AUTO_TEST_CASE(iterator_test) {
     delete itr;
 }
 
-BOOST_AUTO_TEST_CASE(const_iterator_test) {
+BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     int order = 2;
     int* shape = new int[order];
     shape[0] = 2;
@@ -270,6 +272,75 @@ BOOST_AUTO_TEST_CASE(const_iterator_test) {
     BOOST_TEST(t[loc] == 512);
     delete[] loc;
     delete itr;
+}
+
+BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {
+    int order = 1;
+    int* shape = new int[order];
+    shape[0] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    tsr[loc] = 3.14;
+    BOOST_TEST(tsr.sum() == 3.14);
+    delete[] loc;
+}
+
+BOOST_AUTO_TEST_CASE(sum_bigger_size_test, *tolerance(TOL)) {
+    int order = 1;
+    int* shape = new int[order];
+    shape[0] = 3;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    tsr[loc] = 7.0;
+    loc[0] = 1;
+    tsr[loc] = 7.1;
+    loc[0] = 2;
+    tsr[loc] = 7.2;
+    BOOST_TEST(tsr.sum() == 7.0 + 7.1 + 7.2);
+    delete[] loc;
+}
+
+BOOST_AUTO_TEST_CASE(sum_more_dimensions_test, *tolerance(TOL)) {
+    int order = 3;
+    int* shape = new int[order];
+    shape[0] = 1;
+    shape[1] = 1;
+    shape[2] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    loc[2] = 0;
+    tsr[loc] = 3.14;
+    BOOST_TEST(tsr.sum() == 3.14);
+    delete[] loc;
+}
+
+BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
+    int order = 2;
+    int* shape = new int[order];
+    shape[0] = 2;
+    shape[1] = 2;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    tsr[loc] = 7.00;
+    loc[1] = 1;
+    tsr[loc] = 7.01;
+    loc[0] = 1;
+    loc[1] = 0;
+    tsr[loc] = 7.10;
+    loc[1] = 1;
+    tsr[loc] = 7.11;
+    BOOST_TEST(tsr.sum() == 7.00 + 7.01 + 7.10 + 7.11);
+    delete[] loc;
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite

@@ -56,8 +56,9 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     tsr[loc] = 1.0;  // loc is {0, 0}
     loc[0] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
-    int timestep = 0;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 0;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 1.0 * p_fail);  // loc is {0, 0}
@@ -91,8 +92,9 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
-    int timestep = 0;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 0;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -130,8 +132,9 @@ BOOST_AUTO_TEST_CASE(forward_more_edmans_test, *tolerance(TOL)) {
     tsr[loc] = 0.5;  // loc is {2, 0}
     loc[0] = 3;
     tsr[loc] = -1000.0;  // loc is {3, 0} -- this value should be ignored.
-    int timestep = 2;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 2;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 3);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.2 * p_fail);  // loc is {0, 0}
@@ -182,8 +185,9 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {1, 1, 0} -- this value should be ignored.
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1, 1} -- this value should be ignored.
-    int timestep = 0;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 0;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -234,8 +238,9 @@ BOOST_AUTO_TEST_CASE(forward_irrelevant_dye_seq_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
-    int timestep = 0;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 0;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -274,8 +279,9 @@ BOOST_AUTO_TEST_CASE(forward_one_dye_first_edman_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
-    int timestep = 0;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 0;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -325,8 +331,9 @@ BOOST_AUTO_TEST_CASE(forward_two_dyes_second_edman_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {2, 1} -- this value should be ignored.
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
-    int timestep = 1;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 2);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -386,8 +393,9 @@ BOOST_AUTO_TEST_CASE(forward_three_dyes_first_edman_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {1, 2} -- this value should be ignored.
     loc[1] = 3;
     tsr[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
-    int timestep = 0;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 0;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -460,8 +468,9 @@ BOOST_AUTO_TEST_CASE(forward_two_dye_colors_second_edman_test,
     tsr[loc] = -1000.0;  // loc is {2, 1, 0} -- this value should be ignored.
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
-    int timestep = 1;
-    et.forward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.forward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 2);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -520,8 +529,9 @@ BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
     tsr[loc] = 0.3;  // loc is {0, 0}
     loc[0] = 1;
     tsr[loc] = 0.7;  // loc is {1, 0}
-    int timestep = 0;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.3 + p_pop * 0.7);  // loc is {0, 0}
@@ -554,8 +564,9 @@ BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
     tsr[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     tsr[loc] = 1.77;  // loc is {1, 1}
-    int timestep = 0;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
@@ -589,8 +600,9 @@ BOOST_AUTO_TEST_CASE(backward_more_edmans_test, *tolerance(TOL)) {
     tsr[loc] = 0.5;  // loc is {2, 0}
     loc[0] = 3;
     tsr[loc] = 0.7;  // loc is {3, 0}
-    int timestep = 2;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 3;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 2);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.2 + p_pop * 0.3);  // loc is {0, 0}
@@ -640,8 +652,9 @@ BOOST_AUTO_TEST_CASE(backward_multiple_dye_colors_test, *tolerance(TOL)) {
     tsr[loc] = 1.33;  // loc is {1, 1, 0}
     loc[2] = 1;
     tsr[loc] = 1.44;  // loc is {1, 1, 1}
-    int timestep = 0;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -683,8 +696,9 @@ BOOST_AUTO_TEST_CASE(backward_irrelevant_dye_seq_test, *tolerance(TOL)) {
     tsr[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     tsr[loc] = 1.77;  // loc is {1, 1}
-    int timestep = 0;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
@@ -719,8 +733,9 @@ BOOST_AUTO_TEST_CASE(backward_one_dye_first_edman_test, *tolerance(TOL)) {
     tsr[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     tsr[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
-    int timestep = 0;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
@@ -766,8 +781,9 @@ BOOST_AUTO_TEST_CASE(backward_two_dyes_second_edman_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {2, 1} -- this value should be ignored.
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
-    int timestep = 1;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 2;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.1 + p_pop * 0.4);  // loc is {0, 0}
@@ -821,8 +837,9 @@ BOOST_AUTO_TEST_CASE(backward_three_dyes_first_edman_test, *tolerance(TOL)) {
     tsr[loc] = 1.33;  // loc is {1, 2}
     loc[1] = 3;
     tsr[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
-    int timestep = 0;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 1;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0}
@@ -890,8 +907,9 @@ BOOST_AUTO_TEST_CASE(backward_two_dye_colors_second_edman_test,
     tsr[loc] = -1000.0;  // loc is {2, 1, 0} -- this value should be ignored.
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
-    int timestep = 1;
-    et.backward(tsr, timestep, &tsr);
+    int edmans = 2;
+    et.backward(tsr, &edmans, &tsr);
+    BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -917,6 +935,6 @@ BOOST_AUTO_TEST_CASE(backward_two_dye_colors_second_edman_test,
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // edman_transition_suite
-BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
 }  // namespace fluoroseq

@@ -23,6 +23,7 @@ public:
     double& operator[](int* loc);
     TensorIterator* iterator();
     ConstTensorIterator* const_iterator() const;
+    double sum() const;
 
     double* values;
     int* shape;

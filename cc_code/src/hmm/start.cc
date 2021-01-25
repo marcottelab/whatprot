@@ -7,18 +7,20 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "initialization.h"
+#include "start.h"
 
 // Local project headers:
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
-void Initialization::forward(Tensor* tensor) const {
-    for (int i = 0; i < tensor->strides[0] - 1; i++) {
-        tensor->values[i] = 0.0;
+void Start::forward(const Tensor& input, int* edmans, Tensor* output) const {
+    for (int i = 0; i < output->strides[0] - 1; i++) {
+        output->values[i] = 0.0;
     }
-    tensor->values[tensor->strides[0] - 1] = 1.0;
+    output->values[output->strides[0] - 1] = 1.0;
 }
+
+void Start::backward(const Tensor& input, int* edmans, Tensor* output) const {}
 
 }  // namespace fluoroseq

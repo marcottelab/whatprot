@@ -10,7 +10,7 @@
 #include <boost/test/unit_test.hpp>
 
 // File under test:
-#include "initialization.h"
+#include "start.h"
 
 // Local project headers:
 #include "tensor/tensor.h"
@@ -23,10 +23,10 @@ const double TOL = 0.000000001;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
-BOOST_AUTO_TEST_SUITE(initialization_suite)
+BOOST_AUTO_TEST_SUITE(start_suite)
 
 BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
-    Initialization init;
+    Start start;
     int order = 1;
     int* shape = new int[order];
     shape[0] = 1;
@@ -35,13 +35,14 @@ BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     tsr[loc] = -1000.0;
-    init.forward(&tsr);
+    int edmans;  // should be ignored.
+    start.forward(tsr, &edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);
     delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(many_timesteps_test, *tolerance(TOL)) {
-    Initialization init;
+    Start start;
     int order = 1;
     int* shape = new int[order];
     shape[0] = 3;
@@ -50,13 +51,14 @@ BOOST_AUTO_TEST_CASE(many_timesteps_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     tsr[loc] = -1000.0;
-    init.forward(&tsr);
+    int edmans;  // should be ignored.
+    start.forward(tsr, &edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);
     delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
-    Initialization init;
+    Start start;
     int order = 2;
     int* shape = new int[order];
     shape[0] = 1;
@@ -71,7 +73,8 @@ BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {0, 1}
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {0, 2}
-    init.forward(&tsr);
+    int edmans;  // should be ignored.
+    start.forward(tsr, &edmans, &tsr);
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0}
     loc[1] = 1;
@@ -82,7 +85,7 @@ BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
-    Initialization init;
+    Start start;
     int order = 3;
     int* shape = new int[order];
     shape[0] = 1;
@@ -102,7 +105,8 @@ BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {0, 1, 0}
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
-    init.forward(&tsr);
+    int edmans;  // should be ignored.
+    start.forward(tsr, &edmans, &tsr);
     loc[1] = 0;
     loc[2] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0, 0}
@@ -117,7 +121,7 @@ BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
-    Initialization init;
+    Start start;
     int order = 3;
     int* shape = new int[order];
     shape[0] = 2;
@@ -137,7 +141,8 @@ BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
     tsr[loc] = -1000.0;  // loc is {0, 1, 0}
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
-    init.forward(&tsr);
+    int edmans;  // should be ignored.
+    start.forward(tsr, &edmans, &tsr);
     loc[1] = 0;
     loc[2] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0, 0}
@@ -151,7 +156,7 @@ BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_SUITE_END()  // initialization_suite
-BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
+BOOST_AUTO_TEST_SUITE_END()  // start_suite
+BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
 }  // namespace fluoroseq
