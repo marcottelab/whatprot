@@ -6,41 +6,40 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_BINOMIAL_TRANSITION_H
-#define FLUOROSEQ_HMM_BINOMIAL_TRANSITION_H
+#ifndef FLUOROSEQ_HMM_STEP_EMISSION_H
+#define FLUOROSEQ_HMM_STEP_EMISSION_H
 
 // Standard C++ library headers:
+#include <functional>
 #include <vector>
 
 // Local project headers:
-#include "hmm/step.h"
+#include "common/radiometry.h"
+#include "hmm/step/step.h"
 #include "tensor/tensor.h"
-#include "tensor/vector.h"
 
 namespace fluoroseq {
 
-class BinomialTransition : public Step {
+class Emission : public Step {
 public:
-    BinomialTransition(double q, int channel);
-    void reserve(int max_n);
-    double& prob(int from, int to);
-    double prob(int from, int to) const;
+    Emission(const Radiometry& radiometry,
+             int max_num_dyes,
+             std::function<double(double, int)> pdf);
+    double& prob(int timestep, int channel, int num_dyes);
+    double prob(int timestep, int channel, int num_dyes) const;
     virtual void forward(const Tensor& input,
                          int* edmans,
                          Tensor* output) const override;
-    void forward(const Vector& input, Vector* output) const;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;
-    void backward(const Vector& input, Vector* output) const;
 
     std::vector<double> values;
-    const double q;
-    int channel;
-    int length;  // length of array in one dimension.
-    int size;  // length of values.
+    int num_timesteps;
+    int num_channels;
+    int max_num_dyes;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_BINOMIAL_TRANSITION_H
+#endif  // FLUOROSEQ_HMM_STEP_EMISSION_H

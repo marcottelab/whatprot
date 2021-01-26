@@ -13,10 +13,10 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/dye-seq-precomputations.h"
-#include "hmm/radiometry-precomputations.h"
-#include "hmm/step.h"
-#include "hmm/universal-precomputations.h"
+#include "hmm/precomputations/dye-seq-precomputations.h"
+#include "hmm/precomputations/radiometry-precomputations.h"
+#include "hmm/step/step.h"
+#include "hmm/precomputations/universal-precomputations.h"
 
 namespace fluoroseq {
 

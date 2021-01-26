@@ -6,17 +6,17 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_UNIVERSAL_PRECOMPUTATIONS_H
-#define FLUOROSEQ_HMM_UNIVERSAL_PRECOMPUTATIONS_H
+#ifndef FLUOROSEQ_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
+#define FLUOROSEQ_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
 
 // Standard C++ library headers:
 #include <vector>
 
 // Local project headers:
 #include "common/error-model.h"
-#include "hmm/binomial-transition.h"
-#include "hmm/detach-transition.h"
-#include "hmm/start.h"
+#include "hmm/step/binomial-transition.h"
+#include "hmm/step/detach-transition.h"
+#include "hmm/step/start.h"
 
 namespace fluoroseq {
 
@@ -33,4 +33,4 @@ public:
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_UNIVERSAL_PRECOMPUTATIONS_H
+#endif  // FLUOROSEQ_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H

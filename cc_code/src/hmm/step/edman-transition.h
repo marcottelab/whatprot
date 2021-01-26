@@ -6,27 +6,21 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_EMISSION_H
-#define FLUOROSEQ_HMM_EMISSION_H
-
-// Standard C++ library headers:
-#include <functional>
-#include <vector>
+#ifndef FLUOROSEQ_HMM_STEP_EDMAN_TRANSITION_H
+#define FLUOROSEQ_HMM_STEP_EDMAN_TRANSITION_H
 
 // Local project headers:
-#include "common/radiometry.h"
-#include "hmm/step.h"
+#include "common/dye-track.h"
+#include "hmm/step/step.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
 
-class Emission : public Step {
+class EdmanTransition : public Step {
 public:
-    Emission(const Radiometry& radiometry,
-             int max_num_dyes,
-             std::function<double(double, int)> pdf);
-    double& prob(int timestep, int channel, int num_dyes);
-    double prob(int timestep, int channel, int num_dyes) const;
+    EdmanTransition(double p_edman_failure,
+                    const DyeSeq& dye_seq,
+                    const DyeTrack& dye_track);
     virtual void forward(const Tensor& input,
                          int* edmans,
                          Tensor* output) const override;
@@ -34,12 +28,11 @@ public:
                           int* edmans,
                           Tensor* output) const override;
 
-    std::vector<double> values;
-    int num_timesteps;
-    int num_channels;
-    int max_num_dyes;
+    DyeSeq dye_seq;
+    DyeTrack dye_track;
+    double p_edman_failure;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_EMISSION_H
+#endif  // FLUOROSEQ_HMM_STEP_EDMAN_TRANSITION_H

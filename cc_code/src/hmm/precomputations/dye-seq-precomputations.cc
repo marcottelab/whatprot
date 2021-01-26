@@ -13,7 +13,7 @@
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
 #include "common/error-model.h"
-#include "hmm/edman-transition.h"
+#include "hmm/step/edman-transition.h"
 
 namespace fluoroseq {
 

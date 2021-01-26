@@ -13,14 +13,14 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/binomial-transition.h"
-#include "hmm/detach-transition.h"
-#include "hmm/dye-seq-precomputations.h"
-#include "hmm/edman-transition.h"
-#include "hmm/emission.h"
-#include "hmm/radiometry-precomputations.h"
-#include "hmm/start.h"
-#include "hmm/universal-precomputations.h"
+#include "hmm/step/binomial-transition.h"
+#include "hmm/step/detach-transition.h"
+#include "hmm/precomputations/dye-seq-precomputations.h"
+#include "hmm/step/edman-transition.h"
+#include "hmm/step/emission.h"
+#include "hmm/precomputations/radiometry-precomputations.h"
+#include "hmm/step/start.h"
+#include "hmm/precomputations/universal-precomputations.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {

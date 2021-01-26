@@ -6,24 +6,24 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_STEP_H
-#define FLUOROSEQ_HMM_STEP_H
+#ifndef FLUOROSEQ_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
+#define FLUOROSEQ_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
 
 // Local project headers:
-#include "tensor/tensor.h"
+#include "common/error-model.h"
+#include "common/radiometry.h"
+#include "hmm/step/emission.h"
 
 namespace fluoroseq {
 
-class Step {
+class RadiometryPrecomputations {
 public:
-    virtual void forward(const Tensor& input,
-                         int* edmans,
-                         Tensor* output) const = 0;
-    virtual void backward(const Tensor& input,
-                          int* edmans,
-                          Tensor* output) const = 0;
+    RadiometryPrecomputations(const Radiometry& radiometry,
+                              const ErrorModel& error_model,
+                              int max_num_dyes);
+    Emission emission;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_STEP_H
+#endif  // FLUOROSEQ_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H

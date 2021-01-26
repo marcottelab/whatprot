@@ -6,28 +6,41 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_DETACH_TRANSITION_H
-#define FLUOROSEQ_HMM_DETACH_TRANSITION_H
+#ifndef FLUOROSEQ_HMM_STEP_BINOMIAL_TRANSITION_H
+#define FLUOROSEQ_HMM_STEP_BINOMIAL_TRANSITION_H
+
+// Standard C++ library headers:
+#include <vector>
 
 // Local project headers:
-#include "hmm/step.h"
+#include "hmm/step/step.h"
 #include "tensor/tensor.h"
+#include "tensor/vector.h"
 
 namespace fluoroseq {
 
-class DetachTransition : public Step {
+class BinomialTransition : public Step {
 public:
-    DetachTransition(double p_detach);
+    BinomialTransition(double q, int channel);
+    void reserve(int max_n);
+    double& prob(int from, int to);
+    double prob(int from, int to) const;
     virtual void forward(const Tensor& input,
                          int* edmans,
                          Tensor* output) const override;
+    void forward(const Vector& input, Vector* output) const;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;
+    void backward(const Vector& input, Vector* output) const;
 
-    double p_detach;
+    std::vector<double> values;
+    const double q;
+    int channel;
+    int length;  // length of array in one dimension.
+    int size;  // length of values.
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_HMM_DETACH_TRANSITION_H
+#endif  // FLUOROSEQ_HMM_STEP_BINOMIAL_TRANSITION_H

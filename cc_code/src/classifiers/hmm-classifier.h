@@ -18,10 +18,10 @@
 #include "common/error-model.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
-#include "hmm/dye-seq-precomputations.h"
+#include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/hmm.h"
-#include "hmm/radiometry-precomputations.h"
-#include "hmm/universal-precomputations.h"
+#include "hmm/precomputations/radiometry-precomputations.h"
+#include "hmm/precomputations/universal-precomputations.h"
 
 namespace fluoroseq {
 

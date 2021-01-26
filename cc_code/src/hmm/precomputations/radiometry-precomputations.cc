@@ -12,7 +12,7 @@
 // Local project headers:
 #include "common/error-model.h"
 #include "common/radiometry.h"
-#include "hmm/emission.h"
+#include "hmm/step/emission.h"
 
 namespace fluoroseq {
 
