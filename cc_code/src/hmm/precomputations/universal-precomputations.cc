@@ -14,8 +14,9 @@
 
 // Local project headers:
 #include "common/error-model.h"
-#include "hmm/step/binomial-transition.h"
+#include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
+#include "hmm/step/dud-transition.h"
 
 namespace fluoroseq {
 

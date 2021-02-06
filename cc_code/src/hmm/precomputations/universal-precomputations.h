@@ -14,8 +14,9 @@
 
 // Local project headers:
 #include "common/error-model.h"
-#include "hmm/step/binomial-transition.h"
+#include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
+#include "hmm/step/dud-transition.h"
 #include "hmm/step/start.h"
 
 namespace fluoroseq {
@@ -26,8 +27,8 @@ public:
     void set_max_num_dyes(int max_num_dyes);
     Start start;
     DetachTransition detach_transition;
-    std::vector<BinomialTransition> dud_transitions;
-    std::vector<BinomialTransition> bleach_transitions;
+    std::vector<DudTransition> dud_transitions;
+    std::vector<BleachTransition> bleach_transitions;
     int num_channels;
 };
 

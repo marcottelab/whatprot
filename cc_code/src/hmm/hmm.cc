@@ -13,14 +13,15 @@
 #include <vector>
 
 // Local project headers:
+#include "hmm/fit/error-model-fitter.h"
+#include "hmm/precomputations/dye-seq-precomputations.h"
+#include "hmm/precomputations/radiometry-precomputations.h"
+#include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/step/binomial-transition.h"
 #include "hmm/step/detach-transition.h"
-#include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/step/edman-transition.h"
 #include "hmm/step/emission.h"
-#include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/step/start.h"
-#include "hmm/precomputations/universal-precomputations.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {
@@ -50,8 +51,8 @@ HMM::HMM(int num_timesteps,
     tensor_shape = dye_seq_precomputations.tensor_shape;
 }
 
-double HMM::probability() {
-    vector<const Step*>::iterator step = steps.begin();
+double HMM::probability() const {
+    vector<const Step*>::const_iterator step = steps.begin();
     Tensor tensor(tensor_shape.size(), &tensor_shape[0]);
     int num_edmans = 0;
     while (step != steps.end()) {
@@ -59,6 +60,38 @@ double HMM::probability() {
         step++;
     }
     return tensor.sum();
+}
+
+void HMM::improve_fit(ErrorModelFitter* fitter) const {
+    vector<const Step*>::const_iterator step = steps.end();
+    vector<Tensor> backward_tensors;
+    // For efficiency, backwards_tensors is in the reverse order of what we
+    // would like. Yes this is confusing...
+    backward_tensors.emplace_back(tensor_shape.size(), &tensor_shape[0]);
+    int num_edmans = tensor_shape[0] - 1;  // tensor_shape[0] is num_timesteps.
+    while (step != steps.begin()) {
+        step--;
+        Tensor& right_tensor = backward_tensors.back();
+        backward_tensors.emplace_back(tensor_shape.size(), &tensor_shape[0]);
+        Tensor& left_tensor = backward_tensors.back();
+        (*step)->backward(right_tensor, &num_edmans, &left_tensor);
+    }
+    double probability =
+            backward_tensors.back()
+                    .values[backward_tensors.back().strides[0] - 1];
+    vector<Tensor>::iterator backward_tensor = backward_tensors.end();
+    Tensor forward_tensor(tensor_shape.size(), &tensor_shape[0]);
+    while (step != steps.end()) {
+        backward_tensor--;
+        (*step)->improve_fit(forward_tensor,
+                             *backward_tensor,
+                             *(backward_tensor - 1),
+                             num_edmans,
+                             probability,
+                             fitter);
+        (*step)->forward(forward_tensor, &num_edmans, &forward_tensor);
+        step++;
+    }
 }
 
 }  // namespace fluoroseq

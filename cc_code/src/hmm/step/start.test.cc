@@ -23,6 +23,7 @@ const double TOL = 0.000000001;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
+BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(start_suite)
 
 BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
@@ -157,6 +158,7 @@ BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // start_suite
+BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
 }  // namespace fluoroseq

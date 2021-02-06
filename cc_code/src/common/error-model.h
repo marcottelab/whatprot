@@ -15,7 +15,7 @@
 namespace fluoroseq {
 
 enum DistributionType {
-    // NORMAL,
+    NORMAL,
     LOGNORMAL,
     OVERRIDE,  // Intended for testing. Always returns 1.0 from distribution.
 };

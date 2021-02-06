@@ -6,32 +6,19 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_TENSOR_TENSOR_H
-#define FLUOROSEQ_TENSOR_TENSOR_H
-
-// Local project headers:
-#include "tensor/const-tensor-iterator.h"
-#include "tensor/tensor-iterator.h"
+#ifndef FLUOROSEQ_HMM_FIT_PARAMETER_FITTER_H
+#define FLUOROSEQ_HMM_FIT_PARAMETER_FITTER_H
 
 namespace fluoroseq {
 
-class Tensor {
+class ParameterFitter {
 public:
-    Tensor(int order, const int* shape);
-    Tensor(Tensor&& other);
-    ~Tensor();
-    double& operator[](int* loc);
-    TensorIterator* iterator();
-    ConstTensorIterator* const_iterator() const;
-    double sum() const;
-
-    double* values;
-    int* shape;
-    int* strides;
-    int size;
-    int order;
+    ParameterFitter();
+    double get() const;
+    double numerator;
+    double denominator;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_TENSOR_TENSOR_H
+#endif  // FLUOROSEQ_HMM_FIT_PARAMETER_FITTER_H

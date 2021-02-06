@@ -20,6 +20,7 @@ const double TOL = 0.000000001;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
+BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(detach_transition_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
@@ -357,7 +358,84 @@ BOOST_AUTO_TEST_CASE(backward_multiple_dye_colors_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
+BOOST_AUTO_TEST_CASE(improve_fit_test) {
+    double p_detach = 0.05;
+    DetachTransition dt(p_detach);
+    int order = 2;
+    int* shape = new int[order];
+    shape[0] = 1;
+    shape[1] = 2;
+    Tensor ftsr(order, shape);
+    Tensor btsr(order, shape);
+    Tensor nbtsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    ftsr[loc] = 0.31;  // loc is {0, 0}
+    btsr[loc] = 0.32;
+    nbtsr[loc] = 0.33;
+    loc[1] = 1;
+    ftsr[loc] = 0.71;  // loc is {0, 1}
+    btsr[loc] = 0.72;
+    nbtsr[loc] = 0.73;
+    delete[] loc;
+    int edmans = 0;
+    double probability = 0.31 * 0.32 + 0.71 * 0.72;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    dt.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    BOOST_TEST(emf.p_detach_fit.get()
+               == (0.31 * p_detach * 0.33 + 0.71 * p_detach * 0.33)
+                          / (0.31 * 0.32 + 0.71 * 0.72));
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_twice_test) {
+    double p_detach = 0.05;
+    DetachTransition dt(p_detach);
+    int order = 2;
+    int* shape = new int[order];
+    shape[0] = 1;
+    shape[1] = 2;
+    Tensor ftsr1(order, shape);
+    Tensor btsr1(order, shape);
+    Tensor nbtsr1(order, shape);
+    Tensor ftsr2(order, shape);
+    Tensor btsr2(order, shape);
+    Tensor nbtsr2(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    ftsr1[loc] = 0.31;  // loc is {0, 0}
+    btsr1[loc] = 0.32;
+    nbtsr1[loc] = 0.33;
+    ftsr2[loc] = 0.231;
+    btsr2[loc] = 0.232;
+    nbtsr2[loc] = 0.233;
+    loc[1] = 1;
+    ftsr1[loc] = 0.71;  // loc is {0, 1}
+    btsr1[loc] = 0.72;
+    nbtsr1[loc] = 0.73;
+    ftsr2[loc] = 0.271;
+    btsr2[loc] = 0.272;
+    nbtsr2[loc] = 0.273;
+    delete[] loc;
+    int edmans = 0;
+    double prob1 = 0.31 * 0.32 + 0.71 * 0.72;
+    double prob2 = 0.231 * 0.232 + 0.271 * 0.272;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    dt.improve_fit(ftsr1, btsr1, nbtsr1, edmans, prob1, &emf);
+    dt.improve_fit(ftsr2, btsr2, nbtsr2, edmans, prob2, &emf);
+    BOOST_TEST(
+            emf.p_detach_fit.get()
+            == ((0.31 * p_detach * 0.33 + 0.71 * p_detach * 0.33) / prob1
+                + (0.231 * p_detach * 0.233 + 0.271 * p_detach * 0.233) / prob2)
+                       / ((0.31 * 0.32 + 0.71 * 0.72) / prob1
+                          + (0.231 * 0.232 + 0.271 * 0.272) / prob2));
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // detach_transition_suite
+BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
 }  // namespace fluoroseq

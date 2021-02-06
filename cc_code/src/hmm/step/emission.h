@@ -33,7 +33,13 @@ public:
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;
-
+    virtual void improve_fit(const Tensor& forward_tensor,
+                             const Tensor& backward_tensor,
+                             const Tensor& next_backward_tensor,
+                             int edmans,
+                             double probability,
+                             ErrorModelFitter* fitter) const override;
+    Radiometry radiometry;
     std::vector<double> values;
     int num_timesteps;
     int num_channels;

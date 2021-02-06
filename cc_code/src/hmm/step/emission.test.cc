@@ -19,19 +19,32 @@
 // Standard C++ library headers:
 #include <functional>
 
+// External headers:
+#include "fakeit.hpp"
+
 // Local project headers:
+#include "common/error-model.h"
 #include "common/radiometry.h"
+#include "hmm/fit/distribution-fitter.h"
+#include "hmm/fit/error-model-fitter.h"
 #include "tensor/tensor.h"
+#include "test-util/fakeit.h"
 
 namespace fluoroseq {
 
 namespace {
 using boost::unit_test::tolerance;
+using fakeit::Fake;
+using fakeit::Mock;
+using fakeit::Verify;
+using fakeit::VerifyNoOtherInvocations;
+using fluoroseq::test_util::Close;
 using std::function;
 const double TOL = 0.000000001;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
+BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(emission_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
@@ -476,7 +489,235 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
+BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
+    int num_timesteps = 1;
+    int num_channels = 1;
+    Radiometry rad(num_timesteps, num_channels);
+    rad(0, 0) = 1.009;
+    int max_num_dyes = 2;
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return 1.0 / (double)(state + 7);
+    };
+    Emission e(rad, max_num_dyes, pdf);
+    int order = 1 + num_channels;
+    int* shape = new int[order];
+    shape[0] = num_timesteps;
+    shape[1] = max_num_dyes + 1;
+    Tensor ftsr(order, shape);
+    Tensor btsr(order, shape);
+    Tensor nbtsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    ftsr[loc] = 1.72;  // loc is {0, 0}
+    btsr[loc] = 2.72;
+    nbtsr[loc] = 3.72;
+    loc[1] = 1;
+    ftsr[loc] = 1.36;  // loc is {0, 1}
+    btsr[loc] = 2.36;
+    nbtsr[loc] = 3.36;
+    loc[1] = 2;
+    ftsr[loc] = 1.18;  // loc is {0, 2}
+    btsr[loc] = 2.18;
+    nbtsr[loc] = 3.18;
+    delete[] loc;
+    int edmans = 0;
+    double probability = 3.14159;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    DistributionFitter* original_dist_fit = emf.distribution_fit;
+    Mock<DistributionFitter> df_mock;
+    Fake(Method(df_mock, add_sample));
+    emf.distribution_fit = &df_mock.get();
+    e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.72 * 2.72 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.36 * 2.36 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          2,
+                          Close(1.18 * 2.18 / 3.14159, TOL)))
+            .Exactly(1);
+    VerifyNoOtherInvocations(df_mock);
+    emf.distribution_fit = original_dist_fit;  // This avoids breaking cleanup.
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
+    int num_timesteps = 1;
+    int num_channels = 2;
+    Radiometry rad(num_timesteps, num_channels);
+    rad(0, 0) = 1.009;
+    rad(0, 1) = 1.019;
+    int max_num_dyes = 1;
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return 1.0 / (double)(state + 7);
+    };
+    Emission e(rad, max_num_dyes, pdf);
+    int order = 1 + num_channels;
+    int* shape = new int[order];
+    shape[0] = num_timesteps;
+    shape[1] = max_num_dyes + 1;
+    shape[2] = max_num_dyes + 1;
+    Tensor ftsr(order, shape);
+    Tensor btsr(order, shape);
+    Tensor nbtsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    loc[2] = 0;
+    ftsr[loc] = 1.72;  // loc is {0, 0, 0}
+    btsr[loc] = 2.72;
+    nbtsr[loc] = 3.72;
+    loc[2] = 1;
+    ftsr[loc] = 1.64;  // loc is {0, 0, 1}
+    btsr[loc] = 2.64;
+    nbtsr[loc] = 3.64;
+    loc[1] = 1;
+    loc[2] = 0;
+    ftsr[loc] = 1.36;  // loc is {0, 1, 0}
+    btsr[loc] = 2.36;
+    nbtsr[loc] = 3.36;
+    loc[2] = 1;
+    ftsr[loc] = 1.25;  // loc is {0, 1, 1}
+    btsr[loc] = 2.25;
+    nbtsr[loc] = 3.25;
+    delete[] loc;
+    int edmans = 0;
+    double probability = 3.14159;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    DistributionFitter* original_dist_fit = emf.distribution_fit;
+    Mock<DistributionFitter> df_mock;
+    Fake(Method(df_mock, add_sample));
+    emf.distribution_fit = &df_mock.get();
+    e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.72 * 2.72 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.019, TOL),
+                          0,
+                          Close(1.72 * 2.72 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.64 * 2.64 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.019, TOL),
+                          1,
+                          Close(1.64 * 2.64 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.36 * 2.36 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.019, TOL),
+                          0,
+                          Close(1.36 * 2.36 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.25 * 2.25 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.019, TOL),
+                          1,
+                          Close(1.25 * 2.25 / 3.14159, TOL)))
+            .Exactly(1);
+    VerifyNoOtherInvocations(df_mock);
+    emf.distribution_fit = original_dist_fit;  // This avoids breaking cleanup.
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
+    int num_timesteps = 2;
+    int num_channels = 1;
+    Radiometry rad(num_timesteps, num_channels);
+    rad(0, 0) = 1.009;
+    rad(1, 0) = 1.109;
+    int max_num_dyes = 1;
+    function<double(double, int)> pdf = [](double observed,
+                                           int state) -> double {
+        return 1.0 / (double)(state + 7);
+    };
+    Emission e(rad, max_num_dyes, pdf);
+    int order = 1 + num_channels;
+    int* shape = new int[order];
+    shape[0] = num_timesteps;
+    shape[1] = max_num_dyes + 1;
+    Tensor ftsr(order, shape);
+    Tensor btsr(order, shape);
+    Tensor nbtsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    ftsr[loc] = 1.72;  // loc is {0, 0}
+    btsr[loc] = 2.72;
+    nbtsr[loc] = 3.72;
+    loc[1] = 1;
+    ftsr[loc] = 1.36;  // loc is {0, 1}
+    btsr[loc] = 2.36;
+    nbtsr[loc] = 3.36;
+    loc[0] = 1;
+    loc[1] = 0;
+    ftsr[loc] = 1.64;  // loc is {1, 0}
+    btsr[loc] = 2.64;
+    nbtsr[loc] = 3.64;
+    loc[1] = 1;
+    ftsr[loc] = 1.25;  // loc is {1, 1}
+    btsr[loc] = 2.25;
+    nbtsr[loc] = 3.25;
+    delete[] loc;
+    int edmans = 1;
+    double probability = 3.14159;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    DistributionFitter* original_dist_fit = emf.distribution_fit;
+    Mock<DistributionFitter> df_mock;
+    Fake(Method(df_mock, add_sample));
+    emf.distribution_fit = &df_mock.get();
+    e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.72 * 2.72 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.36 * 2.36 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          0,
+                          Close(1.64 * 2.64 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          1,
+                          Close(1.25 * 2.25 / 3.14159, TOL)))
+            .Exactly(1);
+    VerifyNoOtherInvocations(df_mock);
+    emf.distribution_fit = original_dist_fit;  // This avoids breaking cleanup.
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // emission_suite
+BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
 }  // namespace fluoroseq

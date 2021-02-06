@@ -22,7 +22,7 @@ namespace {
 using std::copy;
 }
 
-Tensor::Tensor(int order, int* shape) : order(order) {
+Tensor::Tensor(int order, const int* shape) : order(order) {
     this->shape = new int[order];
     copy(shape, shape + order, this->shape);
     size = 1;

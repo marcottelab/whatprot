@@ -10,6 +10,7 @@
 #include "binomial-transition.h"
 
 // Local project headers:
+#include "hmm/fit/parameter-fitter.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
@@ -104,6 +105,54 @@ void BinomialTransition::backward(const Vector& input, Vector* output) const {
             v_from += prob(from, to) * input[to];
         }
         (*output)[from] = v_from;
+    }
+}
+
+void BinomialTransition::improve_fit(const Tensor& forward_tensor,
+                                     const Tensor& backward_tensor,
+                                     const Tensor& next_backward_tensor,
+                                     int edmans,
+                                     double probability,
+                                     ParameterFitter* fitter) const {
+    int vector_stride = forward_tensor.strides[1 + channel];
+    int vector_length = forward_tensor.shape[1 + channel];
+    int outer_stride = vector_stride * vector_length;
+    int outer_max = forward_tensor.strides[0] * (edmans + 1);
+    for (int outer = 0; outer < outer_max; outer += outer_stride) {
+        for (int inner = 0; inner < vector_stride; inner++) {
+            const Vector fv(vector_length,
+                            vector_stride,
+                            &forward_tensor.values[outer + inner]);
+            const Vector bv(vector_length,
+                            vector_stride,
+                            &backward_tensor.values[outer + inner]);
+            const Vector nbv(vector_length,
+                             vector_stride,
+                             &next_backward_tensor.values[outer + inner]);
+            this->improve_fit(fv, bv, nbv, probability, fitter);
+        }
+    }
+}
+
+void BinomialTransition::improve_fit(const Vector& forward_vector,
+                                     const Vector& backward_vector,
+                                     const Vector& next_backward_vector,
+                                     double probability,
+                                     ParameterFitter* fitter) const {
+    // Note that we can ignore when starting location (from) is 0 because then
+    // there are no dyes, it's irrelevant. We would be adding 0s.
+    for (int from = forward_vector.length - 1; from > 0; from--) {
+        double p_state =
+                forward_vector[from] * backward_vector[from] / probability;
+        fitter->denominator += p_state * (double)from;
+        // We can ignore when to and from are equal, because no dyes are lost
+        // then, so it gives us nothing else for the numerator; we would be
+        // adding zero.
+        for (int to = 0; to < from; to++) {
+            double p_transition = forward_vector[from] * prob(from, to)
+                                  * next_backward_vector[to] / probability;
+            fitter->numerator += p_transition * (double)(from - to);
+        }
     }
 }
 

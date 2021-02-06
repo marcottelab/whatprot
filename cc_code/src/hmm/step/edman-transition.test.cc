@@ -12,6 +12,10 @@
 // File under test:
 #include "edman-transition.h"
 
+// Local project headers:
+#include "common/error-model.h"
+#include "hmm/fit/error-model-fitter.h"
+
 namespace fluoroseq {
 
 namespace {
@@ -20,6 +24,7 @@ const double TOL = 0.000000001;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
+BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(edman_transition_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
@@ -934,7 +939,90 @@ BOOST_AUTO_TEST_CASE(backward_two_dye_colors_second_edman_test,
     delete[] loc;
 }
 
+BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
+    double p_fail = 0.05;
+    double p_pop = 0.95;
+    int num_timesteps = 1;
+    int num_channels = 1;
+    DyeSeq ds(num_channels, "");
+    DyeTrack dt(num_timesteps, num_channels, ds);
+    EdmanTransition et(p_fail, ds, dt);
+    int order = 2;
+    int* shape = new int[order];
+    shape[0] = 2;
+    shape[1] = 1;
+    Tensor ftsr(order, shape);
+    Tensor btsr(order, shape);
+    Tensor nbtsr(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    ftsr[loc] = 0.91;  // loc is {0, 0}
+    btsr[loc] = 0.81;
+    nbtsr[loc] = 0.71;
+    loc[0] = 1;
+    ftsr[loc] = 0.92;  // loc is {1, 0}
+    btsr[loc] = 0.82;
+    nbtsr[loc] = 0.72;
+    delete[] loc;
+    int edmans = 0;
+    double probability = 1.0;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    et.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    BOOST_TEST(emf.p_edman_failure_fit.get()
+               == (0.91 * p_fail * 0.71) / (0.91 * 0.81));
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
+    double p_fail = 0.05;
+    double p_pop = 0.95;
+    int num_timesteps = 1;
+    int num_channels = 1;
+    DyeSeq ds(num_channels, "");
+    DyeTrack dt(num_timesteps, num_channels, ds);
+    EdmanTransition et(p_fail, ds, dt);
+    int order = 2;
+    int* shape = new int[order];
+    shape[0] = 2;
+    shape[1] = 1;
+    Tensor ftsr1(order, shape);
+    Tensor btsr1(order, shape);
+    Tensor nbtsr1(order, shape);
+    Tensor ftsr2(order, shape);
+    Tensor btsr2(order, shape);
+    Tensor nbtsr2(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    ftsr1[loc] = 0.91;  // loc is {0, 0}
+    btsr1[loc] = 0.81;
+    nbtsr1[loc] = 0.71;
+    ftsr2[loc] = 0.61;
+    btsr2[loc] = 0.51;
+    nbtsr2[loc] = 0.41;
+    loc[0] = 1;
+    ftsr1[loc] = 0.92;  // loc is {1, 0}
+    btsr1[loc] = 0.82;
+    nbtsr1[loc] = 0.72;
+    ftsr2[loc] = 0.92;
+    btsr2[loc] = 0.82;
+    nbtsr2[loc] = 0.72;
+    delete[] loc;
+    int edmans = 0;
+    double prob1 = 0.12345;
+    double prob2 = 0.98765;
+    ErrorModelFitter emf(DistributionType::LOGNORMAL);
+    et.improve_fit(ftsr1, btsr1, nbtsr1, edmans, prob1, &emf);
+    et.improve_fit(ftsr2, btsr2, nbtsr2, edmans, prob2, &emf);
+    BOOST_TEST(emf.p_edman_failure_fit.get()
+               == (0.91 * p_fail * 0.71 / prob1 + 0.61 * p_fail * 0.41 / prob2)
+                          / (0.91 * 0.81 / prob1 + 0.61 * 0.51 / prob2));
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // edman_transition_suite
+BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
 }  // namespace fluoroseq

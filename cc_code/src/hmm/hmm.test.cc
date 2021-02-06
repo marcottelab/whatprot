@@ -21,14 +21,14 @@
 #include "common/dye-seq.h"
 #include "common/error-model.h"
 #include "common/radiometry.h"
+#include "hmm/precomputations/dye-seq-precomputations.h"
+#include "hmm/precomputations/radiometry-precomputations.h"
+#include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/step/binomial-transition.h"
 #include "hmm/step/detach-transition.h"
-#include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/step/edman-transition.h"
 #include "hmm/step/emission.h"
-#include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/step/start.h"
-#include "hmm/precomputations/universal-precomputations.h"
 #include "tensor/tensor.h"
 
 namespace fluoroseq {

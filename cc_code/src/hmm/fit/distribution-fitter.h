@@ -6,32 +6,22 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_TENSOR_TENSOR_H
-#define FLUOROSEQ_TENSOR_TENSOR_H
+#ifndef FLUOROSEQ_HMM_FIT_DISTRIBUTION_FITTER_H
+#define FLUOROSEQ_HMM_FIT_DISTRIBUTION_FITTER_H
 
 // Local project headers:
-#include "tensor/const-tensor-iterator.h"
-#include "tensor/tensor-iterator.h"
+#include "common/error-model.h"
 
 namespace fluoroseq {
 
-class Tensor {
+class DistributionFitter {
 public:
-    Tensor(int order, const int* shape);
-    Tensor(Tensor&& other);
-    ~Tensor();
-    double& operator[](int* loc);
-    TensorIterator* iterator();
-    ConstTensorIterator* const_iterator() const;
-    double sum() const;
-
-    double* values;
-    int* shape;
-    int* strides;
-    int size;
-    int order;
+    virtual void add_sample(double x, int n, double weight) = 0;
+    virtual DistributionType get_type() const = 0;
+    virtual double get_mu() const = 0;
+    virtual double get_sigma() const = 0;
 };
 
 }  // namespace fluoroseq
 
-#endif  // FLUOROSEQ_TENSOR_TENSOR_H
+#endif  // FLUOROSEQ_HMM_FIT_DISTRIBUTION_FITTER_H

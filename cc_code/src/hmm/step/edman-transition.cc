@@ -11,6 +11,7 @@
 
 // Local project headers:
 #include "common/dye-track.h"
+#include "hmm/fit/error-model-fitter.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
@@ -114,6 +115,23 @@ void EdmanTransition::backward(const Tensor& input,
         }
     }
     (*edmans)--;
+}
+
+void EdmanTransition::improve_fit(const Tensor& forward_tensor,
+                                  const Tensor& backward_tensor,
+                                  const Tensor& next_backward_tensor,
+                                  int edmans,
+                                  double probability,
+                                  ErrorModelFitter* fitter) const {
+    int t_stride = forward_tensor.strides[0];
+    for (int i = 0; i < (edmans + 1) * t_stride; i++) {
+        fitter->p_edman_failure_fit.numerator +=
+                forward_tensor.values[i] * p_edman_failure
+                * next_backward_tensor.values[i] / probability;
+        fitter->p_edman_failure_fit.denominator += forward_tensor.values[i]
+                                                   * backward_tensor.values[i]
+                                                   / probability;
+    }
 }
 
 }  // namespace fluoroseq
