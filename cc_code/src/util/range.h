@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_UTIL_RANGE_H
-#define FLUOROSEQ_UTIL_RANGE_H
+#ifndef WHATPROT_UTIL_RANGE_H
+#define WHATPROT_UTIL_RANGE_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 class RangeIterator;
 
@@ -34,6 +34,6 @@ public:
     int index;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_UTIL_RANGE_H
+#endif  // WHATPROT_UTIL_RANGE_H

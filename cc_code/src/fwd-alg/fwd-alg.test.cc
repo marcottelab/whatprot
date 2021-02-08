@@ -25,7 +25,7 @@
 #include "fwd-alg/summation.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -204,4 +204,4 @@ BOOST_AUTO_TEST_CASE(more_involved_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

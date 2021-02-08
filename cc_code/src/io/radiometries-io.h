@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_IO_RADIOMETRIES_IO_H
-#define FLUOROSEQ_IO_RADIOMETRIES_IO_H
+#ifndef WHATPROT_IO_RADIOMETRIES_IO_H
+#define WHATPROT_IO_RADIOMETRIES_IO_H
 
 // Standard C++ library headers:
 #include <string>
@@ -17,7 +17,7 @@
 #include "common/radiometry.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void read_radiometries(const std::string& filename,
                        int* num_timesteps,
@@ -67,6 +67,6 @@ void get_raw_ys(const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
 
 void write_ys_raw(const std::string& filename, int num_radiometries, int* ys);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_IO_RADIOMETRIES_IO_H
+#endif  // WHATPROT_IO_RADIOMETRIES_IO_H

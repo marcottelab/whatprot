@@ -15,7 +15,7 @@
 // Local project headers:
 #include "kd-tree/k-best.h"
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 template <typename E, typename Q>
@@ -26,6 +26,6 @@ public:
 };
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 #endif  // KD_TREE_NODE_H

@@ -27,7 +27,7 @@
 #include "simulation/generate-dye-tracks.h"
 #include "util/time.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::atoi;
@@ -106,4 +106,4 @@ int dt_main(int argc, char** argv) {
     return 0;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

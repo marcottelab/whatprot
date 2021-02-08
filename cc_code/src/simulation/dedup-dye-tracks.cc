@@ -22,7 +22,7 @@
 #include "common/dye-track.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using MAPREDUCE_NS::KeyValue;
@@ -147,4 +147,4 @@ void output_dye_tracks(
             move(SourceCountHitsList<int>(num_sources, sources)))));
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

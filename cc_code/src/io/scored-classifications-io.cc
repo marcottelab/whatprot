@@ -18,7 +18,7 @@
 // Local project headers:
 #include "common/scored-classification.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::ofstream;
@@ -68,4 +68,4 @@ void write_scored_classifications_raw(const string& filename,
     delete[] scores;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -15,7 +15,7 @@
 #include "main/classify/nn-main.h"
 #include "main/cmd-line-out.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 int classify_main(int argc, char** argv) {
     if (argc < 3) {
@@ -36,4 +36,4 @@ int classify_main(int argc, char** argv) {
     return return_code;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

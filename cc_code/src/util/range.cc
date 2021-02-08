@@ -9,7 +9,7 @@
 // Defining symbols from header:
 #include "range.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 Range::Range(int max) : min(0), max(max) {}
 
@@ -37,4 +37,4 @@ int RangeIterator::operator*() {
     return index;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

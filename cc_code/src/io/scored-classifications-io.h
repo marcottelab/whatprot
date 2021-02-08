@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_IO_SCORED_CLASSIFICATIONS_IO_H
-#define FLUOROSEQ_IO_SCORED_CLASSIFICATIONS_IO_H
+#ifndef WHATPROT_IO_SCORED_CLASSIFICATIONS_IO_H
+#define WHATPROT_IO_SCORED_CLASSIFICATIONS_IO_H
 
 // Standard C++ library headers:
 #include <string>
@@ -16,7 +16,7 @@
 // Local project headers:
 #include "common/scored-classification.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void write_scored_classifications(
         const std::string& filename,
@@ -33,6 +33,6 @@ void write_scored_classifications_raw(const std::string& filename,
                                       int* ids,
                                       double* scores);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_IO_SCORED_CLASSIFICATIONS_IO_H
+#endif  // WHATPROT_IO_SCORED_CLASSIFICATIONS_IO_H

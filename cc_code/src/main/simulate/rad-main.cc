@@ -26,7 +26,7 @@
 #include "simulation/generate-radiometries.h"
 #include "util/time.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::atoi;
@@ -97,4 +97,4 @@ int rad_main(int argc, char** argv) {
     return 0;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,13 +6,13 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_DETACH_TRANSITION
-#define FLUOROSEQ_FWD_ALG_DETACH_TRANSITION
+#ifndef WHATPROT_FWD_ALG_DETACH_TRANSITION
+#define WHATPROT_FWD_ALG_DETACH_TRANSITION
 
 // Local project headers:
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class DetachTransition {
 public:
@@ -22,6 +22,6 @@ public:
     double p_detach;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_FWD_ALG_DETACH_TRANSITION
+#endif  // WHATPROT_FWD_ALG_DETACH_TRANSITION

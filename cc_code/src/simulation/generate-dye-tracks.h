@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_SIMULATION_GENERATE_DYE_TRACKS_H
-#define FLUOROSEQ_SIMULATION_GENERATE_DYE_TRACKS_H
+#ifndef WHATPROT_SIMULATION_GENERATE_DYE_TRACKS_H
+#define WHATPROT_SIMULATION_GENERATE_DYE_TRACKS_H
 
 // Standard C++ library headers:
 #include <random>
@@ -20,7 +20,7 @@
 #include "common/error-model.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void generate_dye_tracks(
         const ErrorModel& error_model,
@@ -31,6 +31,6 @@ void generate_dye_tracks(
         std::default_random_engine* generator,
         std::vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_SIMULATION_GENERATE_DYE_TRACKS_H
+#endif  // WHATPROT_SIMULATION_GENERATE_DYE_TRACKS_H

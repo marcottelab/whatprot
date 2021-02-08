@@ -12,7 +12,7 @@
 // File under test:
 #include "edman-transition.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -503,4 +503,4 @@ BOOST_AUTO_TEST_CASE(paren_op_two_dye_colors_second_edman_test,
 BOOST_AUTO_TEST_SUITE_END()  // edman_transition_suite
 BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

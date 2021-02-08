@@ -12,7 +12,7 @@
 // Local project headers:
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void Initialization::operator()(Tensor* tensor) const {
     for (int i = 0; i < tensor->strides[0] - 1; i++) {
@@ -21,4 +21,4 @@ void Initialization::operator()(Tensor* tensor) const {
     tensor->values[tensor->strides[0] - 1] = 1.0;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

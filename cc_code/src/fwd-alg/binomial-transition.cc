@@ -13,7 +13,7 @@
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BinomialTransition::BinomialTransition(double q) : q(q) {
     length = 1;
@@ -75,4 +75,4 @@ void BinomialTransition::operator()(Vector* v) const {
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

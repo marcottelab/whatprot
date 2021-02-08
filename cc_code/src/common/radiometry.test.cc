@@ -12,7 +12,7 @@
 // File under test:
 #include "radiometry.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(common_suite)
 BOOST_AUTO_TEST_SUITE(radiometry_suite)
@@ -97,4 +97,4 @@ BOOST_AUTO_TEST_CASE(paren_op_const_test) {
 BOOST_AUTO_TEST_SUITE_END()  // radiometry_suite
 BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

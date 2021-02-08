@@ -22,7 +22,7 @@
 #include "common/sourced-data.h"
 #include "simulation/generate-dye-track.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::default_random_engine;
@@ -72,4 +72,4 @@ void generate_dye_tracks(
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

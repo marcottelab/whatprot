@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_UTIL_VECTOR_HASH_H
-#define FLUOROSEQ_UTIL_VECTOR_HASH_H
+#ifndef WHATPROT_UTIL_VECTOR_HASH_H
+#define WHATPROT_UTIL_VECTOR_HASH_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -39,4 +39,4 @@ public:
 
 }  // namespace std
 
-#endif  // FLUOROSEQ_UTIL_VECTOR_HASH_H
+#endif  // WHATPROT_UTIL_VECTOR_HASH_H

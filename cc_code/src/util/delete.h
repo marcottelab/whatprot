@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_UTIL_DELETE_H
-#define FLUOROSEQ_UTIL_DELETE_H
+#ifndef WHATPROT_UTIL_DELETE_H
+#define WHATPROT_UTIL_DELETE_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 template <class T>
 void delete_if_pointer(const T& t) {}
@@ -32,6 +32,6 @@ void delete_array(int size, T** array) {
     delete[] array;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_UTIL_DELETE_H
+#endif  // WHATPROT_UTIL_DELETE_H

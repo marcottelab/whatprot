@@ -19,7 +19,7 @@
 #include "common/dye-track.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -143,4 +143,4 @@ void write_dye_tracks_helper(
     f.close();
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

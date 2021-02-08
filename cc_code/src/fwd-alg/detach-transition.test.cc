@@ -12,7 +12,7 @@
 // File under test:
 #include "detach-transition.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -193,4 +193,4 @@ BOOST_AUTO_TEST_CASE(paren_op_multiple_dye_colors_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_SUITE_END()  // detach_transition_suite
 BOOST_AUTO_TEST_SUITE_END()  // fwd_alg_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

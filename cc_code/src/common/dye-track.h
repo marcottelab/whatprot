@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_COMMON_DYE_TRACK_H
-#define FLUOROSEQ_COMMON_DYE_TRACK_H
+#ifndef WHATPROT_COMMON_DYE_TRACK_H
+#define WHATPROT_COMMON_DYE_TRACK_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -17,7 +17,7 @@
 #include "common/dye-seq.h"
 #include "util/vector-hash.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class DyeTrack {
 public:
@@ -36,20 +36,20 @@ public:
     int num_channels;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 // An std namespace injection is the accepted way of creating a new hash
 // function.
 namespace std {
 
 template <>
-struct hash<fluoroseq::DyeTrack> {
+struct hash<whatprot::DyeTrack> {
 public:
-    size_t operator()(const fluoroseq::DyeTrack& dye_track) const;
+    size_t operator()(const whatprot::DyeTrack& dye_track) const;
 
     hash<vector<short>> vector_hash;
 };
 
 }  // namespace std
 
-#endif  // FLUOROSEQ_COMMON_DYE_TRACK_H
+#endif  // WHATPROT_COMMON_DYE_TRACK_H

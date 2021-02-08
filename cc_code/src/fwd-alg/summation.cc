@@ -12,7 +12,7 @@
 // Local project headers:
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 Summation::Summation() {}
 
@@ -24,4 +24,4 @@ double Summation::operator()(Tensor* tensor, int timestep) const {
     return sum;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

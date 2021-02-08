@@ -12,7 +12,7 @@
 // Standard C++ library headers:
 #include <algorithm>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -43,4 +43,4 @@ double Radiometry::operator()(int t, int c) const {
     return intensities[t * num_channels + c];
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

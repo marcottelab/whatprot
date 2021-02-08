@@ -6,19 +6,19 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_INITIALIZATION
-#define FLUOROSEQ_FWD_ALG_INITIALIZATION
+#ifndef WHATPROT_FWD_ALG_INITIALIZATION
+#define WHATPROT_FWD_ALG_INITIALIZATION
 
 // Local project headers:
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Initialization {
 public:
     void operator()(Tensor* tensor) const;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_FWD_ALG_INITIALIZATION
+#endif  // WHATPROT_FWD_ALG_INITIALIZATION

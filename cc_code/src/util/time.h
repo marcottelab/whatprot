@@ -6,15 +6,15 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_UTIL_TIME_H
-#define FLUOROSEQ_UTIL_TIME_H
+#ifndef WHATPROT_UTIL_TIME_H
+#define WHATPROT_UTIL_TIME_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 double wall_time();
 double wall_tick();
 unsigned int time_based_seed();
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_UTIL_TIME_H
+#endif  // WHATPROT_UTIL_TIME_H

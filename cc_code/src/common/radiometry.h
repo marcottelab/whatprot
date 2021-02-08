@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_COMMON_RADIOMETRY_H
-#define FLUOROSEQ_COMMON_RADIOMETRY_H
+#ifndef WHATPROT_COMMON_RADIOMETRY_H
+#define WHATPROT_COMMON_RADIOMETRY_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Radiometry {
 public:
@@ -24,6 +24,6 @@ public:
     int num_channels;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_COMMON_RADIOMETRY_H
+#endif  // WHATPROT_COMMON_RADIOMETRY_H

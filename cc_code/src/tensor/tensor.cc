@@ -15,7 +15,7 @@
 // Local project headers:
 #include "tensor/tensor-iterator.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -68,4 +68,4 @@ TensorIterator* Tensor::iterator() {
     return new TensorIterator(order, shape, size, values);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

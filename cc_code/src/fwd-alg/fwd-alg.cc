@@ -18,7 +18,7 @@
 #include "fwd-alg/summation.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 double fwd_alg(Tensor* states,
                int num_timesteps,
@@ -46,4 +46,4 @@ double fwd_alg(Tensor* states,
     return summation(states, num_timesteps - 1);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

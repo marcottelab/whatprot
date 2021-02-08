@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_COMMON_SCORED_CLASSIFICATION_H
-#define FLUOROSEQ_COMMON_SCORED_CLASSIFICATION_H
+#ifndef WHATPROT_COMMON_SCORED_CLASSIFICATION_H
+#define WHATPROT_COMMON_SCORED_CLASSIFICATION_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 class ScoredClassification {
 public:
@@ -24,6 +24,6 @@ public:
 
 bool operator>(const ScoredClassification& x, const ScoredClassification& y);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_COMMON_SCORED_CLASSIFICATION_H
+#endif  // WHATPROT_COMMON_SCORED_CLASSIFICATION_H

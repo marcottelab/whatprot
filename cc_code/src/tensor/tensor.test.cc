@@ -18,7 +18,7 @@
 // Local project headers:
 #include "tensor/tensor-iterator.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::move;
@@ -214,4 +214,4 @@ BOOST_AUTO_TEST_CASE(iterator_test) {
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

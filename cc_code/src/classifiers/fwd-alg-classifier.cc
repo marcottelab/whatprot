@@ -28,7 +28,7 @@
 #include "fwd-alg/summation.h"
 #include "util/range.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::function;
@@ -100,4 +100,4 @@ vector<ScoredClassification> FwdAlgClassifier::classify(
     return results;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

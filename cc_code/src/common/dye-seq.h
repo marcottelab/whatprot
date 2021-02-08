@@ -6,13 +6,13 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_COMMON_DYE_SEQ_H
-#define FLUOROSEQ_COMMON_DYE_SEQ_H
+#ifndef WHATPROT_COMMON_DYE_SEQ_H
+#define WHATPROT_COMMON_DYE_SEQ_H
 
 // Standard C++ library headers:
 #include <string>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::string;
@@ -36,6 +36,6 @@ public:
     int num_channels;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_COMMON_DYE_SEQ_H
+#endif  // WHATPROT_COMMON_DYE_SEQ_H

@@ -18,7 +18,7 @@
 // Local project headers:
 #include "common/dye-seq.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::hash;
@@ -225,4 +225,4 @@ BOOST_AUTO_TEST_CASE(hash_different_test) {
 BOOST_AUTO_TEST_SUITE_END()  // dye_track_suite
 BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

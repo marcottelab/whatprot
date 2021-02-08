@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_IO_DYE_TRACKS_IO_H
-#define FLUOROSEQ_IO_DYE_TRACKS_IO_H
+#ifndef WHATPROT_IO_DYE_TRACKS_IO_H
+#define WHATPROT_IO_DYE_TRACKS_IO_H
 
 // Standard C++ library headers:
 #include <string>
@@ -17,7 +17,7 @@
 #include "common/dye-track.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void read_dye_tracks(
         const std::string& filename,
@@ -55,6 +55,6 @@ void write_dye_tracks_helper(
         const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
                 dye_tracks);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_IO_DYE_TRACKS_IO_H
+#endif  // WHATPROT_IO_DYE_TRACKS_IO_H

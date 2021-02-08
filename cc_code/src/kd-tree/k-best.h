@@ -15,7 +15,7 @@
 #include <utility>
 #include <vector>
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 template <typename E>
@@ -59,6 +59,6 @@ public:
 };
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 #endif  // KD_TREE_K_BEST_H

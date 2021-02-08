@@ -6,13 +6,13 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_COMMON_ERROR_MODEL_H
-#define FLUOROSEQ_COMMON_ERROR_MODEL_H
+#ifndef WHATPROT_COMMON_ERROR_MODEL_H
+#define WHATPROT_COMMON_ERROR_MODEL_H
 
 // Standard C++ library headers:
 #include <functional>
 
-namespace fluoroseq {
+namespace whatprot {
 
 enum DistributionType {
     // NORMAL,
@@ -39,6 +39,6 @@ public:
     double sigma;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_COMMON_ERROR_MODEL_H
+#endif  // WHATPROT_COMMON_ERROR_MODEL_H

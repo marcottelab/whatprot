@@ -14,7 +14,7 @@
 #include "main/simulate/dt-main.h"
 #include "main/simulate/rad-main.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 int simulate_main(int argc, char** argv) {
     if (argc < 3) {
@@ -33,4 +33,4 @@ int simulate_main(int argc, char** argv) {
     return return_code;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

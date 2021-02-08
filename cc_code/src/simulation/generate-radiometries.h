@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_SIMULATION_GENERATE_RADIOMETRIES_H
-#define FLUOROSEQ_SIMULATION_GENERATE_RADIOMETRIES_H
+#ifndef WHATPROT_SIMULATION_GENERATE_RADIOMETRIES_H
+#define WHATPROT_SIMULATION_GENERATE_RADIOMETRIES_H
 
 // Standard C++ library headers:
 #include <random>
@@ -19,7 +19,7 @@
 #include "common/radiometry.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void generate_radiometries(
         const ErrorModel& error_model,
@@ -30,6 +30,6 @@ void generate_radiometries(
         std::default_random_engine* generator,
         std::vector<SourcedData<Radiometry, SourceCount<int>>>* radiometries);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_SIMULATION_GENERATE_RADIOMETRIES_H
+#endif  // WHATPROT_SIMULATION_GENERATE_RADIOMETRIES_H

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_EMISSION
-#define FLUOROSEQ_FWD_ALG_EMISSION
+#ifndef WHATPROT_FWD_ALG_EMISSION
+#define WHATPROT_FWD_ALG_EMISSION
 
 // Standard C++ library headers:
 #include <functional>
@@ -17,7 +17,7 @@
 #include "common/radiometry.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Emission {
 public:
@@ -34,6 +34,6 @@ public:
     int max_num_dyes;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_FWD_ALG_EMISSION
+#endif  // WHATPROT_FWD_ALG_EMISSION

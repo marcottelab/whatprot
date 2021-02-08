@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_TENSOR_VECTOR_H
-#define FLUOROSEQ_TENSOR_VECTOR_H
+#ifndef WHATPROT_TENSOR_VECTOR_H
+#define WHATPROT_TENSOR_VECTOR_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Vector {
 public:
@@ -21,6 +21,6 @@ public:
     int stride;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_TENSOR_VECTOR_H
+#endif  // WHATPROT_TENSOR_VECTOR_H

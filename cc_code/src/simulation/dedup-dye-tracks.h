@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_SIMULATION_DEDUP_DYE_TRACKS_H
-#define FLUOROSEQ_SIMULATION_DEDUP_DYE_TRACKS_H
+#ifndef WHATPROT_SIMULATION_DEDUP_DYE_TRACKS_H
+#define WHATPROT_SIMULATION_DEDUP_DYE_TRACKS_H
 
 // Standard C++ library headers:
 #include <unordered_map>
@@ -20,7 +20,7 @@
 #include "common/dye-track.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void dedup_dye_tracks(
         int num_timesteps,
@@ -60,6 +60,6 @@ public:
 void output_dye_tracks(
         char* key, int keybytes, char* value, int valuebytes, void* ptr);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_SIMULATION_DEDUP_DYE_TRACKS_H
+#endif  // WHATPROT_SIMULATION_DEDUP_DYE_TRACKS_H

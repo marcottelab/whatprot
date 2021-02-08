@@ -17,7 +17,7 @@
 #include "tensor/tensor-iterator.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::function;
@@ -62,4 +62,4 @@ void Emission::operator()(Tensor* tensor, int timestep) const {
     delete iterator;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

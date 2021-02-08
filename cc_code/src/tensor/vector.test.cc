@@ -12,7 +12,7 @@
 // File under test:
 #include "vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(vector_suite)
@@ -76,4 +76,4 @@ BOOST_AUTO_TEST_CASE(stride_two_test) {
 BOOST_AUTO_TEST_SUITE_END()  // vector_suite
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,13 +6,13 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_SUMMATION_H
-#define FLUOROSEQ_FWD_ALG_SUMMATION_H
+#ifndef WHATPROT_FWD_ALG_SUMMATION_H
+#define WHATPROT_FWD_ALG_SUMMATION_H
 
 // Local project headers:
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Summation {
 public:
@@ -20,6 +20,6 @@ public:
     double operator()(Tensor* tensor, int timestep) const;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_FWD_ALG_SUMMATION_H
+#endif  // WHATPROT_FWD_ALG_SUMMATION_H

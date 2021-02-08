@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_CLASSIFIERS_NN_CLASSIFIER_H
-#define FLUOROSEQ_CLASSIFIERS_NN_CLASSIFIER_H
+#ifndef WHATPROT_CLASSIFIERS_NN_CLASSIFIER_H
+#define WHATPROT_CLASSIFIERS_NN_CLASSIFIER_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -23,7 +23,7 @@
 #include "common/sourced-data.h"
 #include "kd-tree/kd-tree.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class KDTEntry {
 public:
@@ -35,14 +35,14 @@ public:
     int hits;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 // Namespace injection to make KDTEntry swappable.
 namespace std {
-void swap(fluoroseq::KDTEntry& e1, fluoroseq::KDTEntry& e2);
+void swap(whatprot::KDTEntry& e1, whatprot::KDTEntry& e2);
 }  // namespace std
 
-namespace fluoroseq {
+namespace whatprot {
 
 class KDTQuery {
 public:
@@ -77,6 +77,6 @@ public:
     double two_sigma_sq;  // sigma to use for kernel weighting
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_CLASSIFIERS_NN_CLASSIFIER_H
+#endif  // WHATPROT_CLASSIFIERS_NN_CLASSIFIER_H

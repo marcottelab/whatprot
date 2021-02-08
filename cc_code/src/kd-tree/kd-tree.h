@@ -19,7 +19,7 @@
 #include "kd-tree/make-node.h"
 #include "kd-tree/node.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 // Template requirements for KDTree to work.
 //   * typename E must have an operator[] function which receives an int and
@@ -63,6 +63,6 @@ public:
     kd_tree::Node<E, Q>* root;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 #endif  // KD_TREE_KD_TREE_H

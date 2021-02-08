@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
-#define FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
+#ifndef WHATPROT_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
+#define WHATPROT_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -27,7 +27,7 @@
 #include "fwd-alg/summation.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class FwdAlgClassifier {
 public:
@@ -87,6 +87,6 @@ public:
     int max_num_dyes;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_CLASSIFIERS_FWD_ALG_CLASSIFIER_H
+#endif  // WHATPROT_CLASSIFIERS_FWD_ALG_CLASSIFIER_H

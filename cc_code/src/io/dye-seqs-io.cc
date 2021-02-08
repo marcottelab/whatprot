@@ -19,7 +19,7 @@
 #include "common/dye-seq.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -105,4 +105,4 @@ void convert_dye_seqs_from_raw(
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

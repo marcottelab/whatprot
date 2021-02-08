@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -172,4 +172,4 @@ BOOST_AUTO_TEST_CASE(big_hits_gt1_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -21,7 +21,7 @@
 // Local project headers:
 #include "test-util/fakeit.h"  // in test directory
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 namespace {
@@ -31,8 +31,8 @@ using fakeit::Fake;
 using fakeit::Mock;
 using fakeit::Verify;
 using fakeit::VerifyNoOtherInvocations;
-using fluoroseq::test_util::Close;
-using fluoroseq::test_util::Ptr;
+using whatprot::test_util::Close;
+using whatprot::test_util::Ptr;
 using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
@@ -260,4 +260,4 @@ BOOST_AUTO_TEST_SUITE_END()  // leaf_node_suite
 BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot

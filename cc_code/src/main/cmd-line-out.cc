@@ -15,7 +15,7 @@
 // OpenMP
 #include <omp.h>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::cout;
@@ -92,4 +92,4 @@ void print_wrong_number_of_inputs() {
     cout << "Wrong number of inputs.\n";
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

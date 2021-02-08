@@ -19,7 +19,7 @@
 #include "common/radiometry.h"
 #include "simulation/generate-radiometry.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void generate_radiometries(
         const ErrorModel& error_model,
@@ -63,4 +63,4 @@ void generate_radiometries(
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

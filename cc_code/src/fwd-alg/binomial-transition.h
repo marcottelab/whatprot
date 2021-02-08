@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_BINOMIAL_TRANSITION
-#define FLUOROSEQ_FWD_ALG_BINOMIAL_TRANSITION
+#ifndef WHATPROT_FWD_ALG_BINOMIAL_TRANSITION
+#define WHATPROT_FWD_ALG_BINOMIAL_TRANSITION
 
 // Standard C++ library headers:
 #include <vector>
@@ -16,7 +16,7 @@
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class BinomialTransition {
 public:
@@ -33,6 +33,6 @@ public:
     int size;  // length of values.
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_FWD_ALG_BINOMIAL_TRANSITION
+#endif  // WHATPROT_FWD_ALG_BINOMIAL_TRANSITION

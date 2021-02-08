@@ -6,14 +6,14 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_FWD_ALG_EDMAN_TRANSITION_H
-#define FLUOROSEQ_FWD_ALG_EDMAN_TRANSITION_H
+#ifndef WHATPROT_FWD_ALG_EDMAN_TRANSITION_H
+#define WHATPROT_FWD_ALG_EDMAN_TRANSITION_H
 
 // Local project headers:
 #include "common/dye-track.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class EdmanTransition {
 public:
@@ -27,6 +27,6 @@ public:
     double p_edman_failure;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_FWD_ALG_EDMAN_TRANSITION_H
+#endif  // WHATPROT_FWD_ALG_EDMAN_TRANSITION_H

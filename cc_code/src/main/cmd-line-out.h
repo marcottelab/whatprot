@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_MAIN_CMD_LINE_OUT_H
-#define FLUOROSEQ_MAIN_CMD_LINE_OUT_H
+#ifndef WHATPROT_MAIN_CMD_LINE_OUT_H
+#define WHATPROT_MAIN_CMD_LINE_OUT_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 void print_bad_inputs();
 void print_built_classifier(double time);
@@ -28,6 +28,6 @@ void print_read_radiometries(int num, double time);
 void print_total_time(double time);
 void print_wrong_number_of_inputs();
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_MAIN_CMD_LINE_OUT_H
+#endif  // WHATPROT_MAIN_CMD_LINE_OUT_H

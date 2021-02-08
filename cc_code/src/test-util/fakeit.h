@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_TEST_UTIL_FAKEIT_H
-#define FLUOROSEQ_TEST_UTIL_FAKEIT_H
+#ifndef WHATPROT_TEST_UTIL_FAKEIT_H
+#define WHATPROT_TEST_UTIL_FAKEIT_H
 
 // Standard C++ library headers:
 #include <string>
@@ -16,7 +16,7 @@
 // External headers:
 #include "fakeit.hpp"
 
-namespace fluoroseq {
+namespace whatprot {
 namespace test_util {
 
 template <typename T>
@@ -128,6 +128,6 @@ PtrMatcherCreator<T, T*> Ptr(const T& expected) {
 }
 
 }  // namespace test_util
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_TEST_UTIL_FAKEIT_H
+#endif  // WHATPROT_TEST_UTIL_FAKEIT_H

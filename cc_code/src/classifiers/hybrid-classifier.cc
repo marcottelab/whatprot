@@ -23,7 +23,7 @@
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::isnan;
@@ -96,4 +96,4 @@ vector<ScoredClassification> HybridClassifier::classify(
     return results;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_SIMPLE_HMM_H
-#define FLUOROSEQ_HMM_SIMPLE_HMM_H
+#ifndef WHATPROT_HMM_SIMPLE_HMM_H
+#define WHATPROT_HMM_SIMPLE_HMM_H
 
 // Local project headers:
 #include "fwd-alg/binomial-transition.h"
@@ -18,7 +18,7 @@
 #include "fwd-alg/summation.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 double fwd_alg(Tensor* states,
                int num_timesteps,
@@ -31,6 +31,6 @@ double fwd_alg(Tensor* states,
                const EdmanTransition& edman_transition,
                const Summation& summation);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_SIMPLE_HMM_H
+#endif  // WHATPROT_HMM_SIMPLE_HMM_H

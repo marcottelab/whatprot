@@ -24,7 +24,7 @@
 #include "common/sourced-data.h"
 
 namespace {
-using fluoroseq::KDTEntry;  // in namespace std for swap
+using whatprot::KDTEntry;  // in namespace std for swap
 using std::exp;
 using std::function;
 using std::greater;  // defined in <functional>
@@ -37,7 +37,7 @@ using std::vector;
 double PI = 3.141592653589793238;
 }  // namespace
 
-namespace fluoroseq {
+namespace whatprot {
 
 KDTEntry::KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
         : dye_track(move(dye_track)) {
@@ -57,7 +57,7 @@ double KDTEntry::operator[](int i) const {
     return (double)dye_track.value.counts[i];
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 namespace std {
 
@@ -69,7 +69,7 @@ void swap(KDTEntry& e1, KDTEntry& e2) {
 
 }  // namespace std
 
-namespace fluoroseq {
+namespace whatprot {
 
 KDTQuery::KDTQuery(const Radiometry& rad) : rad(rad) {}
 
@@ -199,4 +199,4 @@ vector<ScoredClassification> NNClassifier::classify(
     return results;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

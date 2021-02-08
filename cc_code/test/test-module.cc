@@ -11,7 +11,7 @@
 // other inclusions are of <boost/test/unit_test.hpp> which is NOT the same.
 
 // Declare module first:
-#define BOOST_TEST_MODULE fluoroseq
+#define BOOST_TEST_MODULE whatprot
 
 // Then include:
 #include <boost/test/included/unit_test.hpp>

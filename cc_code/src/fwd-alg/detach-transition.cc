@@ -12,7 +12,7 @@
 // Local project headers:
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
@@ -27,4 +27,4 @@ void DetachTransition::operator()(Tensor* tensor, int edmans) const {
     tensor->values[edmans * tensor->strides[0]] += p_detach * sum;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

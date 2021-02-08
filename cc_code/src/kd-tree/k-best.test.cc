@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 namespace {
@@ -189,4 +189,4 @@ BOOST_AUTO_TEST_SUITE_END()  // k_best_suite
 BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot

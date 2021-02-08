@@ -21,7 +21,7 @@
 // Local project headers:
 #include "kd-tree/node.h"
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 namespace {
@@ -236,4 +236,4 @@ BOOST_AUTO_TEST_SUITE_END()  // internal_node_suite
 BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot
