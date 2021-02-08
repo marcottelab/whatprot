@@ -15,7 +15,7 @@
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 EdmanTransition::EdmanTransition(double p_edman_failure,
                                  const DyeSeq& dye_seq,
@@ -134,4 +134,4 @@ void EdmanTransition::improve_fit(const Tensor& forward_tensor,
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_HMM_H
-#define FLUOROSEQ_HMM_HMM_H
+#ifndef WHATPROT_HMM_HMM_H
+#define WHATPROT_HMM_HMM_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -19,7 +19,7 @@
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/step/step.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class HMM {
 public:
@@ -37,6 +37,6 @@ public:
     std::vector<const Step*> steps;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_HMM_H
+#endif  // WHATPROT_HMM_HMM_H

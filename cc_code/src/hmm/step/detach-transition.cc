@@ -13,7 +13,7 @@
 #include "hmm/fit/error-model-fitter.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
@@ -62,4 +62,4 @@ void DetachTransition::improve_fit(const Tensor& forward_tensor,
     fitter->p_detach_fit.denominator += 1.0;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

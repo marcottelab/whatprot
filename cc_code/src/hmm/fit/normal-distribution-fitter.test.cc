@@ -18,7 +18,7 @@
 // Local project headers:
 #include "common/error-model.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -157,4 +157,4 @@ BOOST_AUTO_TEST_SUITE_END()  // normal_distribution_fitter_suite
 BOOST_AUTO_TEST_SUITE_END()  // fit_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

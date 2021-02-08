@@ -19,7 +19,7 @@
 #include <functional>
 #include <vector>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::hash;
@@ -86,4 +86,4 @@ BOOST_AUTO_TEST_CASE(different_element_order_different_hash_test) {
 BOOST_AUTO_TEST_SUITE_END()  // vector_hash_suite
 BOOST_AUTO_TEST_SUITE_END()  // util_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

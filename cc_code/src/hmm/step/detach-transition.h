@@ -6,15 +6,15 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_STEP_DETACH_TRANSITION_H
-#define FLUOROSEQ_HMM_STEP_DETACH_TRANSITION_H
+#ifndef WHATPROT_HMM_STEP_DETACH_TRANSITION_H
+#define WHATPROT_HMM_STEP_DETACH_TRANSITION_H
 
 // Local project headers:
 #include "hmm/fit/error-model-fitter.h"
 #include "hmm/step/step.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class DetachTransition : public Step {
 public:
@@ -35,6 +35,6 @@ public:
     double p_detach;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_STEP_DETACH_TRANSITION_H
+#endif  // WHATPROT_HMM_STEP_DETACH_TRANSITION_H

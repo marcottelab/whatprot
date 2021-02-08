@@ -17,7 +17,7 @@
 #include "common/dye-track.h"
 #include "common/error-model.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::bernoulli_distribution;
@@ -94,4 +94,4 @@ void generate_dye_track(const ErrorModel& error_model,
     delete[] counts;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

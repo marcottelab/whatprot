@@ -14,7 +14,7 @@
 #include "hmm/step/binomial-transition.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BleachTransition::BleachTransition(double q, int channel)
         : BinomialTransition(q, channel) {}
@@ -33,4 +33,4 @@ void BleachTransition::improve_fit(const Tensor& forward_tensor,
                                     &fitter->p_bleach_fit);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

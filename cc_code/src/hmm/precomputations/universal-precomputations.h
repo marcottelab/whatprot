@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
-#define FLUOROSEQ_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
+#ifndef WHATPROT_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
+#define WHATPROT_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -19,7 +19,7 @@
 #include "hmm/step/dud-transition.h"
 #include "hmm/step/start.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class UniversalPrecomputations {
 public:
@@ -32,6 +32,6 @@ public:
     int num_channels;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H
+#endif  // WHATPROT_HMM_PRECOMPUTATIONS_UNIVERSAL_PRECOMPUTATIONS_H

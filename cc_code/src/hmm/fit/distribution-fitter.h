@@ -6,13 +6,13 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_FIT_DISTRIBUTION_FITTER_H
-#define FLUOROSEQ_HMM_FIT_DISTRIBUTION_FITTER_H
+#ifndef WHATPROT_HMM_FIT_DISTRIBUTION_FITTER_H
+#define WHATPROT_HMM_FIT_DISTRIBUTION_FITTER_H
 
 // Local project headers:
 #include "common/error-model.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class DistributionFitter {
 public:
@@ -22,6 +22,6 @@ public:
     virtual double get_sigma() const = 0;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_FIT_DISTRIBUTION_FITTER_H
+#endif  // WHATPROT_HMM_FIT_DISTRIBUTION_FITTER_H

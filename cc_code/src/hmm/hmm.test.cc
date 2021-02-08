@@ -31,7 +31,7 @@
 #include "hmm/step/start.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -206,4 +206,4 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
-#define FLUOROSEQ_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
+#ifndef WHATPROT_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
+#define WHATPROT_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -17,7 +17,7 @@
 #include "common/error-model.h"
 #include "hmm/step/edman-transition.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class DyeSeqPrecomputations {
 public:
@@ -29,6 +29,6 @@ public:
     EdmanTransition edman_transition;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
+#endif  // WHATPROT_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H

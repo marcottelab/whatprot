@@ -14,7 +14,7 @@
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BinomialTransition::BinomialTransition(double q, int channel)
         : q(q), channel(channel) {
@@ -156,4 +156,4 @@ void BinomialTransition::improve_fit(const Vector& forward_vector,
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

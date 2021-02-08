@@ -13,7 +13,7 @@
 #include <algorithm>  // needed for std::copy
 #include <string>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -60,4 +60,4 @@ short& DyeSeq::operator[](int i) {
     return seq[i];
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

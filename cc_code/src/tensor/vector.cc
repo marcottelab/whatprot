@@ -9,7 +9,7 @@
 // File under test:
 #include "vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 Vector::Vector(int length, int stride, double* values)
         : length(length), stride(stride), values(values) {}
@@ -22,4 +22,4 @@ double Vector::operator[](int i) const {
     return values[i * stride];
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

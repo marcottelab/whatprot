@@ -18,7 +18,7 @@
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 UniversalPrecomputations::UniversalPrecomputations(
         const ErrorModel& error_model, int num_channels)
@@ -36,4 +36,4 @@ void UniversalPrecomputations::set_max_num_dyes(int max_num_dyes) {
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

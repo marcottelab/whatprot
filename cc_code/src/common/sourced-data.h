@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_COMMON_SOURCED_DATA_H
-#define FLUOROSEQ_COMMON_SOURCED_DATA_H
+#ifndef WHATPROT_COMMON_SOURCED_DATA_H
+#define WHATPROT_COMMON_SOURCED_DATA_H
 
 // Standard C++ library headers:
 #include <utility>
@@ -15,7 +15,7 @@
 // Local project headers:
 #include "util/delete.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 template <typename V, typename S>
 class SourcedData {
@@ -148,6 +148,6 @@ public:
     int num_sources;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_COMMON_SOURCED_DATA_H
+#endif  // WHATPROT_COMMON_SOURCED_DATA_H

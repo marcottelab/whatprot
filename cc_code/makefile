@@ -108,14 +108,14 @@ CFLAGS = -Wpedantic -Werror -fopenmp
 all: CFLAGS += -Og -ggdb
 all: $(DEBUG_DEV_OBJS)
 	@mkdir -p $(BIN_DIR)/debug
-	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/debug/pfst
+	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/debug/whatprot
 
 # Generate release version.
 release: CFLAGS += -O2 -flto
 release: LDFLAGS += $(CFLAGS)
 release: $(RELEASE_DEV_OBJS)
 	@mkdir -p $(BIN_DIR)/release
-	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/release/pfst
+	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/release/whatprot
 
 # Compile and run tests.
 test: CFLAGS += -Og -ggdb

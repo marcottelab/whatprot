@@ -30,7 +30,7 @@
 #include "tensor/tensor.h"
 #include "test-util/fakeit.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -38,7 +38,7 @@ using fakeit::Fake;
 using fakeit::Mock;
 using fakeit::Verify;
 using fakeit::VerifyNoOtherInvocations;
-using fluoroseq::test_util::Close;
+using whatprot::test_util::Close;
 using std::function;
 const double TOL = 0.000000001;
 }  // namespace
@@ -720,4 +720,4 @@ BOOST_AUTO_TEST_SUITE_END()  // emission_suite
 BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

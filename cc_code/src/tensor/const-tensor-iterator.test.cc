@@ -12,7 +12,7 @@
 // File under test:
 #include "const-tensor-iterator.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(const_tensor_iterator_suite)
@@ -247,4 +247,4 @@ BOOST_AUTO_TEST_CASE(order_three_size_one_test) {
 BOOST_AUTO_TEST_SUITE_END()  // const_tensor_iterator_suite
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,10 +6,10 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_TENSOR_TENSOR_ITERATOR_H
-#define FLUOROSEQ_TENSOR_TENSOR_ITERATOR_H
+#ifndef WHATPROT_TENSOR_TENSOR_ITERATOR_H
+#define WHATPROT_TENSOR_TENSOR_ITERATOR_H
 
-namespace fluoroseq {
+namespace whatprot {
 
 class TensorIterator {
 public:
@@ -28,6 +28,6 @@ public:
     int size;  // length of values
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_TENSOR_TENSOR_ITERATOR_H
+#endif  // WHATPROT_TENSOR_TENSOR_ITERATOR_H

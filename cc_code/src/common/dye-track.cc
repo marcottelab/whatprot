@@ -15,7 +15,7 @@
 #include <utility>  // for std::move
 #include <vector>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -80,12 +80,12 @@ short DyeTrack::operator()(int t, int c) const {
     return counts[t * num_channels + c];
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 namespace std {
 
-size_t hash<fluoroseq::DyeTrack>::operator()(
-        const fluoroseq::DyeTrack& dye_track) const {
+size_t hash<whatprot::DyeTrack>::operator()(
+        const whatprot::DyeTrack& dye_track) const {
     return vector_hash(dye_track.counts);
 }
 

@@ -24,7 +24,7 @@
 #include "hmm/step/start.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::vector;
@@ -94,4 +94,4 @@ void HMM::improve_fit(ErrorModelFitter* fitter) const {
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

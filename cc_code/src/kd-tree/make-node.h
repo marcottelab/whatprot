@@ -21,7 +21,7 @@
 #include "kd-tree/max-min-nth.h"
 #include "kd-tree/node.h"
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 template <typename E, typename Q>
@@ -80,6 +80,6 @@ Node<E, Q>* make_node(int k, int d, E* begin, E* end) {
 }
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 #endif  // KD_TREE_MAKE_NODE_H

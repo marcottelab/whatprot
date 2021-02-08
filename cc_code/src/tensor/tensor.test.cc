@@ -19,7 +19,7 @@
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -346,4 +346,4 @@ BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

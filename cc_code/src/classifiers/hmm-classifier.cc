@@ -24,7 +24,7 @@
 #include "hmm/precomputations/universal-precomputations.h"
 #include "util/range.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::function;
@@ -83,4 +83,4 @@ vector<ScoredClassification> HMMClassifier::classify(
     return results;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

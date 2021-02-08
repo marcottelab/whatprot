@@ -12,7 +12,7 @@
 // File under test:
 #include "dye-seq.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(common_suite)
 BOOST_AUTO_TEST_SUITE(dye_seq_suite)
@@ -106,4 +106,4 @@ BOOST_AUTO_TEST_CASE(bracket_op_test) {
 BOOST_AUTO_TEST_SUITE_END()  // dye_seq_suite
 BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -14,7 +14,7 @@
 #include "common/radiometry.h"
 #include "hmm/step/emission.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 RadiometryPrecomputations::RadiometryPrecomputations(
         const Radiometry& radiometry,
@@ -22,4 +22,4 @@ RadiometryPrecomputations::RadiometryPrecomputations(
         int max_num_dyes)
         : emission(radiometry, max_num_dyes, error_model.pdf()) {}
 
-}  // namespace fluoroseq
+}  // namespace whatprot

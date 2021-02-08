@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cfloat>
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 template <typename E>
@@ -128,6 +128,6 @@ double min_element(E* begin, E* end, int s) {
 }
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 #endif  // KD_TREE_MAX_MIN_NTH_H

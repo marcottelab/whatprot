@@ -19,7 +19,7 @@
 // File under test:
 #include "sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(common_suite)
 BOOST_AUTO_TEST_SUITE(sourced_data_suite)
@@ -109,4 +109,4 @@ BOOST_AUTO_TEST_CASE(source_count_source_is_ptr_test) {
 BOOST_AUTO_TEST_SUITE_END()  // sourced_data_suite
 BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

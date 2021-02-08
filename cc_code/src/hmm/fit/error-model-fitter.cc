@@ -15,7 +15,7 @@
 #include "hmm/fit/log-normal-distribution-fitter.h"
 #include "hmm/fit/normal-distribution-fitter.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 ErrorModelFitter::ErrorModelFitter(DistributionType distribution_type) {
     switch (distribution_type) {
@@ -43,4 +43,4 @@ ErrorModel ErrorModelFitter::error_model() const {
                       distribution_fit->get_sigma());
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

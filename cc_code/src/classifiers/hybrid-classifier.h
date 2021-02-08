@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_CLASSIFIERS_HYBRID_CLASSIFIER_H
-#define FLUOROSEQ_CLASSIFIERS_HYBRID_CLASSIFIER_H
+#ifndef WHATPROT_CLASSIFIERS_HYBRID_CLASSIFIER_H
+#define WHATPROT_CLASSIFIERS_HYBRID_CLASSIFIER_H
 
 // Standard C++ library headers:
 #include <unordered_map>
@@ -23,7 +23,7 @@
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class HybridClassifier {
 public:
@@ -48,6 +48,6 @@ public:
     int h;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_CLASSIFIERS_HYBRID_CLASSIFIER_H
+#endif  // WHATPROT_CLASSIFIERS_HYBRID_CLASSIFIER_H

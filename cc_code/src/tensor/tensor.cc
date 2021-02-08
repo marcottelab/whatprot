@@ -16,7 +16,7 @@
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::copy;
@@ -81,4 +81,4 @@ double Tensor::sum() const {
     return total;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

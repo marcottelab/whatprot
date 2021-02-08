@@ -15,11 +15,11 @@
 #include "main/simulate/simulate-main.h"
 
 namespace {
-using fluoroseq::classify_main;
-using fluoroseq::print_bad_inputs;
-using fluoroseq::print_invalid_command;
-using fluoroseq::print_omp_info;
-using fluoroseq::simulate_main;
+using whatprot::classify_main;
+using whatprot::print_bad_inputs;
+using whatprot::print_invalid_command;
+using whatprot::print_omp_info;
+using whatprot::simulate_main;
 }  // namespace
 
 int main(int argc, char** argv) {

@@ -15,7 +15,7 @@
 // Local project headers:
 #include "common/error-model.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::sqrt;
@@ -54,4 +54,4 @@ double NormalDistributionFitter::get_sigma() const {
     return sqrt(sigma_sq);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

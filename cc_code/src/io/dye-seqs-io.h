@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_IO_DYE_SEQS_IO_H
-#define FLUOROSEQ_IO_DYE_SEQS_IO_H
+#ifndef WHATPROT_IO_DYE_SEQS_IO_H
+#define WHATPROT_IO_DYE_SEQS_IO_H
 
 // Standard C++ library headers:
 #include <string>
@@ -17,7 +17,7 @@
 #include "common/dye-seq.h"
 #include "common/sourced-data.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void read_dye_seqs(
         const std::string& filename,
@@ -42,6 +42,6 @@ void convert_dye_seqs_from_raw(
         int* dye_seqs_ids,
         std::vector<SourcedData<DyeSeq, SourceCount<int>>>* dye_seqs);
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_IO_DYE_SEQS_IO_H
+#endif  // WHATPROT_IO_DYE_SEQS_IO_H

@@ -15,7 +15,7 @@
 // OpenMP
 #include <omp.h>
 
-namespace fluoroseq {
+namespace whatprot {
 
 double wall_time() {
     return omp_get_wtime();
@@ -29,4 +29,4 @@ unsigned int time_based_seed() {
     return (unsigned int)clock();
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

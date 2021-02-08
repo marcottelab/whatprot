@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_STEP_EMISSION_H
-#define FLUOROSEQ_HMM_STEP_EMISSION_H
+#ifndef WHATPROT_HMM_STEP_EMISSION_H
+#define WHATPROT_HMM_STEP_EMISSION_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -18,7 +18,7 @@
 #include "hmm/step/step.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Emission : public Step {
 public:
@@ -46,6 +46,6 @@ public:
     int max_num_dyes;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_STEP_EMISSION_H
+#endif  // WHATPROT_HMM_STEP_EMISSION_H

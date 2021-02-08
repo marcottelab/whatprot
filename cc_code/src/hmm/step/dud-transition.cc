@@ -14,7 +14,7 @@
 #include "hmm/step/binomial-transition.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 DudTransition::DudTransition(double q, int channel)
         : BinomialTransition(q, channel) {}
@@ -33,4 +33,4 @@ void DudTransition::improve_fit(const Tensor& forward_tensor,
                                     &fitter->p_dud_fit);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

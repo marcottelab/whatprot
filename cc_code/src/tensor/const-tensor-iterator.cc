@@ -9,7 +9,7 @@
 // Defining symbols from header:
 #include "const-tensor-iterator.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 ConstTensorIterator::ConstTensorIterator(int order,
                                          const int* shape,
@@ -51,4 +51,4 @@ bool ConstTensorIterator::done() {
     return index == size;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

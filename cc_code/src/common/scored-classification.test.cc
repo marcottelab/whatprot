@@ -15,7 +15,7 @@
 // Standard C++ library headers:
 #include <climits>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -77,4 +77,4 @@ BOOST_AUTO_TEST_CASE(gt_op_false_test) {
 BOOST_AUTO_TEST_SUITE_END()  // scored_classification_suite
 BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

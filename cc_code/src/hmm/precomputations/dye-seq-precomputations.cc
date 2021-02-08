@@ -15,7 +15,7 @@
 #include "common/error-model.h"
 #include "hmm/step/edman-transition.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
                                              const ErrorModel& error_model,
@@ -39,4 +39,4 @@ DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

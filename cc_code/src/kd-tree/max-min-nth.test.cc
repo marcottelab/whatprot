@@ -15,7 +15,7 @@
 // Standard C++ library headers:
 #include <vector>
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 namespace {
@@ -492,4 +492,4 @@ BOOST_AUTO_TEST_SUITE_END()  // max_min_nth_suite
 BOOST_AUTO_TEST_SUITE_END()  // kd_tree_suite
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot

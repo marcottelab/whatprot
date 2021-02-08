@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_STEP_BINOMIAL_TRANSITION_H
-#define FLUOROSEQ_HMM_STEP_BINOMIAL_TRANSITION_H
+#ifndef WHATPROT_HMM_STEP_BINOMIAL_TRANSITION_H
+#define WHATPROT_HMM_STEP_BINOMIAL_TRANSITION_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -18,7 +18,7 @@
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class BinomialTransition : public Step {
 public:
@@ -52,6 +52,6 @@ public:
     int size;  // length of values.
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_STEP_BINOMIAL_TRANSITION_H
+#endif  // WHATPROT_HMM_STEP_BINOMIAL_TRANSITION_H

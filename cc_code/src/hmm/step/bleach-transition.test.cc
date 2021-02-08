@@ -16,7 +16,7 @@
 #include "common/error-model.h"
 #include "hmm/fit/error-model-fitter.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -71,4 +71,4 @@ BOOST_AUTO_TEST_SUITE_END()  // bleach_transition_suite
 BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot

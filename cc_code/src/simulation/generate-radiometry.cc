@@ -16,7 +16,7 @@
 // Local project headers:
 #include "simulation/generate-dye-track.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::default_random_engine;
@@ -47,4 +47,4 @@ void generate_radiometry(const ErrorModel& error_model,
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

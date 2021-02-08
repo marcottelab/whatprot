@@ -15,7 +15,7 @@
 // Local project headers:
 #include "common/error-model.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::log;
@@ -54,4 +54,4 @@ double LogNormalDistributionFitter::get_sigma() const {
     return sqrt(w_sum_log_x_over_n_sq / total_weight - mu * mu);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

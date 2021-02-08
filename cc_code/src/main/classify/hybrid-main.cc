@@ -30,7 +30,7 @@
 #include "util/delete.h"
 #include "util/time.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::atof;
@@ -130,4 +130,4 @@ int hybrid_main(int argc, char** argv) {
     return 0;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

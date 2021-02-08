@@ -13,7 +13,7 @@
 #include <cmath>
 #include <functional>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::exp;
@@ -74,4 +74,4 @@ function<double(double, int)> ErrorModel::pdf() const {
     }
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -13,7 +13,7 @@
 #include "kd-tree/k-best.h"
 #include "kd-tree/node.h"
 
-namespace fluoroseq {
+namespace whatprot {
 namespace kd_tree {
 
 template <typename E, typename Q>
@@ -67,6 +67,6 @@ public:
 };
 
 }  // namespace kd_tree
-}  // namespace fluoroseq
+}  // namespace whatprot
 
 #endif  // KD_TREE_LEAF_NODE_H

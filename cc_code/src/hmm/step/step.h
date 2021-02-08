@@ -6,14 +6,14 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_STEP_STEP_H
-#define FLUOROSEQ_HMM_STEP_STEP_H
+#ifndef WHATPROT_HMM_STEP_STEP_H
+#define WHATPROT_HMM_STEP_STEP_H
 
 // Local project headers:
 #include "hmm/fit/error-model-fitter.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class Step {
 public:
@@ -31,6 +31,6 @@ public:
                              ErrorModelFitter* fitter) const = 0;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_STEP_STEP_H
+#endif  // WHATPROT_HMM_STEP_STEP_H

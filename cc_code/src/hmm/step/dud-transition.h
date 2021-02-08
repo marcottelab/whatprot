@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_STEP_DUD_TRANSITION_H
-#define FLUOROSEQ_HMM_STEP_DUD_TRANSITION_H
+#ifndef WHATPROT_HMM_STEP_DUD_TRANSITION_H
+#define WHATPROT_HMM_STEP_DUD_TRANSITION_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -17,7 +17,7 @@
 #include "hmm/step/binomial-transition.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class DudTransition : public BinomialTransition {
 public:
@@ -30,6 +30,6 @@ public:
                              ErrorModelFitter* fitter) const override;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_STEP_DUD_TRANSITION_H
+#endif  // WHATPROT_HMM_STEP_DUD_TRANSITION_H

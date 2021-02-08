@@ -6,15 +6,15 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
-#define FLUOROSEQ_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
+#ifndef WHATPROT_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
+#define WHATPROT_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
 
 // Local project headers:
 #include "common/error-model.h"
 #include "common/radiometry.h"
 #include "hmm/step/emission.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class RadiometryPrecomputations {
 public:
@@ -24,6 +24,6 @@ public:
     Emission emission;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H
+#endif  // WHATPROT_HMM_PRECOMPUTATIONS_RADIOMETRY_PRECOMPUTATIONS_H

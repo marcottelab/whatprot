@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_CLASSIFIERS_HMM_CLASSIFIER_H
-#define FLUOROSEQ_CLASSIFIERS_HMM_CLASSIFIER_H
+#ifndef WHATPROT_CLASSIFIERS_HMM_CLASSIFIER_H
+#define WHATPROT_CLASSIFIERS_HMM_CLASSIFIER_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -23,7 +23,7 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class HMMClassifier {
 public:
@@ -73,6 +73,6 @@ public:
     int max_num_dyes;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_CLASSIFIERS_HMM_CLASSIFIER_H
+#endif  // WHATPROT_CLASSIFIERS_HMM_CLASSIFIER_H

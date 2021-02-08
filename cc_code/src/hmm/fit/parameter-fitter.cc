@@ -9,7 +9,7 @@
 // Defining symbols from header:
 #include "parameter-fitter.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 ParameterFitter::ParameterFitter() : numerator(0.0), denominator(0.0) {}
 
@@ -17,4 +17,4 @@ double ParameterFitter::get() const {
     return numerator / denominator;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

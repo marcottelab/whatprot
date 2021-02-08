@@ -18,7 +18,7 @@
 // Local project headers:
 #include "common/radiometry.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using std::ifstream;
@@ -170,4 +170,4 @@ void write_ys_raw(const string& filename, int num_radiometries, int* ys) {
     delete[] ys;
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

@@ -6,15 +6,15 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef FLUOROSEQ_HMM_FIT_ERROR_MODEL_FITTER_H
-#define FLUOROSEQ_HMM_FIT_ERROR_MODEL_FITTER_H
+#ifndef WHATPROT_HMM_FIT_ERROR_MODEL_FITTER_H
+#define WHATPROT_HMM_FIT_ERROR_MODEL_FITTER_H
 
 // Local project headers:
 #include "common/error-model.h"
 #include "hmm/fit/distribution-fitter.h"
 #include "hmm/fit/parameter-fitter.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 class ErrorModelFitter {
 public:
@@ -28,6 +28,6 @@ public:
     DistributionFitter* distribution_fit;
 };
 
-}  // namespace fluoroseq
+}  // namespace whatprot
 
-#endif  // FLUOROSEQ_HMM_FIT_ERROR_MODEL_FITTER_H
+#endif  // WHATPROT_HMM_FIT_ERROR_MODEL_FITTER_H

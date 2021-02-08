@@ -12,7 +12,7 @@
 // Standard C++ library headers:
 #include <climits>
 
-namespace fluoroseq {
+namespace whatprot {
 
 ScoredClassification::ScoredClassification(int id, double score, double total)
         : id(id), score(score), total(total) {}
@@ -28,4 +28,4 @@ bool operator>(const ScoredClassification& x, const ScoredClassification& y) {
     return (x.score > y.score);
 }
 
-}  // namespace fluoroseq
+}  // namespace whatprot

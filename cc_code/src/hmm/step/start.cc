@@ -13,7 +13,7 @@
 #include "hmm/fit/error-model-fitter.h"
 #include "tensor/tensor.h"
 
-namespace fluoroseq {
+namespace whatprot {
 
 void Start::forward(const Tensor& input, int* edmans, Tensor* output) const {
     for (int i = 0; i < output->strides[0] - 1; i++) {
@@ -31,4 +31,4 @@ void Start::improve_fit(const Tensor& forward_tensor,
                         double probability,
                         ErrorModelFitter* fitter) const {}
 
-}  // namespace fluoroseq
+}  // namespace whatprot

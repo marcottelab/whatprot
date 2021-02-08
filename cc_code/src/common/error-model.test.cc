@@ -15,7 +15,7 @@
 // Standard C++ library headers:
 #include <functional>
 
-namespace fluoroseq {
+namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
@@ -178,4 +178,4 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_one_obs_one_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_SUITE_END()  // error_model_suite
 BOOST_AUTO_TEST_SUITE_END()  // common_suite
 
-}  // namespace fluoroseq
+}  // namespace whatprot
