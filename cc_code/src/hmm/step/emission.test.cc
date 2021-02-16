@@ -38,8 +38,8 @@ using fakeit::Fake;
 using fakeit::Mock;
 using fakeit::Verify;
 using fakeit::VerifyNoOtherInvocations;
-using whatprot::test_util::Close;
 using std::function;
+using whatprot::test_util::Close;
 const double TOL = 0.000000001;
 }  // namespace
 

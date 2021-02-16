@@ -11,6 +11,7 @@
 
 // Standard C++ library headers:
 #include <functional>
+#include <string>
 
 namespace whatprot {
 
@@ -30,6 +31,8 @@ public:
                double mu,
                double sigma);
     std::function<double(double, int)> pdf() const;
+    double relative_distance(const ErrorModel& error_model) const;
+    std::string debug_string() const;
 
     double p_edman_failure;
     double p_detach;

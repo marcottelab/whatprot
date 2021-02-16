@@ -17,6 +17,7 @@
 #include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
+#include "hmm/step/finish.h"
 #include "hmm/step/start.h"
 
 namespace whatprot {
@@ -26,6 +27,7 @@ public:
     UniversalPrecomputations(const ErrorModel& error_model, int num_channels);
     void set_max_num_dyes(int max_num_dyes);
     Start start;
+    Finish finish;
     DetachTransition detach_transition;
     std::vector<DudTransition> dud_transitions;
     std::vector<BleachTransition> bleach_transitions;

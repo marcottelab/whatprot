@@ -21,6 +21,7 @@
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
 #include "hmm/step/emission.h"
+#include "hmm/step/finish.h"
 #include "hmm/step/start.h"
 #include "tensor/tensor.h"
 
@@ -48,6 +49,7 @@ HMM::HMM(int num_timesteps,
         steps.push_back(&dye_seq_precomputations.edman_transition);
         steps.push_back(&radiometry_precomputations.emission);
     }
+    steps.push_back(&universal_precomputations.finish);
     tensor_shape = dye_seq_precomputations.tensor_shape;
 }
 
@@ -65,16 +67,17 @@ double HMM::probability() const {
 void HMM::improve_fit(ErrorModelFitter* fitter) const {
     vector<const Step*>::const_iterator step = steps.end();
     vector<Tensor> backward_tensors;
+    backward_tensors.reserve(steps.size());
     // For efficiency, backwards_tensors is in the reverse order of what we
     // would like. Yes this is confusing...
     backward_tensors.emplace_back(tensor_shape.size(), &tensor_shape[0]);
     int num_edmans = tensor_shape[0] - 1;  // tensor_shape[0] is num_timesteps.
     while (step != steps.begin()) {
         step--;
-        Tensor& right_tensor = backward_tensors.back();
         backward_tensors.emplace_back(tensor_shape.size(), &tensor_shape[0]);
-        Tensor& left_tensor = backward_tensors.back();
-        (*step)->backward(right_tensor, &num_edmans, &left_tensor);
+        Tensor* left_tensor = &backward_tensors.back();
+        const Tensor& right_tensor = *(&backward_tensors.back() - 1);
+        (*step)->backward(right_tensor, &num_edmans, left_tensor);
     }
     double probability =
             backward_tensors.back()

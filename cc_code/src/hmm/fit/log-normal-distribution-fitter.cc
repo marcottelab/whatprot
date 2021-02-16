@@ -28,7 +28,7 @@ LogNormalDistributionFitter::LogNormalDistributionFitter()
           total_weight(0.0) {}
 
 void LogNormalDistributionFitter::add_sample(double x, int n, double weight) {
-    if (n == 0) {
+    if (n == 0 || x == 0.0) {
         return;
     }
     // Need to divide x by n before taking log to get the scaling right. This

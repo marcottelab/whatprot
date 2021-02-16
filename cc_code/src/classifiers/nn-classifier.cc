@@ -24,7 +24,6 @@
 #include "common/sourced-data.h"
 
 namespace {
-using whatprot::KDTEntry;  // in namespace std for swap
 using std::exp;
 using std::function;
 using std::greater;  // defined in <functional>
@@ -34,6 +33,7 @@ using std::priority_queue;
 using std::sqrt;
 using std::unordered_map;
 using std::vector;
+using whatprot::KDTEntry;  // in namespace std for swap
 double PI = 3.141592653589793238;
 }  // namespace
 

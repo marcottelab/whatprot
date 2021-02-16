@@ -124,13 +124,19 @@ void EdmanTransition::improve_fit(const Tensor& forward_tensor,
                                   double probability,
                                   ErrorModelFitter* fitter) const {
     int t_stride = forward_tensor.strides[0];
-    for (int i = 0; i < (edmans + 1) * t_stride; i++) {
-        fitter->p_edman_failure_fit.numerator +=
-                forward_tensor.values[i] * p_edman_failure
-                * next_backward_tensor.values[i] / probability;
-        fitter->p_edman_failure_fit.denominator += forward_tensor.values[i]
-                                                   * backward_tensor.values[i]
-                                                   / probability;
+    for (int t = 0; t < edmans + 1; t++) {
+        // Here we omit the zeroth entry of every timestep because this is the
+        // entry for zero of every dye color. These entries are unable to
+        // provide tangible evidence of the edman efficiency one way or the
+        // other.
+        for (int i = t * t_stride + 1; i < (t + 1) * t_stride; i++) {
+            fitter->p_edman_failure_fit.numerator +=
+                    forward_tensor.values[i] * p_edman_failure
+                    * next_backward_tensor.values[i] / probability;
+            fitter->p_edman_failure_fit.denominator +=
+                    forward_tensor.values[i] * backward_tensor.values[i]
+                    / probability;
+        }
     }
 }
 

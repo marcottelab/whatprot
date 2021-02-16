@@ -950,7 +950,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     int order = 2;
     int* shape = new int[order];
     shape[0] = 2;
-    shape[1] = 1;
+    shape[1] = 2;
     Tensor ftsr(order, shape);
     Tensor btsr(order, shape);
     Tensor nbtsr(order, shape);
@@ -958,11 +958,20 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    ftsr[loc] = 0.91;  // loc is {0, 0}
+    ftsr[loc] = 0.61;  // loc is {0, 0}
+    btsr[loc] = 0.51;
+    nbtsr[loc] = 0.41;
+    loc[1] = 1;
+    ftsr[loc] = 0.91;  // loc is {0, 1}
     btsr[loc] = 0.81;
     nbtsr[loc] = 0.71;
     loc[0] = 1;
-    ftsr[loc] = 0.92;  // loc is {1, 0}
+    loc[1] = 0;
+    ftsr[loc] = 0.62;  // loc is {1, 0}
+    btsr[loc] = 0.52;
+    nbtsr[loc] = 0.42;
+    loc[1] = 1;
+    ftsr[loc] = 0.92;  // loc is {1, 1}
     btsr[loc] = 0.82;
     nbtsr[loc] = 0.72;
     delete[] loc;
@@ -985,7 +994,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     int order = 2;
     int* shape = new int[order];
     shape[0] = 2;
-    shape[1] = 1;
+    shape[1] = 2;
     Tensor ftsr1(order, shape);
     Tensor btsr1(order, shape);
     Tensor nbtsr1(order, shape);
@@ -996,14 +1005,29 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    ftsr1[loc] = 0.91;  // loc is {0, 0}
+    ftsr1[loc] = 0.31;  // loc is {0, 0}
+    btsr1[loc] = 0.331;
+    nbtsr1[loc] = 0.21;
+    ftsr2[loc] = 0.221;
+    btsr2[loc] = 0.11;
+    nbtsr2[loc] = 0.111;
+    loc[1] = 1;
+    ftsr1[loc] = 0.91;  // loc is {0, 1}
     btsr1[loc] = 0.81;
     nbtsr1[loc] = 0.71;
     ftsr2[loc] = 0.61;
     btsr2[loc] = 0.51;
     nbtsr2[loc] = 0.41;
     loc[0] = 1;
-    ftsr1[loc] = 0.92;  // loc is {1, 0}
+    loc[1] = 0;
+    ftsr1[loc] = 0.32;  // loc is {1, 0}
+    btsr1[loc] = 0.332;
+    nbtsr1[loc] = 0.22;
+    ftsr2[loc] = 0.222;
+    btsr2[loc] = 0.12;
+    nbtsr2[loc] = 0.112;
+    loc[1] = 1;
+    ftsr1[loc] = 0.92;  // loc is {1, 1}
     btsr1[loc] = 0.82;
     nbtsr1[loc] = 0.72;
     ftsr2[loc] = 0.92;

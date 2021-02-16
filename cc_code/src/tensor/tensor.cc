@@ -31,7 +31,7 @@ Tensor::Tensor(int order, const int* shape) : order(order) {
         strides[i] = size;
         size *= shape[i];
     }
-    values = new double[size];
+    values = new double[size]();
 }
 
 Tensor::Tensor(Tensor&& other)

@@ -38,6 +38,28 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     BOOST_TEST(lndf.total_weight == 0.0);
 }
 
+BOOST_AUTO_TEST_CASE(add_sample_once_n_eq_0_test, *tolerance(TOL)) {
+    LogNormalDistributionFitter lndf;
+    double x = 1.277;
+    int n = 0;
+    double w = 0.98;
+    lndf.add_sample(x, n, w);
+    BOOST_TEST(lndf.w_sum_log_x_over_n == 0.0);
+    BOOST_TEST(lndf.w_sum_log_x_over_n_sq == 0.0);
+    BOOST_TEST(lndf.total_weight == 0.0);
+}
+
+BOOST_AUTO_TEST_CASE(add_sample_once_x_eq_0_test, *tolerance(TOL)) {
+    LogNormalDistributionFitter lndf;
+    double x = 0.0;
+    int n = 1;
+    double w = 0.98;
+    lndf.add_sample(x, n, w);
+    BOOST_TEST(lndf.w_sum_log_x_over_n == 0.0);
+    BOOST_TEST(lndf.w_sum_log_x_over_n_sq == 0.0);
+    BOOST_TEST(lndf.total_weight == 0.0);
+}
+
 BOOST_AUTO_TEST_CASE(add_sample_once_n_eq_1_test, *tolerance(TOL)) {
     LogNormalDistributionFitter lndf;
     double x = 1.277;

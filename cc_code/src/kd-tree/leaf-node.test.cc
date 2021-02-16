@@ -31,9 +31,9 @@ using fakeit::Fake;
 using fakeit::Mock;
 using fakeit::Verify;
 using fakeit::VerifyNoOtherInvocations;
+using std::vector;
 using whatprot::test_util::Close;
 using whatprot::test_util::Ptr;
-using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
 

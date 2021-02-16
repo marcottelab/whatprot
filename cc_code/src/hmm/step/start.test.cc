@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_SUITE(hmm_suite)
 BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(start_suite)
 
-BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     Start start;
     int order = 1;
     int* shape = new int[order];
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(trivial_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(many_timesteps_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_many_timesteps_test, *tolerance(TOL)) {
     Start start;
     int order = 1;
     int* shape = new int[order];
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(many_timesteps_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_many_dye_counts_test, *tolerance(TOL)) {
     Start start;
     int order = 2;
     int* shape = new int[order];
@@ -69,9 +69,9 @@ BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    tsr[loc] = -1000.0;  // loc is {0, 0}
+    tsr[loc] = 0.0;  // loc is {0, 0}
     loc[1] = 1;
-    tsr[loc] = -1000.0;  // loc is {0, 1}
+    tsr[loc] = 0.0;  // loc is {0, 1}
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {0, 2}
     int edmans;  // should be ignored.
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(many_dye_counts_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_more_dye_colors_test, *tolerance(TOL)) {
     Start start;
     int order = 3;
     int* shape = new int[order];
@@ -98,12 +98,12 @@ BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    tsr[loc] = -1000.0;  // loc is {0, 0, 0}
+    tsr[loc] = 0.0;  // loc is {0, 0, 0}
     loc[2] = 1;
-    tsr[loc] = -1000.0;  // loc is {0, 0, 1}
+    tsr[loc] = 0.0;  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    tsr[loc] = -1000.0;  // loc is {0, 1, 0}
+    tsr[loc] = 0.0;  // loc is {0, 1, 0}
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
     int edmans;  // should be ignored.
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(more_dye_colors_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_everything_together_test, *tolerance(TOL)) {
     Start start;
     int order = 3;
     int* shape = new int[order];
@@ -134,12 +134,12 @@ BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    tsr[loc] = -1000.0;  // loc is {0, 0, 0}
+    tsr[loc] = 0.0;  // loc is {0, 0, 0}
     loc[2] = 1;
-    tsr[loc] = -1000.0;  // loc is {0, 0, 1}
+    tsr[loc] = 0.0;  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    tsr[loc] = -1000.0;  // loc is {0, 1, 0}
+    tsr[loc] = 0.0;  // loc is {0, 1, 0}
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
     int edmans;  // should be ignored.
@@ -154,6 +154,43 @@ BOOST_AUTO_TEST_CASE(everything_together_test, *tolerance(TOL)) {
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 1, 0}
     loc[2] = 1;
     BOOST_TEST(tsr[loc] == 1.0);  // loc is {0, 1, 1}
+    delete[] loc;
+}
+
+BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
+    Start start;
+    int order = 3;
+    int* shape = new int[order];
+    shape[0] = 2;
+    shape[1] = 2;
+    shape[2] = 2;
+    Tensor tsr1(order, shape);
+    Tensor tsr2(order, shape);
+    delete[] shape;
+    int* loc = new int[order];
+    loc[0] = 0;
+    loc[1] = 0;
+    loc[2] = 0;
+    tsr1[loc] = 0.00;  // loc is {0, 0, 0}
+    loc[2] = 1;
+    tsr1[loc] = 0.01;  // loc is {0, 0, 1}
+    loc[1] = 1;
+    loc[2] = 0;
+    tsr1[loc] = 0.10;  // loc is {0, 1, 0}
+    loc[2] = 1;
+    tsr1[loc] = 0.11;  // loc is {0, 1, 1}
+    int edmans;  // should be ignored.
+    start.backward(tsr1, &edmans, &tsr2);
+    loc[1] = 0;
+    loc[2] = 0;
+    BOOST_TEST(tsr2[loc] == 0.00);  // loc is {0, 0, 0}
+    loc[2] = 1;
+    BOOST_TEST(tsr2[loc] == 0.01);  // loc is {0, 0, 1}
+    loc[1] = 1;
+    loc[2] = 0;
+    BOOST_TEST(tsr2[loc] == 0.10);  // loc is {0, 1, 0}
+    loc[2] = 1;
+    BOOST_TEST(tsr2[loc] == 0.11);  // loc is {0, 1, 1}
     delete[] loc;
 }
 
