@@ -40,7 +40,7 @@ void generate_radiometry(const ErrorModel& error_model,
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             lognormal_distribution<double> lognormal(
-                    log(error_model.mu * (double)dye_track(t, c)),
+                    error_model.mu * log((double)dye_track(t, c)),
                     error_model.sigma);
             (*radiometry)(t, c) = lognormal(*generator);
         }

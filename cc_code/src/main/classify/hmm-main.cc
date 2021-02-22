@@ -55,7 +55,7 @@ int hmm_main(int argc, char** argv) {
                            .05,  // p_bleach
                            .07,  // p_dud
                            DistributionType::LOGNORMAL,
-                           1.0,  // mu
+                           0.0,  // mu
                            .16);  // sigma
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
