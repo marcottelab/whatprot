@@ -13,6 +13,7 @@
 #include <algorithm>  // needed for std::copy
 
 // Local project headers:
+#include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
 namespace whatprot {
@@ -21,7 +22,7 @@ namespace {
 using std::copy;
 }
 
-Tensor::Tensor(int order, int* shape) : order(order) {
+Tensor::Tensor(int order, const int* shape) : order(order) {
     this->shape = new int[order];
     copy(shape, shape + order, this->shape);
     size = 1;
@@ -30,7 +31,7 @@ Tensor::Tensor(int order, int* shape) : order(order) {
         strides[i] = size;
         size *= shape[i];
     }
-    values = new double[size];
+    values = new double[size]();
 }
 
 Tensor::Tensor(Tensor&& other)
@@ -66,6 +67,18 @@ double& Tensor::operator[](int* loc) {
 
 TensorIterator* Tensor::iterator() {
     return new TensorIterator(order, shape, size, values);
+}
+
+ConstTensorIterator* Tensor::const_iterator() const {
+    return new ConstTensorIterator(order, shape, size, values);
+}
+
+double Tensor::sum() const {
+    double total = 0.0;
+    for (int i = 0; i < size; i++) {
+        total += values[i];
+    }
+    return total;
 }
 
 }  // namespace whatprot

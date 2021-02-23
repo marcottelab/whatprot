@@ -24,7 +24,6 @@
 #include "common/sourced-data.h"
 
 namespace {
-using whatprot::KDTEntry;  // in namespace std for swap
 using std::exp;
 using std::function;
 using std::greater;  // defined in <functional>
@@ -34,6 +33,7 @@ using std::priority_queue;
 using std::sqrt;
 using std::unordered_map;
 using std::vector;
+using whatprot::KDTEntry;  // in namespace std for swap
 double PI = 3.141592653589793238;
 }  // namespace
 
@@ -192,7 +192,7 @@ vector<ScoredClassification> NNClassifier::classify(
         const vector<Radiometry>& radiometries) {
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
-    #pragma omp parallel for
+#pragma omp parallel for
     for (int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }

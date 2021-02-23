@@ -73,6 +73,43 @@ BOOST_AUTO_TEST_CASE(stride_two_test) {
     delete[] values;
 }
 
+BOOST_AUTO_TEST_CASE(const_stride_one_test) {
+    int length = 5;
+    int stride = 1;
+    double* values = new double[length * stride];
+    values[0] = 420;
+    values[1] = 421;
+    values[2] = 422;
+    values[3] = 423;
+    values[4] = 424;
+    Vector v(length, stride, values);
+    const Vector& cv = v;
+    BOOST_TEST(cv[0] == 420);
+    BOOST_TEST(cv[1] == 421);
+    BOOST_TEST(cv[2] == 422);
+    BOOST_TEST(cv[3] == 423);
+    BOOST_TEST(cv[4] == 424);
+    delete[] values;
+}
+
+BOOST_AUTO_TEST_CASE(const_stride_two_test) {
+    int length = 3;
+    int stride = 2;
+    double* values = new double[length * stride];
+    values[0] = 420;
+    values[1] = -1;
+    values[2] = 422;
+    values[3] = -1;
+    values[4] = 424;
+    values[5] = -1;
+    Vector v(length, stride, values);
+    const Vector& cv = v;
+    BOOST_TEST(cv[0] == 420);
+    BOOST_TEST(cv[1] == 422);
+    BOOST_TEST(cv[2] == 424);
+    delete[] values;
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // vector_suite
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
 

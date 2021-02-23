@@ -10,17 +10,20 @@
 #define WHATPROT_TENSOR_TENSOR_H
 
 // Local project headers:
+#include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 
 namespace whatprot {
 
 class Tensor {
 public:
-    Tensor(int order, int* shape);
+    Tensor(int order, const int* shape);
     Tensor(Tensor&& other);
     ~Tensor();
     double& operator[](int* loc);
     TensorIterator* iterator();
+    ConstTensorIterator* const_iterator() const;
+    double sum() const;
 
     double* values;
     int* shape;

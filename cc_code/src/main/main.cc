@@ -12,10 +12,12 @@
 // Local project headers:
 #include "main/classify/classify-main.h"
 #include "main/cmd-line-out.h"
+#include "main/fit/fit-main.h"
 #include "main/simulate/simulate-main.h"
 
 namespace {
 using whatprot::classify_main;
+using whatprot::fit_main;
 using whatprot::print_bad_inputs;
 using whatprot::print_invalid_command;
 using whatprot::print_omp_info;
@@ -34,6 +36,8 @@ int main(int argc, char** argv) {
         return_code = classify_main(argc, argv);
     } else if (0 == strcmp(mode, "simulate")) {
         return_code = simulate_main(argc, argv);
+    } else if (0 == strcmp(mode, "fit")) {
+        return_code = fit_main(argc, argv);
     } else {
         print_invalid_command();
     }

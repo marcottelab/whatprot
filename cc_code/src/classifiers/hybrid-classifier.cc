@@ -14,7 +14,7 @@
 #include <vector>
 
 // Local project headers:
-#include "classifiers/fwd-alg-classifier.h"
+#include "classifiers/hmm-classifier.h"
 #include "classifiers/nn-classifier.h"
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
@@ -46,8 +46,7 @@ HybridClassifier::HybridClassifier(
                         k,
                         sigma,
                         dye_tracks),
-          fwd_alg_classifier(
-                  num_timesteps, num_channels, error_model, dye_seqs) {
+          hmm_classifier(num_timesteps, num_channels, error_model, dye_seqs) {
     for (int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;
         id_count_map[dye_seqs[i].source.source] = dye_seqs[i].source.count;
@@ -67,7 +66,7 @@ ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
         candidate_indices.push_back(id_index_map[candidate.id]);
     }
     ScoredClassification result;
-    result = fwd_alg_classifier.classify(radiometry, candidate_indices);
+    result = hmm_classifier.classify(radiometry, candidate_indices);
     if (result.id == -1) {
         result = candidates.back();
     } else {
@@ -89,7 +88,7 @@ vector<ScoredClassification> HybridClassifier::classify(
         const vector<Radiometry>& radiometries) {
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
-    #pragma omp parallel for
+#pragma omp parallel for
     for (int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }

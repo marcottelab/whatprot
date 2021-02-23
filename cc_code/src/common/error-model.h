@@ -11,12 +11,14 @@
 
 // Standard C++ library headers:
 #include <functional>
+#include <string>
 
 namespace whatprot {
 
 enum DistributionType {
-    // NORMAL,
+    NORMAL,
     LOGNORMAL,
+    OVERRIDE,  // Intended for testing. Always returns 1.0 from distribution.
 };
 
 class ErrorModel {
@@ -29,6 +31,8 @@ public:
                double mu,
                double sigma);
     std::function<double(double, int)> pdf() const;
+    double relative_distance(const ErrorModel& error_model) const;
+    std::string debug_string() const;
 
     double p_edman_failure;
     double p_detach;

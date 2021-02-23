@@ -15,6 +15,7 @@ class Vector {
 public:
     Vector(int length, int stride, double* values);
     double& operator[](int i);
+    double operator[](int i) const;
 
     double* values;
     int length;
