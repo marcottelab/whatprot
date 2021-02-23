@@ -17,13 +17,12 @@ namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(const Tensor& input,
-                               int* edmans,
+void DetachTransition::forward(int* edmans,
                                Tensor* output) const {
-    int i_max = ((*edmans) + 1) * input.strides[0];
+    int i_max = ((*edmans) + 1) * output->strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {
-        double value = input.values[i];
+        double value = output->values[i];
         output->values[i] = value * (1 - p_detach);
         sum += value;
     }

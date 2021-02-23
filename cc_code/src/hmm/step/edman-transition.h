@@ -22,8 +22,7 @@ public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
-    virtual void forward(const Tensor& input,
-                         int* edmans,
+    virtual void forward(int* edmans,
                          Tensor* output) const override;
     virtual void backward(const Tensor& input,
                           int* edmans,

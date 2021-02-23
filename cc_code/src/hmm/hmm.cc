@@ -58,7 +58,7 @@ double HMM::probability() const {
     Tensor tensor(tensor_shape.size(), &tensor_shape[0]);
     int num_edmans = 0;
     while (step != steps.end()) {
-        (*step)->forward(tensor, &num_edmans, &tensor);
+        (*step)->forward(&num_edmans, &tensor);
         step++;
     }
     return tensor.sum();
@@ -92,7 +92,7 @@ void HMM::improve_fit(ErrorModelFitter* fitter) const {
                              num_edmans,
                              probability,
                              fitter);
-        (*step)->forward(forward_tensor, &num_edmans, &forward_tensor);
+        (*step)->forward(&num_edmans, &forward_tensor);
         step++;
     }
 }
