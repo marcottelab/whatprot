@@ -43,30 +43,30 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 1.0;  // loc is {0, 0}
     int edmans = 0;
-    dt.forward(tsr, &edmans, &tsr);
+    dt.forward(&edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
-    double p_detach = 0.05;
-    DetachTransition dt(p_detach);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 1;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 1.0;  // loc is {0, 0}
-    int edmans = 0;
-    dt.forward(tsr1, &edmans, &tsr2);
-    BOOST_TEST(tsr2[loc] == 1.0);  // loc is {0, 0}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
+//     double p_detach = 0.05;
+//     DetachTransition dt(p_detach);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 1;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 1.0;  // loc is {0, 0}
+//     int edmans = 0;
+//     dt.forward(tsr1, &edmans, &tsr2);
+//     BOOST_TEST(tsr2[loc] == 1.0);  // loc is {0, 0}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     double p_detach = 0.05;
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 0.7;  // loc is {0, 1}
     int edmans = 0;
-    dt.forward(tsr, &edmans, &tsr);
+    dt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 + 0.7 * p_detach);  // loc is {0, 0}
@@ -93,31 +93,31 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_test, *tolerance(TOL)) {
-    double p_detach = 0.05;
-    DetachTransition dt(p_detach);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 0.3;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.7;  // loc is {0, 1}
-    int edmans = 0;
-    dt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.3 + 0.7 * p_detach);  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.7 * (1 - p_detach));  // loc is {0, 1}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_test, *tolerance(TOL)) {
+//     double p_detach = 0.05;
+//     DetachTransition dt(p_detach);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.3;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.7;  // loc is {0, 1}
+//     int edmans = 0;
+//     dt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.3 + 0.7 * p_detach);  // loc is {0, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.7 * (1 - p_detach));  // loc is {0, 1}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_bigger_test, *tolerance(TOL)) {
     double p_detach = 0.05;
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = 0.1;  // loc is {0, 2}
     int edmans = 0;
-    dt.forward(tsr, &edmans, &tsr);
+    dt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
@@ -148,35 +148,35 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_bigger_test, *tolerance(TOL)) {
-    double p_detach = 0.05;
-    DetachTransition dt(p_detach);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 3;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 0.3;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.6;  // loc is {0, 1}
-    loc[1] = 2;
-    tsr1[loc] = 0.1;  // loc is {0, 2}
-    int edmans = 0;
-    dt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.6 * (1 - p_detach));  // loc is {0, 1}
-    loc[1] = 2;
-    BOOST_TEST(tsr2[loc] == 0.1 * (1 - p_detach));  // loc is {0, 2}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_bigger_test, *tolerance(TOL)) {
+//     double p_detach = 0.05;
+//     DetachTransition dt(p_detach);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 3;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.3;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.6;  // loc is {0, 1}
+//     loc[1] = 2;
+//     tsr1[loc] = 0.1;  // loc is {0, 2}
+//     int edmans = 0;
+//     dt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.6 * (1 - p_detach));  // loc is {0, 1}
+//     loc[1] = 2;
+//     BOOST_TEST(tsr2[loc] == 0.1 * (1 - p_detach));  // loc is {0, 2}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     double p_detach = 0.05;
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 0.6;  // loc is {2, 1}
     int edmans = 2;
-    dt.forward(tsr, &edmans, &tsr);
+    dt.forward(&edmans, &tsr);
     // Just testing the ones with at least one lit amino acid here. See below
     // for other tests.
     loc[0] = 0;
@@ -228,56 +228,56 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
-    double p_detach = 0.05;
-    DetachTransition dt(p_detach);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 3;
-    shape[1] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 0.1;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.2;  // loc is {0, 1}
-    loc[0] = 1;
-    loc[1] = 0;
-    tsr1[loc] = 0.3;  // loc is {1, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.4;  // loc is {1, 1}
-    loc[0] = 2;
-    loc[1] = 0;
-    tsr1[loc] = 0.5;  // loc is {2, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.6;  // loc is {2, 1}
-    int edmans = 2;
-    dt.forward(tsr1, &edmans, &tsr2);
-    // Just testing the ones with at least one lit amino acid here. See below
-    // for other tests.
-    loc[0] = 0;
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.2 * (1 - p_detach));  // loc is {0, 1}
-    loc[0] = 1;
-    BOOST_TEST(tsr2[loc] == 0.4 * (1 - p_detach));  // loc is {1, 1}
-    loc[0] = 2;
-    BOOST_TEST(tsr2[loc] == 0.6 * (1 - p_detach));  // loc is {2, 1}
-    // Distribution between empty states is of no importance. We only care about
-    // the sum.
-    double sum_empties = 0.0;
-    loc[0] = 0;
-    loc[1] = 0;
-    sum_empties += tsr2[loc];  // loc is {0, 0}
-    loc[0] = 1;
-    sum_empties += tsr2[loc];  // loc is {1, 0};
-    loc[0] = 2;
-    sum_empties += tsr2[loc];  // loc is {2, 0};
-    BOOST_TEST(sum_empties == 0.1 + 0.3 + 0.5 + (0.2 + 0.4 + 0.6) * p_detach);
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
+//     double p_detach = 0.05;
+//     DetachTransition dt(p_detach);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 3;
+//     shape[1] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.1;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.2;  // loc is {0, 1}
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.3;  // loc is {1, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.4;  // loc is {1, 1}
+//     loc[0] = 2;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.5;  // loc is {2, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.6;  // loc is {2, 1}
+//     int edmans = 2;
+//     dt.forward(tsr1, &edmans, &tsr2);
+//     // Just testing the ones with at least one lit amino acid here. See below
+//     // for other tests.
+//     loc[0] = 0;
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.2 * (1 - p_detach));  // loc is {0, 1}
+//     loc[0] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.4 * (1 - p_detach));  // loc is {1, 1}
+//     loc[0] = 2;
+//     BOOST_TEST(tsr2[loc] == 0.6 * (1 - p_detach));  // loc is {2, 1}
+//     // Distribution between empty states is of no importance. We only care about
+//     // the sum.
+//     double sum_empties = 0.0;
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     sum_empties += tsr2[loc];  // loc is {0, 0}
+//     loc[0] = 1;
+//     sum_empties += tsr2[loc];  // loc is {1, 0};
+//     loc[0] = 2;
+//     sum_empties += tsr2[loc];  // loc is {2, 0};
+//     BOOST_TEST(sum_empties == 0.1 + 0.3 + 0.5 + (0.2 + 0.4 + 0.6) * p_detach);
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
                      *tolerance(TOL)) {
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
     loc[2] = 1;
     tsr[loc] = 0.4;  // loc is {0, 1, 1}
     int edmans = 0;
-    dt.forward(tsr, &edmans, &tsr);
+    dt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -319,46 +319,46 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_dye_colors_test,
-                     *tolerance(TOL)) {
-    double p_detach = 0.05;
-    DetachTransition dt(p_detach);
-    int order = 3;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 2;
-    shape[2] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    tsr1[loc] = 0.1;  // loc is {0, 0, 0}
-    loc[2] = 1;
-    tsr1[loc] = 0.2;  // loc is {0, 0, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    tsr1[loc] = 0.3;  // loc is {0, 1, 0}
-    loc[2] = 1;
-    tsr1[loc] = 0.4;  // loc is {0, 1, 1}
-    int edmans = 0;
-    dt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    // loc is {0, 0, 0}
-    BOOST_TEST(tsr2[loc] == 0.1 + (0.2 + 0.3 + 0.4) * p_detach);
-    loc[2] = 1;
-    BOOST_TEST(tsr2[loc] == 0.2 * (1 - p_detach));  // loc is {0, 0, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    BOOST_TEST(tsr2[loc] == 0.3 * (1 - p_detach));  // loc is {0, 1, 0}
-    loc[2] = 1;
-    BOOST_TEST(tsr2[loc] == 0.4 * (1 - p_detach));  // loc is {0, 1, 1}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_dye_colors_test,
+//                      *tolerance(TOL)) {
+//     double p_detach = 0.05;
+//     DetachTransition dt(p_detach);
+//     int order = 3;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 2;
+//     shape[2] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     tsr1[loc] = 0.1;  // loc is {0, 0, 0}
+//     loc[2] = 1;
+//     tsr1[loc] = 0.2;  // loc is {0, 0, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     tsr1[loc] = 0.3;  // loc is {0, 1, 0}
+//     loc[2] = 1;
+//     tsr1[loc] = 0.4;  // loc is {0, 1, 1}
+//     int edmans = 0;
+//     dt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     // loc is {0, 0, 0}
+//     BOOST_TEST(tsr2[loc] == 0.1 + (0.2 + 0.3 + 0.4) * p_detach);
+//     loc[2] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.2 * (1 - p_detach));  // loc is {0, 0, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.3 * (1 - p_detach));  // loc is {0, 1, 0}
+//     loc[2] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.4 * (1 - p_detach));  // loc is {0, 1, 1}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
     double p_detach = 0.05;

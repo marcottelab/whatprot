@@ -143,33 +143,33 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 1.0;  // loc is {0, 0}
     int edmans = 0;
-    bt.forward(tsr, &edmans, &tsr);
+    bt.forward(&edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(0);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 1;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 1.0;  // loc is {0, 0}
-    int edmans = 0;
-    bt.forward(tsr1, &edmans, &tsr2);
-    BOOST_TEST(tsr2[loc] == 1.0);  // loc is {0, 0}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
+//     double q = 0.05;
+//     double p = 0.95;
+//     int channel = 0;
+//     TestableBinomialTransition bt(q, channel);
+//     bt.reserve(0);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 1;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 1.0;  // loc is {0, 0}
+//     int edmans = 0;
+//     bt.forward(tsr1, &edmans, &tsr2);
+//     BOOST_TEST(tsr2[loc] == 1.0);  // loc is {0, 0}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     double q = 0.05;
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 0.7;  // loc is {0, 1}
     int edmans = 0;
-    bt.forward(tsr, &edmans, &tsr);
+    bt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.3 + 0.7 * q);  // loc is {0, 0}
@@ -199,34 +199,34 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_transition_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 0.3;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.7;  // loc is {0, 1}
-    int edmans = 0;
-    bt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.3 + 0.7 * q);  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.7 * p);  // loc is {0, 1}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_transition_test, *tolerance(TOL)) {
+//     double q = 0.05;
+//     double p = 0.95;
+//     int channel = 0;
+//     TestableBinomialTransition bt(q, channel);
+//     bt.reserve(1);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.3;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.7;  // loc is {0, 1}
+//     int edmans = 0;
+//     bt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.3 + 0.7 * q);  // loc is {0, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.7 * p);  // loc is {0, 1}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     double q = 0.05;
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = 0.7;  // loc is {0, 2}
     int edmans = 0;
-    bt.forward(tsr, &edmans, &tsr);
+    bt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.2 + 0.3 * q + 0.7 * q * q);  // loc is {0, 0}
@@ -260,38 +260,38 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 3;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 0.2;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.3;  // loc is {0, 1}
-    loc[1] = 2;
-    tsr1[loc] = 0.7;  // loc is {0, 2}
-    int edmans = 0;
-    bt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.2 + 0.3 * q + 0.7 * q * q);  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.3 * p + 0.7 * 2 * q * p);  // loc is {0, 1}
-    loc[1] = 2;
-    BOOST_TEST(tsr2[loc] == 0.7 * p * p);  // loc is {0, 2}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
+//     double q = 0.05;
+//     double p = 0.95;
+//     int channel = 0;
+//     TestableBinomialTransition bt(q, channel);
+//     bt.reserve(2);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 3;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.2;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.3;  // loc is {0, 1}
+//     loc[1] = 2;
+//     tsr1[loc] = 0.7;  // loc is {0, 2}
+//     int edmans = 0;
+//     bt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.2 + 0.3 * q + 0.7 * q * q);  // loc is {0, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.3 * p + 0.7 * 2 * q * p);  // loc is {0, 1}
+//     loc[1] = 2;
+//     BOOST_TEST(tsr2[loc] == 0.7 * p * p);  // loc is {0, 2}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     loc[1] = 1;
     tsr[loc] = 0.6;  // loc is {2, 1}
     int edmans = 2;
-    bt.forward(tsr, &edmans, &tsr);
+    bt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.2 + 0.8 * q);  // loc is {0, 0}
@@ -341,54 +341,54 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
-    shape[0] = 3;
-    shape[1] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 0.2;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.8;  // loc is {0, 1}
-    loc[0] = 1;
-    loc[1] = 0;
-    tsr1[loc] = 0.3;  // loc is {1, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.7;  // loc is {1, 1}
-    loc[0] = 2;
-    loc[1] = 0;
-    tsr1[loc] = 0.4;  // loc is {2, 0}
-    loc[1] = 1;
-    tsr1[loc] = 0.6;  // loc is {2, 1}
-    int edmans = 2;
-    bt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.2 + 0.8 * q);  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.8 * p);  // loc is {0, 1}
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.3 + 0.7 * q);  // loc is {1, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.7 * p);  // loc is {1, 1}
-    loc[0] = 2;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 0.4 + 0.6 * q);  // loc is {2, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 0.6 * p);  // loc is {2, 1}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
+//     double q = 0.05;
+//     double p = 0.95;
+//     int channel = 0;
+//     TestableBinomialTransition bt(q, channel);
+//     bt.reserve(2);
+//     int order = 2;
+//     int* shape = new int[order];
+//     shape[0] = 3;
+//     shape[1] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.2;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.8;  // loc is {0, 1}
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.3;  // loc is {1, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.7;  // loc is {1, 1}
+//     loc[0] = 2;
+//     loc[1] = 0;
+//     tsr1[loc] = 0.4;  // loc is {2, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 0.6;  // loc is {2, 1}
+//     int edmans = 2;
+//     bt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.2 + 0.8 * q);  // loc is {0, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.8 * p);  // loc is {0, 1}
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.3 + 0.7 * q);  // loc is {1, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.7 * p);  // loc is {1, 1}
+//     loc[0] = 2;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.4 + 0.6 * q);  // loc is {2, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.6 * p);  // loc is {2, 1}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     double q = 0.05;
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     loc[3] = 1;
     tsr[loc] = 0.8;  // loc is {0, 1, 1, 1}
     int edmans = 0;
-    bt.forward(tsr, &edmans, &tsr);
+    bt.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -456,72 +456,72 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 1;  // corresponds to 2nd dim of tensor
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(1);
-    int order = 4;
-    int* shape = new int[order];
-    shape[0] = 1;
-    shape[1] = 2;
-    shape[2] = 2;
-    shape[3] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    loc[3] = 0;
-    tsr1[loc] = 0.1;  // loc is {0, 0, 0, 0}
-    loc[3] = 1;
-    tsr1[loc] = 0.2;  // loc is {0, 0, 0, 1}
-    loc[2] = 1;
-    loc[3] = 0;
-    tsr1[loc] = 0.3;  // loc is {0, 0, 1, 0}
-    loc[3] = 1;
-    tsr1[loc] = 0.4;  // loc is {0, 0, 1, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    loc[3] = 0;
-    tsr1[loc] = 0.5;  // loc is {0, 1, 0, 0}
-    loc[3] = 1;
-    tsr1[loc] = 0.6;  // loc is {0, 1, 0, 1}
-    loc[2] = 1;
-    loc[3] = 0;
-    tsr1[loc] = 0.7;  // loc is {0, 1, 1, 0}
-    loc[3] = 1;
-    tsr1[loc] = 0.8;  // loc is {0, 1, 1, 1}
-    int edmans = 0;
-    bt.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    loc[3] = 0;
-    BOOST_TEST(tsr2[loc] == 0.1 + 0.3 * q);  // loc is {0, 0, 0, 0}
-    loc[3] = 1;
-    BOOST_TEST(tsr2[loc] == 0.2 + 0.4 * q);  // loc is {0, 0, 0, 1}
-    loc[2] = 1;
-    loc[3] = 0;
-    BOOST_TEST(tsr2[loc] == 0.3 * p);  // loc is {0, 0, 1, 0}
-    loc[3] = 1;
-    BOOST_TEST(tsr2[loc] == 0.4 * p);  // loc is {0, 0, 1, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    loc[3] = 0;
-    BOOST_TEST(tsr2[loc] == 0.5 + 0.7 * q);  // loc is {0, 1, 0, 0}
-    loc[3] = 1;
-    BOOST_TEST(tsr2[loc] == 0.6 + 0.8 * q);  // loc is {0, 1, 0, 1}
-    loc[2] = 1;
-    loc[3] = 0;
-    BOOST_TEST(tsr2[loc] == 0.7 * p);  // loc is {0, 1, 1, 0}
-    loc[3] = 1;
-    BOOST_TEST(tsr2[loc] == 0.8 * p);  // loc is {0, 1, 1, 1}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
+//     double q = 0.05;
+//     double p = 0.95;
+//     int channel = 1;  // corresponds to 2nd dim of tensor
+//     TestableBinomialTransition bt(q, channel);
+//     bt.reserve(1);
+//     int order = 4;
+//     int* shape = new int[order];
+//     shape[0] = 1;
+//     shape[1] = 2;
+//     shape[2] = 2;
+//     shape[3] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     loc[3] = 0;
+//     tsr1[loc] = 0.1;  // loc is {0, 0, 0, 0}
+//     loc[3] = 1;
+//     tsr1[loc] = 0.2;  // loc is {0, 0, 0, 1}
+//     loc[2] = 1;
+//     loc[3] = 0;
+//     tsr1[loc] = 0.3;  // loc is {0, 0, 1, 0}
+//     loc[3] = 1;
+//     tsr1[loc] = 0.4;  // loc is {0, 0, 1, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     loc[3] = 0;
+//     tsr1[loc] = 0.5;  // loc is {0, 1, 0, 0}
+//     loc[3] = 1;
+//     tsr1[loc] = 0.6;  // loc is {0, 1, 0, 1}
+//     loc[2] = 1;
+//     loc[3] = 0;
+//     tsr1[loc] = 0.7;  // loc is {0, 1, 1, 0}
+//     loc[3] = 1;
+//     tsr1[loc] = 0.8;  // loc is {0, 1, 1, 1}
+//     int edmans = 0;
+//     bt.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     loc[3] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.1 + 0.3 * q);  // loc is {0, 0, 0, 0}
+//     loc[3] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.2 + 0.4 * q);  // loc is {0, 0, 0, 1}
+//     loc[2] = 1;
+//     loc[3] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.3 * p);  // loc is {0, 0, 1, 0}
+//     loc[3] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.4 * p);  // loc is {0, 0, 1, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     loc[3] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.5 + 0.7 * q);  // loc is {0, 1, 0, 0}
+//     loc[3] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.6 + 0.8 * q);  // loc is {0, 1, 0, 1}
+//     loc[2] = 1;
+//     loc[3] = 0;
+//     BOOST_TEST(tsr2[loc] == 0.7 * p);  // loc is {0, 1, 1, 0}
+//     loc[3] = 1;
+//     BOOST_TEST(tsr2[loc] == 0.8 * p);  // loc is {0, 1, 1, 1}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
     double q = 0.05;

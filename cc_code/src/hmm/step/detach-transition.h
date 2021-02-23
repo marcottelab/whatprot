@@ -20,7 +20,7 @@ class DetachTransition : public Step {
 public:
     DetachTransition(double p_detach);
     virtual void forward(int* edmans,
-                         Tensor* output) const override;
+                         Tensor* tsr) const override;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;

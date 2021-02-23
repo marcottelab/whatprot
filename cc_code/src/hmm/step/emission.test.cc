@@ -268,38 +268,38 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 3.14;  // loc is {0, 0}
     int edmans = 0;
-    e.forward(tsr, &edmans, &tsr);
+    e.forward(&edmans, &tsr);
     BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    int max_num_dyes = 0;
-    function<double(double, int)> pdf = [](double observed,
-                                           int state) -> double {
-        return 0.5;
-    };
-    Emission e(rad, max_num_dyes, pdf);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
-    shape[0] = num_timesteps;
-    shape[1] = 1;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 3.14;  // loc is {0, 0}
-    int edmans = 0;
-    e.forward(tsr1, &edmans, &tsr2);
-    BOOST_TEST(tsr2[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
+//     int num_timesteps = 1;
+//     int num_channels = 1;
+//     Radiometry rad(num_timesteps, num_channels);
+//     rad(0, 0) = 1.0;
+//     int max_num_dyes = 0;
+//     function<double(double, int)> pdf = [](double observed,
+//                                            int state) -> double {
+//         return 0.5;
+//     };
+//     Emission e(rad, max_num_dyes, pdf);
+//     int order = 1 + num_channels;
+//     int* shape = new int[order];
+//     shape[0] = num_timesteps;
+//     shape[1] = 1;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 3.14;  // loc is {0, 0}
+//     int edmans = 0;
+//     e.forward(tsr1, &edmans, &tsr2);
+//     BOOST_TEST(tsr2[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
     int num_timesteps = 1;
@@ -323,8 +323,8 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
     loc[1] = 0;
     tsr[loc] = 3.14;  // loc is {0, 0}
     int edmans = 0;
-    e.forward(tsr, &edmans, &tsr);
-    e.forward(tsr, &edmans, &tsr);
+    e.forward(&edmans, &tsr);
+    e.forward(&edmans, &tsr);
     BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     loc[0] = 2;
     tsr[loc] = 13.2;  // loc is {2, 0}
     int edmans = 2;
-    e.forward(tsr, &edmans, &tsr);
+    e.forward(&edmans, &tsr);
     loc[0] = 0;
     BOOST_TEST(tsr[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
     loc[0] = 1;
@@ -368,44 +368,44 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_timesteps_test, *tolerance(TOL)) {
-    int num_timesteps = 3;
-    int num_channels = 1;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 0.0;
-    rad(1, 0) = 1.0;
-    rad(2, 0) = 2.0;
-    int max_num_dyes = 0;
-    function<double(double, int)> pdf = [](double observed,
-                                           int state) -> double {
-        return observed + 0.042;
-    };
-    Emission e(rad, max_num_dyes, pdf);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
-    shape[0] = num_timesteps;
-    shape[1] = 1;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 13.0;  // loc is {0, 0}
-    loc[0] = 1;
-    tsr1[loc] = 13.1;  // loc is {1, 0}
-    loc[0] = 2;
-    tsr1[loc] = 13.2;  // loc is {2, 0}
-    int edmans = 2;
-    e.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    BOOST_TEST(tsr2[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
-    loc[0] = 1;
-    BOOST_TEST(tsr2[loc] == 13.1 * pdf(2.0, 0));  // loc is {1, 0}
-    loc[0] = 2;
-    BOOST_TEST(tsr2[loc] == 13.2 * pdf(2.0, 0));  // loc is {2, 0}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_timesteps_test, *tolerance(TOL)) {
+//     int num_timesteps = 3;
+//     int num_channels = 1;
+//     Radiometry rad(num_timesteps, num_channels);
+//     rad(0, 0) = 0.0;
+//     rad(1, 0) = 1.0;
+//     rad(2, 0) = 2.0;
+//     int max_num_dyes = 0;
+//     function<double(double, int)> pdf = [](double observed,
+//                                            int state) -> double {
+//         return observed + 0.042;
+//     };
+//     Emission e(rad, max_num_dyes, pdf);
+//     int order = 1 + num_channels;
+//     int* shape = new int[order];
+//     shape[0] = num_timesteps;
+//     shape[1] = 1;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 13.0;  // loc is {0, 0}
+//     loc[0] = 1;
+//     tsr1[loc] = 13.1;  // loc is {1, 0}
+//     loc[0] = 2;
+//     tsr1[loc] = 13.2;  // loc is {2, 0}
+//     int edmans = 2;
+//     e.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     BOOST_TEST(tsr2[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
+//     loc[0] = 1;
+//     BOOST_TEST(tsr2[loc] == 13.1 * pdf(2.0, 0));  // loc is {1, 0}
+//     loc[0] = 2;
+//     BOOST_TEST(tsr2[loc] == 13.2 * pdf(2.0, 0));  // loc is {2, 0}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     int num_timesteps = 1;
@@ -435,46 +435,46 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     loc[3] = 0;
     tsr[loc] = 13.0;  // loc is {0, 0, 0, 0}
     int edmans = 0;
-    e.forward(tsr, &edmans, &tsr);
+    e.forward(&edmans, &tsr);
     // loc is {0, 0, 0, 0}
     BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_channels_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 0.0;
-    rad(0, 1) = 0.1;
-    rad(0, 2) = 0.2;
-    int max_num_dyes = 0;
-    function<double(double, int)> pdf = [](double observed,
-                                           int state) -> double {
-        return observed + 0.042;
-    };
-    Emission e(rad, max_num_dyes, pdf);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
-    shape[0] = num_timesteps;
-    shape[1] = 1;
-    shape[2] = 1;
-    shape[3] = 1;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    loc[3] = 0;
-    tsr1[loc] = 13.0;  // loc is {0, 0, 0, 0}
-    int edmans = 0;
-    e.forward(tsr1, &edmans, &tsr2);
-    // loc is {0, 0, 0, 0}
-    BOOST_TEST(tsr2[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_channels_test, *tolerance(TOL)) {
+//     int num_timesteps = 1;
+//     int num_channels = 3;
+//     Radiometry rad(num_timesteps, num_channels);
+//     rad(0, 0) = 0.0;
+//     rad(0, 1) = 0.1;
+//     rad(0, 2) = 0.2;
+//     int max_num_dyes = 0;
+//     function<double(double, int)> pdf = [](double observed,
+//                                            int state) -> double {
+//         return observed + 0.042;
+//     };
+//     Emission e(rad, max_num_dyes, pdf);
+//     int order = 1 + num_channels;
+//     int* shape = new int[order];
+//     shape[0] = num_timesteps;
+//     shape[1] = 1;
+//     shape[2] = 1;
+//     shape[3] = 1;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     loc[3] = 0;
+//     tsr1[loc] = 13.0;  // loc is {0, 0, 0, 0}
+//     int edmans = 0;
+//     e.forward(tsr1, &edmans, &tsr2);
+//     // loc is {0, 0, 0, 0}
+//     BOOST_TEST(tsr2[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
                      *tolerance(TOL)) {
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
     loc[1] = 2;
     tsr[loc] = 13.2;  // loc is {0, 2}
     int edmans = 0;
-    e.forward(tsr, &edmans, &tsr);
+    e.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
@@ -514,44 +514,44 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_dye_counts_test,
-                     *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 0.0;
-    int max_num_dyes = 2;
-    function<double(double, int)> pdf = [](double observed,
-                                           int state) -> double {
-        return 1.0 / (double)(state + 7);
-    };
-    Emission e(rad, max_num_dyes, pdf);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
-    shape[0] = num_timesteps;
-    shape[1] = max_num_dyes + 1;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr1[loc] = 13.0;  // loc is {0, 0}
-    loc[1] = 1;
-    tsr1[loc] = 13.1;  // loc is {0, 1}
-    loc[1] = 2;
-    tsr1[loc] = 13.2;  // loc is {0, 2}
-    int edmans = 0;
-    e.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(tsr2[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(tsr2[loc] == 13.1 * pdf(0.0, 1));  // loc is {0, 1}
-    loc[1] = 2;
-    BOOST_TEST(tsr2[loc] == 13.2 * pdf(0.0, 2));  // loc is {0, 2}
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_dye_counts_test,
+//                      *tolerance(TOL)) {
+//     int num_timesteps = 1;
+//     int num_channels = 1;
+//     Radiometry rad(num_timesteps, num_channels);
+//     rad(0, 0) = 0.0;
+//     int max_num_dyes = 2;
+//     function<double(double, int)> pdf = [](double observed,
+//                                            int state) -> double {
+//         return 1.0 / (double)(state + 7);
+//     };
+//     Emission e(rad, max_num_dyes, pdf);
+//     int order = 1 + num_channels;
+//     int* shape = new int[order];
+//     shape[0] = num_timesteps;
+//     shape[1] = max_num_dyes + 1;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     tsr1[loc] = 13.0;  // loc is {0, 0}
+//     loc[1] = 1;
+//     tsr1[loc] = 13.1;  // loc is {0, 1}
+//     loc[1] = 2;
+//     tsr1[loc] = 13.2;  // loc is {0, 2}
+//     int edmans = 0;
+//     e.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     BOOST_TEST(tsr2[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
+//     loc[1] = 1;
+//     BOOST_TEST(tsr2[loc] == 13.1 * pdf(0.0, 1));  // loc is {0, 1}
+//     loc[1] = 2;
+//     BOOST_TEST(tsr2[loc] == 13.2 * pdf(0.0, 2));  // loc is {0, 2}
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
                      *tolerance(TOL)) {
@@ -599,7 +599,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     loc[2] = 1;
     tsr[loc] = 7.111;  // loc is {1, 1, 1}
     int edmans = 1;
-    e.forward(tsr, &edmans, &tsr);
+    e.forward(&edmans, &tsr);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -633,86 +633,86 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     delete[] loc;
 }
 
-BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_everything_test,
-                     *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 2;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 0.0;
-    rad(0, 1) = 0.1;
-    rad(1, 0) = 1.0;
-    rad(1, 1) = 1.1;
-    int max_num_dyes = 1;
-    function<double(double, int)> pdf = [](double observed,
-                                           int state) -> double {
-        return (observed + 0.042) / (double)(state + 7);
-    };
-    Emission e(rad, max_num_dyes, pdf);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
-    shape[0] = num_timesteps;
-    shape[1] = 2;
-    shape[2] = 2;
-    Tensor tsr1(order, shape);
-    Tensor tsr2(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    tsr1[loc] = 7.000;  // loc is {0, 0, 0}
-    loc[2] = 1;
-    tsr1[loc] = 7.001;  // loc is {0, 0, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    tsr1[loc] = 7.010;  // loc is {0, 1, 0}
-    loc[2] = 1;
-    tsr1[loc] = 7.011;  // loc is {0, 1, 1}
-    loc[0] = 1;
-    loc[1] = 0;
-    loc[2] = 0;
-    tsr1[loc] = 7.100;  // loc is {1, 0, 0}
-    loc[2] = 1;
-    tsr1[loc] = 7.101;  // loc is {1, 0, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    tsr1[loc] = 7.110;  // loc is {1, 1, 0}
-    loc[2] = 1;
-    tsr1[loc] = 7.111;  // loc is {1, 1, 1}
-    int edmans = 1;
-    e.forward(tsr1, &edmans, &tsr2);
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    // loc is {0, 0, 0}
-    BOOST_TEST(tsr2[loc] == 7.000 * pdf(1.0, 0) * pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {0, 0, 1}
-    BOOST_TEST(tsr2[loc] == 7.001 * pdf(1.0, 0) * pdf(1.1, 1));
-    loc[1] = 1;
-    loc[2] = 0;
-    // loc is {0, 1, 0}
-    BOOST_TEST(tsr2[loc] == 7.010 * pdf(1.0, 1) * pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {0, 1, 1}
-    BOOST_TEST(tsr2[loc] == 7.011 * pdf(1.0, 1) * pdf(1.1, 1));
-    loc[0] = 1;
-    loc[1] = 0;
-    loc[2] = 0;
-    // loc is {1, 0, 0}
-    BOOST_TEST(tsr2[loc] == 7.100 * pdf(1.0, 0) * pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {1, 0, 1}
-    BOOST_TEST(tsr2[loc] == 7.101 * pdf(1.0, 0) * pdf(1.1, 1));
-    loc[1] = 1;
-    loc[2] = 0;
-    // loc is {1, 1, 0}
-    BOOST_TEST(tsr2[loc] == 7.110 * pdf(1.0, 1) * pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {1, 1, 1}
-    BOOST_TEST(tsr2[loc] == 7.111 * pdf(1.0, 1) * pdf(1.1, 1));
-    delete[] loc;
-}
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_everything_test,
+//                      *tolerance(TOL)) {
+//     int num_timesteps = 2;
+//     int num_channels = 2;
+//     Radiometry rad(num_timesteps, num_channels);
+//     rad(0, 0) = 0.0;
+//     rad(0, 1) = 0.1;
+//     rad(1, 0) = 1.0;
+//     rad(1, 1) = 1.1;
+//     int max_num_dyes = 1;
+//     function<double(double, int)> pdf = [](double observed,
+//                                            int state) -> double {
+//         return (observed + 0.042) / (double)(state + 7);
+//     };
+//     Emission e(rad, max_num_dyes, pdf);
+//     int order = 1 + num_channels;
+//     int* shape = new int[order];
+//     shape[0] = num_timesteps;
+//     shape[1] = 2;
+//     shape[2] = 2;
+//     Tensor tsr1(order, shape);
+//     Tensor tsr2(order, shape);
+//     delete[] shape;
+//     int* loc = new int[order];
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     tsr1[loc] = 7.000;  // loc is {0, 0, 0}
+//     loc[2] = 1;
+//     tsr1[loc] = 7.001;  // loc is {0, 0, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     tsr1[loc] = 7.010;  // loc is {0, 1, 0}
+//     loc[2] = 1;
+//     tsr1[loc] = 7.011;  // loc is {0, 1, 1}
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     tsr1[loc] = 7.100;  // loc is {1, 0, 0}
+//     loc[2] = 1;
+//     tsr1[loc] = 7.101;  // loc is {1, 0, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     tsr1[loc] = 7.110;  // loc is {1, 1, 0}
+//     loc[2] = 1;
+//     tsr1[loc] = 7.111;  // loc is {1, 1, 1}
+//     int edmans = 1;
+//     e.forward(tsr1, &edmans, &tsr2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     // loc is {0, 0, 0}
+//     BOOST_TEST(tsr2[loc] == 7.000 * pdf(1.0, 0) * pdf(1.1, 0));
+//     loc[2] = 1;
+//     // loc is {0, 0, 1}
+//     BOOST_TEST(tsr2[loc] == 7.001 * pdf(1.0, 0) * pdf(1.1, 1));
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     // loc is {0, 1, 0}
+//     BOOST_TEST(tsr2[loc] == 7.010 * pdf(1.0, 1) * pdf(1.1, 0));
+//     loc[2] = 1;
+//     // loc is {0, 1, 1}
+//     BOOST_TEST(tsr2[loc] == 7.011 * pdf(1.0, 1) * pdf(1.1, 1));
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     // loc is {1, 0, 0}
+//     BOOST_TEST(tsr2[loc] == 7.100 * pdf(1.0, 0) * pdf(1.1, 0));
+//     loc[2] = 1;
+//     // loc is {1, 0, 1}
+//     BOOST_TEST(tsr2[loc] == 7.101 * pdf(1.0, 0) * pdf(1.1, 1));
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     // loc is {1, 1, 0}
+//     BOOST_TEST(tsr2[loc] == 7.110 * pdf(1.0, 1) * pdf(1.1, 0));
+//     loc[2] = 1;
+//     // loc is {1, 1, 1}
+//     BOOST_TEST(tsr2[loc] == 7.111 * pdf(1.0, 1) * pdf(1.1, 1));
+//     delete[] loc;
+// }
 
 BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     int num_timesteps = 1;

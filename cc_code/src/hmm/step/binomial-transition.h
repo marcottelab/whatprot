@@ -27,8 +27,8 @@ public:
     double& prob(int from, int to);
     double prob(int from, int to) const;
     virtual void forward(int* edmans,
-                         Tensor* output) const override;
-    void forward(Vector* output) const;
+                         Tensor* tsr) const override;
+    void forward(Vector* v) const;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;

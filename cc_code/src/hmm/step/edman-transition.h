@@ -23,7 +23,7 @@ public:
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
     virtual void forward(int* edmans,
-                         Tensor* output) const override;
+                         Tensor* tsr) const override;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;

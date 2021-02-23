@@ -25,27 +25,27 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_track(dye_track) {}
 
 void EdmanTransition::forward(int* edmans,
-                              Tensor* output) const {
+                              Tensor* tsr) const {
     (*edmans)++;
-    int t_stride = output->strides[0];
+    int t_stride = tsr->strides[0];
     for (int i = t_stride * (*edmans) - 1; i >= 0; i--) {
-        output->values[i + t_stride] = output->values[i];
+        tsr->values[i + t_stride] = tsr->values[i];
     }
     for (int i = 0; i < t_stride; i++) {
-        output->values[i] = output->values[i] * p_edman_failure;
+        tsr->values[i] = tsr->values[i] * p_edman_failure;
     }
     for (int t = 0; t < *edmans; t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                output->values[i] +=
-                        p_edman_failure * output->values[i + t_stride];
+                tsr->values[i] +=
+                        p_edman_failure * tsr->values[i + t_stride];
             }
         }
         short channel = dye_seq[t];
         if (channel != -1) {
             int amt = dye_track(t, channel);
-            int vector_stride = output->strides[1 + channel];
-            int vector_length = output->shape[1 + channel];
+            int vector_stride = tsr->strides[1 + channel];
+            int vector_length = tsr->shape[1 + channel];
             int outer_stride = vector_stride * vector_length;
             int outer_min = (t + 1) * t_stride;
             int outer_max = (t + 2) * t_stride;
@@ -54,7 +54,7 @@ void EdmanTransition::forward(int* edmans,
                 for (int inner = 0; inner < vector_stride; inner++) {
                     Vector v(vector_length,
                              vector_stride,
-                             &output->values[outer + inner]);
+                             &tsr->values[outer + inner]);
                     for (int i = 1; i <= amt; i++) {
                         double ratio = (double)i / (double)amt;
                         v[i - 1] += v[i] * ratio;
@@ -64,7 +64,7 @@ void EdmanTransition::forward(int* edmans,
             }
         }
         for (int i = (t + 1) * t_stride; i < (t + 2) * t_stride; i++) {
-            output->values[i] *= (1 - p_edman_failure);
+            tsr->values[i] *= (1 - p_edman_failure);
         }
     }
 }

@@ -48,17 +48,17 @@ double Emission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void Emission::forward(int* edmans, Tensor* output) const {
-    TensorIterator* outputit = output->iterator();
-    while (outputit->index < (*edmans + 1) * output->strides[0]) {
+void Emission::forward(int* edmans, Tensor* tsr) const {
+    TensorIterator* it = tsr->iterator();
+    while (it->index < (*edmans + 1) * tsr->strides[0]) {
         double product = 1.0;
         for (int c = 0; c < num_channels; c++) {
-            product *= prob(*edmans, c, outputit->loc[1 + c]);
+            product *= prob(*edmans, c, it->loc[1 + c]);
         }
-        *outputit->get() = *outputit->get() * product;
-        outputit->advance();
+        *it->get() = *it->get() * product;
+        it->advance();
     }
-    delete outputit;
+    delete it;
 }
 
 void Emission::backward(const Tensor& input,

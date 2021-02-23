@@ -15,8 +15,8 @@
 
 namespace whatprot {
 
-void Start::forward(int* edmans, Tensor* output) const {
-    output->values[output->strides[0] - 1] = 1.0;
+void Start::forward(int* edmans, Tensor* tsr) const {
+    tsr->values[tsr->strides[0] - 1] = 1.0;
 }
 
 void Start::backward(const Tensor& input, int* edmans, Tensor* output) const {

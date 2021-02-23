@@ -15,7 +15,7 @@
 
 namespace whatprot {
 
-void Finish::forward(int* edmans, Tensor* output) const {
+void Finish::forward(int* edmans, Tensor* tsr) const {
 }
 
 void Finish::backward(const Tensor& input, int* edmans, Tensor* output) const {

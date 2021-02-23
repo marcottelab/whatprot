@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     loc[0] = 0;
     tsr[loc] = -1000.0;
     int edmans;  // should be ignored.
-    start.forward(tsr, &edmans, &tsr);
+    start.forward(&edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);
     delete[] loc;
 }
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(forward_many_timesteps_test, *tolerance(TOL)) {
     loc[0] = 0;
     tsr[loc] = -1000.0;
     int edmans;  // should be ignored.
-    start.forward(tsr, &edmans, &tsr);
+    start.forward(&edmans, &tsr);
     BOOST_TEST(tsr[loc] == 1.0);
     delete[] loc;
 }
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(forward_many_dye_counts_test, *tolerance(TOL)) {
     loc[1] = 2;
     tsr[loc] = -1000.0;  // loc is {0, 2}
     int edmans;  // should be ignored.
-    start.forward(tsr, &edmans, &tsr);
+    start.forward(&edmans, &tsr);
     loc[1] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0}
     loc[1] = 1;
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(forward_more_dye_colors_test, *tolerance(TOL)) {
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
     int edmans;  // should be ignored.
-    start.forward(tsr, &edmans, &tsr);
+    start.forward(&edmans, &tsr);
     loc[1] = 0;
     loc[2] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0, 0}
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(forward_everything_together_test, *tolerance(TOL)) {
     loc[2] = 1;
     tsr[loc] = -1000.0;  // loc is {0, 1, 1}
     int edmans;  // should be ignored.
-    start.forward(tsr, &edmans, &tsr);
+    start.forward(&edmans, &tsr);
     loc[1] = 0;
     loc[2] = 0;
     BOOST_TEST(tsr[loc] == 0.0);  // loc is {0, 0, 0}

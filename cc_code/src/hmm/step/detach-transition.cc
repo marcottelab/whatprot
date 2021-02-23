@@ -18,15 +18,15 @@ namespace whatprot {
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
 void DetachTransition::forward(int* edmans,
-                               Tensor* output) const {
-    int i_max = ((*edmans) + 1) * output->strides[0];
+                               Tensor* tsr) const {
+    int i_max = ((*edmans) + 1) * tsr->strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {
-        double value = output->values[i];
-        output->values[i] = value * (1 - p_detach);
+        double value = tsr->values[i];
+        tsr->values[i] = value * (1 - p_detach);
         sum += value;
     }
-    output->values[(*edmans) * output->strides[0]] += p_detach * sum;
+    tsr->values[(*edmans) * tsr->strides[0]] += p_detach * sum;
 }
 
 void DetachTransition::backward(const Tensor& input,
