@@ -64,7 +64,7 @@ double HMM::probability() const {
     return tensor.sum();
 }
 
-void HMM::improve_fit(ErrorModelFitter* fitter) const {
+double HMM::improve_fit(ErrorModelFitter* fitter) const {
     vector<const Step*>::const_iterator step = steps.end();
     vector<Tensor> backward_tensors;
     backward_tensors.reserve(steps.size());
@@ -82,6 +82,16 @@ void HMM::improve_fit(ErrorModelFitter* fitter) const {
     double probability =
             backward_tensors.back()
                     .values[backward_tensors.back().strides[0] - 1];
+    // We will end up adding NaN results to the fitter if the probability is 0,
+    // because the numerators and denominators of parameter estimates will both
+    // be 0 - parameter estimates are less than or equal to the full probability
+    // always. Then we end up adding 0/0 to the numerator AND the denominator,
+    // putting a NaN in both cases.
+    //
+    // To avoid this, we just return early.
+    if (probability == 0.0) {
+        return probability;
+    }
     vector<Tensor>::iterator backward_tensor = backward_tensors.end();
     Tensor forward_tensor(tensor_shape.size(), &tensor_shape[0]);
     while (step != steps.end()) {
@@ -95,6 +105,7 @@ void HMM::improve_fit(ErrorModelFitter* fitter) const {
         (*step)->forward(&num_edmans, &forward_tensor);
         step++;
     }
+    return probability;
 }
 
 }  // namespace whatprot

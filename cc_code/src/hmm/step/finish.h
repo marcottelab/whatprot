@@ -18,8 +18,7 @@ namespace whatprot {
 
 class Finish : public Step {
 public:
-    virtual void forward(int* edmans,
-                         Tensor* tsr) const override;
+    virtual void forward(int* edmans, Tensor* tsr) const override;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;

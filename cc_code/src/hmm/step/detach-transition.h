@@ -19,8 +19,7 @@ namespace whatprot {
 class DetachTransition : public Step {
 public:
     DetachTransition(double p_detach);
-    virtual void forward(int* edmans,
-                         Tensor* tsr) const override;
+    virtual void forward(int* edmans, Tensor* tsr) const override;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;

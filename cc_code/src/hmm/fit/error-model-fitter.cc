@@ -11,22 +11,13 @@
 
 // Local project headers:
 #include "common/error-model.h"
-#include "hmm/fit/distribution-fitter.h"
 #include "hmm/fit/log-normal-distribution-fitter.h"
 #include "hmm/fit/normal-distribution-fitter.h"
 
 namespace whatprot {
 
-ErrorModelFitter::ErrorModelFitter(DistributionType distribution_type) {
-    switch (distribution_type) {
-        case DistributionType::LOGNORMAL:
-            distribution_fit = new LogNormalDistributionFitter();
-            break;
-        case DistributionType::NORMAL:
-        default:
-            distribution_fit = new NormalDistributionFitter();
-            break;
-    }
+ErrorModelFitter::ErrorModelFitter() {
+    distribution_fit = new LogNormalDistributionFitter();
 }
 
 ErrorModelFitter::~ErrorModelFitter() {
@@ -40,7 +31,41 @@ ErrorModel ErrorModelFitter::error_model() const {
                       p_dud_fit.get(),
                       distribution_fit->get_type(),
                       distribution_fit->get_mu(),
-                      distribution_fit->get_sigma());
+                      distribution_fit->get_sigma(),
+                      stuck_dye_ratio_fit.get());
+}
+
+ErrorModelFitter ErrorModelFitter::operator+(
+        const ErrorModelFitter& other) const {
+    ErrorModelFitter result_fitter;
+    result_fitter.p_edman_failure_fit =
+            p_edman_failure_fit + other.p_edman_failure_fit;
+    result_fitter.p_detach_fit = p_detach_fit + other.p_detach_fit;
+    result_fitter.p_bleach_fit = p_bleach_fit + other.p_bleach_fit;
+    result_fitter.p_dud_fit = p_dud_fit + other.p_dud_fit;
+    *result_fitter.distribution_fit =
+            *distribution_fit + *other.distribution_fit;
+    result_fitter.stuck_dye_ratio_fit =
+            stuck_dye_ratio_fit + other.stuck_dye_ratio_fit;
+    return result_fitter;
+}
+
+void ErrorModelFitter::operator+=(const ErrorModelFitter& other) {
+    p_edman_failure_fit += other.p_edman_failure_fit;
+    p_detach_fit += other.p_detach_fit;
+    p_bleach_fit += other.p_bleach_fit;
+    p_dud_fit += other.p_dud_fit;
+    *distribution_fit += *other.distribution_fit;
+    stuck_dye_ratio_fit += other.stuck_dye_ratio_fit;
+}
+
+void ErrorModelFitter::operator*=(double weight_adjustment) {
+    p_edman_failure_fit *= weight_adjustment;
+    p_detach_fit *= weight_adjustment;
+    p_bleach_fit *= weight_adjustment;
+    p_dud_fit *= weight_adjustment;
+    *distribution_fit *= weight_adjustment;
+    stuck_dye_ratio_fit *= weight_adjustment;
 }
 
 }  // namespace whatprot

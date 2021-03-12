@@ -27,8 +27,7 @@ public:
              std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(int* edmans,
-                         Tensor* tsr) const override;
+    virtual void forward(int* edmans, Tensor* tsr) const override;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const override;

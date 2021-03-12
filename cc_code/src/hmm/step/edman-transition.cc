@@ -24,8 +24,7 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_seq(dye_seq),
           dye_track(dye_track) {}
 
-void EdmanTransition::forward(int* edmans,
-                              Tensor* tsr) const {
+void EdmanTransition::forward(int* edmans, Tensor* tsr) const {
     (*edmans)++;
     int t_stride = tsr->strides[0];
     for (int i = t_stride * (*edmans) - 1; i >= 0; i--) {
@@ -37,8 +36,7 @@ void EdmanTransition::forward(int* edmans,
     for (int t = 0; t < *edmans; t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                tsr->values[i] +=
-                        p_edman_failure * tsr->values[i + t_stride];
+                tsr->values[i] += p_edman_failure * tsr->values[i + t_stride];
             }
         }
         short channel = dye_seq[t];

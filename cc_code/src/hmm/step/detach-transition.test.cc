@@ -265,7 +265,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
 //     BOOST_TEST(tsr2[loc] == 0.4 * (1 - p_detach));  // loc is {1, 1}
 //     loc[0] = 2;
 //     BOOST_TEST(tsr2[loc] == 0.6 * (1 - p_detach));  // loc is {2, 1}
-//     // Distribution between empty states is of no importance. We only care about
+//     // Distribution between empty states is of no importance. We only care
+//     about
 //     // the sum.
 //     double sum_empties = 0.0;
 //     loc[0] = 0;
@@ -275,8 +276,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
 //     sum_empties += tsr2[loc];  // loc is {1, 0};
 //     loc[0] = 2;
 //     sum_empties += tsr2[loc];  // loc is {2, 0};
-//     BOOST_TEST(sum_empties == 0.1 + 0.3 + 0.5 + (0.2 + 0.4 + 0.6) * p_detach);
-//     delete[] loc;
+//     BOOST_TEST(sum_empties == 0.1 + 0.3 + 0.5 + (0.2 + 0.4 + 0.6) *
+//     p_detach); delete[] loc;
 // }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,

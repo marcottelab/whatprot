@@ -368,7 +368,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     delete[] loc;
 }
 
-// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_timesteps_test, *tolerance(TOL)) {
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_timesteps_test,
+// *tolerance(TOL)) {
 //     int num_timesteps = 3;
 //     int num_channels = 1;
 //     Radiometry rad(num_timesteps, num_channels);
@@ -441,7 +442,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_channels_test, *tolerance(TOL)) {
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_multiple_channels_test, *tolerance(TOL))
+// {
 //     int num_timesteps = 1;
 //     int num_channels = 3;
 //     Radiometry rad(num_timesteps, num_channels);

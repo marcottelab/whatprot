@@ -64,7 +64,8 @@ int hybrid_main(int argc, char** argv) {
                            .07,  // p_dud
                            DistributionType::LOGNORMAL,
                            0.0,  // mu
-                           .16);  // sigma
+                           .16,  // sigma
+                           0.5);  // stuck_dye_ratio
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 

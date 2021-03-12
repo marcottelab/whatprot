@@ -57,8 +57,15 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     DistributionType dist_type = DistributionType::LOGNORMAL;
     double mu = 1.0;
     double sigma = 0.05;
-    ErrorModel em(
-            p_edman_failure, p_detach, p_bleach, p_dud, dist_type, mu, sigma);
+    double stuck_dye_ratio = 0.5;
+    ErrorModel em(p_edman_failure,
+                  p_detach,
+                  p_bleach,
+                  p_dud,
+                  dist_type,
+                  mu,
+                  sigma,
+                  stuck_dye_ratio);
     int num_channels = 2;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(em, num_channels);
@@ -139,8 +146,15 @@ BOOST_AUTO_TEST_CASE(probability_trivial_test, *tolerance(TOL)) {
     DistributionType dist_type = DistributionType::OVERRIDE;
     double mu = 1.0;
     double sigma = 0.05;
-    ErrorModel em(
-            p_edman_failure, p_detach, p_bleach, p_dud, dist_type, mu, sigma);
+    double stuck_dye_ratio = 0.5;
+    ErrorModel em(p_edman_failure,
+                  p_detach,
+                  p_bleach,
+                  p_dud,
+                  dist_type,
+                  mu,
+                  sigma,
+                  stuck_dye_ratio);
     int num_channels = 0;
     int max_num_dyes = 0;
     UniversalPrecomputations up(em, num_channels);
@@ -165,8 +179,15 @@ BOOST_AUTO_TEST_CASE(probability_sum_to_one_test, *tolerance(TOL)) {
     DistributionType dist_type = DistributionType::OVERRIDE;
     double mu = 1.0;
     double sigma = 0.05;
-    ErrorModel em(
-            p_edman_failure, p_detach, p_bleach, p_dud, dist_type, mu, sigma);
+    double stuck_dye_ratio = 0.5;
+    ErrorModel em(p_edman_failure,
+                  p_detach,
+                  p_bleach,
+                  p_dud,
+                  dist_type,
+                  mu,
+                  sigma,
+                  stuck_dye_ratio);
     int num_channels = 2;
     int max_num_dyes = 5;
     UniversalPrecomputations up(em, num_channels);
@@ -196,8 +217,15 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     DistributionType dist_type = DistributionType::LOGNORMAL;
     double mu = log(1.0);
     double sigma = 0.16;
-    ErrorModel em(
-            p_edman_failure, p_detach, p_bleach, p_dud, dist_type, mu, sigma);
+    double stuck_dye_ratio = 0.5;
+    ErrorModel em(p_edman_failure,
+                  p_detach,
+                  p_bleach,
+                  p_dud,
+                  dist_type,
+                  mu,
+                  sigma,
+                  stuck_dye_ratio);
     int num_channels = 2;
     int max_num_dyes = 5;
     UniversalPrecomputations up(em, num_channels);
@@ -225,8 +253,15 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     DistributionType dist_type = DistributionType::LOGNORMAL;
     double mu = 1.0;
     double sigma = 0.05;
-    ErrorModel em(
-            p_edman_failure, p_detach, p_bleach, p_dud, dist_type, mu, sigma);
+    double stuck_dye_ratio = 0.5;
+    ErrorModel em(p_edman_failure,
+                  p_detach,
+                  p_bleach,
+                  p_dud,
+                  dist_type,
+                  mu,
+                  sigma,
+                  stuck_dye_ratio);
     int num_channels = 2;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(em, num_channels);

@@ -32,6 +32,7 @@ public:
               const DyeSeq& dye_seq);
     ErrorModel fit(const std::vector<Radiometry>& radiometries) const;
     const DyeSeq& dye_seq;
+    std::vector<DyeSeq> stuck_dyes;
     const ErrorModel& error_model;
     double stopping_threshold;
     int num_timesteps;

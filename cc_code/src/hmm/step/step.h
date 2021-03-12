@@ -17,8 +17,7 @@ namespace whatprot {
 
 class Step {
 public:
-    virtual void forward(int* edmans,
-                         Tensor* tsr) const = 0;
+    virtual void forward(int* edmans, Tensor* tsr) const = 0;
     virtual void backward(const Tensor& input,
                           int* edmans,
                           Tensor* output) const = 0;

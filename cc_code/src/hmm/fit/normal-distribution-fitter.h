@@ -11,17 +11,19 @@
 
 // Local project headers:
 #include "common/error-model.h"
-#include "hmm/fit/distribution-fitter.h"
 
 namespace whatprot {
 
-class NormalDistributionFitter : public DistributionFitter {
+class NormalDistributionFitter {
 public:
     NormalDistributionFitter();
-    virtual void add_sample(double x, int n, double weight) override;
-    virtual DistributionType get_type() const override;
-    virtual double get_mu() const override;
-    virtual double get_sigma() const override;
+    void add_sample(double x, int n, double weight);
+    DistributionType get_type() const;
+    double get_mu() const;
+    double get_sigma() const;
+    NormalDistributionFitter operator+(const NormalDistributionFitter& other) const;
+    void operator+=(const NormalDistributionFitter& other);
+    void operator*=(double weight_adjustment);
     double w_sum_x;
     double w_sum_x_sq_over_n;
     double w_sum_n;

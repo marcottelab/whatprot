@@ -32,7 +32,10 @@ public:
     // provided radiometry. To do this efficiently, it uses a modified version
     // of the forward algorithm.
     double probability() const;
-    void improve_fit(ErrorModelFitter* fitter) const;
+    // This will fit the data the HMM was provided with. It also computes the
+    // probability as a side effect, so it returns this in case that is useful
+    // to the caller.
+    double improve_fit(ErrorModelFitter* fitter) const;
     std::vector<int> tensor_shape;
     std::vector<const Step*> steps;
 };

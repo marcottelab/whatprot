@@ -10,22 +10,25 @@
 #define WHATPROT_HMM_FIT_ERROR_MODEL_FITTER_H
 
 // Local project headers:
-#include "common/error-model.h"
-#include "hmm/fit/distribution-fitter.h"
+#include "hmm/fit/log-normal-distribution-fitter.h"
 #include "hmm/fit/parameter-fitter.h"
 
 namespace whatprot {
 
 class ErrorModelFitter {
 public:
-    ErrorModelFitter(DistributionType distribution_type);
+    ErrorModelFitter();
     ~ErrorModelFitter();
     ErrorModel error_model() const;
+    ErrorModelFitter operator+(const ErrorModelFitter& other) const;
+    void operator+=(const ErrorModelFitter& other);
+    void operator*=(double weight_adjustment);
     ParameterFitter p_edman_failure_fit;
     ParameterFitter p_detach_fit;
     ParameterFitter p_bleach_fit;
     ParameterFitter p_dud_fit;
-    DistributionFitter* distribution_fit;
+    LogNormalDistributionFitter* distribution_fit;
+    ParameterFitter stuck_dye_ratio_fit;
 };
 
 }  // namespace whatprot

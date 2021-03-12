@@ -50,17 +50,14 @@ double BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::forward(int* edmans,
-                                 Tensor* tsr) const {
+void BinomialTransition::forward(int* edmans, Tensor* tsr) const {
     int vector_stride = tsr->strides[1 + channel];
     int vector_length = tsr->shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
     int outer_max = tsr->strides[0] * (*edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
-            Vector v(vector_length,
-                        vector_stride,
-                        &tsr->values[outer + inner]);
+            Vector v(vector_length, vector_stride, &tsr->values[outer + inner]);
             this->forward(&v);
         }
     }

@@ -17,8 +17,7 @@ namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(int* edmans,
-                               Tensor* tsr) const {
+void DetachTransition::forward(int* edmans, Tensor* tsr) const {
     int i_max = ((*edmans) + 1) * tsr->strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {

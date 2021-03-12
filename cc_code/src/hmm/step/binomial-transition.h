@@ -26,8 +26,7 @@ public:
     void reserve(int max_n);
     double& prob(int from, int to);
     double prob(int from, int to) const;
-    virtual void forward(int* edmans,
-                         Tensor* tsr) const override;
+    virtual void forward(int* edmans, Tensor* tsr) const override;
     void forward(Vector* v) const;
     virtual void backward(const Tensor& input,
                           int* edmans,

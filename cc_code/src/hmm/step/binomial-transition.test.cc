@@ -199,7 +199,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-// BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_transition_test, *tolerance(TOL)) {
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_transition_test, *tolerance(TOL))
+// {
 //     double q = 0.05;
 //     double p = 0.95;
 //     int channel = 0;
@@ -260,7 +261,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-// BOOST_AUTO_TEST_CASE(forward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_bigger_transition_test, *tolerance(TOL))
+// {
 //     double q = 0.05;
 //     double p = 0.95;
 //     int channel = 0;
@@ -456,7 +458,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     delete[] loc;
 }
 
-// BOOST_AUTO_TEST_CASE(forward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_other_dye_colors_test, *tolerance(TOL))
+// {
 //     double q = 0.05;
 //     double p = 0.95;
 //     int channel = 1;  // corresponds to 2nd dim of tensor

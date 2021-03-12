@@ -35,14 +35,16 @@ ErrorModel::ErrorModel(double p_edman_failure,
                        double p_dud,
                        DistributionType distribution_type,
                        double mu,
-                       double sigma)
+                       double sigma,
+                       double stuck_dye_ratio)
         : p_edman_failure(p_edman_failure),
           p_detach(p_detach),
           p_bleach(p_bleach),
           p_dud(p_dud),
           distribution_type(distribution_type),
           mu(mu),
-          sigma(sigma) {}
+          sigma(sigma),
+          stuck_dye_ratio(stuck_dye_ratio) {}
 
 function<double(double, int)> ErrorModel::pdf() const {
     switch (distribution_type) {
@@ -88,6 +90,9 @@ double ErrorModel::relative_distance(const ErrorModel& error_model) const {
     dist = max(dist, abs(p_dud - error_model.p_dud) / p_dud);
     dist = max(dist, abs(exp(mu) - exp(error_model.mu)) / exp(mu));
     dist = max(dist, abs(sigma - error_model.sigma) / sigma);
+    dist = max(dist,
+               abs(stuck_dye_ratio - error_model.stuck_dye_ratio)
+                       / stuck_dye_ratio);
     return dist;
 }
 
@@ -95,8 +100,8 @@ string ErrorModel::debug_string() const {
     return "Edman failure rate: " + to_string(p_edman_failure)
            + ", Detach rate: " + to_string(p_detach) + ", Bleach rate: "
            + to_string(p_bleach) + ", Dud rate: " + to_string(p_dud)
-           + ", exp(mu): " + to_string(exp(mu))
-           + ", sigma: " + to_string(sigma);
+           + ", exp(mu): " + to_string(exp(mu)) + ", sigma: " + to_string(sigma)
+           + ", Stuck dye ratio: " + to_string(stuck_dye_ratio);
 }
 
 }  // namespace whatprot

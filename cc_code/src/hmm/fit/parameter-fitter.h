@@ -15,6 +15,9 @@ class ParameterFitter {
 public:
     ParameterFitter();
     double get() const;
+    ParameterFitter operator+(const ParameterFitter& other) const;
+    void operator+=(const ParameterFitter& other);
+    void operator*=(double weight_adjustment);
     double numerator;
     double denominator;
 };

@@ -365,31 +365,17 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
 //     loc[0] = 1;
 //     loc[1] = 0;
 //     loc[2] = 0;
-//     tsr1[loc] = -1000.0;  // loc is {1, 0, 0} -- this value should be ignored.
-//     loc[2] = 1;
-//     tsr1[loc] = -1000.0;  // loc is {1, 0, 1} -- this value should be ignored.
-//     loc[1] = 1;
-//     loc[2] = 0;
-//     tsr1[loc] = -1000.0;  // loc is {1, 1, 0} -- this value should be ignored.
-//     loc[2] = 1;
-//     tsr1[loc] = -1000.0;  // loc is {1, 1, 1} -- this value should be ignored.
-//     int edmans = 0;
-//     et.forward(tsr1, &edmans, &tsr2);
-//     BOOST_TEST(edmans == 1);
-//     loc[0] = 0;
-//     loc[1] = 0;
-//     loc[2] = 0;
-//     BOOST_TEST(tsr2[loc] == 0.1 * p_fail);  // loc is {0, 0, 0}
-//     loc[2] = 1;
-//     BOOST_TEST(tsr2[loc] == 0.2 * p_fail);  // loc is {0, 0, 1}
-//     loc[1] = 1;
-//     loc[2] = 0;
-//     BOOST_TEST(tsr2[loc] == 0.3 * p_fail);  // loc is {0, 1, 0}
-//     loc[2] = 1;
-//     BOOST_TEST(tsr2[loc] == 0.4 * p_fail);  // loc is {0, 1, 1}
-//     loc[0] = 1;
-//     loc[1] = 0;
-//     loc[2] = 0;
+//     tsr1[loc] = -1000.0;  // loc is {1, 0, 0} -- this value should be
+//     ignored. loc[2] = 1; tsr1[loc] = -1000.0;  // loc is {1, 0, 1} -- this
+//     value should be ignored. loc[1] = 1; loc[2] = 0; tsr1[loc] = -1000.0;  //
+//     loc is {1, 1, 0} -- this value should be ignored. loc[2] = 1; tsr1[loc] =
+//     -1000.0;  // loc is {1, 1, 1} -- this value should be ignored. int edmans
+//     = 0; et.forward(tsr1, &edmans, &tsr2); BOOST_TEST(edmans == 1); loc[0] =
+//     0; loc[1] = 0; loc[2] = 0; BOOST_TEST(tsr2[loc] == 0.1 * p_fail);  // loc
+//     is {0, 0, 0} loc[2] = 1; BOOST_TEST(tsr2[loc] == 0.2 * p_fail);  // loc
+//     is {0, 0, 1} loc[1] = 1; loc[2] = 0; BOOST_TEST(tsr2[loc] == 0.3 *
+//     p_fail);  // loc is {0, 1, 0} loc[2] = 1; BOOST_TEST(tsr2[loc] == 0.4 *
+//     p_fail);  // loc is {0, 1, 1} loc[0] = 1; loc[1] = 0; loc[2] = 0;
 //     BOOST_TEST(tsr2[loc] == 0.1 * p_pop);  // loc is {1, 0, 0}
 //     loc[2] = 1;
 //     BOOST_TEST(tsr2[loc] == 0.2 * p_pop);  // loc is {1, 0, 1}
@@ -443,7 +429,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
     delete[] loc;
 }
 
-// BOOST_AUTO_TEST_CASE(forward_new_tsr_irrelevant_dye_seq_test, *tolerance(TOL)) {
+// BOOST_AUTO_TEST_CASE(forward_new_tsr_irrelevant_dye_seq_test,
+// *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
 //     int num_timesteps = 1;
@@ -956,31 +943,17 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
 //     loc[0] = 2;
 //     loc[1] = 0;
 //     loc[2] = 0;
-//     tsr1[loc] = -1000.0;  // loc is {2, 0, 0} -- this value should be ignored.
-//     loc[2] = 1;
-//     tsr1[loc] = -1000.0;  // loc is {2, 0, 1} -- this value should be ignored.
-//     loc[1] = 1;
-//     loc[2] = 0;
-//     tsr1[loc] = -1000.0;  // loc is {2, 1, 0} -- this value should be ignored.
-//     loc[2] = 1;
-//     tsr1[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
-//     int edmans = 1;
-//     et.forward(tsr1, &edmans, &tsr2);
-//     BOOST_TEST(edmans == 2);
-//     loc[0] = 0;
-//     loc[1] = 0;
-//     loc[2] = 0;
-//     BOOST_TEST(tsr2[loc] == 0.1 * p_fail);  // loc is {0, 0, 0}
-//     loc[2] = 1;
-//     BOOST_TEST(tsr2[loc] == 0.2 * p_fail);  // loc is {0, 0, 1}
-//     loc[1] = 1;
-//     loc[2] = 0;
-//     BOOST_TEST(tsr2[loc] == 0.3 * p_fail);  // loc is {0, 1, 0}
-//     loc[2] = 1;
-//     BOOST_TEST(tsr2[loc] == 0.4 * p_fail);  // loc is {0, 1, 1}
-//     loc[0] = 1;
-//     loc[1] = 0;
-//     loc[2] = 0;
+//     tsr1[loc] = -1000.0;  // loc is {2, 0, 0} -- this value should be
+//     ignored. loc[2] = 1; tsr1[loc] = -1000.0;  // loc is {2, 0, 1} -- this
+//     value should be ignored. loc[1] = 1; loc[2] = 0; tsr1[loc] = -1000.0;  //
+//     loc is {2, 1, 0} -- this value should be ignored. loc[2] = 1; tsr1[loc] =
+//     -1000.0;  // loc is {2, 1, 1} -- this value should be ignored. int edmans
+//     = 1; et.forward(tsr1, &edmans, &tsr2); BOOST_TEST(edmans == 2); loc[0] =
+//     0; loc[1] = 0; loc[2] = 0; BOOST_TEST(tsr2[loc] == 0.1 * p_fail);  // loc
+//     is {0, 0, 0} loc[2] = 1; BOOST_TEST(tsr2[loc] == 0.2 * p_fail);  // loc
+//     is {0, 0, 1} loc[1] = 1; loc[2] = 0; BOOST_TEST(tsr2[loc] == 0.3 *
+//     p_fail);  // loc is {0, 1, 0} loc[2] = 1; BOOST_TEST(tsr2[loc] == 0.4 *
+//     p_fail);  // loc is {0, 1, 1} loc[0] = 1; loc[1] = 0; loc[2] = 0;
 //     // loc is {1, 0, 0}
 //     BOOST_TEST(tsr2[loc] == (0.1 + 0.3) * p_pop + 0.5 * p_fail);
 //     loc[2] = 1;

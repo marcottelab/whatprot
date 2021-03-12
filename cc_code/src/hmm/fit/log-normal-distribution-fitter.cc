@@ -54,4 +54,26 @@ double LogNormalDistributionFitter::get_sigma() const {
     return sqrt(w_sum_log_x_over_n_sq / total_weight - mu * mu);
 }
 
+LogNormalDistributionFitter LogNormalDistributionFitter::operator+(
+        const LogNormalDistributionFitter& other) const {
+    LogNormalDistributionFitter result_fitter;
+    result_fitter.w_sum_log_x_over_n = w_sum_log_x_over_n + other.w_sum_log_x_over_n;
+    result_fitter.w_sum_log_x_over_n_sq = w_sum_log_x_over_n_sq + other.w_sum_log_x_over_n_sq;
+    result_fitter.total_weight = total_weight + other.total_weight;
+    return result_fitter;
+}
+
+void LogNormalDistributionFitter::operator+=(
+        const LogNormalDistributionFitter& other) {
+    w_sum_log_x_over_n += other.w_sum_log_x_over_n;
+    w_sum_log_x_over_n_sq += other.w_sum_log_x_over_n_sq;
+    total_weight += other.total_weight;
+}
+
+void LogNormalDistributionFitter::operator*=(double weight_adjustment) {
+    w_sum_log_x_over_n *= weight_adjustment;
+    w_sum_log_x_over_n_sq *= weight_adjustment;
+    total_weight *= weight_adjustment;
+}
+
 }  // namespace whatprot

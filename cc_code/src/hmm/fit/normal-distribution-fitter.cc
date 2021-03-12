@@ -54,4 +54,29 @@ double NormalDistributionFitter::get_sigma() const {
     return sqrt(sigma_sq);
 }
 
+NormalDistributionFitter NormalDistributionFitter::operator+(
+        const NormalDistributionFitter& other) const {
+    NormalDistributionFitter result_fitter;
+    result_fitter.w_sum_x = w_sum_x + other.w_sum_x;
+    result_fitter.w_sum_x_sq_over_n = w_sum_x_sq_over_n + other.w_sum_x_sq_over_n;
+    result_fitter.w_sum_n = w_sum_n + other.w_sum_n;
+    result_fitter.total_weight = total_weight + other.total_weight;
+    return result_fitter;
+}
+
+void NormalDistributionFitter::operator+=(
+        const NormalDistributionFitter& other) {
+    w_sum_x += other.w_sum_x;
+    w_sum_x_sq_over_n += other.w_sum_x_sq_over_n;
+    w_sum_n += other.w_sum_n;
+    total_weight += other.total_weight;
+}
+
+void NormalDistributionFitter::operator*=(double weight_adjustment) {
+    w_sum_x *= weight_adjustment;
+    w_sum_x_sq_over_n *= weight_adjustment;
+    w_sum_n *= weight_adjustment;
+    total_weight *= weight_adjustment;
+}
+
 }  // namespace whatprot
