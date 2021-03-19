@@ -16,7 +16,7 @@
 #include "common/dye-seq.h"
 #include "common/error-model.h"
 #include "common/radiometry.h"
-#include "hmm/hmm.h"
+#include "hmm/hmm/peptide-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"

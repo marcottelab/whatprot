@@ -11,24 +11,22 @@
 
 // Local project headers:
 #include "hmm/fit/error-model-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/binomial-transition.h"
-#include "tensor/tensor.h"
 
 namespace whatprot {
 
 DudTransition::DudTransition(double q, int channel)
         : BinomialTransition(q, channel) {}
 
-void DudTransition::improve_fit(const Tensor& forward_tensor,
-                                const Tensor& backward_tensor,
-                                const Tensor& next_backward_tensor,
-                                int edmans,
+void DudTransition::improve_fit(const PeptideStateVector& forward_psv,
+                                const PeptideStateVector& backward_psv,
+                                const PeptideStateVector& next_backward_psv,
                                 double probability,
                                 ErrorModelFitter* fitter) const {
-    BinomialTransition::improve_fit(forward_tensor,
-                                    backward_tensor,
-                                    next_backward_tensor,
-                                    edmans,
+    BinomialTransition::improve_fit(forward_psv,
+                                    backward_psv,
+                                    next_backward_psv,
                                     probability,
                                     &fitter->p_dud_fit);
 }

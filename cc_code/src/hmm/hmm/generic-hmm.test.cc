@@ -10,7 +10,7 @@
 #include <boost/test/unit_test.hpp>
 
 // File under test:
-#include "hmm.h"
+#include "generic-hmm.h"
 
 // Standard C++ library headers:
 #include <cmath>
@@ -84,11 +84,11 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     r(3, 0) = 1.0;
     r(3, 1) = 1.0;
     RadiometryPrecomputations radiometry_precomputations(r, em, max_num_dyes);
-    HMM hmm(num_timesteps,
-            num_channels,
-            dye_seq_precomputations,
-            radiometry_precomputations,
-            universal_precomputations);
+    GenericHMM hmm(num_timesteps,
+                   num_channels,
+                   dye_seq_precomputations,
+                   radiometry_precomputations,
+                   universal_precomputations);
     BOOST_ASSERT(hmm.tensor_shape.size() == 1 + num_channels);
     BOOST_TEST(hmm.tensor_shape[0] == num_timesteps);
     BOOST_TEST(hmm.tensor_shape[1] == 2 + 1);  // extra is to have 0 & num dyes.
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(probability_trivial_test, *tolerance(TOL)) {
     DyeSeqPrecomputations dsp(ds, em, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
     RadiometryPrecomputations rp(r, em, max_num_dyes);
-    HMM hmm(num_timesteps, num_channels, dsp, rp, up);
+    GenericHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     BOOST_TEST(hmm.probability() == 1.0);
 }
 
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(probability_sum_to_one_test, *tolerance(TOL)) {
     r(2, 0) = 2.0;
     r(2, 1) = 2.1;
     RadiometryPrecomputations rp(r, em, max_num_dyes);
-    HMM hmm(num_timesteps, num_channels, dsp, rp, up);
+    GenericHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     BOOST_TEST(hmm.probability() == 1.0);
 }
 
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     r(2, 0) = 4.0;
     r(2, 1) = 1.0;
     RadiometryPrecomputations rp(r, em, max_num_dyes);
-    HMM hmm(num_timesteps, num_channels, dsp, rp, up);
+    GenericHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     BOOST_TEST(hmm.probability() == 3.2324422559808915e-23);
 }
 
@@ -280,11 +280,11 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     r(3, 0) = 1.0;
     r(3, 1) = 1.0;
     RadiometryPrecomputations radiometry_precomputations(r, em, max_num_dyes);
-    HMM hmm(num_timesteps,
-            num_channels,
-            dye_seq_precomputations,
-            radiometry_precomputations,
-            universal_precomputations);
+    GenericHMM hmm(num_timesteps,
+                   num_channels,
+                   dye_seq_precomputations,
+                   radiometry_precomputations,
+                   universal_precomputations);
     ErrorModelFitter emf(dist_type);
     hmm.improve_fit(&emf);
     // There are no BOOST_TEST statements because setting up a proper test for

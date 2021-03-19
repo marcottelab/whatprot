@@ -11,21 +11,19 @@
 
 // Local project headers:
 #include "hmm/fit/error-model-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/step.h"
-#include "tensor/tensor.h"
 
 namespace whatprot {
 
-class Finish : public Step {
+class Finish : public Step<PeptideStateVector> {
 public:
-    virtual void forward(int* edmans, Tensor* tsr) const override;
-    virtual void backward(const Tensor& input,
-                          int* edmans,
-                          Tensor* output) const override;
-    virtual void improve_fit(const Tensor& forward_tensor,
-                             const Tensor& backward_tensor,
-                             const Tensor& next_backward_tensor,
-                             int edmans,
+    virtual void forward(PeptideStateVector* psv) const override;
+    virtual void backward(const PeptideStateVector& input,
+                          PeptideStateVector* output) const override;
+    virtual void improve_fit(const PeptideStateVector& forward_psv,
+                             const PeptideStateVector& backward_psv,
+                             const PeptideStateVector& next_backward_psv,
                              double probability,
                              ErrorModelFitter* fitter) const override;
 };

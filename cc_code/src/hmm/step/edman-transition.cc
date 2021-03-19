@@ -12,7 +12,7 @@
 // Local project headers:
 #include "common/dye-track.h"
 #include "hmm/fit/error-model-fitter.h"
-#include "tensor/tensor.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "tensor/vector.h"
 
 namespace whatprot {
@@ -24,26 +24,27 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_seq(dye_seq),
           dye_track(dye_track) {}
 
-void EdmanTransition::forward(int* edmans, Tensor* tsr) const {
-    (*edmans)++;
-    int t_stride = tsr->strides[0];
-    for (int i = t_stride * (*edmans) - 1; i >= 0; i--) {
-        tsr->values[i + t_stride] = tsr->values[i];
+void EdmanTransition::forward(PeptideStateVector* psv) const {
+    psv->num_edmans++;
+    int t_stride = psv->tensor.strides[0];
+    for (int i = t_stride * psv->num_edmans - 1; i >= 0; i--) {
+        psv->tensor.values[i + t_stride] = psv->tensor.values[i];
     }
     for (int i = 0; i < t_stride; i++) {
-        tsr->values[i] = tsr->values[i] * p_edman_failure;
+        psv->tensor.values[i] = psv->tensor.values[i] * p_edman_failure;
     }
-    for (int t = 0; t < *edmans; t++) {
+    for (int t = 0; t < psv->num_edmans; t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                tsr->values[i] += p_edman_failure * tsr->values[i + t_stride];
+                psv->tensor.values[i] +=
+                        p_edman_failure * psv->tensor.values[i + t_stride];
             }
         }
         short channel = dye_seq[t];
         if (channel != -1) {
             int amt = dye_track(t, channel);
-            int vector_stride = tsr->strides[1 + channel];
-            int vector_length = tsr->shape[1 + channel];
+            int vector_stride = psv->tensor.strides[1 + channel];
+            int vector_length = psv->tensor.shape[1 + channel];
             int outer_stride = vector_stride * vector_length;
             int outer_min = (t + 1) * t_stride;
             int outer_max = (t + 2) * t_stride;
@@ -52,7 +53,7 @@ void EdmanTransition::forward(int* edmans, Tensor* tsr) const {
                 for (int inner = 0; inner < vector_stride; inner++) {
                     Vector v(vector_length,
                              vector_stride,
-                             &tsr->values[outer + inner]);
+                             &psv->tensor.values[outer + inner]);
                     for (int i = 1; i <= amt; i++) {
                         double ratio = (double)i / (double)amt;
                         v[i - 1] += v[i] * ratio;
@@ -62,41 +63,41 @@ void EdmanTransition::forward(int* edmans, Tensor* tsr) const {
             }
         }
         for (int i = (t + 1) * t_stride; i < (t + 2) * t_stride; i++) {
-            tsr->values[i] *= (1 - p_edman_failure);
+            psv->tensor.values[i] *= (1 - p_edman_failure);
         }
     }
 }
 
-void EdmanTransition::backward(const Tensor& input,
-                               int* edmans,
-                               Tensor* output) const {
-    int t_stride = input.strides[0];
-    for (int t = 0; t < *edmans; t++) {
+void EdmanTransition::backward(const PeptideStateVector& input,
+                               PeptideStateVector* output) const {
+    int t_stride = input.tensor.strides[0];
+    for (int t = 0; t < input.num_edmans; t++) {
         for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-            output->values[i] = p_edman_failure * input.values[i];
+            output->tensor.values[i] = p_edman_failure * input.tensor.values[i];
         }
         short channel = dye_seq[t];
         if (channel == -1) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                output->values[i] +=
-                        (1 - p_edman_failure) * input.values[i + t_stride];
+                output->tensor.values[i] += (1 - p_edman_failure)
+                                            * input.tensor.values[i + t_stride];
             }
         } else {
             int amt = dye_track(t, channel);
-            int vector_stride = output->strides[1 + channel];
-            int vector_length = output->shape[1 + channel];
+            int vector_stride = output->tensor.strides[1 + channel];
+            int vector_length = output->tensor.shape[1 + channel];
             int outer_stride = vector_stride * vector_length;
             int outer_min = t * t_stride;
             int outer_max = (t + 1) * t_stride;
             for (int outer = outer_min; outer < outer_max;
                  outer += outer_stride) {
                 for (int inner = 0; inner < vector_stride; inner++) {
-                    const Vector inv(vector_length,
-                                     vector_stride,
-                                     &input.values[outer + inner + t_stride]);
+                    const Vector inv(
+                            vector_length,
+                            vector_stride,
+                            &input.tensor.values[outer + inner + t_stride]);
                     Vector outv(vector_length,
                                 vector_stride,
-                                &output->values[outer + inner]);
+                                &output->tensor.values[outer + inner]);
                     for (int i = 0; i <= amt; i++) {
                         double ratio = (double)i / (double)amt;
                         if (i != 0) {
@@ -109,27 +110,26 @@ void EdmanTransition::backward(const Tensor& input,
             }
         }
     }
-    (*edmans)--;
+    output->num_edmans = input.num_edmans - 1;
 }
 
-void EdmanTransition::improve_fit(const Tensor& forward_tensor,
-                                  const Tensor& backward_tensor,
-                                  const Tensor& next_backward_tensor,
-                                  int edmans,
+void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
+                                  const PeptideStateVector& backward_psv,
+                                  const PeptideStateVector& next_backward_psv,
                                   double probability,
                                   ErrorModelFitter* fitter) const {
-    int t_stride = forward_tensor.strides[0];
-    for (int t = 0; t < edmans + 1; t++) {
+    int t_stride = forward_psv.tensor.strides[0];
+    for (int t = 0; t < forward_psv.num_edmans + 1; t++) {
         // Here we omit the zeroth entry of every timestep because this is the
         // entry for zero of every dye color. These entries are unable to
         // provide tangible evidence of the edman efficiency one way or the
         // other.
         for (int i = t * t_stride + 1; i < (t + 1) * t_stride; i++) {
             fitter->p_edman_failure_fit.numerator +=
-                    forward_tensor.values[i] * p_edman_failure
-                    * next_backward_tensor.values[i] / probability;
+                    forward_psv.tensor.values[i] * p_edman_failure
+                    * next_backward_psv.tensor.values[i] / probability;
             fitter->p_edman_failure_fit.denominator +=
-                    forward_tensor.values[i] * backward_tensor.values[i]
+                    forward_psv.tensor.values[i] * backward_psv.tensor.values[i]
                     / probability;
         }
     }

@@ -15,26 +15,25 @@
 
 // Local project headers:
 #include "common/radiometry.h"
+#include "hmm/fit/error-model-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/step.h"
-#include "tensor/tensor.h"
 
 namespace whatprot {
 
-class Emission : public Step {
+class Emission : public Step<PeptideStateVector> {
 public:
     Emission(const Radiometry& radiometry,
              int max_num_dyes,
              std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(int* edmans, Tensor* tsr) const override;
-    virtual void backward(const Tensor& input,
-                          int* edmans,
-                          Tensor* output) const override;
-    virtual void improve_fit(const Tensor& forward_tensor,
-                             const Tensor& backward_tensor,
-                             const Tensor& next_backward_tensor,
-                             int edmans,
+    virtual void forward(PeptideStateVector* psv) const override;
+    virtual void backward(const PeptideStateVector& input,
+                          PeptideStateVector* output) const override;
+    virtual void improve_fit(const PeptideStateVector& forward_psv,
+                             const PeptideStateVector& backward_psv,
+                             const PeptideStateVector& next_backward_psv,
                              double probability,
                              ErrorModelFitter* fitter) const override;
     Radiometry radiometry;

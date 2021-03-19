@@ -57,8 +57,10 @@ double LogNormalDistributionFitter::get_sigma() const {
 LogNormalDistributionFitter LogNormalDistributionFitter::operator+(
         const LogNormalDistributionFitter& other) const {
     LogNormalDistributionFitter result_fitter;
-    result_fitter.w_sum_log_x_over_n = w_sum_log_x_over_n + other.w_sum_log_x_over_n;
-    result_fitter.w_sum_log_x_over_n_sq = w_sum_log_x_over_n_sq + other.w_sum_log_x_over_n_sq;
+    result_fitter.w_sum_log_x_over_n =
+            w_sum_log_x_over_n + other.w_sum_log_x_over_n;
+    result_fitter.w_sum_log_x_over_n_sq =
+            w_sum_log_x_over_n_sq + other.w_sum_log_x_over_n_sq;
     result_fitter.total_weight = total_weight + other.total_weight;
     return result_fitter;
 }

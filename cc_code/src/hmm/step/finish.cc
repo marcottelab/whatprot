@@ -15,18 +15,23 @@
 
 namespace whatprot {
 
-void Finish::forward(int* edmans, Tensor* tsr) const {}
+void Finish::forward(PeptideStateVector* psv) const {}
 
-void Finish::backward(const Tensor& input, int* edmans, Tensor* output) const {
-    for (int i = 0; i < output->size; i++) {
-        output->values[i] = 1.0;
+void Finish::backward(const PeptideStateVector& input,
+                      PeptideStateVector* output) const {
+    for (int i = 0; i < output->tensor.size; i++) {
+        output->tensor.values[i] = 1.0;
     }
+    // The zeroth dimension in the Tensors is time, so output->shape[0] gives
+    // the total number of timesteps being considered. There is one less Edman
+    // than the number of timesteps, because no Edman is done before the zeroth
+    // timestep.
+    output->num_edmans = output->tensor.shape[0] - 1;
 }
 
-void Finish::improve_fit(const Tensor& forward_tensor,
-                         const Tensor& backward_tensor,
-                         const Tensor& next_backward_tensor,
-                         int edmans,
+void Finish::improve_fit(const PeptideStateVector& forward_psv,
+                         const PeptideStateVector& backward_psv,
+                         const PeptideStateVector& next_backward_psv,
                          double probability,
                          ErrorModelFitter* fitter) const {}
 

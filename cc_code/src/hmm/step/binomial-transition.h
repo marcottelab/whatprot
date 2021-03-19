@@ -14,28 +14,27 @@
 
 // Local project headers:
 #include "hmm/fit/parameter-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/step.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
 namespace whatprot {
 
-class BinomialTransition : public Step {
+class BinomialTransition : public Step<PeptideStateVector> {
 public:
     BinomialTransition(double q, int channel);
     void reserve(int max_n);
     double& prob(int from, int to);
     double prob(int from, int to) const;
-    virtual void forward(int* edmans, Tensor* tsr) const override;
+    virtual void forward(PeptideStateVector* psv) const override;
     void forward(Vector* v) const;
-    virtual void backward(const Tensor& input,
-                          int* edmans,
-                          Tensor* output) const override;
+    virtual void backward(const PeptideStateVector& input,
+                          PeptideStateVector* output) const override;
     void backward(const Vector& input, Vector* output) const;
-    void improve_fit(const Tensor& forward_tensor,
-                     const Tensor& backward_tensor,
-                     const Tensor& next_backward_tensor,
-                     int edmans,
+    void improve_fit(const PeptideStateVector& forward_psv,
+                     const PeptideStateVector& backward_psv,
+                     const PeptideStateVector& next_backward_psv,
                      double probability,
                      ParameterFitter* fitter) const;
     void improve_fit(const Vector& forward_vector,

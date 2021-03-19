@@ -58,7 +58,8 @@ NormalDistributionFitter NormalDistributionFitter::operator+(
         const NormalDistributionFitter& other) const {
     NormalDistributionFitter result_fitter;
     result_fitter.w_sum_x = w_sum_x + other.w_sum_x;
-    result_fitter.w_sum_x_sq_over_n = w_sum_x_sq_over_n + other.w_sum_x_sq_over_n;
+    result_fitter.w_sum_x_sq_over_n =
+            w_sum_x_sq_over_n + other.w_sum_x_sq_over_n;
     result_fitter.w_sum_n = w_sum_n + other.w_sum_n;
     result_fitter.total_weight = total_weight + other.total_weight;
     return result_fitter;

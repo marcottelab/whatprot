@@ -14,8 +14,9 @@
 
 // Local project headers:
 #include "common/radiometry.h"
+#include "hmm/fit/error-model-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "tensor/tensor-iterator.h"
-#include "tensor/tensor.h"
 
 namespace whatprot {
 
@@ -48,12 +49,12 @@ double Emission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void Emission::forward(int* edmans, Tensor* tsr) const {
-    TensorIterator* it = tsr->iterator();
-    while (it->index < (*edmans + 1) * tsr->strides[0]) {
+void Emission::forward(PeptideStateVector* psv) const {
+    TensorIterator* it = psv->tensor.iterator();
+    while (it->index < (psv->num_edmans + 1) * psv->tensor.strides[0]) {
         double product = 1.0;
         for (int c = 0; c < num_channels; c++) {
-            product *= prob(*edmans, c, it->loc[1 + c]);
+            product *= prob(psv->num_edmans, c, it->loc[1 + c]);
         }
         *it->get() = *it->get() * product;
         it->advance();
@@ -61,15 +62,14 @@ void Emission::forward(int* edmans, Tensor* tsr) const {
     delete it;
 }
 
-void Emission::backward(const Tensor& input,
-                        int* edmans,
-                        Tensor* output) const {
-    ConstTensorIterator* inputit = input.const_iterator();
-    TensorIterator* outputit = output->iterator();
-    while (inputit->index < (*edmans + 1) * input.strides[0]) {
+void Emission::backward(const PeptideStateVector& input,
+                        PeptideStateVector* output) const {
+    ConstTensorIterator* inputit = input.tensor.const_iterator();
+    TensorIterator* outputit = output->tensor.iterator();
+    while (inputit->index < (input.num_edmans + 1) * input.tensor.strides[0]) {
         double product = 1.0;
         for (int c = 0; c < num_channels; c++) {
-            product *= prob(*edmans, c, inputit->loc[1 + c]);
+            product *= prob(input.num_edmans, c, inputit->loc[1 + c]);
         }
         *outputit->get() = inputit->get() * product;
         inputit->advance();
@@ -77,17 +77,18 @@ void Emission::backward(const Tensor& input,
     }
     delete inputit;
     delete outputit;
+    output->num_edmans = input.num_edmans;
 }
 
-void Emission::improve_fit(const Tensor& forward_tensor,
-                           const Tensor& backward_tensor,
-                           const Tensor& next_backward_tensor,
-                           int edmans,
+void Emission::improve_fit(const PeptideStateVector& forward_psv,
+                           const PeptideStateVector& backward_psv,
+                           const PeptideStateVector& next_backward_psv,
                            double probability,
                            ErrorModelFitter* fitter) const {
-    ConstTensorIterator* fit = forward_tensor.const_iterator();
-    ConstTensorIterator* bit = backward_tensor.const_iterator();
-    while (fit->index < (edmans + 1) * forward_tensor.strides[0]) {
+    ConstTensorIterator* fit = forward_psv.tensor.const_iterator();
+    ConstTensorIterator* bit = backward_psv.tensor.const_iterator();
+    while (fit->index
+           < (forward_psv.num_edmans + 1) * forward_psv.tensor.strides[0]) {
         double p_state = fit->get() * bit->get() / probability;
         for (int c = 0; c < num_channels; c++) {
             int t = fit->loc[0];

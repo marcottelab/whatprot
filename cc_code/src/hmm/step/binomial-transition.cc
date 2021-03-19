@@ -11,6 +11,7 @@
 
 // Local project headers:
 #include "hmm/fit/parameter-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
@@ -50,14 +51,16 @@ double BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::forward(int* edmans, Tensor* tsr) const {
-    int vector_stride = tsr->strides[1 + channel];
-    int vector_length = tsr->shape[1 + channel];
+void BinomialTransition::forward(PeptideStateVector* psv) const {
+    int vector_stride = psv->tensor.strides[1 + channel];
+    int vector_length = psv->tensor.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max = tsr->strides[0] * (*edmans + 1);
+    int outer_max = psv->tensor.strides[0] * (psv->num_edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
-            Vector v(vector_length, vector_stride, &tsr->values[outer + inner]);
+            Vector v(vector_length,
+                     vector_stride,
+                     &psv->tensor.values[outer + inner]);
             this->forward(&v);
         }
     }
@@ -73,23 +76,24 @@ void BinomialTransition::forward(Vector* v) const {
     }
 }
 
-void BinomialTransition::backward(const Tensor& input,
-                                  int* edmans,
-                                  Tensor* output) const {
-    int vector_stride = input.strides[1 + channel];
-    int vector_length = input.shape[1 + channel];
+void BinomialTransition::backward(const PeptideStateVector& input,
+                                  PeptideStateVector* output) const {
+    int vector_stride = input.tensor.strides[1 + channel];
+    int vector_length = input.tensor.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max = input.strides[0] * (*edmans + 1);
+    int outer_max = input.tensor.strides[0] * (input.num_edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
-            const Vector inv(
-                    vector_length, vector_stride, &input.values[outer + inner]);
+            const Vector inv(vector_length,
+                             vector_stride,
+                             &input.tensor.values[outer + inner]);
             Vector outv(vector_length,
                         vector_stride,
-                        &output->values[outer + inner]);
+                        &output->tensor.values[outer + inner]);
             this->backward(inv, &outv);
         }
     }
+    output->num_edmans = input.num_edmans;
 }
 
 void BinomialTransition::backward(const Vector& input, Vector* output) const {
@@ -102,27 +106,28 @@ void BinomialTransition::backward(const Vector& input, Vector* output) const {
     }
 }
 
-void BinomialTransition::improve_fit(const Tensor& forward_tensor,
-                                     const Tensor& backward_tensor,
-                                     const Tensor& next_backward_tensor,
-                                     int edmans,
-                                     double probability,
-                                     ParameterFitter* fitter) const {
-    int vector_stride = forward_tensor.strides[1 + channel];
-    int vector_length = forward_tensor.shape[1 + channel];
+void BinomialTransition::improve_fit(
+        const PeptideStateVector& forward_psv,
+        const PeptideStateVector& backward_psv,
+        const PeptideStateVector& next_backward_psv,
+        double probability,
+        ParameterFitter* fitter) const {
+    int vector_stride = forward_psv.tensor.strides[1 + channel];
+    int vector_length = forward_psv.tensor.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max = forward_tensor.strides[0] * (edmans + 1);
+    int outer_max =
+            forward_psv.tensor.strides[0] * (forward_psv.num_edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
             const Vector fv(vector_length,
                             vector_stride,
-                            &forward_tensor.values[outer + inner]);
+                            &forward_psv.tensor.values[outer + inner]);
             const Vector bv(vector_length,
                             vector_stride,
-                            &backward_tensor.values[outer + inner]);
+                            &backward_psv.tensor.values[outer + inner]);
             const Vector nbv(vector_length,
                              vector_stride,
-                             &next_backward_tensor.values[outer + inner]);
+                             &next_backward_psv.tensor.values[outer + inner]);
             this->improve_fit(fv, bv, nbv, probability, fitter);
         }
     }

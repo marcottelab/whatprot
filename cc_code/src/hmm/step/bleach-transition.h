@@ -14,18 +14,17 @@
 
 // Local project headers:
 #include "hmm/fit/error-model-fitter.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/binomial-transition.h"
-#include "tensor/tensor.h"
 
 namespace whatprot {
 
 class BleachTransition : public BinomialTransition {
 public:
     BleachTransition(double q, int channel);
-    virtual void improve_fit(const Tensor& forward_tensor,
-                             const Tensor& backward_tensor,
-                             const Tensor& next_backward_tensor,
-                             int edmans,
+    virtual void improve_fit(const PeptideStateVector& forward_psv,
+                             const PeptideStateVector& backward_psv,
+                             const PeptideStateVector& next_backward_psv,
                              double probability,
                              ErrorModelFitter* fitter) const override;
 };

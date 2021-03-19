@@ -18,7 +18,7 @@
 #include "common/error-model.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
-#include "hmm/hmm.h"
+#include "hmm/hmm/peptide-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
@@ -48,11 +48,11 @@ public:
         double total_score = 0.0;
         int i = 0;
         for (int i : indices) {
-            HMM hmm(num_timesteps,
-                    num_channels,
-                    dye_seq_precomputations_vec[i],
-                    radiometry_precomputations,
-                    universal_precomputations);
+            PeptideHMM hmm(num_timesteps,
+                           num_channels,
+                           dye_seq_precomputations_vec[i],
+                           radiometry_precomputations,
+                           universal_precomputations);
             double score = hmm.probability();
             total_score += score * dye_seqs[i].source.count;
             if (score > best_score) {

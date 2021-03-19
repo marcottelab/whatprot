@@ -21,7 +21,8 @@ public:
     DistributionType get_type() const;
     double get_mu() const;
     double get_sigma() const;
-    NormalDistributionFitter operator+(const NormalDistributionFitter& other) const;
+    NormalDistributionFitter operator+(
+            const NormalDistributionFitter& other) const;
     void operator+=(const NormalDistributionFitter& other);
     void operator*=(double weight_adjustment);
     double w_sum_x;
