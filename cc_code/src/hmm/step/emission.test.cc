@@ -918,12 +918,12 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     emf.distribution_fit = &df_mock.get();
     e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
     Verify(Method(df_mock, add_sample)
-                   .Using(Close(1.009, TOL),
+                   .Using(Close(1.109, TOL),
                           0,
                           Close(1.72 * 2.72 / 3.14159, TOL)))
             .Exactly(1);
     Verify(Method(df_mock, add_sample)
-                   .Using(Close(1.009, TOL),
+                   .Using(Close(1.109, TOL),
                           1,
                           Close(1.36 * 2.36 / 3.14159, TOL)))
             .Exactly(1);
