@@ -92,7 +92,7 @@ void Emission::improve_fit(const PeptideStateVector& forward_psv,
         double p_state = fit->get() * bit->get() / probability;
         for (int c = 0; c < num_channels; c++) {
             int t = fit->loc[0];
-            double intensity = radiometry(t, c);
+            double intensity = radiometry(edmans, c);
             int dye_count = fit->loc[1 + c];
             fitter->distribution_fit->add_sample(intensity, dye_count, p_state);
         }
