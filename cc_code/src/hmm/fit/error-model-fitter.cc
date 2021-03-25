@@ -32,7 +32,8 @@ ErrorModel ErrorModelFitter::error_model() const {
                       distribution_fit->get_type(),
                       distribution_fit->get_mu(),
                       distribution_fit->get_sigma(),
-                      stuck_dye_ratio_fit.get());
+                      stuck_dye_ratio_fit.get(),
+                      p_stuck_dye_loss_fit.get());
 }
 
 ErrorModelFitter ErrorModelFitter::operator+(
@@ -47,6 +48,8 @@ ErrorModelFitter ErrorModelFitter::operator+(
             *distribution_fit + *other.distribution_fit;
     result_fitter.stuck_dye_ratio_fit =
             stuck_dye_ratio_fit + other.stuck_dye_ratio_fit;
+    result_fitter.p_stuck_dye_loss_fit =
+            p_stuck_dye_loss_fit + other.p_stuck_dye_loss_fit;
     return result_fitter;
 }
 
@@ -57,6 +60,7 @@ void ErrorModelFitter::operator+=(const ErrorModelFitter& other) {
     p_dud_fit += other.p_dud_fit;
     *distribution_fit += *other.distribution_fit;
     stuck_dye_ratio_fit += other.stuck_dye_ratio_fit;
+    p_stuck_dye_loss_fit += other.p_stuck_dye_loss_fit;
 }
 
 void ErrorModelFitter::operator*=(double weight_adjustment) {
@@ -66,6 +70,7 @@ void ErrorModelFitter::operator*=(double weight_adjustment) {
     p_dud_fit *= weight_adjustment;
     *distribution_fit *= weight_adjustment;
     stuck_dye_ratio_fit *= weight_adjustment;
+    p_stuck_dye_loss_fit *= weight_adjustment;
 }
 
 }  // namespace whatprot

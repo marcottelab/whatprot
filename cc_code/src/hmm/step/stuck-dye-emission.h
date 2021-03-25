@@ -16,31 +16,31 @@
 // Local project headers:
 #include "common/radiometry.h"
 #include "hmm/fit/error-model-fitter.h"
-#include "hmm/state-vector/peptide-state-vector.h"
+#include "hmm/state-vector/stuck-dye-state-vector.h"
 #include "hmm/step/step.h"
 
 namespace whatprot {
 
-class Emission : public Step<PeptideStateVector> {
+class StuckDyeEmission : public Step<StuckDyeStateVector> {
 public:
-    Emission(const Radiometry& radiometry,
-             int max_num_dyes,
+    StuckDyeEmission(const Radiometry& radiometry,
+            int channel,
              std::function<double(double, int)> pdf);
-    double& prob(int timestep, int channel, int num_dyes);
-    double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(PeptideStateVector* psv) const override;
-    virtual void backward(const PeptideStateVector& input,
-                          PeptideStateVector* output) const override;
-    virtual void improve_fit(const PeptideStateVector& forward_psv,
-                             const PeptideStateVector& backward_psv,
-                             const PeptideStateVector& next_backward_psv,
+    double& prob(int timestep, int num_dyes);
+    double prob(int timestep, int num_dyes) const;
+    virtual void forward(StuckDyeStateVector* stsv) const override;
+    virtual void backward(const StuckDyeStateVector& input,
+                          StuckDyeStateVector* output) const override;
+    virtual void improve_fit(const StuckDyeStateVector& forward_stsv,
+                             const StuckDyeStateVector& backward_stsv,
+                             const StuckDyeStateVector& next_backward_stsv,
                              double probability,
                              ErrorModelFitter* fitter) const override;
     Radiometry radiometry;
     std::vector<double> values;
     int num_timesteps;
     int num_channels;
-    int max_num_dyes;
+    int channel;
 };
 
 }  // namespace whatprot

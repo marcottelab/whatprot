@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 0.5;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_test, *tolerance(TOL)) {
                                            int state) -> double {
         return observed + 0.042;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
@@ -99,11 +99,11 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, *tolerance(TOL)) {
                                            int state) -> double {
         return observed + 0.042;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
-    const Emission& ce = e;
+    const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0, 0) == pdf(0.0, 0));
     BOOST_TEST(ce.prob(1, 0, 0) == pdf(1.0, 0));
     BOOST_TEST(ce.prob(2, 0, 0) == pdf(2.0, 0));
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(multiple_channels_test, *tolerance(TOL)) {
                                            int state) -> double {
         return observed + 0.042;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
@@ -142,11 +142,11 @@ BOOST_AUTO_TEST_CASE(multiple_channels_const_test, *tolerance(TOL)) {
                                            int state) -> double {
         return observed + 0.042;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
-    const Emission& ce = e;
+    const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0, 0) == pdf(0.0, 0));
     BOOST_TEST(ce.prob(0, 1, 0) == pdf(0.1, 0));
     BOOST_TEST(ce.prob(0, 2, 0) == pdf(0.2, 0));
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(multiple_dye_counts_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 1.0 / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
@@ -181,11 +181,11 @@ BOOST_AUTO_TEST_CASE(multiple_dye_counts_const_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 1.0 / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
-    const Emission& ce = e;
+    const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0, 0) == pdf(0.0, 0));
     BOOST_TEST(ce.prob(0, 0, 1) == pdf(0.0, 1));
     BOOST_TEST(ce.prob(0, 0, 2) == pdf(0.0, 2));
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(multiple_everything_test, *tolerance(TOL)) {
                                            int state) -> double {
         return (observed + 0.042) / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
@@ -231,11 +231,11 @@ BOOST_AUTO_TEST_CASE(multiple_everything_const_test, *tolerance(TOL)) {
                                            int state) -> double {
         return (observed + 0.042) / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
-    const Emission& ce = e;
+    const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0, 0) == pdf(0.0, 0));
     BOOST_TEST(ce.prob(0, 0, 1) == pdf(0.0, 1));
     BOOST_TEST(ce.prob(0, 1, 0) == pdf(0.1, 0));
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 0.5;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 //                                            int state) -> double {
 //         return 0.5;
 //     };
-//     Emission e(rad, max_num_dyes, pdf);
+//     PeptideEmission e(rad, max_num_dyes, pdf);
 //     int order = 1 + num_channels;
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 0.5;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
                                            int state) -> double {
         return observed + 0.042;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
 //                                            int state) -> double {
 //         return observed + 0.042;
 //     };
-//     Emission e(rad, max_num_dyes, pdf);
+//     PeptideEmission e(rad, max_num_dyes, pdf);
 //     int order = 1 + num_channels;
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
@@ -420,7 +420,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
                                            int state) -> double {
         return observed + 0.042;
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
 //                                            int state) -> double {
 //         return observed + 0.042;
 //     };
-//     Emission e(rad, max_num_dyes, pdf);
+//     PeptideEmission e(rad, max_num_dyes, pdf);
 //     int order = 1 + num_channels;
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
                                            int state) -> double {
         return 1.0 / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -527,7 +527,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
 //                                            int state) -> double {
 //         return 1.0 / (double)(state + 7);
 //     };
-//     Emission e(rad, max_num_dyes, pdf);
+//     PeptideEmission e(rad, max_num_dyes, pdf);
 //     int order = 1 + num_channels;
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
@@ -569,7 +569,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
                                            int state) -> double {
         return (observed + 0.042) / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -649,7 +649,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
 //                                            int state) -> double {
 //         return (observed + 0.042) / (double)(state + 7);
 //     };
-//     Emission e(rad, max_num_dyes, pdf);
+//     PeptideEmission e(rad, max_num_dyes, pdf);
 //     int order = 1 + num_channels;
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
@@ -726,7 +726,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 1.0 / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -788,7 +788,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 1.0 / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;
@@ -882,7 +882,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
                                            int state) -> double {
         return 1.0 / (double)(state + 7);
     };
-    Emission e(rad, max_num_dyes, pdf);
+    PeptideEmission e(rad, max_num_dyes, pdf);
     int order = 1 + num_channels;
     int* shape = new int[order];
     shape[0] = num_timesteps;

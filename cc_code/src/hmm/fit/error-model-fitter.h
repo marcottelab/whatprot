@@ -29,6 +29,7 @@ public:
     ParameterFitter p_dud_fit;
     LogNormalDistributionFitter* distribution_fit;
     ParameterFitter stuck_dye_ratio_fit;
+    ParameterFitter p_stuck_dye_loss_fit;
 };
 
 }  // namespace whatprot

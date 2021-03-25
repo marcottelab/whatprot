@@ -30,7 +30,8 @@ public:
                DistributionType distribution_type,
                double mu,
                double sigma,
-               double stuck_dye_ratio);
+               double stuck_dye_ratio,
+               double p_stuck_dye_loss);
     std::function<double(double, int)> pdf() const;
     double relative_distance(const ErrorModel& error_model) const;
     std::string debug_string() const;
@@ -43,6 +44,7 @@ public:
     double mu;
     double sigma;
     double stuck_dye_ratio;
+    double p_stuck_dye_loss;
 };
 
 }  // namespace whatprot

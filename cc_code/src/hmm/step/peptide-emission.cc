@@ -24,7 +24,7 @@ namespace {
 using std::function;
 }  // namespace
 
-Emission::Emission(const Radiometry& radiometry,
+PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                    int max_num_dyes,
                    function<double(double, int)> pdf)
         : radiometry(radiometry),
@@ -41,15 +41,15 @@ Emission::Emission(const Radiometry& radiometry,
     }
 }
 
-double& Emission::prob(int t, int c, int d) {
+double& PeptideEmission::prob(int t, int c, int d) {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-double Emission::prob(int t, int c, int d) const {
+double PeptideEmission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void Emission::forward(PeptideStateVector* psv) const {
+void PeptideEmission::forward(PeptideStateVector* psv) const {
     TensorIterator* it = psv->tensor.iterator();
     while (it->index < (psv->num_edmans + 1) * psv->tensor.strides[0]) {
         double product = 1.0;
@@ -62,7 +62,7 @@ void Emission::forward(PeptideStateVector* psv) const {
     delete it;
 }
 
-void Emission::backward(const PeptideStateVector& input,
+void PeptideEmission::backward(const PeptideStateVector& input,
                         PeptideStateVector* output) const {
     ConstTensorIterator* inputit = input.tensor.const_iterator();
     TensorIterator* outputit = output->tensor.iterator();
@@ -80,7 +80,7 @@ void Emission::backward(const PeptideStateVector& input,
     output->num_edmans = input.num_edmans;
 }
 
-void Emission::improve_fit(const PeptideStateVector& forward_psv,
+void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                            const PeptideStateVector& backward_psv,
                            const PeptideStateVector& next_backward_psv,
                            double probability,
