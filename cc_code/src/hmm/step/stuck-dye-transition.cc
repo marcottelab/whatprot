@@ -26,7 +26,7 @@
 
 // void StuckDyeTransition::backward(const StuckDyeStateVector& input,
 //                                   StuckDyeStateVector* output) const {
-//     output->num_edmans = input.num_edmans - 1;
+//     (*num_edmans) = (*num_edmans) - 1;
 //     output->dye = (1 - loss_rate) * input.dye + loss_rate * input.no_dye;
 //     output->no_dye = input.no_dye;
 // }

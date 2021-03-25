@@ -24,7 +24,8 @@ namespace whatprot {
 //             int num_channels,
 //             int channel,
 //                 const RadiometryPrecomputations& radiometry_precomputations,
-//                 const UniversalPrecomputations& universal_precomputations) {
+//                 const UniversalPrecomputations& universal_precomputations)
+            // GenericHMM(num_timesteps) {
 //     for (int i = 0; i < num_timesteps; i++) {
 //     }
 // }

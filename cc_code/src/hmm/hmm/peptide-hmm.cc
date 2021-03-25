@@ -28,7 +28,8 @@ PeptideHMM::PeptideHMM(
         int num_channels,
         const DyeSeqPrecomputations& dye_seq_precomputations,
         const RadiometryPrecomputations& radiometry_precomputations,
-        const UniversalPrecomputations& universal_precomputations) {
+        const UniversalPrecomputations& universal_precomputations)
+            : GenericHMM(num_timesteps) {
     steps.push_back(&universal_precomputations.start);
     for (int c = 0; c < num_channels; c++) {
         steps.push_back(&universal_precomputations.dud_transitions[c]);

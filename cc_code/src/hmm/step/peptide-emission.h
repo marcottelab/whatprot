@@ -28,12 +28,12 @@ public:
              std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(PeptideStateVector* psv) const override;
-    virtual void backward(const PeptideStateVector& input,
+    virtual void forward(int* num_edmans, PeptideStateVector* psv) const override;
+    virtual void backward(const PeptideStateVector& input, int* num_edmans,
                           PeptideStateVector* output) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
-                             const PeptideStateVector& next_backward_psv,
+                             const PeptideStateVector& next_backward_psv, int num_edmans,
                              double probability,
                              ErrorModelFitter* fitter) const override;
     Radiometry radiometry;

@@ -21,16 +21,19 @@ namespace whatprot {
 template <typename SV>  // SV is the state vector type.
 class GenericHMM {
 public:
+    GenericHMM(int num_timesteps) : num_timesteps(num_timesteps) {}
+
     virtual SV create_states() const = 0;
 
     // This computes the probability of the provided dye seq producing the
     // provided radiometry. To do this efficiently, it uses a modified version
     // of the forward algorithm.
     double probability() const {
+        int num_edmans = 0;
         auto step = steps.begin();  // const_iterator type
         SV states = create_states();
         while (step != steps.end()) {
-            (*step)->forward(&states);
+            (*step)->forward(&num_edmans, &states);
             step++;
         }
         return states.sum();
@@ -40,6 +43,9 @@ public:
     // probability as a side effect, so it returns this in case that is useful
     // to the caller.
     double improve_fit(ErrorModelFitter* fitter) const {
+        // There is one less Edman than the number of timesteps, because no
+        // Edman is done before the zeroth timestep.
+        int num_edmans = num_timesteps - 1;
         auto step = steps.end();  // const_iterator type
         std::vector<SV> backward_sv;
         backward_sv.reserve(steps.size());
@@ -51,7 +57,7 @@ public:
             backward_sv.push_back(create_states());
             SV* left_states = &backward_sv.back();
             const SV& right_states = *(&backward_sv.back() - 1);
-            (*step)->backward(right_states, left_states);
+            (*step)->backward(right_states, &num_edmans, left_states);
         }
         double probability = backward_sv.back().source();
         // We will end up adding NaN results to the fitter if the probability is
@@ -71,14 +77,16 @@ public:
             (*step)->improve_fit(forward_states,
                                  *backward_states,
                                  *(backward_states - 1),
+                                 num_edmans,
                                  probability,
                                  fitter);
-            (*step)->forward(&forward_states);
+            (*step)->forward(&num_edmans, &forward_states);
             step++;
         }
         return probability;
     }
     std::vector<const Step<SV>*> steps;
+    int num_timesteps;
 };
 
 }  // namespace whatprot

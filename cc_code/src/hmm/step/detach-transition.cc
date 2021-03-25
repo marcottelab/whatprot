@@ -17,39 +17,39 @@ namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(PeptideStateVector* psv) const {
-    int i_max = (psv->num_edmans + 1) * psv->tensor.strides[0];
+void DetachTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
+    int i_max = (*num_edmans + 1) * psv->tensor.strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {
         double value = psv->tensor.values[i];
         psv->tensor.values[i] = value * (1 - p_detach);
         sum += value;
     }
-    psv->tensor.values[psv->num_edmans * psv->tensor.strides[0]] +=
+    psv->tensor.values[(*num_edmans) * psv->tensor.strides[0]] +=
             p_detach * sum;
 }
 
-void DetachTransition::backward(const PeptideStateVector& input,
+void DetachTransition::backward(const PeptideStateVector& input, int* num_edmans,
                                 PeptideStateVector* output) const {
-    int i_max = (input.num_edmans + 1) * input.tensor.strides[0];
+    int i_max = (*num_edmans + 1) * input.tensor.strides[0];
     double if_detach =
-            input.tensor.values[input.num_edmans * input.tensor.strides[0]];
+            input.tensor.values[(*num_edmans) * input.tensor.strides[0]];
     for (int i = 0; i < i_max; i++) {
         output->tensor.values[i] =
                 (1 - p_detach) * input.tensor.values[i] + p_detach * if_detach;
     }
-    output->num_edmans = input.num_edmans;
+    
 }
 
 void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& backward_psv,
-                                   const PeptideStateVector& next_backward_psv,
+                                   const PeptideStateVector& next_backward_psv, int num_edmans,
                                    double probability,
                                    ErrorModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
     double forward_sum = 0.0;
     double forward_backward_sum = 0.0;
-    for (int t = 0; t < forward_psv.num_edmans + 1; t++) {
+    for (int t = 0; t < num_edmans + 1; t++) {
         // Here we omit the zeroth entry of every timestep because this is the
         // entry for zero of every dye color. These entries are unable to
         // provide tangible evidence of detachment one way or the other.
@@ -61,7 +61,7 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
     }
     fitter->p_detach_fit.numerator +=
             forward_sum * p_detach
-            * next_backward_psv.tensor.values[forward_psv.num_edmans
+            * next_backward_psv.tensor.values[num_edmans
                                               * forward_psv.tensor.strides[0]]
             / probability;
     // Probability of being in a state that can detach is 1.0, because all

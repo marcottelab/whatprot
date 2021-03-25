@@ -28,7 +28,6 @@ public:
     double source() const;
 
     Tensor tensor;
-    int num_edmans;
 };
 
 }  // namespace whatprot

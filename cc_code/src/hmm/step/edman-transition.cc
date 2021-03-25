@@ -24,16 +24,16 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_seq(dye_seq),
           dye_track(dye_track) {}
 
-void EdmanTransition::forward(PeptideStateVector* psv) const {
-    psv->num_edmans++;
+void EdmanTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
+    (*num_edmans)++;
     int t_stride = psv->tensor.strides[0];
-    for (int i = t_stride * psv->num_edmans - 1; i >= 0; i--) {
+    for (int i = t_stride * (*num_edmans) - 1; i >= 0; i--) {
         psv->tensor.values[i + t_stride] = psv->tensor.values[i];
     }
     for (int i = 0; i < t_stride; i++) {
         psv->tensor.values[i] = psv->tensor.values[i] * p_edman_failure;
     }
-    for (int t = 0; t < psv->num_edmans; t++) {
+    for (int t = 0; t < (*num_edmans); t++) {
         if (t > 0) {
             for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
                 psv->tensor.values[i] +=
@@ -68,10 +68,10 @@ void EdmanTransition::forward(PeptideStateVector* psv) const {
     }
 }
 
-void EdmanTransition::backward(const PeptideStateVector& input,
+void EdmanTransition::backward(const PeptideStateVector& input, int* num_edmans,
                                PeptideStateVector* output) const {
     int t_stride = input.tensor.strides[0];
-    for (int t = 0; t < input.num_edmans; t++) {
+    for (int t = 0; t < (*num_edmans); t++) {
         for (int i = t * t_stride; i < (t + 1) * t_stride; i++) {
             output->tensor.values[i] = p_edman_failure * input.tensor.values[i];
         }
@@ -110,16 +110,16 @@ void EdmanTransition::backward(const PeptideStateVector& input,
             }
         }
     }
-    output->num_edmans = input.num_edmans - 1;
+    (*num_edmans) = (*num_edmans) - 1;
 }
 
 void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
                                   const PeptideStateVector& backward_psv,
-                                  const PeptideStateVector& next_backward_psv,
+                                  const PeptideStateVector& next_backward_psv, int num_edmans,
                                   double probability,
                                   ErrorModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
-    for (int t = 0; t < forward_psv.num_edmans + 1; t++) {
+    for (int t = 0; t < num_edmans + 1; t++) {
         // Here we omit the zeroth entry of every timestep because this is the
         // entry for zero of every dye color. These entries are unable to
         // provide tangible evidence of the edman efficiency one way or the

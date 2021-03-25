@@ -67,10 +67,10 @@
 //         if (c == channel) {
 //             continue;
 //         }
-//         product *= prob(input.num_edmans, c, 0);
+//         product *= prob((*num_edmans), c, 0);
 //     }
-//     output->dye *= input.dye * product * prob(input.num_edmans, channel, 1);
-//     output->no_dye *= input.no_dye * product * prob(input.num_edmans, channel, 0);
+//     output->dye *= input.dye * product * prob((*num_edmans), channel, 1);
+//     output->no_dye *= input.no_dye * product * prob((*num_edmans), channel, 0);
 // }
 
 // void StuckDyeEmission::improve_fit(const StuckDyeStateVector& forward_sdsv,

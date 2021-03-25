@@ -18,7 +18,7 @@
 namespace whatprot {
 
 PeptideStateVector::PeptideStateVector(int order, const int* shape)
-        : tensor(order, shape), num_edmans(0) {}
+        : tensor(order, shape) {}
 
 double PeptideStateVector::sum() const {
     return tensor.sum();

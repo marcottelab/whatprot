@@ -15,23 +15,23 @@
 
 namespace whatprot {
 
-void Start::forward(PeptideStateVector* psv) const {
+void Start::forward(int* num_edmans, PeptideStateVector* psv) const {
     psv->tensor.values[psv->tensor.strides[0] - 1] = 1.0;
 }
 
-void Start::backward(const PeptideStateVector& input,
+void Start::backward(const PeptideStateVector& input, int* num_edmans,
                      PeptideStateVector* output) const {
     if (&input != output) {
         for (int i = 0; i < output->tensor.size; i++) {
             output->tensor.values[i] = input.tensor.values[i];
         }
     }
-    output->num_edmans = input.num_edmans;
+    
 }
 
 void Start::improve_fit(const PeptideStateVector& forward_psv,
                         const PeptideStateVector& backward_psv,
-                        const PeptideStateVector& next_backward_psv,
+                        const PeptideStateVector& next_backward_psv, int num_edmans,
                         double probability,
                         ErrorModelFitter* fitter) const {}
 

@@ -21,12 +21,13 @@ DudTransition::DudTransition(double q, int channel)
 
 void DudTransition::improve_fit(const PeptideStateVector& forward_psv,
                                 const PeptideStateVector& backward_psv,
-                                const PeptideStateVector& next_backward_psv,
+                                const PeptideStateVector& next_backward_psv, int num_edmans,
                                 double probability,
                                 ErrorModelFitter* fitter) const {
     BinomialTransition::improve_fit(forward_psv,
                                     backward_psv,
                                     next_backward_psv,
+                                    num_edmans,
                                     probability,
                                     &fitter->p_dud_fit);
 }
