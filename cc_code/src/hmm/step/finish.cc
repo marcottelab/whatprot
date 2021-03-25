@@ -22,11 +22,6 @@ void Finish::backward(const PeptideStateVector& input, int* num_edmans,
     for (int i = 0; i < output->tensor.size; i++) {
         output->tensor.values[i] = 1.0;
     }
-    // The zeroth dimension in the Tensors is time, so output->shape[0] gives
-    // the total number of timesteps being considered. There is one less Edman
-    // than the number of timesteps, because no Edman is done before the zeroth
-    // timestep.
-    (*num_edmans) = output->tensor.shape[0] - 1;
 }
 
 void Finish::improve_fit(const PeptideStateVector& forward_psv,
