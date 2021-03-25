@@ -7,7 +7,7 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "emission.h"
+#include "peptide-emission.h"
 
 // Standard C++ library headers:
 #include <functional>

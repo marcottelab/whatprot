@@ -49,7 +49,8 @@ int fit_main(int argc, char** argv) {
                            DistributionType::LOGNORMAL,
                            0.0,  // mu
                            .16,  // sigma
-                           0.5);  // stuck_dye_ratio
+                           0.5,  // stuck_dye_ratio
+                           .08);  // p_stuck_dye_loss
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 

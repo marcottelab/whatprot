@@ -20,13 +20,13 @@
 
 namespace whatprot {
 
-StuckDyeHMM::StuckDyeHMM(int num_timesteps,
-            int num_channels,
-            int channel,
-                const RadiometryPrecomputations& radiometry_precomputations,
-                const UniversalPrecomputations& universal_precomputations) {
-    for (int i = 0; i < num_timesteps; i++) {
-    }
-}
+// StuckDyeHMM::StuckDyeHMM(int num_timesteps,
+//             int num_channels,
+//             int channel,
+//                 const RadiometryPrecomputations& radiometry_precomputations,
+//                 const UniversalPrecomputations& universal_precomputations) {
+//     for (int i = 0; i < num_timesteps; i++) {
+//     }
+// }
 
 }  // namespace whatprot

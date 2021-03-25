@@ -17,8 +17,8 @@
 #include "hmm/step/binomial-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
-#include "hmm/step/emission.h"
 #include "hmm/step/finish.h"
+#include "hmm/step/peptide-emission.h"
 #include "hmm/step/start.h"
 
 namespace whatprot {

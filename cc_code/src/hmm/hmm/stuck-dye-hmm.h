@@ -20,15 +20,15 @@
 
 namespace whatprot {
 
-class StuckDyeHMM : public GenericHMM<StuckDyeStateVector> {
-public:
-    StuckDyeHMM(int num_timesteps,
-               int num_channels,
-               int channel,
-                const RadiometryPrecomputations& radiometry_precomputations,
-                const UniversalPrecomputations& universal_precomputations);
-    virtual StuckDyeStateVector create_states() const override;
-};
+// class StuckDyeHMM : public GenericHMM<StuckDyeStateVector> {
+// public:
+//     StuckDyeHMM(int num_timesteps,
+//                int num_channels,
+//                int channel,
+//                 const RadiometryPrecomputations& radiometry_precomputations,
+//                 const UniversalPrecomputations& universal_precomputations);
+//     virtual StuckDyeStateVector create_states() const override;
+// };
 
 }  // namespace whatprot
 

@@ -12,7 +12,7 @@
 // Local project headers:
 #include "common/error-model.h"
 #include "common/radiometry.h"
-#include "hmm/step/emission.h"
+#include "hmm/step/peptide-emission.h"
 
 namespace whatprot {
 

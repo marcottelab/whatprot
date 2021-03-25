@@ -12,7 +12,7 @@
 // Local project headers:
 #include "common/error-model.h"
 #include "common/radiometry.h"
-#include "hmm/step/emission.h"
+#include "hmm/step/peptide-emission.h"
 
 namespace whatprot {
 
@@ -21,7 +21,7 @@ public:
     RadiometryPrecomputations(const Radiometry& radiometry,
                               const ErrorModel& error_model,
                               int max_num_dyes);
-    Emission emission;
+    PeptideEmission emission;
 };
 
 }  // namespace whatprot
