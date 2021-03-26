@@ -22,6 +22,10 @@ public:
     // To construct a PeptideStateVector, you need to give the order and shape
     // of the underlying tensor.
     PeptideStateVector(int order, const int* shape);
+    // Put 1.0 in starting state.
+    void initialize_from_start();
+    // Put 1.0 in every state.
+    void initialize_from_finish();
     // Sum of the states.
     double sum() const;
     // Probability of the original source state.

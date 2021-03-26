@@ -32,6 +32,7 @@ public:
         int num_edmans = 0;
         auto step = steps.begin();  // const_iterator type
         SV states = create_states();
+        states.initialize_from_start();
         while (step != steps.end()) {
             (*step)->forward(&num_edmans, &states);
             step++;
@@ -52,6 +53,7 @@ public:
         // For efficiency, backwards_states is in the reverse order of what we
         // would like. Yes this is confusing...
         backward_sv.push_back(create_states());
+        backward_sv.back().initialize_from_finish();
         while (step != steps.begin()) {
             step--;
             backward_sv.push_back(create_states());
@@ -72,6 +74,7 @@ public:
         }
         auto backward_states = backward_sv.end();  // iterator type
         SV forward_states = create_states();
+        forward_states.initialize_from_start();
         while (step != steps.end()) {
             backward_states--;
             (*step)->improve_fit(forward_states,

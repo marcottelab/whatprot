@@ -17,9 +17,7 @@
 #include "hmm/step/binomial-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
-#include "hmm/step/finish.h"
 #include "hmm/step/peptide-emission.h"
-#include "hmm/step/start.h"
 
 namespace whatprot {
 
@@ -30,20 +28,18 @@ PeptideHMM::PeptideHMM(
         const RadiometryPrecomputations& radiometry_precomputations,
         const UniversalPrecomputations& universal_precomputations)
             : GenericHMM(num_timesteps) {
-    steps.push_back(&universal_precomputations.start);
     for (int c = 0; c < num_channels; c++) {
         steps.push_back(&universal_precomputations.dud_transitions[c]);
     }
-    steps.push_back(&radiometry_precomputations.emission);
+    steps.push_back(&radiometry_precomputations.peptide_emission);
     for (int t = 1; t < num_timesteps; t++) {
         steps.push_back(&universal_precomputations.detach_transition);
         for (int c = 0; c < num_channels; c++) {
             steps.push_back(&universal_precomputations.bleach_transitions[c]);
         }
         steps.push_back(&dye_seq_precomputations.edman_transition);
-        steps.push_back(&radiometry_precomputations.emission);
+        steps.push_back(&radiometry_precomputations.peptide_emission);
     }
-    steps.push_back(&universal_precomputations.finish);
     tensor_shape = dye_seq_precomputations.tensor_shape;
 }
 

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_HMM_STEP_EMISSION_H
-#define WHATPROT_HMM_STEP_EMISSION_H
+#ifndef WHATPROT_HMM_STEP_PEPTIDE_EMISSION_H
+#define WHATPROT_HMM_STEP_PEPTIDE_EMISSION_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -45,4 +45,4 @@ public:
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_HMM_STEP_EMISSION_H
+#endif  // WHATPROT_HMM_STEP_PEPTIDE_EMISSION_H

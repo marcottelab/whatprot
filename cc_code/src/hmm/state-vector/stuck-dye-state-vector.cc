@@ -14,8 +14,17 @@
 
 namespace whatprot {
 
-StuckDyeStateVector::StuckDyeStateVector(int order, const int* shape)
+StuckDyeStateVector::StuckDyeStateVector()
         : dye(0), no_dye(0) {}
+
+void StuckDyeStateVector::initialize_from_start() {
+    dye = 1.0;
+}
+
+void StuckDyeStateVector::initialize_from_finish() {
+    dye = 1.0;
+    no_dye = 1.0;
+}
 
 double StuckDyeStateVector::sum() const {
     return dye + no_dye;

@@ -110,7 +110,7 @@ void EdmanTransition::backward(const PeptideStateVector& input, int* num_edmans,
             }
         }
     }
-    (*num_edmans) = (*num_edmans) - 1;
+    (*num_edmans)--;
 }
 
 void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
