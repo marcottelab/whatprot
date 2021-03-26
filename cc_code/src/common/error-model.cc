@@ -95,8 +95,9 @@ double ErrorModel::relative_distance(const ErrorModel& error_model) const {
     dist = max(dist,
                abs(stuck_dye_ratio - error_model.stuck_dye_ratio)
                        / stuck_dye_ratio);
-    dist = max(dist, abs(p_stuck_dye_loss - error_model.p_stuck_dye_loss)
-                  / p_stuck_dye_loss);
+    dist = max(dist,
+               abs(p_stuck_dye_loss - error_model.p_stuck_dye_loss)
+                       / p_stuck_dye_loss);
     return dist;
 }
 

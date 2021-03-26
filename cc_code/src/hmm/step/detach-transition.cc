@@ -29,7 +29,8 @@ void DetachTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
             p_detach * sum;
 }
 
-void DetachTransition::backward(const PeptideStateVector& input, int* num_edmans,
+void DetachTransition::backward(const PeptideStateVector& input,
+                                int* num_edmans,
                                 PeptideStateVector* output) const {
     int i_max = (*num_edmans + 1) * input.tensor.strides[0];
     double if_detach =
@@ -38,12 +39,12 @@ void DetachTransition::backward(const PeptideStateVector& input, int* num_edmans
         output->tensor.values[i] =
                 (1 - p_detach) * input.tensor.values[i] + p_detach * if_detach;
     }
-    
 }
 
 void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& backward_psv,
-                                   const PeptideStateVector& next_backward_psv, int num_edmans,
+                                   const PeptideStateVector& next_backward_psv,
+                                   int num_edmans,
                                    double probability,
                                    ErrorModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
@@ -61,8 +62,8 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
     }
     fitter->p_detach_fit.numerator +=
             forward_sum * p_detach
-            * next_backward_psv.tensor.values[num_edmans
-                                              * forward_psv.tensor.strides[0]]
+            * next_backward_psv.tensor
+                      .values[num_edmans * forward_psv.tensor.strides[0]]
             / probability;
     // Probability of being in a state that can detach is 1.0, because all
     // states can detach (although we are ignoring the case where there are no

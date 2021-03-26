@@ -14,8 +14,7 @@
 
 namespace whatprot {
 
-StuckDyeStateVector::StuckDyeStateVector()
-        : dye(0), no_dye(0) {}
+StuckDyeStateVector::StuckDyeStateVector() : dye(0), no_dye(0) {}
 
 void StuckDyeStateVector::initialize_from_start() {
     dye = 1.0;

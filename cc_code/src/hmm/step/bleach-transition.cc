@@ -21,7 +21,8 @@ BleachTransition::BleachTransition(double q, int channel)
 
 void BleachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& backward_psv,
-                                   const PeptideStateVector& next_backward_psv, int num_edmans,
+                                   const PeptideStateVector& next_backward_psv,
+                                   int num_edmans,
                                    double probability,
                                    ErrorModelFitter* fitter) const {
     BinomialTransition::improve_fit(forward_psv,

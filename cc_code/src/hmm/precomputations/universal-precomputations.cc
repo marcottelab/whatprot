@@ -25,7 +25,7 @@ UniversalPrecomputations::UniversalPrecomputations(
         const ErrorModel& error_model, int num_channels)
         : detach_transition(error_model.p_detach),
           stuck_dye_transition(error_model.p_stuck_dye_loss),
-           num_channels(num_channels) {
+          num_channels(num_channels) {
     for (int i = 0; i < num_channels; i++) {
         dud_transitions.emplace_back(error_model.p_dud, i);
         bleach_transitions.emplace_back(error_model.p_bleach, i);

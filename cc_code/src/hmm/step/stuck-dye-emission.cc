@@ -24,8 +24,8 @@ using std::function;
 }  // namespace
 
 StuckDyeEmission::StuckDyeEmission(const Radiometry& radiometry,
-                   int channel,
-                   function<double(double, int)> pdf)
+                                   int channel,
+                                   function<double(double, int)> pdf)
         : radiometry(radiometry),
           num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
@@ -62,8 +62,8 @@ void StuckDyeEmission::forward(int* num_edmans,
 }
 
 void StuckDyeEmission::backward(const StuckDyeStateVector& input,
-                        int* num_edmans,
-                        StuckDyeStateVector* output) const {
+                                int* num_edmans,
+                                StuckDyeStateVector* output) const {
     double product = 1.0;
     for (int c = 0; c < num_channels; c++) {
         if (c == channel) {
@@ -75,12 +75,13 @@ void StuckDyeEmission::backward(const StuckDyeStateVector& input,
     output->no_dye *= input.no_dye * product * prob((*num_edmans), channel, 0);
 }
 
-void StuckDyeEmission::improve_fit(const StuckDyeStateVector& forward_sdsv,
-                           const StuckDyeStateVector& backward_sdsv,
-                           const StuckDyeStateVector& next_backward_sdsv,
-                           int num_edmans,
-                           double probability,
-                           ErrorModelFitter* fitter) const {
+void StuckDyeEmission::improve_fit(
+        const StuckDyeStateVector& forward_sdsv,
+        const StuckDyeStateVector& backward_sdsv,
+        const StuckDyeStateVector& next_backward_sdsv,
+        int num_edmans,
+        double probability,
+        ErrorModelFitter* fitter) const {
     double intensity = radiometry(num_edmans, channel);
     double p_no_dye = forward_sdsv.no_dye * backward_sdsv.no_dye;
     fitter->distribution_fit->add_sample(intensity, 0, p_no_dye);

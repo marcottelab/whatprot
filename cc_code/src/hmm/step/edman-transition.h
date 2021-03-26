@@ -22,12 +22,15 @@ public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
-    virtual void forward(int* num_edmans, PeptideStateVector* psv) const override;
-    virtual void backward(const PeptideStateVector& input, int* num_edmans,
+    virtual void forward(int* num_edmans,
+                         PeptideStateVector* psv) const override;
+    virtual void backward(const PeptideStateVector& input,
+                          int* num_edmans,
                           PeptideStateVector* output) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
-                             const PeptideStateVector& next_backward_psv, int num_edmans,
+                             const PeptideStateVector& next_backward_psv,
+                             int num_edmans,
                              double probability,
                              ErrorModelFitter* fitter) const override;
 

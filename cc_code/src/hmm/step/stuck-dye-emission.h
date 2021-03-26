@@ -24,8 +24,8 @@ namespace whatprot {
 class StuckDyeEmission : public Step<StuckDyeStateVector> {
 public:
     StuckDyeEmission(const Radiometry& radiometry,
-            int channel,
-             std::function<double(double, int)> pdf);
+                     int channel,
+                     std::function<double(double, int)> pdf);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
     virtual void forward(int* num_edmans,

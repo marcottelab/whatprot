@@ -19,9 +19,10 @@ namespace whatprot {
 class StuckDyeTransition : public Step<StuckDyeStateVector> {
 public:
     StuckDyeTransition(double loss_rate);
-    virtual void forward(int* num_edmans, StuckDyeStateVector* sdsv) const override;
+    virtual void forward(int* num_edmans,
+                         StuckDyeStateVector* sdsv) const override;
     virtual void backward(const StuckDyeStateVector& input,
-                        int* num_edmans,
+                          int* num_edmans,
                           StuckDyeStateVector* output) const override;
     virtual void improve_fit(const StuckDyeStateVector& forward_sdsv,
                              const StuckDyeStateVector& backward_sdsv,

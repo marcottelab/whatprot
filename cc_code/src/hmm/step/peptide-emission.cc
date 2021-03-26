@@ -25,8 +25,8 @@ using std::function;
 }  // namespace
 
 PeptideEmission::PeptideEmission(const Radiometry& radiometry,
-                   int max_num_dyes,
-                   function<double(double, int)> pdf)
+                                 int max_num_dyes,
+                                 function<double(double, int)> pdf)
         : radiometry(radiometry),
           num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
@@ -62,8 +62,9 @@ void PeptideEmission::forward(int* num_edmans, PeptideStateVector* psv) const {
     delete it;
 }
 
-void PeptideEmission::backward(const PeptideStateVector& input, int* num_edmans,
-                        PeptideStateVector* output) const {
+void PeptideEmission::backward(const PeptideStateVector& input,
+                               int* num_edmans,
+                               PeptideStateVector* output) const {
     ConstTensorIterator* inputit = input.tensor.const_iterator();
     TensorIterator* outputit = output->tensor.iterator();
     while (inputit->index < (*num_edmans + 1) * input.tensor.strides[0]) {
@@ -77,18 +78,17 @@ void PeptideEmission::backward(const PeptideStateVector& input, int* num_edmans,
     }
     delete inputit;
     delete outputit;
-    
 }
 
 void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
-                           const PeptideStateVector& backward_psv,
-                           const PeptideStateVector& next_backward_psv, int num_edmans,
-                           double probability,
-                           ErrorModelFitter* fitter) const {
+                                  const PeptideStateVector& backward_psv,
+                                  const PeptideStateVector& next_backward_psv,
+                                  int num_edmans,
+                                  double probability,
+                                  ErrorModelFitter* fitter) const {
     ConstTensorIterator* fit = forward_psv.tensor.const_iterator();
     ConstTensorIterator* bit = backward_psv.tensor.const_iterator();
-    while (fit->index
-           < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
+    while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
         double p_state = fit->get() * bit->get() / probability;
         for (int c = 0; c < num_channels; c++) {
             int t = fit->loc[0];

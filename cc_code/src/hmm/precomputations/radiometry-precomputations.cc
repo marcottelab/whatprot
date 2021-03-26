@@ -23,9 +23,8 @@ RadiometryPrecomputations::RadiometryPrecomputations(
         int max_num_dyes)
         : peptide_emission(radiometry, max_num_dyes, error_model.pdf()) {
     for (int c = 0; c < radiometry.num_channels; c++) {
-        stuck_dye_emissions.push_back(StuckDyeEmission(radiometry,
-                                        c, error_model.pdf()));
-
+        stuck_dye_emissions.push_back(
+                StuckDyeEmission(radiometry, c, error_model.pdf()));
     }
 }
 

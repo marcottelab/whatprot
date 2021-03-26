@@ -27,14 +27,17 @@ public:
     void reserve(int max_n);
     double& prob(int from, int to);
     double prob(int from, int to) const;
-    virtual void forward(int* num_edmans, PeptideStateVector* psv) const override;
+    virtual void forward(int* num_edmans,
+                         PeptideStateVector* psv) const override;
     void forward(Vector* v) const;
-    virtual void backward(const PeptideStateVector& input, int* num_edmans,
+    virtual void backward(const PeptideStateVector& input,
+                          int* num_edmans,
                           PeptideStateVector* output) const override;
     void backward(const Vector& input, Vector* output) const;
     void improve_fit(const PeptideStateVector& forward_psv,
                      const PeptideStateVector& backward_psv,
-                     const PeptideStateVector& next_backward_psv, int num_edmans,
+                     const PeptideStateVector& next_backward_psv,
+                     int num_edmans,
                      double probability,
                      ParameterFitter* fitter) const;
     void improve_fit(const Vector& forward_vector,

@@ -51,7 +51,8 @@ double BinomialTransition::prob(int from, int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
+void BinomialTransition::forward(int* num_edmans,
+                                 PeptideStateVector* psv) const {
     int vector_stride = psv->tensor.strides[1 + channel];
     int vector_length = psv->tensor.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
@@ -76,7 +77,8 @@ void BinomialTransition::forward(Vector* v) const {
     }
 }
 
-void BinomialTransition::backward(const PeptideStateVector& input, int* num_edmans,
+void BinomialTransition::backward(const PeptideStateVector& input,
+                                  int* num_edmans,
                                   PeptideStateVector* output) const {
     int vector_stride = input.tensor.strides[1 + channel];
     int vector_length = input.tensor.shape[1 + channel];
@@ -93,7 +95,6 @@ void BinomialTransition::backward(const PeptideStateVector& input, int* num_edma
             this->backward(inv, &outv);
         }
     }
-    
 }
 
 void BinomialTransition::backward(const Vector& input, Vector* output) const {
@@ -109,14 +110,14 @@ void BinomialTransition::backward(const Vector& input, Vector* output) const {
 void BinomialTransition::improve_fit(
         const PeptideStateVector& forward_psv,
         const PeptideStateVector& backward_psv,
-        const PeptideStateVector& next_backward_psv, int num_edmans,
+        const PeptideStateVector& next_backward_psv,
+        int num_edmans,
         double probability,
         ParameterFitter* fitter) const {
     int vector_stride = forward_psv.tensor.strides[1 + channel];
     int vector_length = forward_psv.tensor.shape[1 + channel];
     int outer_stride = vector_stride * vector_length;
-    int outer_max =
-            forward_psv.tensor.strides[0] * (num_edmans + 1);
+    int outer_max = forward_psv.tensor.strides[0] * (num_edmans + 1);
     for (int outer = 0; outer < outer_max; outer += outer_stride) {
         for (int inner = 0; inner < vector_stride; inner++) {
             const Vector fv(vector_length,

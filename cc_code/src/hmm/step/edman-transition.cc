@@ -68,7 +68,8 @@ void EdmanTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
     }
 }
 
-void EdmanTransition::backward(const PeptideStateVector& input, int* num_edmans,
+void EdmanTransition::backward(const PeptideStateVector& input,
+                               int* num_edmans,
                                PeptideStateVector* output) const {
     int t_stride = input.tensor.strides[0];
     for (int t = 0; t < (*num_edmans); t++) {
@@ -115,7 +116,8 @@ void EdmanTransition::backward(const PeptideStateVector& input, int* num_edmans,
 
 void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
                                   const PeptideStateVector& backward_psv,
-                                  const PeptideStateVector& next_backward_psv, int num_edmans,
+                                  const PeptideStateVector& next_backward_psv,
+                                  int num_edmans,
                                   double probability,
                                   ErrorModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
