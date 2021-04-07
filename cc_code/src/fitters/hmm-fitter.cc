@@ -99,7 +99,8 @@ ErrorModel HMMFitter::fit(const std::vector<Radiometry>& radiometries) const {
                     stuck_dye_fitters[c] *= (stuck_dye_probs[c] / total_prob);
                     fitter += stuck_dye_fitters[c];
                 }
-                fitter.stuck_dye_ratio_fit.numerator += (1.0 - peptide_prob / total_prob);
+                fitter.stuck_dye_ratio_fit.numerator +=
+                        (1.0 - peptide_prob / total_prob);
                 fitter.stuck_dye_ratio_fit.denominator += 1.0;
             }
         }
