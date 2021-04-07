@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     double mu = log(1.0);
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -45,7 +46,8 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     BOOST_TEST(em.p_edman_failure == p_edman_failure);
     BOOST_TEST(em.p_detach == p_detach);
     BOOST_TEST(em.p_bleach == p_bleach);
@@ -54,6 +56,7 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     BOOST_TEST(em.mu == mu);
     BOOST_TEST(em.sigma == sigma);
     BOOST_TEST(em.stuck_dye_ratio == stuck_dye_ratio);
+    BOOST_TEST(em.p_stuck_dye_loss == p_stuck_dye_loss);
 }
 
 BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_zero_test) {
@@ -65,6 +68,7 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_zero_test) {
     double mu = log(1.0);
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -72,7 +76,8 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_zero_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 0.0;
     int state = 0;
@@ -88,6 +93,7 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_one_test) {
     double mu = log(1.0);
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -95,7 +101,8 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_one_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 1.0;
     int state = 0;
@@ -111,6 +118,7 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_zero_test) {
     double mu = log(1.0);
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -118,7 +126,8 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_zero_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 0.0;
     int state = 1;
@@ -134,6 +143,7 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_one_test, *tolerance(TOL)) {
     double mu = log(1.0);
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -141,7 +151,8 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_one_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 1.0;
     int state = 1;
@@ -159,6 +170,7 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_eq_obs_ne_one_test, *tolerance(TOL)) {
     double mu = log(1.3);
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -166,7 +178,8 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_eq_obs_ne_one_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 1.3;
     int state = 1;
@@ -184,6 +197,7 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_zero_obs_zero_test) {
     double mu = 1.0;
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -191,7 +205,8 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_zero_obs_zero_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 0.0;
     int state = 0;
@@ -207,6 +222,7 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_zero_obs_one_test) {
     double mu = 1.0;
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -214,7 +230,8 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_zero_obs_one_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 1.0;
     int state = 0;
@@ -230,6 +247,7 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_one_obs_zero_test) {
     double mu = 1.0;
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -237,7 +255,8 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_one_obs_zero_test) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 0.0;
     int state = 1;
@@ -253,6 +272,7 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_one_obs_one_test, *tolerance(TOL)) {
     double mu = 1.0;
     double sigma = .16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -260,7 +280,8 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_one_obs_one_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     function<double(double, int)> pdf = em.pdf();
     double observed = 1.0;
     int state = 1;
@@ -269,45 +290,80 @@ BOOST_AUTO_TEST_CASE(pdf_override_state_one_obs_one_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(relative_distance_p_edman_failure_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.66, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.66,
+                   0.5,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.5,
+                   0.5,
+                   0.5);
     BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_p_detach_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.5, 0.66, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.66,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.5,
+                   0.5,
+                   0.5);
     BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_p_bleach_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.5, 0.5, 0.66, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.5,
+                   0.66,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.5,
+                   0.5,
+                   0.5);
     BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_p_dud_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.5, 0.5, 0.5, 0.66, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.5,
+                   0.5,
+                   0.66,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.5,
+                   0.5,
+                   0.5);
     BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_mu_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.66, 0.5, 0.5);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.5,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.66,
+                   0.5,
+                   0.5,
+                   0.5);
     BOOST_TEST(em1.relative_distance(em2) == (exp(0.66) - exp(0.5)) / exp(0.5));
     BOOST_TEST(em2.relative_distance(em1)
                == (exp(0.66) - exp(0.5)) / exp(0.66));
@@ -315,27 +371,71 @@ BOOST_AUTO_TEST_CASE(relative_distance_mu_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(relative_distance_sigma_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.66, 0.5);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.5,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.66,
+                   0.5,
+                   0.5);
     BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_stuck_dye_ratio_test, *tolerance(TOL)) {
     ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5);
-    ErrorModel em2(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.66);
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.5,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.5,
+                   0.66,
+                   0.5);
+    BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
+    BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
+}
+
+BOOST_AUTO_TEST_CASE(relative_distance_p_stuck_dye_loss_test, *tolerance(TOL)) {
+    ErrorModel em1(
+            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.5, 0.5, 0.5, 0.5);
+    ErrorModel em2(0.5,
+                   0.5,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.5,
+                   0.5,
+                   0.5,
+                   0.66);
     BOOST_TEST(em1.relative_distance(em2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.66 - 0.5) / 0.66);
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_max_no_sum_test, *tolerance(TOL)) {
-    ErrorModel em1(
-            0.5, 0.5, 0.5, 0.5, DistributionType::OVERRIDE, 0.66, 0.5, 0.5);
-    ErrorModel em2(
-            0.7, 0.7, 0.7, 0.7, DistributionType::OVERRIDE, 0.66, 0.7, 0.7);
+    ErrorModel em1(0.5,
+                   0.5,
+                   0.5,
+                   0.5,
+                   DistributionType::OVERRIDE,
+                   0.66,
+                   0.5,
+                   0.5,
+                   0.5);
+    ErrorModel em2(0.7,
+                   0.7,
+                   0.7,
+                   0.7,
+                   DistributionType::OVERRIDE,
+                   0.66,
+                   0.7,
+                   0.7,
+                   0.7);
     BOOST_TEST(em1.relative_distance(em2) == (0.7 - 0.5) / 0.5);
     BOOST_TEST(em2.relative_distance(em1) == (0.7 - 0.5) / 0.7);
 }

@@ -25,12 +25,12 @@
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
+#include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/binomial-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
-#include "hmm/step/emission.h"
-#include "hmm/step/finish.h"
-#include "hmm/step/start.h"
+#include "hmm/step/peptide-emission.h"
+#include "hmm/step/step.h"
 #include "tensor/tensor.h"
 
 namespace whatprot {
@@ -58,6 +58,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     double mu = 1.0;
     double sigma = 0.05;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -65,7 +66,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     int num_channels = 2;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(em, num_channels);
@@ -94,16 +96,14 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     BOOST_TEST(hmm.tensor_shape[1] == 2 + 1);  // extra is to have 0 & num dyes.
     BOOST_TEST(hmm.tensor_shape[2] == 3 + 1);  // extra is to have 0 & num dyes.
     BOOST_ASSERT(hmm.steps.size()
-                 == (3 + num_channels) * (num_timesteps - 1) + 3
+                 == (3 + num_channels) * (num_timesteps - 1) + 1
                             + num_channels);
-    vector<const Step*>::iterator step = hmm.steps.begin();
-    BOOST_TEST(*step == &universal_precomputations.start);
-    step++;
+    vector<const Step<PeptideStateVector>*>::iterator step = hmm.steps.begin();
     BOOST_TEST(*step == &universal_precomputations.dud_transitions[0]);
     step++;
     BOOST_TEST(*step == &universal_precomputations.dud_transitions[1]);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
     step++;
     BOOST_TEST(*step == &universal_precomputations.detach_transition);
     step++;
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
     step++;
     BOOST_TEST(*step == &universal_precomputations.detach_transition);
     step++;
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
     step++;
     BOOST_TEST(*step == &universal_precomputations.detach_transition);
     step++;
@@ -133,9 +133,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.emission);
-    step++;
-    BOOST_TEST(*step == &universal_precomputations.finish);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
 }
 
 BOOST_AUTO_TEST_CASE(probability_trivial_test, *tolerance(TOL)) {
@@ -147,6 +145,7 @@ BOOST_AUTO_TEST_CASE(probability_trivial_test, *tolerance(TOL)) {
     double mu = 1.0;
     double sigma = 0.05;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -154,7 +153,8 @@ BOOST_AUTO_TEST_CASE(probability_trivial_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     int num_channels = 0;
     int max_num_dyes = 0;
     UniversalPrecomputations up(em, num_channels);
@@ -180,6 +180,7 @@ BOOST_AUTO_TEST_CASE(probability_sum_to_one_test, *tolerance(TOL)) {
     double mu = 1.0;
     double sigma = 0.05;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -187,7 +188,8 @@ BOOST_AUTO_TEST_CASE(probability_sum_to_one_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     int num_channels = 2;
     int max_num_dyes = 5;
     UniversalPrecomputations up(em, num_channels);
@@ -218,6 +220,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     double mu = log(1.0);
     double sigma = 0.16;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -225,7 +228,8 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     int num_channels = 2;
     int max_num_dyes = 5;
     UniversalPrecomputations up(em, num_channels);
@@ -254,6 +258,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     double mu = 1.0;
     double sigma = 0.05;
     double stuck_dye_ratio = 0.5;
+    double p_stuck_dye_loss = 0.08;
     ErrorModel em(p_edman_failure,
                   p_detach,
                   p_bleach,
@@ -261,7 +266,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                   dist_type,
                   mu,
                   sigma,
-                  stuck_dye_ratio);
+                  stuck_dye_ratio,
+                  p_stuck_dye_loss);
     int num_channels = 2;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(em, num_channels);
@@ -285,7 +291,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                    dye_seq_precomputations,
                    radiometry_precomputations,
                    universal_precomputations);
-    ErrorModelFitter emf(dist_type);
+    ErrorModelFitter emf;
     hmm.improve_fit(&emf);
     // There are no BOOST_TEST statements because setting up a proper test for
     // this function is very difficult. We still have the test though as a no

@@ -17,7 +17,7 @@ namespace whatprot {
 class LogNormalDistributionFitter {
 public:
     LogNormalDistributionFitter();
-    void add_sample(double x, int n, double weight);
+    virtual void add_sample(double x, int n, double weight);
     DistributionType get_type() const;
     double get_mu() const;
     double get_sigma() const;

@@ -14,7 +14,7 @@
 #include <boost/test/unit_test.hpp>
 
 // File under test:
-#include "emission.h"
+#include "peptide-emission.h"
 
 // Standard C++ library headers:
 #include <functional>
@@ -25,8 +25,8 @@
 // Local project headers:
 #include "common/error-model.h"
 #include "common/radiometry.h"
-#include "hmm/fit/distribution-fitter.h"
 #include "hmm/fit/error-model-fitter.h"
+#include "hmm/fit/log-normal-distribution-fitter.h"
 #include "tensor/tensor.h"
 #include "test-util/fakeit.h"
 
@@ -261,15 +261,15 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     int* shape = new int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
-    Tensor tsr(order, shape);
+    PeptideStateVector psv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    tsr[loc] = 3.14;  // loc is {0, 0}
+    psv.tensor[loc] = 3.14;  // loc is {0, 0}
     int edmans = 0;
-    e.forward(&edmans, &tsr);
-    BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
+    e.forward(&edmans, &psv);
+    BOOST_TEST(psv.tensor[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
 
@@ -288,16 +288,16 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
 //     shape[1] = 1;
-//     Tensor tsr1(order, shape);
-//     Tensor tsr2(order, shape);
+//     PeptideStateVector psv1(order, shape);
+//     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
 //     int* loc = new int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
-//     tsr1[loc] = 3.14;  // loc is {0, 0}
+//     psv1.tensor[loc] = 3.14;  // loc is {0, 0}
 //     int edmans = 0;
-//     e.forward(tsr1, &edmans, &tsr2);
-//     BOOST_TEST(tsr2[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
+//     e.forward(tsr1, &edmans, &psv2);
+//     BOOST_TEST(psv2.tensor[loc] == 3.14 * pdf(1.0, 0));  // loc is {0, 0}
 //     delete[] loc;
 // }
 
@@ -316,16 +316,16 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
     int* shape = new int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
-    Tensor tsr(order, shape);
+    PeptideStateVector psv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    tsr[loc] = 3.14;  // loc is {0, 0}
+    psv.tensor[loc] = 3.14;  // loc is {0, 0}
     int edmans = 0;
-    e.forward(&edmans, &tsr);
-    e.forward(&edmans, &tsr);
-    BOOST_TEST(tsr[loc] == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
+    e.forward(&edmans, &psv);
+    e.forward(&edmans, &psv);
+    BOOST_TEST(psv.tensor[loc] == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
 
@@ -347,24 +347,24 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     int* shape = new int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
-    Tensor tsr(order, shape);
+    PeptideStateVector psv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    tsr[loc] = 13.0;  // loc is {0, 0}
+    psv.tensor[loc] = 13.0;  // loc is {0, 0}
     loc[0] = 1;
-    tsr[loc] = 13.1;  // loc is {1, 0}
+    psv.tensor[loc] = 13.1;  // loc is {1, 0}
     loc[0] = 2;
-    tsr[loc] = 13.2;  // loc is {2, 0}
+    psv.tensor[loc] = 13.2;  // loc is {2, 0}
     int edmans = 2;
-    e.forward(&edmans, &tsr);
+    e.forward(&edmans, &psv);
     loc[0] = 0;
-    BOOST_TEST(tsr[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
     loc[0] = 1;
-    BOOST_TEST(tsr[loc] == 13.1 * pdf(2.0, 0));  // loc is {1, 0}
+    BOOST_TEST(psv.tensor[loc] == 13.1 * pdf(2.0, 0));  // loc is {1, 0}
     loc[0] = 2;
-    BOOST_TEST(tsr[loc] == 13.2 * pdf(2.0, 0));  // loc is {2, 0}
+    BOOST_TEST(psv.tensor[loc] == 13.2 * pdf(2.0, 0));  // loc is {2, 0}
     delete[] loc;
 }
 
@@ -386,25 +386,25 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
 //     shape[1] = 1;
-//     Tensor tsr1(order, shape);
-//     Tensor tsr2(order, shape);
+//     PeptideStateVector psv1(order, shape);
+//     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
 //     int* loc = new int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
-//     tsr1[loc] = 13.0;  // loc is {0, 0}
+//     psv1.tensor[loc] = 13.0;  // loc is {0, 0}
 //     loc[0] = 1;
-//     tsr1[loc] = 13.1;  // loc is {1, 0}
+//     psv1.tensor[loc] = 13.1;  // loc is {1, 0}
 //     loc[0] = 2;
-//     tsr1[loc] = 13.2;  // loc is {2, 0}
+//     psv1.tensor[loc] = 13.2;  // loc is {2, 0}
 //     int edmans = 2;
-//     e.forward(tsr1, &edmans, &tsr2);
+//     e.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
-//     BOOST_TEST(tsr2[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
+//     BOOST_TEST(psv2.tensor[loc] == 13.0 * pdf(2.0, 0));  // loc is {0, 0}
 //     loc[0] = 1;
-//     BOOST_TEST(tsr2[loc] == 13.1 * pdf(2.0, 0));  // loc is {1, 0}
+//     BOOST_TEST(psv2.tensor[loc] == 13.1 * pdf(2.0, 0));  // loc is {1, 0}
 //     loc[0] = 2;
-//     BOOST_TEST(tsr2[loc] == 13.2 * pdf(2.0, 0));  // loc is {2, 0}
+//     BOOST_TEST(psv2.tensor[loc] == 13.2 * pdf(2.0, 0));  // loc is {2, 0}
 //     delete[] loc;
 // }
 
@@ -427,18 +427,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     shape[1] = 1;
     shape[2] = 1;
     shape[3] = 1;
-    Tensor tsr(order, shape);
+    PeptideStateVector psv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
     loc[3] = 0;
-    tsr[loc] = 13.0;  // loc is {0, 0, 0, 0}
+    psv.tensor[loc] = 13.0;  // loc is {0, 0, 0, 0}
     int edmans = 0;
-    e.forward(&edmans, &tsr);
+    e.forward(&edmans, &psv);
     // loc is {0, 0, 0, 0}
-    BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
+    BOOST_TEST(psv.tensor[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
     delete[] loc;
 }
 
@@ -462,19 +462,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
 //     shape[1] = 1;
 //     shape[2] = 1;
 //     shape[3] = 1;
-//     Tensor tsr1(order, shape);
-//     Tensor tsr2(order, shape);
+//     PeptideStateVector psv1(order, shape);
+//     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
 //     int* loc = new int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
 //     loc[3] = 0;
-//     tsr1[loc] = 13.0;  // loc is {0, 0, 0, 0}
+//     psv1.tensor[loc] = 13.0;  // loc is {0, 0, 0, 0}
 //     int edmans = 0;
-//     e.forward(tsr1, &edmans, &tsr2);
+//     e.forward(tsr1, &edmans, &psv2);
 //     // loc is {0, 0, 0, 0}
-//     BOOST_TEST(tsr2[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
+//     BOOST_TEST(psv2.tensor[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
 //     delete[] loc;
 // }
 
@@ -494,25 +494,25 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
     int* shape = new int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
-    Tensor tsr(order, shape);
+    PeptideStateVector psv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    tsr[loc] = 13.0;  // loc is {0, 0}
+    psv.tensor[loc] = 13.0;  // loc is {0, 0}
     loc[1] = 1;
-    tsr[loc] = 13.1;  // loc is {0, 1}
+    psv.tensor[loc] = 13.1;  // loc is {0, 1}
     loc[1] = 2;
-    tsr[loc] = 13.2;  // loc is {0, 2}
+    psv.tensor[loc] = 13.2;  // loc is {0, 2}
     int edmans = 0;
-    e.forward(&edmans, &tsr);
+    e.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(tsr[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(tsr[loc] == 13.1 * pdf(0.0, 1));  // loc is {0, 1}
+    BOOST_TEST(psv.tensor[loc] == 13.1 * pdf(0.0, 1));  // loc is {0, 1}
     loc[1] = 2;
-    BOOST_TEST(tsr[loc] == 13.2 * pdf(0.0, 2));  // loc is {0, 2}
+    BOOST_TEST(psv.tensor[loc] == 13.2 * pdf(0.0, 2));  // loc is {0, 2}
     delete[] loc;
 }
 
@@ -532,26 +532,26 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
 //     int* shape = new int[order];
 //     shape[0] = num_timesteps;
 //     shape[1] = max_num_dyes + 1;
-//     Tensor tsr1(order, shape);
-//     Tensor tsr2(order, shape);
+//     PeptideStateVector psv1(order, shape);
+//     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
 //     int* loc = new int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
-//     tsr1[loc] = 13.0;  // loc is {0, 0}
+//     psv1.tensor[loc] = 13.0;  // loc is {0, 0}
 //     loc[1] = 1;
-//     tsr1[loc] = 13.1;  // loc is {0, 1}
+//     psv1.tensor[loc] = 13.1;  // loc is {0, 1}
 //     loc[1] = 2;
-//     tsr1[loc] = 13.2;  // loc is {0, 2}
+//     psv1.tensor[loc] = 13.2;  // loc is {0, 2}
 //     int edmans = 0;
-//     e.forward(tsr1, &edmans, &tsr2);
+//     e.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
-//     BOOST_TEST(tsr2[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
+//     BOOST_TEST(psv2.tensor[loc] == 13.0 * pdf(0.0, 0));  // loc is {0, 0}
 //     loc[1] = 1;
-//     BOOST_TEST(tsr2[loc] == 13.1 * pdf(0.0, 1));  // loc is {0, 1}
+//     BOOST_TEST(psv2.tensor[loc] == 13.1 * pdf(0.0, 1));  // loc is {0, 1}
 //     loc[1] = 2;
-//     BOOST_TEST(tsr2[loc] == 13.2 * pdf(0.0, 2));  // loc is {0, 2}
+//     BOOST_TEST(psv2.tensor[loc] == 13.2 * pdf(0.0, 2));  // loc is {0, 2}
 //     delete[] loc;
 // }
 
@@ -575,63 +575,63 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     shape[0] = num_timesteps;
     shape[1] = 2;
     shape[2] = 2;
-    Tensor tsr(order, shape);
+    PeptideStateVector psv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    tsr[loc] = 7.000;  // loc is {0, 0, 0}
+    psv.tensor[loc] = 7.000;  // loc is {0, 0, 0}
     loc[2] = 1;
-    tsr[loc] = 7.001;  // loc is {0, 0, 1}
+    psv.tensor[loc] = 7.001;  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    tsr[loc] = 7.010;  // loc is {0, 1, 0}
+    psv.tensor[loc] = 7.010;  // loc is {0, 1, 0}
     loc[2] = 1;
-    tsr[loc] = 7.011;  // loc is {0, 1, 1}
+    psv.tensor[loc] = 7.011;  // loc is {0, 1, 1}
     loc[0] = 1;
     loc[1] = 0;
     loc[2] = 0;
-    tsr[loc] = 7.100;  // loc is {1, 0, 0}
+    psv.tensor[loc] = 7.100;  // loc is {1, 0, 0}
     loc[2] = 1;
-    tsr[loc] = 7.101;  // loc is {1, 0, 1}
+    psv.tensor[loc] = 7.101;  // loc is {1, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    tsr[loc] = 7.110;  // loc is {1, 1, 0}
+    psv.tensor[loc] = 7.110;  // loc is {1, 1, 0}
     loc[2] = 1;
-    tsr[loc] = 7.111;  // loc is {1, 1, 1}
+    psv.tensor[loc] = 7.111;  // loc is {1, 1, 1}
     int edmans = 1;
-    e.forward(&edmans, &tsr);
+    e.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
     // loc is {0, 0, 0}
-    BOOST_TEST(tsr[loc] == 7.000 * pdf(1.0, 0) * pdf(1.1, 0));
+    BOOST_TEST(psv.tensor[loc] == 7.000 * pdf(1.0, 0) * pdf(1.1, 0));
     loc[2] = 1;
     // loc is {0, 0, 1}
-    BOOST_TEST(tsr[loc] == 7.001 * pdf(1.0, 0) * pdf(1.1, 1));
+    BOOST_TEST(psv.tensor[loc] == 7.001 * pdf(1.0, 0) * pdf(1.1, 1));
     loc[1] = 1;
     loc[2] = 0;
     // loc is {0, 1, 0}
-    BOOST_TEST(tsr[loc] == 7.010 * pdf(1.0, 1) * pdf(1.1, 0));
+    BOOST_TEST(psv.tensor[loc] == 7.010 * pdf(1.0, 1) * pdf(1.1, 0));
     loc[2] = 1;
     // loc is {0, 1, 1}
-    BOOST_TEST(tsr[loc] == 7.011 * pdf(1.0, 1) * pdf(1.1, 1));
+    BOOST_TEST(psv.tensor[loc] == 7.011 * pdf(1.0, 1) * pdf(1.1, 1));
     loc[0] = 1;
     loc[1] = 0;
     loc[2] = 0;
     // loc is {1, 0, 0}
-    BOOST_TEST(tsr[loc] == 7.100 * pdf(1.0, 0) * pdf(1.1, 0));
+    BOOST_TEST(psv.tensor[loc] == 7.100 * pdf(1.0, 0) * pdf(1.1, 0));
     loc[2] = 1;
     // loc is {1, 0, 1}
-    BOOST_TEST(tsr[loc] == 7.101 * pdf(1.0, 0) * pdf(1.1, 1));
+    BOOST_TEST(psv.tensor[loc] == 7.101 * pdf(1.0, 0) * pdf(1.1, 1));
     loc[1] = 1;
     loc[2] = 0;
     // loc is {1, 1, 0}
-    BOOST_TEST(tsr[loc] == 7.110 * pdf(1.0, 1) * pdf(1.1, 0));
+    BOOST_TEST(psv.tensor[loc] == 7.110 * pdf(1.0, 1) * pdf(1.1, 0));
     loc[2] = 1;
     // loc is {1, 1, 1}
-    BOOST_TEST(tsr[loc] == 7.111 * pdf(1.0, 1) * pdf(1.1, 1));
+    BOOST_TEST(psv.tensor[loc] == 7.111 * pdf(1.0, 1) * pdf(1.1, 1));
     delete[] loc;
 }
 
@@ -655,64 +655,64 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
 //     shape[0] = num_timesteps;
 //     shape[1] = 2;
 //     shape[2] = 2;
-//     Tensor tsr1(order, shape);
-//     Tensor tsr2(order, shape);
+//     PeptideStateVector psv1(order, shape);
+//     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
 //     int* loc = new int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
-//     tsr1[loc] = 7.000;  // loc is {0, 0, 0}
+//     psv1.tensor[loc] = 7.000;  // loc is {0, 0, 0}
 //     loc[2] = 1;
-//     tsr1[loc] = 7.001;  // loc is {0, 0, 1}
+//     psv1.tensor[loc] = 7.001;  // loc is {0, 0, 1}
 //     loc[1] = 1;
 //     loc[2] = 0;
-//     tsr1[loc] = 7.010;  // loc is {0, 1, 0}
+//     psv1.tensor[loc] = 7.010;  // loc is {0, 1, 0}
 //     loc[2] = 1;
-//     tsr1[loc] = 7.011;  // loc is {0, 1, 1}
+//     psv1.tensor[loc] = 7.011;  // loc is {0, 1, 1}
 //     loc[0] = 1;
 //     loc[1] = 0;
 //     loc[2] = 0;
-//     tsr1[loc] = 7.100;  // loc is {1, 0, 0}
+//     psv1.tensor[loc] = 7.100;  // loc is {1, 0, 0}
 //     loc[2] = 1;
-//     tsr1[loc] = 7.101;  // loc is {1, 0, 1}
+//     psv1.tensor[loc] = 7.101;  // loc is {1, 0, 1}
 //     loc[1] = 1;
 //     loc[2] = 0;
-//     tsr1[loc] = 7.110;  // loc is {1, 1, 0}
+//     psv1.tensor[loc] = 7.110;  // loc is {1, 1, 0}
 //     loc[2] = 1;
-//     tsr1[loc] = 7.111;  // loc is {1, 1, 1}
+//     psv1.tensor[loc] = 7.111;  // loc is {1, 1, 1}
 //     int edmans = 1;
-//     e.forward(tsr1, &edmans, &tsr2);
+//     e.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
 //     // loc is {0, 0, 0}
-//     BOOST_TEST(tsr2[loc] == 7.000 * pdf(1.0, 0) * pdf(1.1, 0));
+//     BOOST_TEST(psv2.tensor[loc] == 7.000 * pdf(1.0, 0) * pdf(1.1, 0));
 //     loc[2] = 1;
 //     // loc is {0, 0, 1}
-//     BOOST_TEST(tsr2[loc] == 7.001 * pdf(1.0, 0) * pdf(1.1, 1));
+//     BOOST_TEST(psv2.tensor[loc] == 7.001 * pdf(1.0, 0) * pdf(1.1, 1));
 //     loc[1] = 1;
 //     loc[2] = 0;
 //     // loc is {0, 1, 0}
-//     BOOST_TEST(tsr2[loc] == 7.010 * pdf(1.0, 1) * pdf(1.1, 0));
+//     BOOST_TEST(psv2.tensor[loc] == 7.010 * pdf(1.0, 1) * pdf(1.1, 0));
 //     loc[2] = 1;
 //     // loc is {0, 1, 1}
-//     BOOST_TEST(tsr2[loc] == 7.011 * pdf(1.0, 1) * pdf(1.1, 1));
+//     BOOST_TEST(psv2.tensor[loc] == 7.011 * pdf(1.0, 1) * pdf(1.1, 1));
 //     loc[0] = 1;
 //     loc[1] = 0;
 //     loc[2] = 0;
 //     // loc is {1, 0, 0}
-//     BOOST_TEST(tsr2[loc] == 7.100 * pdf(1.0, 0) * pdf(1.1, 0));
+//     BOOST_TEST(psv2.tensor[loc] == 7.100 * pdf(1.0, 0) * pdf(1.1, 0));
 //     loc[2] = 1;
 //     // loc is {1, 0, 1}
-//     BOOST_TEST(tsr2[loc] == 7.101 * pdf(1.0, 0) * pdf(1.1, 1));
+//     BOOST_TEST(psv2.tensor[loc] == 7.101 * pdf(1.0, 0) * pdf(1.1, 1));
 //     loc[1] = 1;
 //     loc[2] = 0;
 //     // loc is {1, 1, 0}
-//     BOOST_TEST(tsr2[loc] == 7.110 * pdf(1.0, 1) * pdf(1.1, 0));
+//     BOOST_TEST(psv2.tensor[loc] == 7.110 * pdf(1.0, 1) * pdf(1.1, 0));
 //     loc[2] = 1;
 //     // loc is {1, 1, 1}
-//     BOOST_TEST(tsr2[loc] == 7.111 * pdf(1.0, 1) * pdf(1.1, 1));
+//     BOOST_TEST(psv2.tensor[loc] == 7.111 * pdf(1.0, 1) * pdf(1.1, 1));
 //     delete[] loc;
 // }
 
@@ -731,33 +731,33 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     int* shape = new int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
-    Tensor ftsr(order, shape);
-    Tensor btsr(order, shape);
-    Tensor nbtsr(order, shape);
+    PeptideStateVector fpsv(order, shape);
+    PeptideStateVector bpsv(order, shape);
+    PeptideStateVector nbpsv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    ftsr[loc] = 1.72;  // loc is {0, 0}
-    btsr[loc] = 2.72;
-    nbtsr[loc] = 3.72;
+    fpsv.tensor[loc] = 1.72;  // loc is {0, 0}
+    bpsv.tensor[loc] = 2.72;
+    nbpsv.tensor[loc] = 3.72;
     loc[1] = 1;
-    ftsr[loc] = 1.36;  // loc is {0, 1}
-    btsr[loc] = 2.36;
-    nbtsr[loc] = 3.36;
+    fpsv.tensor[loc] = 1.36;  // loc is {0, 1}
+    bpsv.tensor[loc] = 2.36;
+    nbpsv.tensor[loc] = 3.36;
     loc[1] = 2;
-    ftsr[loc] = 1.18;  // loc is {0, 2}
-    btsr[loc] = 2.18;
-    nbtsr[loc] = 3.18;
+    fpsv.tensor[loc] = 1.18;  // loc is {0, 2}
+    bpsv.tensor[loc] = 2.18;
+    nbpsv.tensor[loc] = 3.18;
     delete[] loc;
     int edmans = 0;
     double probability = 3.14159;
-    ErrorModelFitter emf(DistributionType::LOGNORMAL);
-    DistributionFitter* original_dist_fit = emf.distribution_fit;
-    Mock<DistributionFitter> df_mock;
+    ErrorModelFitter emf;
+    LogNormalDistributionFitter* original_dist_fit = emf.distribution_fit;
+    Mock<LogNormalDistributionFitter> df_mock;
     Fake(Method(df_mock, add_sample));
     emf.distribution_fit = &df_mock.get();
-    e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    e.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
     Verify(Method(df_mock, add_sample)
                    .Using(Close(1.009, TOL),
                           0,
@@ -794,39 +794,39 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     shape[2] = max_num_dyes + 1;
-    Tensor ftsr(order, shape);
-    Tensor btsr(order, shape);
-    Tensor nbtsr(order, shape);
+    PeptideStateVector fpsv(order, shape);
+    PeptideStateVector bpsv(order, shape);
+    PeptideStateVector nbpsv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    ftsr[loc] = 1.72;  // loc is {0, 0, 0}
-    btsr[loc] = 2.72;
-    nbtsr[loc] = 3.72;
+    fpsv.tensor[loc] = 1.72;  // loc is {0, 0, 0}
+    bpsv.tensor[loc] = 2.72;
+    nbpsv.tensor[loc] = 3.72;
     loc[2] = 1;
-    ftsr[loc] = 1.64;  // loc is {0, 0, 1}
-    btsr[loc] = 2.64;
-    nbtsr[loc] = 3.64;
+    fpsv.tensor[loc] = 1.64;  // loc is {0, 0, 1}
+    bpsv.tensor[loc] = 2.64;
+    nbpsv.tensor[loc] = 3.64;
     loc[1] = 1;
     loc[2] = 0;
-    ftsr[loc] = 1.36;  // loc is {0, 1, 0}
-    btsr[loc] = 2.36;
-    nbtsr[loc] = 3.36;
+    fpsv.tensor[loc] = 1.36;  // loc is {0, 1, 0}
+    bpsv.tensor[loc] = 2.36;
+    nbpsv.tensor[loc] = 3.36;
     loc[2] = 1;
-    ftsr[loc] = 1.25;  // loc is {0, 1, 1}
-    btsr[loc] = 2.25;
-    nbtsr[loc] = 3.25;
+    fpsv.tensor[loc] = 1.25;  // loc is {0, 1, 1}
+    bpsv.tensor[loc] = 2.25;
+    nbpsv.tensor[loc] = 3.25;
     delete[] loc;
     int edmans = 0;
     double probability = 3.14159;
-    ErrorModelFitter emf(DistributionType::LOGNORMAL);
-    DistributionFitter* original_dist_fit = emf.distribution_fit;
-    Mock<DistributionFitter> df_mock;
+    ErrorModelFitter emf;
+    LogNormalDistributionFitter* original_dist_fit = emf.distribution_fit;
+    Mock<LogNormalDistributionFitter> df_mock;
     Fake(Method(df_mock, add_sample));
     emf.distribution_fit = &df_mock.get();
-    e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    e.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
     Verify(Method(df_mock, add_sample)
                    .Using(Close(1.009, TOL),
                           0,
@@ -887,38 +887,38 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     int* shape = new int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
-    Tensor ftsr(order, shape);
-    Tensor btsr(order, shape);
-    Tensor nbtsr(order, shape);
+    PeptideStateVector fpsv(order, shape);
+    PeptideStateVector bpsv(order, shape);
+    PeptideStateVector nbpsv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    ftsr[loc] = 1.72;  // loc is {0, 0}
-    btsr[loc] = 2.72;
-    nbtsr[loc] = 3.72;
+    fpsv.tensor[loc] = 1.72;  // loc is {0, 0}
+    bpsv.tensor[loc] = 2.72;
+    nbpsv.tensor[loc] = 3.72;
     loc[1] = 1;
-    ftsr[loc] = 1.36;  // loc is {0, 1}
-    btsr[loc] = 2.36;
-    nbtsr[loc] = 3.36;
+    fpsv.tensor[loc] = 1.36;  // loc is {0, 1}
+    bpsv.tensor[loc] = 2.36;
+    nbpsv.tensor[loc] = 3.36;
     loc[0] = 1;
     loc[1] = 0;
-    ftsr[loc] = 1.64;  // loc is {1, 0}
-    btsr[loc] = 2.64;
-    nbtsr[loc] = 3.64;
+    fpsv.tensor[loc] = 1.64;  // loc is {1, 0}
+    bpsv.tensor[loc] = 2.64;
+    nbpsv.tensor[loc] = 3.64;
     loc[1] = 1;
-    ftsr[loc] = 1.25;  // loc is {1, 1}
-    btsr[loc] = 2.25;
-    nbtsr[loc] = 3.25;
+    fpsv.tensor[loc] = 1.25;  // loc is {1, 1}
+    bpsv.tensor[loc] = 2.25;
+    nbpsv.tensor[loc] = 3.25;
     delete[] loc;
     int edmans = 1;
     double probability = 3.14159;
-    ErrorModelFitter emf(DistributionType::LOGNORMAL);
-    DistributionFitter* original_dist_fit = emf.distribution_fit;
-    Mock<DistributionFitter> df_mock;
+    ErrorModelFitter emf;
+    LogNormalDistributionFitter* original_dist_fit = emf.distribution_fit;
+    Mock<LogNormalDistributionFitter> df_mock;
     Fake(Method(df_mock, add_sample));
     emf.distribution_fit = &df_mock.get();
-    e.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    e.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
     Verify(Method(df_mock, add_sample)
                    .Using(Close(1.109, TOL),
                           0,

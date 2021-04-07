@@ -45,25 +45,25 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     int* shape = new int[order];
     shape[0] = 1;
     shape[1] = 2;
-    Tensor ftsr(order, shape);
-    Tensor btsr(order, shape);
-    Tensor nbtsr(order, shape);
+    PeptideStateVector fpsv(order, shape);
+    PeptideStateVector bpsv(order, shape);
+    PeptideStateVector nbpsv(order, shape);
     delete[] shape;
     int* loc = new int[order];
     loc[0] = 0;
     loc[1] = 0;
-    ftsr[loc] = 0.31;  // loc is {0, 0}
-    btsr[loc] = 0.32;
-    nbtsr[loc] = 0.33;
+    fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
+    bpsv.tensor[loc] = 0.32;
+    nbpsv.tensor[loc] = 0.33;
     loc[1] = 1;
-    ftsr[loc] = 0.71;  // loc is {0, 1}
-    btsr[loc] = 0.72;
-    nbtsr[loc] = 0.73;
+    fpsv.tensor[loc] = 0.71;  // loc is {0, 1}
+    bpsv.tensor[loc] = 0.72;
+    nbpsv.tensor[loc] = 0.73;
     delete[] loc;
     int edmans = 0;
     double probability = 1.0;
-    ErrorModelFitter emf(DistributionType::LOGNORMAL);
-    dt.improve_fit(ftsr, btsr, nbtsr, edmans, probability, &emf);
+    ErrorModelFitter emf;
+    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
     BOOST_TEST(emf.p_dud_fit.get() == (0.71 * q * 0.33) / (0.71 * 0.72));
 }
 
