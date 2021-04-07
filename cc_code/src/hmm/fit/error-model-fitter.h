@@ -18,6 +18,8 @@ namespace whatprot {
 class ErrorModelFitter {
 public:
     ErrorModelFitter();
+    ErrorModelFitter(const ErrorModelFitter& other);
+    ErrorModelFitter(ErrorModelFitter&& other);
     ~ErrorModelFitter();
     ErrorModel error_model() const;
     ErrorModelFitter operator+(const ErrorModelFitter& other) const;

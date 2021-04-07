@@ -71,8 +71,8 @@ void StuckDyeEmission::backward(const StuckDyeStateVector& input,
         }
         product *= prob((*num_edmans), c, 0);
     }
-    output->dye *= input.dye * product * prob((*num_edmans), channel, 1);
-    output->no_dye *= input.no_dye * product * prob((*num_edmans), channel, 0);
+    output->dye = input.dye * product * prob((*num_edmans), channel, 1);
+    output->no_dye = input.no_dye * product * prob((*num_edmans), channel, 0);
 }
 
 void StuckDyeEmission::improve_fit(
@@ -83,9 +83,9 @@ void StuckDyeEmission::improve_fit(
         double probability,
         ErrorModelFitter* fitter) const {
     double intensity = radiometry(num_edmans, channel);
-    double p_no_dye = forward_sdsv.no_dye * backward_sdsv.no_dye;
+    double p_no_dye = forward_sdsv.no_dye * backward_sdsv.no_dye / probability;
     fitter->distribution_fit->add_sample(intensity, 0, p_no_dye);
-    double p_dye = forward_sdsv.dye * backward_sdsv.dye;
+    double p_dye = forward_sdsv.dye * backward_sdsv.dye / probability;
     fitter->distribution_fit->add_sample(intensity, 1, p_dye);
     double p_total = p_no_dye + p_dye;
     for (int c = 0; c < num_channels; c++) {

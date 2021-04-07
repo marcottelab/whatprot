@@ -9,10 +9,17 @@
 // Defining symbols from header:
 #include "error-model-fitter.h"
 
+// Standard C++ library headers:
+#include <utility>
+
 // Local project headers:
 #include "common/error-model.h"
 #include "hmm/fit/log-normal-distribution-fitter.h"
 #include "hmm/fit/normal-distribution-fitter.h"
+
+namespace {
+using std::move;
+}  // namespace
 
 namespace whatprot {
 
@@ -20,8 +27,31 @@ ErrorModelFitter::ErrorModelFitter() {
     distribution_fit = new LogNormalDistributionFitter();
 }
 
+ErrorModelFitter::ErrorModelFitter(const ErrorModelFitter& other) {
+    p_edman_failure_fit = other.p_edman_failure_fit;
+    p_detach_fit = other.p_detach_fit;
+    p_bleach_fit = other.p_bleach_fit;
+    p_dud_fit = other.p_dud_fit;
+    distribution_fit = new LogNormalDistributionFitter(*other.distribution_fit);
+    stuck_dye_ratio_fit = other.stuck_dye_ratio_fit;
+    p_stuck_dye_loss_fit = other.p_stuck_dye_loss_fit;
+}
+
+ErrorModelFitter::ErrorModelFitter(ErrorModelFitter&& other) {
+    p_edman_failure_fit = move(other.p_edman_failure_fit);
+    p_detach_fit = move(other.p_detach_fit);
+    p_bleach_fit = move(other.p_bleach_fit);
+    p_dud_fit = move(other.p_dud_fit);
+    distribution_fit = other.distribution_fit;
+    other.distribution_fit = NULL;
+    stuck_dye_ratio_fit = move(other.stuck_dye_ratio_fit);
+    p_stuck_dye_loss_fit = move(other.p_stuck_dye_loss_fit);
+}
+
 ErrorModelFitter::~ErrorModelFitter() {
-    delete distribution_fit;
+    if (distribution_fit != NULL) {
+        delete distribution_fit;
+    }
 }
 
 ErrorModel ErrorModelFitter::error_model() const {
