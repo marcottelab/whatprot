@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     loc[1] = 0;
     psv.tensor[loc] = 1.0;  // loc is {0, 0}
     loc[0] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     int edmans = 0;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 1.0;  // loc is {0, 0}
 //     loc[0] = 1;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 1);
@@ -126,9 +126,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.7;  // loc is {0, 1}
     loc[0] = 1;
     loc[1] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
     int edmans = 0;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -168,9 +168,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
 //     psv1.tensor[loc] = 0.7;  // loc is {0, 1}
 //     loc[0] = 1;
 //     loc[1] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
 //     int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 1);
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
     loc[0] = 2;
     psv.tensor[loc] = 0.5;  // loc is {2, 0}
     loc[0] = 3;
-    psv.tensor[loc] = -1000.0;  // loc is {3, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {3, 0} -- to be ignored.
     int edmans = 2;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 3);
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
 //     loc[0] = 2;
 //     psv1.tensor[loc] = 0.5;  // loc is {2, 0}
 //     loc[0] = 3;
-//     psv1.tensor[loc] = -1000.0;  // loc is {3, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {3, 0} -- to be ignored.
 //     int edmans = 2;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 3);
@@ -258,11 +258,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.2 * p_fail);  // loc is {0, 0}
 //     loc[0] = 1;
-//     BOOST_TEST(psv2.tensor[loc] == 0.2 * p_pop + 0.3 * p_fail);  // loc is {1, 0}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.2 * p_pop + 0.3 * p_fail);  // loc is {1, 0}
 //     loc[0] = 2;
-//     BOOST_TEST(psv2.tensor[loc] == 0.3 * p_pop + 0.5 * p_fail);  // loc is {2, 0}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.3 * p_pop + 0.5 * p_fail);  // loc is {2, 0}
 //     loc[0] = 3;
-//     BOOST_TEST(psv2.tensor[loc] == 0.5 * p_pop);  // loc is {3, 0}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.5 * p_pop);  // loc is {3, 0}
 //     delete[] loc;
 // }
 
@@ -297,14 +300,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
     loc[0] = 1;
     loc[1] = 0;
     loc[2] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0, 0} -- to be ignored.
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0, 1} -- to be ignored.
     loc[1] = 1;
     loc[2] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- to be ignored.
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- to be ignored.
     int edmans = 0;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -365,17 +368,31 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
 //     loc[0] = 1;
 //     loc[1] = 0;
 //     loc[2] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0, 0} -- this value should be
-//     ignored. loc[2] = 1; psv1.tensor[loc] = -1000.0;  // loc is {1, 0, 1} -- this
-//     value should be ignored. loc[1] = 1; loc[2] = 0; psv1.tensor[loc] = -1000.0;  //
-//     loc is {1, 1, 0} -- this value should be ignored. loc[2] = 1; psv1.tensor[loc] =
-//     -1000.0;  // loc is {1, 1, 1} -- this value should be ignored. int edmans
-//     = 0; et.forward(tsr1, &edmans, &psv2); BOOST_TEST(edmans == 1); loc[0] =
-//     0; loc[1] = 0; loc[2] = 0; BOOST_TEST(psv2.tensor[loc] == 0.1 * p_fail);  // loc
-//     is {0, 0, 0} loc[2] = 1; BOOST_TEST(psv2.tensor[loc] == 0.2 * p_fail);  // loc
-//     is {0, 0, 1} loc[1] = 1; loc[2] = 0; BOOST_TEST(psv2.tensor[loc] == 0.3 *
-//     p_fail);  // loc is {0, 1, 0} loc[2] = 1; BOOST_TEST(psv2.tensor[loc] == 0.4 *
-//     p_fail);  // loc is {0, 1, 1} loc[0] = 1; loc[1] = 0; loc[2] = 0;
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0, 0} -- ignore this
+//     loc[2] = 1;
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0, 1} -- ignore this
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- to be ignored.
+//     loc[2] = 1;
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- to be ignored.
+//     int edmans = 0;
+//     et.forward(tsr1, &edmans, &psv2);
+//     BOOST_TEST(edmans == 1);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     BOOST_TEST(psv2.tensor[loc] == 0.1 * p_fail);  // loc is {0, 0, 0}
+//     loc[2] = 1;
+//     BOOST_TEST(psv2.tensor[loc] == 0.2 * p_fail);  // loc is {0, 0, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     BOOST_TEST(psv2.tensor[loc] == 0.3 * p_fail);  // loc is {0, 1, 0}
+//     loc[2] = 1;
+//     BOOST_TEST(psv2.tensor[loc] == 0.4 * p_fail);  // loc is {0, 1, 1}
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     loc[2] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.1 * p_pop);  // loc is {1, 0, 0}
 //     loc[2] = 1;
 //     BOOST_TEST(psv2.tensor[loc] == 0.2 * p_pop);  // loc is {1, 0, 1}
@@ -410,9 +427,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
     psv.tensor[loc] = 0.7;  // loc is {0, 1}
     loc[0] = 1;
     loc[1] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
     int edmans = 0;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -453,9 +470,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
 //     psv1.tensor[loc] = 0.7;  // loc is {0, 1}
 //     loc[0] = 1;
 //     loc[1] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
 //     int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 1);
@@ -495,9 +512,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
     psv.tensor[loc] = 0.7;  // loc is {0, 1}
     loc[0] = 1;
     loc[1] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
     int edmans = 0;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -538,9 +555,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
 //     psv1.tensor[loc] = 0.7;  // loc is {0, 1}
 //     loc[0] = 1;
 //     loc[1] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
 //     int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 1);
@@ -586,14 +603,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
     loc[1] = 1;
     psv.tensor[loc] = 0.5;  // loc is {1, 1}
     loc[1] = 2;
-    psv.tensor[loc] = 0.0;  // loc is {1, 2} -- one edman incompatible with 2 dyes.
+    psv.tensor[loc] = 0.0;  // loc is {1, 2} -- 1 edman can't have 2 dyes.
     loc[0] = 2;
     loc[1] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 0} -- to be ignored.
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
     loc[1] = 2;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
     int edmans = 1;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 2);
@@ -653,14 +670,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
 //     loc[1] = 1;
 //     psv1.tensor[loc] = 0.5;  // loc is {1, 1}
 //     loc[1] = 2;
-//     psv1.tensor[loc] = 0.0;  // loc is {1, 2} -- one edman incompatible with 2 dyes.
+//     psv1.tensor[loc] = 0.0;  // loc is {1, 2} -- 1 edman can't have 2 dyes.
 //     loc[0] = 2;
 //     loc[1] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {2, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 0} -- to be ignored.
 //     loc[1] = 1;
-//     psv1.tensor[loc] = -1000.0;  // loc is {2, 1} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
 //     loc[1] = 2;
-//     psv1.tensor[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
 //     int edmans = 1;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 2);
@@ -717,13 +734,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
     psv.tensor[loc] = 0.4;  // loc is {0, 3}
     loc[0] = 1;
     loc[1] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
     loc[1] = 2;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 2} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 2} -- to be ignored.
     loc[1] = 3;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
     int edmans = 0;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -777,13 +794,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
 //     psv1.tensor[loc] = 0.4;  // loc is {0, 3}
 //     loc[0] = 1;
 //     loc[1] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
 //     loc[1] = 2;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 2} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 2} -- to be ignored.
 //     loc[1] = 3;
-//     psv1.tensor[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
+//     psv1.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
 //     int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(edmans == 1);
@@ -798,12 +815,15 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
 //     BOOST_TEST(psv2.tensor[loc] == 0.4 * p_fail);  // loc is {0, 3}
 //     loc[0] = 1;
 //     loc[1] = 0;
-//     BOOST_TEST(psv2.tensor[loc] == (0.1 + 0.2 / 3.0) * p_pop);  // loc is {1, 0}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == (0.1 + 0.2 / 3.0) * p_pop);  // loc is {1, 0}
 //     loc[1] = 1;
 //     // loc is {1, 1}
-//     BOOST_TEST(psv2.tensor[loc] == (0.2 * 2.0 / 3.0 + 0.3 * 2.0 / 3.0) * p_pop);
+//     BOOST_TEST(psv2.tensor[loc]
+//                == (0.2 * 2.0 / 3.0 + 0.3 * 2.0 / 3.0) * p_pop);
 //     loc[1] = 2;
-//     BOOST_TEST(psv2.tensor[loc] == (0.3 / 3.0 + 0.4) * p_pop);  // loc is {1, 2}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == (0.3 / 3.0 + 0.4) * p_pop);  // loc is {1, 2}
 //     loc[1] = 3;
 //     BOOST_TEST(psv2.tensor[loc] == 0.0);  // loc is {1, 3}
 //     delete[] loc;
@@ -851,14 +871,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
     loc[0] = 2;
     loc[1] = 0;
     loc[2] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 0, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 0, 0} -- to be ignored.
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- to be ignored.
     loc[1] = 1;
     loc[2] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored.
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
     int edmans = 1;
     et.forward(&edmans, &psv);
     BOOST_TEST(edmans == 2);
@@ -943,18 +963,31 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
 //     loc[0] = 2;
 //     loc[1] = 0;
 //     loc[2] = 0;
-//     psv1.tensor[loc] = -1000.0;  // loc is {2, 0, 0} -- this value should be
-//     ignored. loc[2] = 1; psv1.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- this
-//     value should be ignored. loc[1] = 1; loc[2] = 0; psv1.tensor[loc] = -1000.0;  //
-//     loc is {2, 1, 0} -- this value should be ignored. loc[2] = 1; psv1.tensor[loc] =
-//     -1000.0;  // loc is {2, 1, 1} -- this value should be ignored. int edmans
-//     = 1; et.forward(tsr1, &edmans, &psv2); BOOST_TEST(edmans == 2); loc[0] =
-//     0; loc[1] = 0; loc[2] = 0; BOOST_TEST(psv2.tensor[loc] == 0.1 * p_fail);  // loc
-//     is {0, 0, 0} loc[2] = 1; BOOST_TEST(psv2.tensor[loc] == 0.2 * p_fail);  // loc
-//     is {0, 0, 1} loc[1] = 1; loc[2] = 0; BOOST_TEST(psv2.tensor[loc] == 0.3 *
-//     p_fail);  // loc is {0, 1, 0} loc[2] = 1; BOOST_TEST(psv2.tensor[loc] == 0.4 *
-//     p_fail);  // loc is {0, 1, 1} loc[0] = 1; loc[1] = 0; loc[2] = 0;
-//     // loc is {1, 0, 0}
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 0, 0} -- to be ignored
+//     loc[2] = 1;
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- to be ignored
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored
+//     loc[2] = 1;
+//     psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
+//     int edmans = 1;
+//     et.forward(tsr1, &edmans, &psv2);
+//     BOOST_TEST(edmans == 2);
+//     loc[0] = 0;
+//     loc[1] = 0;
+//     loc[2] = 0;
+//     BOOST_TEST(psv2.tensor[loc] == 0.1 * p_fail);  // loc is {0, 0, 0}
+//     loc[2] = 1;
+//     BOOST_TEST(psv2.tensor[loc] == 0.2 * p_fail);  // loc is {0, 0, 1}
+//     loc[1] = 1;
+//     loc[2] = 0;
+//     BOOST_TEST(psv2.tensor[loc] == 0.3 * p_fail);  // loc is {0, 1, 0}
+//     loc[2] = 1;
+//     BOOST_TEST(psv2.tensor[loc] == 0.4 * p_fail);  // loc is {0, 1, 1}
+//     loc[0] = 1;
+//     loc[1] = 0;
+//     loc[2] = 0;  // loc is {1, 0, 0}
 //     BOOST_TEST(psv2.tensor[loc] == (0.1 + 0.3) * p_pop + 0.5 * p_fail);
 //     loc[2] = 1;
 //     // loc is {1, 0, 1}
@@ -1034,7 +1067,8 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 0.7);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 0.7);  // loc is {0, 0}
     // We ignore the value at {1, 0}, it doesn't matter.
     delete[] loc;
 }
@@ -1069,9 +1103,11 @@ BOOST_AUTO_TEST_CASE(backward_in_place_basic_test, *tolerance(TOL)) {
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
     delete[] loc;
 }
@@ -1107,9 +1143,11 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_test, *tolerance(TOL)) {
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
     delete[] loc;
 }
@@ -1182,11 +1220,14 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_more_edmans_test, *tolerance(TOL)) {
     BOOST_TEST(edmans == 2);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.2 + p_pop * 0.3);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.2 + p_pop * 0.3);  // loc is {0, 0}
     loc[0] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 0.5);  // loc is {1, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 0.5);  // loc is {1, 0}
     loc[0] = 2;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.5 + p_pop * 0.7);  // loc is {2, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.5 + p_pop * 0.7);  // loc is {2, 0}
     // We ignore the value at {3, 0}, it doesn't matter.
     delete[] loc;
 }
@@ -1236,14 +1277,18 @@ BOOST_AUTO_TEST_CASE(backward_in_place_multiple_dye_colors_test,
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0, 0}
     loc[2] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.2 + p_pop * 1.22);  // loc is {0, 0, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.2 + p_pop * 1.22);  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 1, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 1, 0}
     loc[2] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.4 + p_pop * 1.44);  // loc is {0, 1, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.4 + p_pop * 1.44);  // loc is {0, 1, 1}
     // We ignore the values at {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, and {1, 1, 1}
     // they don't matter.
     delete[] loc;
@@ -1295,14 +1340,18 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_dye_colors_test,
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0, 0}
     loc[2] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.2 + p_pop * 1.22);  // loc is {0, 0, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.2 + p_pop * 1.22);  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 1, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 1, 0}
     loc[2] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.4 + p_pop * 1.44);  // loc is {0, 1, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.4 + p_pop * 1.44);  // loc is {0, 1, 1}
     // We ignore the values at {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, and {1, 1, 1}
     // they don't matter.
     delete[] loc;
@@ -1339,9 +1388,11 @@ BOOST_AUTO_TEST_CASE(backward_in_place_irrelevant_dye_seq_test,
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
     delete[] loc;
 }
@@ -1378,9 +1429,11 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_irrelevant_dye_seq_test,
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.7 + p_pop * 1.77);  // loc is {0, 1}
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
     delete[] loc;
 }
@@ -1410,15 +1463,17 @@ BOOST_AUTO_TEST_CASE(backward_in_place_one_dye_first_edman_test,
     loc[1] = 0;
     psv.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
     int edmans = 1;
     et.backward(psv, &edmans, &psv);
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.7 + p_pop * 1.33);  // loc is {0, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.7 + p_pop * 1.33);  // loc is {0, 1}
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
     delete[] loc;
 }
@@ -1449,15 +1504,17 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_one_dye_first_edman_test,
     loc[1] = 0;
     psv1.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
-    psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
     int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 1.33);  // loc is {0, 0}
     loc[1] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.7 + p_pop * 1.33);  // loc is {0, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.7 + p_pop * 1.33);  // loc is {0, 1}
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
     delete[] loc;
 }
@@ -1491,14 +1548,14 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dyes_second_edman_test,
     loc[1] = 1;
     psv.tensor[loc] = 0.5;  // loc is {1, 1}
     loc[1] = 2;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 2} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 2} -- to be ignored.
     loc[0] = 2;
     loc[1] = 0;
     psv.tensor[loc] = 0.6;  // loc is {2, 0}
     loc[1] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
     loc[1] = 2;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
     int edmans = 2;
     et.backward(psv, &edmans, &psv);
     BOOST_TEST(edmans == 1);
@@ -1507,7 +1564,8 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dyes_second_edman_test,
     BOOST_TEST(psv.tensor[loc] == p_fail * 0.1 + p_pop * 0.4);  // loc is {0, 0}
     loc[1] = 1;
     // loc is {0, 1}
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.2 + p_pop * (0.5 / 2.0 + 0.4 / 2.0));
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.2 + p_pop * (0.5 / 2.0 + 0.4 / 2.0));
     loc[1] = 2;
     BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 2}
     loc[0] = 1;
@@ -1552,25 +1610,28 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dyes_second_edman_test,
     loc[1] = 1;
     psv1.tensor[loc] = 0.5;  // loc is {1, 1}
     loc[1] = 2;
-    psv1.tensor[loc] = -1000.0;  // loc is {1, 2} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {1, 2} -- to be ignored.
     loc[0] = 2;
     loc[1] = 0;
     psv1.tensor[loc] = 0.6;  // loc is {2, 0}
     loc[1] = 1;
-    psv1.tensor[loc] = -1000.0;  // loc is {2, 1} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
     loc[1] = 2;
-    psv1.tensor[loc] = -1000.0;  // loc is {2, 2} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
     int edmans = 2;
     et.backward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.1 + p_pop * 0.4);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.1 + p_pop * 0.4);  // loc is {0, 0}
     loc[1] = 1;
     // loc is {0, 1}
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.2 + p_pop * (0.5 / 2.0 + 0.4 / 2.0));
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.2 + p_pop * (0.5 / 2.0 + 0.4 / 2.0));
     loc[1] = 2;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 2}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 2}
     loc[0] = 1;
     loc[1] = 0;
     // loc is {1, 0}
@@ -1616,13 +1677,14 @@ BOOST_AUTO_TEST_CASE(backward_in_place_three_dyes_first_edman_test,
     loc[1] = 2;
     psv.tensor[loc] = 1.33;  // loc is {1, 2}
     loc[1] = 3;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
     int edmans = 1;
     et.backward(psv, &edmans, &psv);
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0}
     loc[1] = 1;
     // loc is {0, 1}
     BOOST_TEST(psv.tensor[loc]
@@ -1632,7 +1694,8 @@ BOOST_AUTO_TEST_CASE(backward_in_place_three_dyes_first_edman_test,
     BOOST_TEST(psv.tensor[loc]
                == p_fail * 0.3 + p_pop * (1.22 * 2.0 / 3.0 + 1.33 * 1.0 / 3.0));
     loc[1] = 3;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.4 + p_pop * 1.33);  // loc is {0, 3}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.4 + p_pop * 1.33);  // loc is {0, 3}
     // We ignore the values at {1, 0}, {1, 1}, {1, 2}, and {1, 3}.
     delete[] loc;
 }
@@ -1671,13 +1734,14 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_three_dyes_first_edman_test,
     loc[1] = 2;
     psv1.tensor[loc] = 1.33;  // loc is {1, 2}
     loc[1] = 3;
-    psv1.tensor[loc] = -1000.0;  // loc is {1, 3} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
     int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 0);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.1 + p_pop * 1.11);  // loc is {0, 0}
     loc[1] = 1;
     // loc is {0, 1}
     BOOST_TEST(psv2.tensor[loc]
@@ -1687,7 +1751,8 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_three_dyes_first_edman_test,
     BOOST_TEST(psv2.tensor[loc]
                == p_fail * 0.3 + p_pop * (1.22 * 2.0 / 3.0 + 1.33 * 1.0 / 3.0));
     loc[1] = 3;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.4 + p_pop * 1.33);  // loc is {0, 3}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.4 + p_pop * 1.33);  // loc is {0, 3}
     // We ignore the values at {1, 0}, {1, 1}, {1, 2}, and {1, 3}.
     delete[] loc;
 }
@@ -1728,34 +1793,38 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dye_colors_second_edman_test,
     psv.tensor[loc] = 0.6;  // loc is {1, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- to be ignored.
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- to be ignored.
     loc[0] = 2;
     loc[1] = 0;
     loc[2] = 0;
     psv.tensor[loc] = 0.7;  // loc is {2, 0, 0}
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- to be ignored.
     loc[1] = 1;
     loc[2] = 0;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored.
     loc[2] = 1;
-    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
+    psv.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
     int edmans = 2;
     et.backward(psv, &edmans, &psv);
     BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.1 + p_pop * 0.5);  // loc is {0, 0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.1 + p_pop * 0.5);  // loc is {0, 0, 0}
     loc[2] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.2 + p_pop * 0.6);  // loc is {0, 0, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.2 + p_pop * 0.6);  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 1, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 1, 0}
     loc[2] = 1;
-    BOOST_TEST(psv.tensor[loc] == p_fail * 0.4 + p_pop * 0.6);  // loc is {0, 1, 1}
+    BOOST_TEST(psv.tensor[loc]
+               == p_fail * 0.4 + p_pop * 0.6);  // loc is {0, 1, 1}
     loc[0] = 1;
     loc[1] = 0;
     loc[2] = 0;
@@ -1806,34 +1875,38 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dye_colors_second_edman_test,
     psv1.tensor[loc] = 0.6;  // loc is {1, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- to be ignored.
     loc[2] = 1;
-    psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- to be ignored.
     loc[0] = 2;
     loc[1] = 0;
     loc[2] = 0;
     psv1.tensor[loc] = 0.7;  // loc is {2, 0, 0}
     loc[2] = 1;
-    psv1.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {2, 0, 1} -- to be ignored.
     loc[1] = 1;
     loc[2] = 0;
-    psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored.
     loc[2] = 1;
-    psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- this value should be ignored.
+    psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
     int edmans = 2;
     et.backward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.1 + p_pop * 0.5);  // loc is {0, 0, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.1 + p_pop * 0.5);  // loc is {0, 0, 0}
     loc[2] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.2 + p_pop * 0.6);  // loc is {0, 0, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.2 + p_pop * 0.6);  // loc is {0, 0, 1}
     loc[1] = 1;
     loc[2] = 0;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 1, 0}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.3 + p_pop * 0.5);  // loc is {0, 1, 0}
     loc[2] = 1;
-    BOOST_TEST(psv2.tensor[loc] == p_fail * 0.4 + p_pop * 0.6);  // loc is {0, 1, 1}
+    BOOST_TEST(psv2.tensor[loc]
+               == p_fail * 0.4 + p_pop * 0.6);  // loc is {0, 1, 1}
     loc[0] = 1;
     loc[1] = 0;
     loc[2] = 0;

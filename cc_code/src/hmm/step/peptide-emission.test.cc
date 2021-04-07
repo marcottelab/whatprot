@@ -325,7 +325,8 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
     int edmans = 0;
     e.forward(&edmans, &psv);
     e.forward(&edmans, &psv);
-    BOOST_TEST(psv.tensor[loc] == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == 3.14 * pdf(1.0, 0) * pdf(1.0, 0));  // loc is {0, 0}
     delete[] loc;
 }
 
@@ -438,7 +439,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     int edmans = 0;
     e.forward(&edmans, &psv);
     // loc is {0, 0, 0, 0}
-    BOOST_TEST(psv.tensor[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
+    BOOST_TEST(psv.tensor[loc]
+               == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
     delete[] loc;
 }
 
@@ -474,7 +476,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
 //     int edmans = 0;
 //     e.forward(tsr1, &edmans, &psv2);
 //     // loc is {0, 0, 0, 0}
-//     BOOST_TEST(psv2.tensor[loc] == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 13.0 * pdf(0.0, 0) * pdf(0.1, 0) * pdf(0.2, 0));
 //     delete[] loc;
 // }
 

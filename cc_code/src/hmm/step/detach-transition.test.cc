@@ -141,7 +141,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_test, *tolerance(TOL)) {
     dt.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
-    BOOST_TEST(psv.tensor[loc] == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
+    BOOST_TEST(psv.tensor[loc]
+               == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
     loc[1] = 1;
     BOOST_TEST(psv.tensor[loc] == 0.6 * (1 - p_detach));  // loc is {0, 1}
     loc[1] = 2;
@@ -171,7 +172,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_test, *tolerance(TOL)) {
 //     dt.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
-//     BOOST_TEST(psv2.tensor[loc] == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.3 + (0.6 + 0.1) * p_detach);  // loc is {0, 0}
 //     loc[1] = 1;
 //     BOOST_TEST(psv2.tensor[loc] == 0.6 * (1 - p_detach));  // loc is {0, 1}
 //     loc[1] = 2;
@@ -353,12 +355,15 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
 //     // loc is {0, 0, 0}
 //     BOOST_TEST(psv2.tensor[loc] == 0.1 + (0.2 + 0.3 + 0.4) * p_detach);
 //     loc[2] = 1;
-//     BOOST_TEST(psv2.tensor[loc] == 0.2 * (1 - p_detach));  // loc is {0, 0, 1}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.2 * (1 - p_detach));  // loc is {0, 0, 1}
 //     loc[1] = 1;
 //     loc[2] = 0;
-//     BOOST_TEST(psv2.tensor[loc] == 0.3 * (1 - p_detach));  // loc is {0, 1, 0}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.3 * (1 - p_detach));  // loc is {0, 1, 0}
 //     loc[2] = 1;
-//     BOOST_TEST(psv2.tensor[loc] == 0.4 * (1 - p_detach));  // loc is {0, 1, 1}
+//     BOOST_TEST(psv2.tensor[loc]
+//                == 0.4 * (1 - p_detach));  // loc is {0, 1, 1}
 //     delete[] loc;
 // }
 
