@@ -45,7 +45,7 @@ const double TOL = 0.000000001;
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
 BOOST_AUTO_TEST_SUITE(step_suite)
-BOOST_AUTO_TEST_SUITE(emission_suite)
+BOOST_AUTO_TEST_SUITE(peptide_emission_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int num_timesteps = 1;
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     BOOST_TEST(e.values[0] == 0.5);
 }
 
-BOOST_AUTO_TEST_CASE(multiple_timesteps_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
     int num_timesteps = 3;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_test, *tolerance(TOL)) {
     BOOST_TEST(e.prob(2, 0, 0) == pdf(2.0, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
     int num_timesteps = 3;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(multiple_timesteps_const_test, *tolerance(TOL)) {
     BOOST_TEST(ce.prob(2, 0, 0) == pdf(2.0, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_channels_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(multiple_channels_test, *tolerance(TOL)) {
     BOOST_TEST(e.prob(0, 2, 0) == pdf(0.2, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_channels_const_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(multiple_channels_const_test, *tolerance(TOL)) {
     BOOST_TEST(ce.prob(0, 2, 0) == pdf(0.2, 0));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_dye_counts_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(multiple_dye_counts_test, *tolerance(TOL)) {
     BOOST_TEST(e.prob(0, 0, 2) == pdf(0.0, 2));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_dye_counts_const_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
     int num_timesteps = 1;
     int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(multiple_dye_counts_const_test, *tolerance(TOL)) {
     BOOST_TEST(ce.prob(0, 0, 2) == pdf(0.0, 2));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_everything_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
     int num_timesteps = 2;
     int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(multiple_everything_test, *tolerance(TOL)) {
     BOOST_TEST(e.prob(1, 1, 1) == pdf(1.1, 1));
 }
 
-BOOST_AUTO_TEST_CASE(multiple_everything_const_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
     int num_timesteps = 2;
     int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -946,7 +946,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     emf.distribution_fit = original_dist_fit;  // This avoids breaking cleanup.
 }
 
-BOOST_AUTO_TEST_SUITE_END()  // emission_suite
+BOOST_AUTO_TEST_SUITE_END()  // peptide_emission_suite
 BOOST_AUTO_TEST_SUITE_END()  // step_suite
 BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
 
