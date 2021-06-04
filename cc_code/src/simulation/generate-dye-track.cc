@@ -11,34 +11,40 @@
 
 // Standard C++ library headers:
 #include <random>
+#include <vector>
 
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 namespace {
 using std::bernoulli_distribution;
 using std::default_random_engine;
+using std::vector;
 }  // namespace
 
-void generate_dye_track(const ErrorModel& error_model,
+void generate_dye_track(const SequencingModel& seq_model,
                         const DyeSeq& dye_seq,
                         int num_timesteps,
                         int num_channels,
                         default_random_engine* generator,
                         DyeTrack* dye_track) {
-    bernoulli_distribution edman_failure(error_model.p_edman_failure);
-    bernoulli_distribution dud_event(error_model.p_dud);
-    bernoulli_distribution bleach_event(error_model.p_bleach);
-    bernoulli_distribution detach_event(error_model.p_detach);
+    bernoulli_distribution edman_failure(seq_model.p_edman_failure);
+    bernoulli_distribution detach_event(seq_model.p_detach);
+    vector<bernoulli_distribution> dud_events;
+    vector<bernoulli_distribution> bleach_events;
+    for (int c = 0; c < num_channels; c++) {
+        dud_events.emplace_back(seq_model.channel_models[c]->p_dud);
+        bleach_events.emplace_back(seq_model.channel_models[c]->p_bleach);
+    }
     DyeSeq ds(dye_seq);
     // Duds.
     for (int i = 0; i < ds.length; i++) {
         if (ds[i] != -1) {
-            if (dud_event(*generator)) {
+            if (dud_events[ds[i]](*generator)) {
                 ds[i] = -1;
             }
         }
@@ -78,7 +84,7 @@ void generate_dye_track(const ErrorModel& error_model,
         // Bleaching.
         for (int i = e; i < ds.length; i++) {
             if (ds[i] != -1) {
-                if (bleach_event(*generator)) {
+                if (bleach_events[ds[i]](*generator)) {
                     counts[ds[i]]--;
                     ds[i] = -1;
                 }

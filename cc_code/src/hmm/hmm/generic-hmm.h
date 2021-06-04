@@ -13,8 +13,8 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/step/step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -43,7 +43,7 @@ public:
     // This will fit the data the HMM was provided with. It also computes the
     // probability as a side effect, so it returns this in case that is useful
     // to the caller.
-    double improve_fit(ErrorModelFitter* fitter) const {
+    double improve_fit(SequencingModelFitter* fitter) const {
         // There is one less Edman than the number of timesteps, because no
         // Edman is done before the zeroth timestep.
         int num_edmans = num_timesteps - 1;

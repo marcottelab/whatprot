@@ -13,8 +13,8 @@
 #include "edman-transition.h"
 
 // Local project headers:
-#include "common/error-model.h"
-#include "hmm/fit/error-model-fitter.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -1958,9 +1958,9 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     delete[] loc;
     int edmans = 0;
     double probability = 1.0;
-    ErrorModelFitter emf;
-    et.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
-    BOOST_TEST(emf.p_edman_failure_fit.get()
+    SequencingModelFitter smf;
+    et.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    BOOST_TEST(smf.p_edman_failure_fit.get()
                == (0.91 * p_fail * 0.71) / (0.91 * 0.81));
 }
 
@@ -2018,10 +2018,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     int edmans = 0;
     double prob1 = 0.12345;
     double prob2 = 0.98765;
-    ErrorModelFitter emf;
-    et.improve_fit(fpsv1, bpsv1, nbpsv1, edmans, prob1, &emf);
-    et.improve_fit(fpsv2, bpsv2, nbpsv2, edmans, prob2, &emf);
-    BOOST_TEST(emf.p_edman_failure_fit.get()
+    SequencingModelFitter smf;
+    et.improve_fit(fpsv1, bpsv1, nbpsv1, edmans, prob1, &smf);
+    et.improve_fit(fpsv2, bpsv2, nbpsv2, edmans, prob2, &smf);
+    BOOST_TEST(smf.p_edman_failure_fit.get()
                == (0.91 * p_fail * 0.71 / prob1 + 0.61 * p_fail * 0.41 / prob2)
                           / (0.91 * 0.81 / prob1 + 0.61 * 0.51 / prob2));
 }

@@ -18,10 +18,10 @@
 #include "classifiers/nn-classifier.h"
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -33,20 +33,16 @@ using std::vector;
 HybridClassifier::HybridClassifier(
         int num_timesteps,
         int num_channels,
-        const ErrorModel& error_model,
+        const SequencingModel& seq_model,
         int k,
         double sigma,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : h(h),
-          nn_classifier(num_timesteps,
-                        num_channels,
-                        error_model,
-                        k,
-                        sigma,
-                        dye_tracks),
-          hmm_classifier(num_timesteps, num_channels, error_model, dye_seqs) {
+          nn_classifier(
+                  num_timesteps, num_channels, seq_model, k, sigma, dye_tracks),
+          hmm_classifier(num_timesteps, num_channels, seq_model, dye_seqs) {
     for (int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;
         id_count_map[dye_seqs[i].source.source] = dye_seqs[i].source.count;

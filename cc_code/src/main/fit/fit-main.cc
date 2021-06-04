@@ -12,11 +12,11 @@
 
 // Local project headers:
 #include "common/dye-seq.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "fitters/hmm-fitter.h"
 #include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
+#include "parameterization/model/sequencing-model.h"
 #include "util/time.h"
 
 namespace whatprot {
@@ -42,22 +42,6 @@ int fit_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    ErrorModel error_model(.06,  // p_edman_failure
-                           .05,  // p_detach
-                           .05,  // p_bleach
-                           .07,  // p_dud
-                           DistributionType::LOGNORMAL,
-                           0.0,  // mu
-                           .16,  // sigma
-                           0.5,  // stuck_dye_ratio
-                           .08);  // p_stuck_dye_loss
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
-
-    start_time = wall_time();
-    end_time = wall_time();
-
-    start_time = wall_time();
     int num_timesteps;
     int num_channels;
     int total_num_radiometries;
@@ -75,10 +59,26 @@ int fit_main(int argc, char** argv) {
     end_time = wall_time();
 
     start_time = wall_time();
+    SequencingModel seq_model;
+    seq_model.p_edman_failure = 0.06;
+    seq_model.p_detach = 0.05;
+    for (int c = 0; c < num_channels; c++) {
+        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models[c]->p_bleach = 0.05;
+        seq_model.channel_models[c]->p_dud = 0.07;
+        seq_model.channel_models[c]->mu = 0.0;
+        seq_model.channel_models[c]->sigma = 0.16;
+        seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
+    }
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
+
+    start_time = wall_time();
     HMMFitter fitter(num_timesteps,
                      num_channels,
                      stopping_threshold,
-                     error_model,
+                     seq_model,
                      dye_seq);
     fitter.fit(radiometries);
     end_time = wall_time();

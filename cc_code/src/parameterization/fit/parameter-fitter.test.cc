@@ -19,7 +19,7 @@ using boost::unit_test::tolerance;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(hmm_suite)
+BOOST_AUTO_TEST_SUITE(parameterization_suite)
 BOOST_AUTO_TEST_SUITE(fit_suite)
 BOOST_AUTO_TEST_SUITE(parameter_fitter_suite)
 
@@ -38,6 +38,6 @@ BOOST_AUTO_TEST_CASE(get_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_SUITE_END()  // parameter_fitter_suite
 BOOST_AUTO_TEST_SUITE_END()  // fit_suite
-BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
+BOOST_AUTO_TEST_SUITE_END()  // parameterization_suite
 
 }  // namespace whatprot

@@ -13,17 +13,17 @@
 #include <vector>
 
 // Local project headers:
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "hmm/step/peptide-emission.h"
 #include "hmm/step/stuck-dye-emission.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 class RadiometryPrecomputations {
 public:
     RadiometryPrecomputations(const Radiometry& radiometry,
-                              const ErrorModel& error_model,
+                              const SequencingModel& seq_model,
                               int max_num_dyes);
     PeptideEmission peptide_emission;
     std::vector<StuckDyeEmission> stuck_dye_emissions;

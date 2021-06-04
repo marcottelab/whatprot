@@ -18,8 +18,8 @@
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
 #include "simulation/generate-dye-track.h"
 
 namespace whatprot {
@@ -32,7 +32,7 @@ using std::vector;
 }  // namespace
 
 void generate_dye_tracks(
-        const ErrorModel& error_model,
+        const SequencingModel& seq_model,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         int num_timesteps,
         int num_channels,
@@ -47,7 +47,7 @@ void generate_dye_tracks(
         for (int i = 0; i < dye_seq.source.count; i++) {
             for (int j = 0; j < dye_tracks_per_peptide; j++) {
                 DyeTrack dye_track(num_timesteps, num_channels);
-                generate_dye_track(error_model,
+                generate_dye_track(seq_model,
                                    dye_seq.value,
                                    num_timesteps,
                                    num_channels,

@@ -13,8 +13,8 @@
 #include "dud-transition.h"
 
 // Local project headers:
-#include "common/error-model.h"
-#include "hmm/fit/error-model-fitter.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -62,9 +62,11 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     delete[] loc;
     int edmans = 0;
     double probability = 1.0;
-    ErrorModelFitter emf;
-    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
-    BOOST_TEST(emf.p_dud_fit.get() == (0.71 * q * 0.33) / (0.71 * 0.72));
+    SequencingModelFitter smf;
+    smf.channel_fits.push_back(new ChannelModelFitter());
+    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    BOOST_TEST(smf.channel_fits[0]->p_dud_fit.get()
+               == (0.71 * q * 0.33) / (0.71 * 0.72));
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // dud_transition_suite

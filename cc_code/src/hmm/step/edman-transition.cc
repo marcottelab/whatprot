@@ -11,8 +11,8 @@
 
 // Local project headers:
 #include "common/dye-track.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 #include "tensor/vector.h"
 
 namespace whatprot {
@@ -119,7 +119,7 @@ void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
                                   const PeptideStateVector& next_backward_psv,
                                   int num_edmans,
                                   double probability,
-                                  ErrorModelFitter* fitter) const {
+                                  SequencingModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
     for (int t = 0; t < num_edmans + 1; t++) {
         // Here we omit the zeroth entry of every timestep because this is the

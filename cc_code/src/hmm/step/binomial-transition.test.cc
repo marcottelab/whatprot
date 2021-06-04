@@ -13,8 +13,8 @@
 #include "binomial-transition.h"
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
-#include "hmm/fit/parameter-fitter.h"
+#include "parameterization/fit/parameter-fitter.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -34,7 +34,7 @@ public:
                              const PeptideStateVector& next_backward_psv,
                              int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const override;
+                             SequencingModelFitter* fitter) const override;
 };
 
 void TestableBinomialTransition::improve_fit(
@@ -43,7 +43,7 @@ void TestableBinomialTransition::improve_fit(
         const PeptideStateVector& next_backward_psv,
         int num_edmans,
         double probability,
-        ErrorModelFitter* fitter) const {}
+        SequencingModelFitter* fitter) const {}
 
 BOOST_AUTO_TEST_SUITE(hmm_suite)
 BOOST_AUTO_TEST_SUITE(step_suite)

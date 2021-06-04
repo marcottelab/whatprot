@@ -16,7 +16,7 @@
 #include <cmath>
 
 // Local project headers:
-#include "common/error-model.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -26,7 +26,7 @@ using std::sqrt;
 const double TOL = 0.000000001;
 }  // namespace
 
-BOOST_AUTO_TEST_SUITE(hmm_suite)
+BOOST_AUTO_TEST_SUITE(parameterization_suite)
 BOOST_AUTO_TEST_SUITE(fit_suite)
 BOOST_AUTO_TEST_SUITE(normal_distribution_fitter_suite)
 
@@ -96,11 +96,6 @@ BOOST_AUTO_TEST_CASE(add_sample_twice_n_gt_1_test, *tolerance(TOL)) {
     BOOST_TEST(ndf.total_weight == w1 + w2);
 }
 
-BOOST_AUTO_TEST_CASE(get_type_test, *tolerance(TOL)) {
-    NormalDistributionFitter ndf;
-    BOOST_TEST(ndf.get_type() == DistributionType::NORMAL);
-}
-
 BOOST_AUTO_TEST_CASE(get_mu_one_sample_test, *tolerance(TOL)) {
     NormalDistributionFitter ndf;
     double x1 = 3.43;
@@ -155,6 +150,6 @@ BOOST_AUTO_TEST_CASE(get_sigma_two_samples_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_SUITE_END()  // normal_distribution_fitter_suite
 BOOST_AUTO_TEST_SUITE_END()  // fit_suite
-BOOST_AUTO_TEST_SUITE_END()  // hmm_suite
+BOOST_AUTO_TEST_SUITE_END()  // parameterization_suite
 
 }  // namespace whatprot

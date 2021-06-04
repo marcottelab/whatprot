@@ -10,8 +10,8 @@
 #include "binomial-transition.h"
 
 // Local project headers:
-#include "hmm/fit/parameter-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "parameterization/fit/parameter-fitter.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 

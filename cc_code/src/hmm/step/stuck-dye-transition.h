@@ -10,15 +10,15 @@
 #define WHATPROT_HMM_STEP_STUCK_DYE_TRANSITION_H
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
 #include "hmm/step/step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
 class StuckDyeTransition : public Step<StuckDyeStateVector> {
 public:
-    StuckDyeTransition(double loss_rate);
+    StuckDyeTransition(double loss_rate, int channel);
     virtual void forward(int* num_edmans,
                          StuckDyeStateVector* sdsv) const override;
     virtual void backward(const StuckDyeStateVector& input,
@@ -29,8 +29,9 @@ public:
                              const StuckDyeStateVector& next_backward_sdsv,
                              int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const override;
+                             SequencingModelFitter* fitter) const override;
 
+    int channel;
     double loss_rate;
 };
 

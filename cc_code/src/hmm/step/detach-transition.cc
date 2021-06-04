@@ -10,8 +10,8 @@
 #include "detach-transition.h"
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -46,7 +46,7 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& next_backward_psv,
                                    int num_edmans,
                                    double probability,
-                                   ErrorModelFitter* fitter) const {
+                                   SequencingModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
     double forward_sum = 0.0;
     double forward_backward_sum = 0.0;

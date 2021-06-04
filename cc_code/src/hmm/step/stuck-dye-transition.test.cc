@@ -13,8 +13,8 @@
 #include "stuck-dye-transition.h"
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -28,14 +28,16 @@ BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(stuck_dye_transition_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
+    int channel = 0;
     double loss_rate = 0.035;
-    StuckDyeTransition sdt(loss_rate);
+    StuckDyeTransition sdt(loss_rate, channel);
     BOOST_TEST(sdt.loss_rate == loss_rate);
 }
 
 BOOST_AUTO_TEST_CASE(forward_test, *tolerance(TOL)) {
+    int channel = 0;
     double loss_rate = 0.035;
-    StuckDyeTransition sdt(loss_rate);
+    StuckDyeTransition sdt(loss_rate, channel);
     int num_edmans = 0;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.3;
@@ -47,8 +49,9 @@ BOOST_AUTO_TEST_CASE(forward_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
+    int channel = 0;
     double loss_rate = 0.035;
-    StuckDyeTransition sdt(loss_rate);
+    StuckDyeTransition sdt(loss_rate, channel);
     int num_edmans = 1;
     StuckDyeStateVector input;
     input.dye = 0.3;
@@ -61,8 +64,9 @@ BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
+    int channel = 0;
     double loss_rate = 0.035;
-    StuckDyeTransition sdt(loss_rate);
+    StuckDyeTransition sdt(loss_rate, channel);
     int num_edmans = 1;
     double probability = 0.98765;
     StuckDyeStateVector forward_sdsv;
@@ -74,14 +78,45 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     StuckDyeStateVector next_backward_sdsv;
     next_backward_sdsv.dye = 0.2;
     next_backward_sdsv.no_dye = 0.8;
-    ErrorModelFitter emf;
+    SequencingModelFitter smf;
+    smf.channel_fits.push_back(new ChannelModelFitter());
     sdt.improve_fit(forward_sdsv,
                     backward_sdsv,
                     next_backward_sdsv,
                     num_edmans,
                     probability,
-                    &emf);
-    BOOST_TEST(emf.p_stuck_dye_loss_fit.get()
+                    &smf);
+    BOOST_TEST(smf.channel_fits[0]->p_stuck_dye_loss_fit.get()
+               == (0.3 * loss_rate * 0.8) / (0.3 * 0.4));
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_different_channel_test, *tolerance(TOL)) {
+    int channel = 1;
+    double loss_rate = 0.035;
+    StuckDyeTransition sdt(loss_rate, channel);
+    int num_edmans = 1;
+    double probability = 0.98765;
+    StuckDyeStateVector forward_sdsv;
+    forward_sdsv.dye = 0.3;
+    forward_sdsv.no_dye = 0.7;
+    StuckDyeStateVector backward_sdsv;
+    backward_sdsv.dye = 0.4;
+    backward_sdsv.no_dye = 0.6;
+    StuckDyeStateVector next_backward_sdsv;
+    next_backward_sdsv.dye = 0.2;
+    next_backward_sdsv.no_dye = 0.8;
+    SequencingModelFitter smf;
+    smf.channel_fits.push_back(new ChannelModelFitter());
+    smf.channel_fits.push_back(new ChannelModelFitter());
+    sdt.improve_fit(forward_sdsv,
+                    backward_sdsv,
+                    next_backward_sdsv,
+                    num_edmans,
+                    probability,
+                    &smf);
+    BOOST_TEST(smf.channel_fits[0]->p_stuck_dye_loss_fit.numerator == 0);
+    BOOST_TEST(smf.channel_fits[0]->p_stuck_dye_loss_fit.denominator == 0);
+    BOOST_TEST(smf.channel_fits[1]->p_stuck_dye_loss_fit.get()
                == (0.3 * loss_rate * 0.8) / (0.3 * 0.4));
 }
 

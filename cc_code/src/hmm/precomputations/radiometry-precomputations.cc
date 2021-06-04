@@ -10,21 +10,21 @@
 #include "radiometry-precomputations.h"
 
 // Local project headers:
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "hmm/step/peptide-emission.h"
 #include "hmm/step/stuck-dye-emission.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 RadiometryPrecomputations::RadiometryPrecomputations(
         const Radiometry& radiometry,
-        const ErrorModel& error_model,
+        const SequencingModel& seq_model,
         int max_num_dyes)
-        : peptide_emission(radiometry, max_num_dyes, error_model.pdf()) {
+        : peptide_emission(radiometry, max_num_dyes, seq_model) {
     for (int c = 0; c < radiometry.num_channels; c++) {
         stuck_dye_emissions.push_back(
-                StuckDyeEmission(radiometry, c, error_model.pdf()));
+                StuckDyeEmission(radiometry, c, seq_model));
     }
 }
 

@@ -16,14 +16,14 @@
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/hmm/peptide-hmm.h"
 #include "hmm/hmm/stuck-dye-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -36,12 +36,12 @@ using std::vector;
 HMMFitter::HMMFitter(int num_timesteps,
                      int num_channels,
                      double stopping_threshold,
-                     const ErrorModel& error_model,
+                     const SequencingModel& seq_model,
                      const DyeSeq& dye_seq)
         : num_timesteps(num_timesteps),
           num_channels(num_channels),
           stopping_threshold(stopping_threshold),
-          error_model(error_model),
+          seq_model(seq_model),
           dye_seq(dye_seq) {
     max_num_dyes = 0;
     for (int c = 0; c < num_channels; c++) {
@@ -57,31 +57,37 @@ HMMFitter::HMMFitter(int num_timesteps,
     }
 }
 
-ErrorModel HMMFitter::fit(const std::vector<Radiometry>& radiometries) const {
-    ErrorModel em = error_model;
-    cout << em.debug_string() << "\n";
+SequencingModel HMMFitter::fit(
+        const std::vector<Radiometry>& radiometries) const {
+    SequencingModel sm = seq_model;
+    cout << sm.debug_string() << "\n";
     while (true) {
-        ErrorModelFitter fitter;
+        SequencingModelFitter fitter(num_channels);
         DyeSeqPrecomputations dye_seq_precomputations(
-                dye_seq, em, num_timesteps, num_channels);
-        UniversalPrecomputations universal_precomputations(em, num_channels);
+                dye_seq, sm, num_timesteps, num_channels);
+        UniversalPrecomputations universal_precomputations(sm, num_channels);
         universal_precomputations.set_max_num_dyes(max_num_dyes);
         for (const Radiometry& radiometry : radiometries) {
             RadiometryPrecomputations radiometry_precomputations(
-                    radiometry, em, max_num_dyes);
+                    radiometry, sm, max_num_dyes);
             PeptideHMM hmm(num_timesteps,
                            num_channels,
                            dye_seq_precomputations,
                            radiometry_precomputations,
                            universal_precomputations);
-            ErrorModelFitter peptide_fitter;
+            SequencingModelFitter peptide_fitter(num_channels);
+            double peptide_ratio = 1.0;
+            for (int c = 0; c < num_channels; c++) {
+                peptide_ratio -= sm.channel_models[c]->stuck_dye_ratio;
+            }
             double peptide_prob =
-                    hmm.improve_fit(&peptide_fitter) * (1 - em.stuck_dye_ratio);
-            vector<ErrorModelFitter> stuck_dye_fitters;
+                    hmm.improve_fit(&peptide_fitter) * peptide_ratio;
+            vector<SequencingModelFitter> stuck_dye_fitters;
             vector<double> stuck_dye_probs;
             double total_prob = peptide_prob;
             for (int c = 0; c < num_channels; c++) {
-                stuck_dye_fitters.push_back(ErrorModelFitter());
+                stuck_dye_fitters.push_back(
+                        SequencingModelFitter(num_channels));
                 StuckDyeHMM stuck_dye_hmm(num_timesteps,
                                           num_channels,
                                           c,
@@ -89,7 +95,7 @@ ErrorModel HMMFitter::fit(const std::vector<Radiometry>& radiometries) const {
                                           universal_precomputations);
                 stuck_dye_probs.push_back(
                         stuck_dye_hmm.improve_fit(&stuck_dye_fitters.back())
-                        * em.stuck_dye_ratio / (double)num_channels);
+                        * sm.channel_models[c]->stuck_dye_ratio);
                 total_prob += stuck_dye_probs.back();
             }
             if (total_prob != 0.0) {
@@ -98,21 +104,23 @@ ErrorModel HMMFitter::fit(const std::vector<Radiometry>& radiometries) const {
                 for (int c = 0; c < num_channels; c++) {
                     stuck_dye_fitters[c] *= (stuck_dye_probs[c] / total_prob);
                     fitter += stuck_dye_fitters[c];
+                    fitter.channel_fits[c]->stuck_dye_ratio_fit.numerator +=
+                            stuck_dye_probs[c] / total_prob;
+                    fitter.channel_fits[c]->stuck_dye_ratio_fit.denominator +=
+                            1.0;
                 }
-                fitter.stuck_dye_ratio_fit.numerator +=
-                        (1.0 - peptide_prob / total_prob);
-                fitter.stuck_dye_ratio_fit.denominator += 1.0;
             }
         }
-        ErrorModel next = fitter.error_model();
+        SequencingModel next = fitter.get();
         cout << next.debug_string() << "\n";
-        double relative_distance = em.relative_distance(next);
+        double relative_distance = sm.relative_distance(next);
         cout << "relative distance: " << relative_distance << "\n";
         if (relative_distance < stopping_threshold) {
             return next;
         }
-        em = next;
+        sm = next;
     }
+    return sm;
 }
 
 }  // namespace whatprot

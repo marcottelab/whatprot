@@ -9,13 +9,11 @@
 // Defining symbols from header:
 #include "peptide-emission.h"
 
-// Standard C++ library headers:
-#include <functional>
-
 // Local project headers:
 #include "common/radiometry.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
 #include "tensor/tensor-iterator.h"
 
 namespace whatprot {
@@ -26,7 +24,7 @@ using std::function;
 
 PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                                  int max_num_dyes,
-                                 function<double(double, int)> pdf)
+                                 const SequencingModel& seq_model)
         : radiometry(radiometry),
           num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
@@ -35,7 +33,8 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             for (int d = 0; d < (max_num_dyes + 1); d++) {
-                prob(t, c, d) = pdf(radiometry(t, c), d);
+                prob(t, c, d) =
+                        seq_model.channel_models[c]->pdf(radiometry(t, c), d);
             }
         }
     }
@@ -85,7 +84,7 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   const PeptideStateVector& next_backward_psv,
                                   int num_edmans,
                                   double probability,
-                                  ErrorModelFitter* fitter) const {
+                                  SequencingModelFitter* fitter) const {
     ConstTensorIterator* fit = forward_psv.tensor.const_iterator();
     ConstTensorIterator* bit = backward_psv.tensor.const_iterator();
     while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
@@ -94,7 +93,8 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
             int t = fit->loc[0];
             double intensity = radiometry(num_edmans, c);
             int dye_count = fit->loc[1 + c];
-            fitter->distribution_fit->add_sample(intensity, dye_count, p_state);
+            fitter->channel_fits[c]->distribution_fit->add_sample(
+                    intensity, dye_count, p_state);
         }
         fit->advance();
         bit->advance();

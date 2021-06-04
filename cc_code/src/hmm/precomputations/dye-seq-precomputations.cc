@@ -12,16 +12,16 @@
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "hmm/step/edman-transition.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
-                                             const ErrorModel& error_model,
+                                             const SequencingModel& seq_model,
                                              int num_timesteps,
                                              int num_channels)
-        : edman_transition(error_model.p_edman_failure,
+        : edman_transition(seq_model.p_edman_failure,
                            dye_seq,
                            DyeTrack(num_timesteps, num_channels, dye_seq)) {
     tensor_shape.resize(1 + num_channels);

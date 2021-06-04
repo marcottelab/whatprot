@@ -736,9 +736,9 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     delete[] loc;
     int edmans = 0;
     double probability = 0.31 * 0.32 + 0.71 * 0.72 + 0.91 * 0.92;
-    ErrorModelFitter emf;
-    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &emf);
-    BOOST_TEST(emf.p_detach_fit.get()
+    SequencingModelFitter smf;
+    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    BOOST_TEST(smf.p_detach_fit.get()
                == (0.71 * p_detach * 0.33 + 0.91 * p_detach * 0.33)
                           / (0.71 * 0.72 + 0.91 * 0.92));
 }
@@ -784,11 +784,11 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     int edmans = 0;
     double prob1 = 0.31 * 0.32 + 0.71 * 0.72 + 0.91 * 0.92;
     double prob2 = 0.231 * 0.232 + 0.271 * 0.272 + 0.291 * 0.292;
-    ErrorModelFitter emf;
-    dt.improve_fit(fpsv1, bpsv1, nbpsv1, edmans, prob1, &emf);
-    dt.improve_fit(fpsv2, bpsv2, nbpsv2, edmans, prob2, &emf);
+    SequencingModelFitter smf;
+    dt.improve_fit(fpsv1, bpsv1, nbpsv1, edmans, prob1, &smf);
+    dt.improve_fit(fpsv2, bpsv2, nbpsv2, edmans, prob2, &smf);
     BOOST_TEST(
-            emf.p_detach_fit.get()
+            smf.p_detach_fit.get()
             == ((0.71 * p_detach * 0.33 + 0.91 * p_detach * 0.33) / prob1
                 + (0.271 * p_detach * 0.233 + 0.291 * p_detach * 0.233) / prob2)
                        / ((0.71 * 0.72 + 0.91 * 0.92) / prob1

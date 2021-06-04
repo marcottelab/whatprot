@@ -10,9 +10,9 @@
 #include "dud-transition.h"
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/binomial-transition.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -24,13 +24,13 @@ void DudTransition::improve_fit(const PeptideStateVector& forward_psv,
                                 const PeptideStateVector& next_backward_psv,
                                 int num_edmans,
                                 double probability,
-                                ErrorModelFitter* fitter) const {
+                                SequencingModelFitter* fitter) const {
     BinomialTransition::improve_fit(forward_psv,
                                     backward_psv,
                                     next_backward_psv,
                                     num_edmans,
                                     probability,
-                                    &fitter->p_dud_fit);
+                                    &fitter->channel_fits[channel]->p_dud_fit);
 }
 
 }  // namespace whatprot

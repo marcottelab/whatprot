@@ -14,8 +14,9 @@
 
 // Local project headers:
 #include "common/radiometry.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -25,7 +26,7 @@ using std::function;
 
 StuckDyeEmission::StuckDyeEmission(const Radiometry& radiometry,
                                    int channel,
-                                   function<double(double, int)> pdf)
+                                   const SequencingModel& seq_model)
         : radiometry(radiometry),
           num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
@@ -34,7 +35,8 @@ StuckDyeEmission::StuckDyeEmission(const Radiometry& radiometry,
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             for (int d = 0; d < 2; d++) {
-                prob(t, c, d) = pdf(radiometry(t, c), d);
+                prob(t, c, d) =
+                        seq_model.channel_models[c]->pdf(radiometry(t, c), d);
             }
         }
     }
@@ -81,19 +83,22 @@ void StuckDyeEmission::improve_fit(
         const StuckDyeStateVector& next_backward_sdsv,
         int num_edmans,
         double probability,
-        ErrorModelFitter* fitter) const {
+        SequencingModelFitter* fitter) const {
     double intensity = radiometry(num_edmans, channel);
     double p_no_dye = forward_sdsv.no_dye * backward_sdsv.no_dye / probability;
-    fitter->distribution_fit->add_sample(intensity, 0, p_no_dye);
+    fitter->channel_fits[channel]->distribution_fit->add_sample(
+            intensity, 0, p_no_dye);
     double p_dye = forward_sdsv.dye * backward_sdsv.dye / probability;
-    fitter->distribution_fit->add_sample(intensity, 1, p_dye);
+    fitter->channel_fits[channel]->distribution_fit->add_sample(
+            intensity, 1, p_dye);
     double p_total = p_no_dye + p_dye;
     for (int c = 0; c < num_channels; c++) {
         if (c == channel) {
             continue;
         }
         intensity = radiometry(num_edmans, c);
-        fitter->distribution_fit->add_sample(intensity, 0, p_total);
+        fitter->channel_fits[c]->distribution_fit->add_sample(
+                intensity, 0, p_total);
     }
 }
 

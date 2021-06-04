@@ -7,15 +7,15 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "error-model-fitter.h"
+#include "channel-model-fitter.h"
 
 // Standard C++ library headers:
 #include <utility>
 
 // Local project headers:
-#include "common/error-model.h"
-#include "hmm/fit/log-normal-distribution-fitter.h"
-#include "hmm/fit/normal-distribution-fitter.h"
+#include "parameterization/fit/log-normal-distribution-fitter.h"
+#include "parameterization/fit/normal-distribution-fitter.h"
+#include "parameterization/model/channel-model.h"
 
 namespace {
 using std::move;
@@ -23,13 +23,11 @@ using std::move;
 
 namespace whatprot {
 
-ErrorModelFitter::ErrorModelFitter() {
+ChannelModelFitter::ChannelModelFitter() {
     distribution_fit = new LogNormalDistributionFitter();
 }
 
-ErrorModelFitter::ErrorModelFitter(const ErrorModelFitter& other) {
-    p_edman_failure_fit = other.p_edman_failure_fit;
-    p_detach_fit = other.p_detach_fit;
+ChannelModelFitter::ChannelModelFitter(const ChannelModelFitter& other) {
     p_bleach_fit = other.p_bleach_fit;
     p_dud_fit = other.p_dud_fit;
     distribution_fit = new LogNormalDistributionFitter(*other.distribution_fit);
@@ -37,9 +35,7 @@ ErrorModelFitter::ErrorModelFitter(const ErrorModelFitter& other) {
     p_stuck_dye_loss_fit = other.p_stuck_dye_loss_fit;
 }
 
-ErrorModelFitter::ErrorModelFitter(ErrorModelFitter&& other) {
-    p_edman_failure_fit = move(other.p_edman_failure_fit);
-    p_detach_fit = move(other.p_detach_fit);
+ChannelModelFitter::ChannelModelFitter(ChannelModelFitter&& other) {
     p_bleach_fit = move(other.p_bleach_fit);
     p_dud_fit = move(other.p_dud_fit);
     distribution_fit = other.distribution_fit;
@@ -48,30 +44,26 @@ ErrorModelFitter::ErrorModelFitter(ErrorModelFitter&& other) {
     p_stuck_dye_loss_fit = move(other.p_stuck_dye_loss_fit);
 }
 
-ErrorModelFitter::~ErrorModelFitter() {
+ChannelModelFitter::~ChannelModelFitter() {
     if (distribution_fit != NULL) {
         delete distribution_fit;
     }
 }
 
-ErrorModel ErrorModelFitter::error_model() const {
-    return ErrorModel(p_edman_failure_fit.get(),
-                      p_detach_fit.get(),
-                      p_bleach_fit.get(),
-                      p_dud_fit.get(),
-                      distribution_fit->get_type(),
-                      distribution_fit->get_mu(),
-                      distribution_fit->get_sigma(),
-                      stuck_dye_ratio_fit.get(),
-                      p_stuck_dye_loss_fit.get());
+ChannelModel ChannelModelFitter::get() const {
+    ChannelModel model;
+    model.p_bleach = p_bleach_fit.get();
+    model.p_dud = p_dud_fit.get();
+    model.mu = distribution_fit->get_mu();
+    model.sigma = distribution_fit->get_sigma();
+    model.stuck_dye_ratio = stuck_dye_ratio_fit.get();
+    model.p_stuck_dye_loss = p_stuck_dye_loss_fit.get();
+    return model;
 }
 
-ErrorModelFitter ErrorModelFitter::operator+(
-        const ErrorModelFitter& other) const {
-    ErrorModelFitter result_fitter;
-    result_fitter.p_edman_failure_fit =
-            p_edman_failure_fit + other.p_edman_failure_fit;
-    result_fitter.p_detach_fit = p_detach_fit + other.p_detach_fit;
+ChannelModelFitter ChannelModelFitter::operator+(
+        const ChannelModelFitter& other) const {
+    ChannelModelFitter result_fitter;
     result_fitter.p_bleach_fit = p_bleach_fit + other.p_bleach_fit;
     result_fitter.p_dud_fit = p_dud_fit + other.p_dud_fit;
     *result_fitter.distribution_fit =
@@ -83,9 +75,7 @@ ErrorModelFitter ErrorModelFitter::operator+(
     return result_fitter;
 }
 
-void ErrorModelFitter::operator+=(const ErrorModelFitter& other) {
-    p_edman_failure_fit += other.p_edman_failure_fit;
-    p_detach_fit += other.p_detach_fit;
+void ChannelModelFitter::operator+=(const ChannelModelFitter& other) {
     p_bleach_fit += other.p_bleach_fit;
     p_dud_fit += other.p_dud_fit;
     *distribution_fit += *other.distribution_fit;
@@ -93,9 +83,7 @@ void ErrorModelFitter::operator+=(const ErrorModelFitter& other) {
     p_stuck_dye_loss_fit += other.p_stuck_dye_loss_fit;
 }
 
-void ErrorModelFitter::operator*=(double weight_adjustment) {
-    p_edman_failure_fit *= weight_adjustment;
-    p_detach_fit *= weight_adjustment;
+void ChannelModelFitter::operator*=(double weight_adjustment) {
     p_bleach_fit *= weight_adjustment;
     p_dud_fit *= weight_adjustment;
     *distribution_fit *= weight_adjustment;

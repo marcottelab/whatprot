@@ -15,14 +15,14 @@
 
 // Local project headers:
 #include "common/dye-seq.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 void generate_radiometries(
-        const ErrorModel& error_model,
+        const SequencingModel& seq_model,
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         int num_timesteps,
         int num_channels,

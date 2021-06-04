@@ -13,13 +13,13 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/hmm/generic-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 

@@ -10,14 +10,14 @@
 #define WHATPROT_HMM_STEP_PEPTIDE_EMISSION_H
 
 // Standard C++ library headers:
-#include <functional>
 #include <vector>
 
 // Local project headers:
 #include "common/radiometry.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -25,7 +25,7 @@ class PeptideEmission : public Step<PeptideStateVector> {
 public:
     PeptideEmission(const Radiometry& radiometry,
                     int max_num_dyes,
-                    std::function<double(double, int)> pdf);
+                    const SequencingModel& seq_model);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
     virtual void forward(int* num_edmans,
@@ -38,7 +38,7 @@ public:
                              const PeptideStateVector& next_backward_psv,
                              int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const override;
+                             SequencingModelFitter* fitter) const override;
     Radiometry radiometry;
     std::vector<double> values;
     int num_timesteps;

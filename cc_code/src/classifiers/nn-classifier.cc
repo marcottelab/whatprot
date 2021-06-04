@@ -18,10 +18,10 @@
 #include <vector>
 
 // Local project headers:
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace {
 using std::exp;
@@ -80,7 +80,7 @@ double KDTQuery::operator[](int i) const {
 NNClassifier::NNClassifier(
         int num_timesteps,
         int num_channels,
-        const ErrorModel& error_model,
+        const SequencingModel& seq_model,
         int k,
         double sigma,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks)

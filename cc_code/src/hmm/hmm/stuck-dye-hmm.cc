@@ -13,12 +13,12 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/hmm/generic-hmm.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
 #include "hmm/step/step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -31,7 +31,8 @@ StuckDyeHMM::StuckDyeHMM(
         : GenericHMM(num_timesteps) {
     steps.push_back(&radiometry_precomputations.stuck_dye_emissions[channel]);
     for (int i = 1; i < num_timesteps; i++) {
-        steps.push_back(&universal_precomputations.stuck_dye_transition);
+        steps.push_back(
+                &universal_precomputations.stuck_dye_transitions[channel]);
         steps.push_back(
                 &radiometry_precomputations.stuck_dye_emissions[channel]);
     }

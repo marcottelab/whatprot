@@ -10,13 +10,13 @@
 #include "stuck-dye-transition.h"
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-StuckDyeTransition::StuckDyeTransition(double loss_rate)
-        : loss_rate(loss_rate) {}
+StuckDyeTransition::StuckDyeTransition(double loss_rate, int channel)
+        : loss_rate(loss_rate), channel(channel) {}
 
 void StuckDyeTransition::forward(int* num_edmans,
                                  StuckDyeStateVector* sdsv) const {
@@ -39,11 +39,11 @@ void StuckDyeTransition::improve_fit(
         const StuckDyeStateVector& next_backward_sdsv,
         int num_edmans,
         double probability,
-        ErrorModelFitter* fitter) const {
-    fitter->p_stuck_dye_loss_fit.numerator += forward_sdsv.dye * loss_rate
-                                              * next_backward_sdsv.no_dye
-                                              / probability;
-    fitter->p_stuck_dye_loss_fit.denominator +=
+        SequencingModelFitter* fitter) const {
+    fitter->channel_fits[channel]->p_stuck_dye_loss_fit.numerator +=
+            forward_sdsv.dye * loss_rate * next_backward_sdsv.no_dye
+            / probability;
+    fitter->channel_fits[channel]->p_stuck_dye_loss_fit.denominator +=
             forward_sdsv.dye * backward_sdsv.dye / probability;
 }
 

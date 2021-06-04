@@ -18,10 +18,10 @@
 #include "classifiers/nn-classifier.h"
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -30,7 +30,7 @@ public:
     HybridClassifier(
             int num_timesteps,
             int num_channels,
-            const ErrorModel& error_model,
+            const SequencingModel& seq_model,
             int k,
             double sigma,
             std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*

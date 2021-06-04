@@ -14,6 +14,7 @@
 #include <random>
 
 // Local project headers:
+#include "parameterization/model/sequencing-model.h"
 #include "simulation/generate-dye-track.h"
 
 namespace whatprot {
@@ -24,14 +25,14 @@ using std::log;
 using std::lognormal_distribution;
 }  // namespace
 
-void generate_radiometry(const ErrorModel& error_model,
+void generate_radiometry(const SequencingModel& seq_model,
                          const DyeSeq& dye_seq,
                          int num_timesteps,
                          int num_channels,
                          default_random_engine* generator,
                          Radiometry* radiometry) {
     DyeTrack dye_track(num_timesteps, num_channels);
-    generate_dye_track(error_model,
+    generate_dye_track(seq_model,
                        dye_seq,
                        num_timesteps,
                        num_channels,
@@ -40,9 +41,10 @@ void generate_radiometry(const ErrorModel& error_model,
     for (int t = 0; t < num_timesteps; t++) {
         for (int c = 0; c < num_channels; c++) {
             if (dye_track(t, c) > 0) {
+                double mu = seq_model.channel_models[c]->mu;
+                double sigma = seq_model.channel_models[c]->sigma;
                 lognormal_distribution<double> lognormal(
-                        error_model.mu + log((double)dye_track(t, c)),
-                        error_model.sigma);
+                        mu + log((double)dye_track(t, c)), sigma);
                 (*radiometry)(t, c) = lognormal(*generator);
             } else {
                 (*radiometry)(t, c) = 0.0;

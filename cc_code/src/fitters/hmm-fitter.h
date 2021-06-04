@@ -14,12 +14,12 @@
 
 // Local project headers:
 #include "common/dye-seq.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "hmm/hmm/peptide-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -28,12 +28,12 @@ public:
     HMMFitter(int num_timesteps,
               int num_channels,
               double stopping_threshold,
-              const ErrorModel& error_model,
+              const SequencingModel& seq_model,
               const DyeSeq& dye_seq);
-    ErrorModel fit(const std::vector<Radiometry>& radiometries) const;
+    SequencingModel fit(const std::vector<Radiometry>& radiometries) const;
     const DyeSeq& dye_seq;
     std::vector<DyeSeq> stuck_dyes;
-    const ErrorModel& error_model;
+    const SequencingModel& seq_model;
     double stopping_threshold;
     int num_timesteps;
     int num_channels;

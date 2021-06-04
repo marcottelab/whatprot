@@ -6,29 +6,33 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
-#define WHATPROT_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
+#ifndef WHATPROT_PARAMETERIZATION_MODEL_SEQUENCING_MODEL_H
+#define WHATPROT_PARAMETERIZATION_MODEL_SEQUENCING_MODEL_H
 
 // Standard C++ library headers:
+#include <string>
 #include <vector>
 
 // Local project headers:
-#include "common/dye-seq.h"
-#include "hmm/step/edman-transition.h"
-#include "parameterization/model/sequencing-model.h"
+#include "parameterization/model/channel-model.h"
 
 namespace whatprot {
 
-class DyeSeqPrecomputations {
+class SequencingModel {
 public:
-    DyeSeqPrecomputations(const DyeSeq& dye_seq,
-                          const SequencingModel& seq_model,
-                          int num_timesteps,
-                          int num_channels);
-    std::vector<int> tensor_shape;
-    EdmanTransition edman_transition;
+    SequencingModel();
+    SequencingModel(const SequencingModel& other);
+    SequencingModel& operator=(const SequencingModel& other);
+    SequencingModel(SequencingModel&& other);
+    ~SequencingModel();
+    double relative_distance(const SequencingModel& sequencing_model) const;
+    std::string debug_string() const;
+
+    double p_edman_failure;
+    double p_detach;
+    std::vector<ChannelModel*> channel_models;
 };
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_HMM_PRECOMPUTATIONS_DYE_SEQ_PRECOMPUTATIONS_H
+#endif  // WHATPROT_PARAMETERIZATION_MODEL_SEQUENCING_MODEL_H

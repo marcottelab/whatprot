@@ -10,7 +10,7 @@
 #define WHATPROT_HMM_STEP_STEP_H
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -26,7 +26,7 @@ public:
                              const SV& next_backward_states,
                              int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const = 0;
+                             SequencingModelFitter* fitter) const = 0;
 };
 
 }  // namespace whatprot
