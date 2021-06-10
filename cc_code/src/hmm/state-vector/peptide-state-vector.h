@@ -21,7 +21,7 @@ class PeptideStateVector {
 public:
     // To construct a PeptideStateVector, you need to give the order and shape
     // of the underlying tensor.
-    PeptideStateVector(int order, const int* shape);
+    PeptideStateVector(unsigned int order, const unsigned int* shape);
     // Put 1.0 in starting state.
     void initialize_from_start();
     // Put 1.0 in every state.

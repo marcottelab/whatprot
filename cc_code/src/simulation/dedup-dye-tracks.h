@@ -23,8 +23,8 @@
 namespace whatprot {
 
 void dedup_dye_tracks(
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         std::vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks_in,
         std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                 dye_tracks_out);
@@ -46,12 +46,12 @@ void reduce_dye_tracks_helper(
 
 class OutputInfo {
 public:
-    OutputInfo(int num_timesteps,
-               int num_channels,
+    OutputInfo(unsigned int num_timesteps,
+               unsigned int num_channels,
                std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                        dye_tracks_out);
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
     std::vector<SourcedData<DyeTrack,
                             SourceCountHitsList<int>>>*
             dye_tracks_out;  // not ownd

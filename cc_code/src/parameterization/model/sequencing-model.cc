@@ -33,7 +33,7 @@ SequencingModel::SequencingModel() {}
 SequencingModel::SequencingModel(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
-    for (int c = 0; c < other.channel_models.size(); c++) {
+    for (unsigned int c = 0; c < other.channel_models.size(); c++) {
         channel_models.push_back(new ChannelModel(*other.channel_models[c]));
     }
 }
@@ -41,7 +41,7 @@ SequencingModel::SequencingModel(const SequencingModel& other) {
 SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
-    for (int c = 0; c < other.channel_models.size(); c++) {
+    for (unsigned int c = 0; c < other.channel_models.size(); c++) {
         channel_models.push_back(new ChannelModel(*other.channel_models[c]));
     }
     return *this;
@@ -68,7 +68,7 @@ double SequencingModel::relative_distance(
                abs(p_edman_failure - sequencing_model.p_edman_failure)
                        / p_edman_failure);
     dist = max(dist, abs(p_detach - sequencing_model.p_detach) / p_detach);
-    for (int i = 0; i < channel_models.size(); i++) {
+    for (unsigned int i = 0; i < channel_models.size(); i++) {
         dist = max(dist,
                    channel_models[i]->relative_distance(
                            *sequencing_model.channel_models[i]));
@@ -80,7 +80,7 @@ string SequencingModel::debug_string() const {
     string s = "";
     s += "Edman failure rate: " + to_string(p_edman_failure) + ", ";
     s += "Detach rate: " + to_string(p_detach);
-    for (int i = 0; i < channel_models.size(); i++) {
+    for (unsigned int i = 0; i < channel_models.size(); i++) {
         s += ", ";
         s += "Channel " + to_string(i) + " info: (";
         s += channel_models[i]->debug_string() + ")";

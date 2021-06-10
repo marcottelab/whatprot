@@ -42,17 +42,17 @@ BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(stuck_dye_emission_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int expected_size = num_timesteps * num_channels * 2;
+    unsigned int expected_size = num_timesteps * num_channels * 2;
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.num_channels == num_channels);
@@ -63,13 +63,13 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(1, 0) = 1.0;
     rad(2, 0) = 2.0;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int expected_size = num_timesteps * num_channels * 2;
+    unsigned int expected_size = num_timesteps * num_channels * 2;
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -92,13 +92,13 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(1, 0) = 1.0;
     rad(2, 0) = 2.0;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int expected_size = num_timesteps * num_channels * 2;
+    unsigned int expected_size = num_timesteps * num_channels * 2;
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     const StuckDyeEmission& ce = e;
@@ -122,13 +122,13 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
     rad(0, 2) = 0.2;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int expected_size = num_timesteps * num_channels * 2;
+    unsigned int expected_size = num_timesteps * num_channels * 2;
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -152,13 +152,13 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
     rad(0, 2) = 0.2;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock_0;
     When(Method(cm_mock_0, pdf))
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
             });
     seq_model.channel_models.push_back(&cm_mock_2.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int expected_size = num_timesteps * num_channels * 2;
+    unsigned int expected_size = num_timesteps * num_channels * 2;
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock_0.get().pdf(0.0, 0));
@@ -191,13 +191,13 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
     rad(0, 2) = 0.2;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int expected_size = num_timesteps * num_channels * 2;
+    unsigned int expected_size = num_timesteps * num_channels * 2;
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     const StuckDyeEmission& ce = e;
@@ -221,11 +221,11 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.7;
     sdsv.no_dye = 0.3;
@@ -246,12 +246,12 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_timestamps_test, *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(1, 0) = 1.1;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timestamps_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 1;
+    unsigned int num_edmans = 1;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.7;
     sdsv.no_dye = 0.3;
@@ -272,12 +272,12 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timestamps_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(0, 1) = 1.1;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.7;
     sdsv.no_dye = 0.3;
@@ -302,12 +302,12 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(forward_multiple_channels_other_channel_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(0, 1) = 1.1;
-    int channel = 1;
+    unsigned int channel = 1;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_other_channel_test,
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.7;
     sdsv.no_dye = 0.3;
@@ -332,12 +332,12 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_other_channel_test,
 
 BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(0, 1) = 1.1;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock_0;
     When(Method(cm_mock_0, pdf))
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
             });
     seq_model.channel_models.push_back(&cm_mock_1.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.7;
     sdsv.no_dye = 0.3;
@@ -368,11 +368,11 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
 }
 
 BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector input;
     input.dye = 0.7;
     input.no_dye = 0.3;
@@ -394,12 +394,12 @@ BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_multiple_timestamps_test, *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(1, 0) = 1.1;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE(backward_multiple_timestamps_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 1;
+    unsigned int num_edmans = 1;
     StuckDyeStateVector input;
     input.dye = 0.7;
     input.no_dye = 0.3;
@@ -421,12 +421,12 @@ BOOST_AUTO_TEST_CASE(backward_multiple_timestamps_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_multiple_channels_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(0, 1) = 1.1;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -436,7 +436,7 @@ BOOST_AUTO_TEST_CASE(backward_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector input;
     input.dye = 0.7;
     input.no_dye = 0.3;
@@ -452,12 +452,12 @@ BOOST_AUTO_TEST_CASE(backward_multiple_channels_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(backward_multiple_channels_other_channel_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(0, 1) = 1.1;
-    int channel = 1;
+    unsigned int channel = 1;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -467,7 +467,7 @@ BOOST_AUTO_TEST_CASE(backward_multiple_channels_other_channel_test,
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector input;
     input.dye = 0.7;
     input.no_dye = 0.3;
@@ -483,12 +483,12 @@ BOOST_AUTO_TEST_CASE(backward_multiple_channels_other_channel_test,
 
 BOOST_AUTO_TEST_CASE(backward_multiple_channels_different_pdfs_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     rad(0, 1) = 1.1;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock_0;
     When(Method(cm_mock_0, pdf))
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(backward_multiple_channels_different_pdfs_test,
             });
     seq_model.channel_models.push_back(&cm_mock_1.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector input;
     input.dye = 0.7;
     input.no_dye = 0.3;
@@ -520,11 +520,11 @@ BOOST_AUTO_TEST_CASE(backward_multiple_channels_different_pdfs_test,
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.2;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -533,7 +533,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     double probability = 0.98765;
     StuckDyeStateVector forward_sdsv;
     forward_sdsv.dye = 0.7;
@@ -571,12 +571,12 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_multiple_timesteps_test, *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.2;
     rad(1, 0) = 1.3;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -585,7 +585,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_timesteps_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 1;
+    unsigned int num_edmans = 1;
     double probability = 0.98765;
     StuckDyeStateVector forward_sdsv;
     forward_sdsv.dye = 0.7;
@@ -623,12 +623,12 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_timesteps_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.2;
     rad(0, 1) = 1.3;
-    int channel = 0;
+    unsigned int channel = 0;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf))
@@ -638,7 +638,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     double probability = 0.98765;
     StuckDyeStateVector forward_sdsv;
     forward_sdsv.dye = 0.7;

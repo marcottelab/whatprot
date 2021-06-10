@@ -24,8 +24,8 @@ namespace whatprot {
 void generate_radiometries(
         const SequencingModel& seq_model,
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         int radiometries_per_peptide,
         std::default_random_engine* generator,
         std::vector<SourcedData<Radiometry, SourceCount<int>>>* radiometries) {
@@ -50,7 +50,7 @@ void generate_radiometries(
                 // detectable. Any Radiometry with all 0s at the 0th timestep
                 // will have all 0s throughout.
                 bool nontrivial = false;
-                for (int c = 0; c < num_channels; c++) {
+                for (unsigned int c = 0; c < num_channels; c++) {
                     if (radiometries->back().value(0, c) != 0.0) {
                         nontrivial = true;
                     }

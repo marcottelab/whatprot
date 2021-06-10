@@ -32,7 +32,7 @@ public:
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
 };
@@ -41,7 +41,7 @@ void TestableBinomialTransition::improve_fit(
         const PeptideStateVector& forward_psv,
         const PeptideStateVector& backward_psv,
         const PeptideStateVector& next_backward_psv,
-        int num_edmans,
+        unsigned int num_edmans,
         double probability,
         SequencingModelFitter* fitter) const {}
 
@@ -129,21 +129,20 @@ BOOST_AUTO_TEST_CASE(reserve_no_shrink_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 1.0;  // loc is {0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.forward(&edmans, &psv);
     BOOST_TEST(psv.tensor[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
@@ -155,18 +154,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 //     int channel = 0;
 //     TestableBinomialTransition bt(q, channel);
 //     bt.reserve(0);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 1;
 //     shape[1] = 1;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 1.0;  // loc is {0, 0}
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     bt.forward(tsr1, &edmans, &psv2);
 //     BOOST_TEST(psv2.tensor[loc] == 1.0);  // loc is {0, 0}
 //     delete[] loc;
@@ -178,19 +177,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
     loc[1] = 1;
     psv.tensor[loc] = 0.7;  // loc is {0, 1}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -207,20 +206,20 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
 //     int channel = 0;
 //     TestableBinomialTransition bt(q, channel);
 //     bt.reserve(1);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 1;
 //     shape[1] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
 //     loc[1] = 1;
 //     psv1.tensor[loc] = 0.7;  // loc is {0, 1}
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     bt.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
@@ -236,13 +235,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 3;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -250,7 +249,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.3;  // loc is {0, 1}
     loc[1] = 2;
     psv.tensor[loc] = 0.7;  // loc is {0, 2}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -270,14 +269,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
 //     int channel = 0;
 //     TestableBinomialTransition bt(q, channel);
 //     bt.reserve(2);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 1;
 //     shape[1] = 3;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -285,7 +284,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
 //     psv1.tensor[loc] = 0.3;  // loc is {0, 1}
 //     loc[1] = 2;
 //     psv1.tensor[loc] = 0.7;  // loc is {0, 2}
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     bt.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
@@ -305,13 +304,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -327,7 +326,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.4;  // loc is {2, 0}
     loc[1] = 1;
     psv.tensor[loc] = 0.6;  // loc is {2, 1}
-    int edmans = 2;
+    unsigned int edmans = 2;
     bt.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -353,14 +352,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
 //     int channel = 0;
 //     TestableBinomialTransition bt(q, channel);
 //     bt.reserve(2);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 3;
 //     shape[1] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -376,7 +375,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
 //     psv1.tensor[loc] = 0.4;  // loc is {2, 0}
 //     loc[1] = 1;
 //     psv1.tensor[loc] = 0.6;  // loc is {2, 1}
-//     int edmans = 2;
+//     unsigned int edmans = 2;
 //     bt.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
@@ -402,15 +401,15 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     int channel = 1;  // corresponds to 2nd dim of tensor
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 4;
-    int* shape = new int[order];
+    unsigned int order = 4;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     shape[2] = 2;
     shape[3] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -434,7 +433,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.7;  // loc is {0, 1, 1, 0}
     loc[3] = 1;
     psv.tensor[loc] = 0.8;  // loc is {0, 1, 1, 1}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -469,8 +468,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
 //     int channel = 1;  // corresponds to 2nd dim of tensor
 //     TestableBinomialTransition bt(q, channel);
 //     bt.reserve(1);
-//     int order = 4;
-//     int* shape = new int[order];
+//     unsigned int order = 4;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 1;
 //     shape[1] = 2;
 //     shape[2] = 2;
@@ -478,7 +477,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
@@ -502,7 +501,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
 //     psv1.tensor[loc] = 0.7;  // loc is {0, 1, 1, 0}
 //     loc[3] = 1;
 //     psv1.tensor[loc] = 0.8;  // loc is {0, 1, 1, 1}
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     bt.forward(tsr1, &edmans, &psv2);
 //     loc[0] = 0;
 //     loc[1] = 0;
@@ -532,21 +531,20 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 1.0;  // loc is {0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv, &edmans, &psv);
     BOOST_TEST(psv.tensor[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
@@ -554,22 +552,21 @@ BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 1.0;  // loc is {0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv1, &edmans, &psv2);
     BOOST_TEST(psv2.tensor[loc] == 1.0);  // loc is {0, 0}
     delete[] loc;
@@ -581,19 +578,19 @@ BOOST_AUTO_TEST_CASE(backward_in_place_basic_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
     loc[1] = 1;
     psv.tensor[loc] = 0.7;  // loc is {0, 1}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv, &edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -609,20 +606,20 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
     loc[1] = 1;
     psv1.tensor[loc] = 0.7;  // loc is {0, 1}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv1, &edmans, &psv2);
     loc[0] = 0;
     loc[1] = 0;
@@ -639,13 +636,13 @@ BOOST_AUTO_TEST_CASE(backward_in_place_bigger_transition_test,
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 3;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -653,7 +650,7 @@ BOOST_AUTO_TEST_CASE(backward_in_place_bigger_transition_test,
     psv.tensor[loc] = 0.3;  // loc is {0, 1}
     loc[1] = 2;
     psv.tensor[loc] = 0.7;  // loc is {0, 2}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv, &edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -672,14 +669,14 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 3;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -687,7 +684,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
     psv1.tensor[loc] = 0.3;  // loc is {0, 1}
     loc[1] = 2;
     psv1.tensor[loc] = 0.7;  // loc is {0, 2}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv1, &edmans, &psv2);
     loc[0] = 0;
     loc[1] = 0;
@@ -706,13 +703,13 @@ BOOST_AUTO_TEST_CASE(backward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -728,7 +725,7 @@ BOOST_AUTO_TEST_CASE(backward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.4;  // loc is {2, 0}
     loc[1] = 1;
     psv.tensor[loc] = 0.6;  // loc is {2, 1}
-    int edmans = 2;
+    unsigned int edmans = 2;
     bt.backward(psv, &edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -754,14 +751,14 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -777,7 +774,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
     psv1.tensor[loc] = 0.4;  // loc is {2, 0}
     loc[1] = 1;
     psv1.tensor[loc] = 0.6;  // loc is {2, 1}
-    int edmans = 2;
+    unsigned int edmans = 2;
     bt.backward(psv1, &edmans, &psv2);
     loc[0] = 0;
     loc[1] = 0;
@@ -803,15 +800,15 @@ BOOST_AUTO_TEST_CASE(backward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     int channel = 1;  // corresponds to 2nd dim of tensor
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 4;
-    int* shape = new int[order];
+    unsigned int order = 4;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     shape[2] = 2;
     shape[3] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -835,7 +832,7 @@ BOOST_AUTO_TEST_CASE(backward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.7;  // loc is {0, 1, 1, 0}
     loc[3] = 1;
     psv.tensor[loc] = 0.8;  // loc is {0, 1, 1, 1}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv, &edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -869,8 +866,8 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
     int channel = 1;  // corresponds to 2nd dim of tensor
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 4;
-    int* shape = new int[order];
+    unsigned int order = 4;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     shape[2] = 2;
@@ -878,7 +875,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -902,7 +899,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
     psv1.tensor[loc] = 0.7;  // loc is {0, 1, 1, 0}
     loc[3] = 1;
     psv1.tensor[loc] = 0.8;  // loc is {0, 1, 1, 1}
-    int edmans = 0;
+    unsigned int edmans = 0;
     bt.backward(psv1, &edmans, &psv2);
     loc[0] = 0;
     loc[1] = 0;
@@ -932,26 +929,25 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 1.0;  // loc is {0, 0}
     bpsv.tensor[loc] = 1.0;
     nbpsv.tensor[loc] = 1.0;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
@@ -961,19 +957,18 @@ BOOST_AUTO_TEST_CASE(improve_fit_trivial_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -984,7 +979,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.72;
     nbpsv.tensor[loc] = 0.73;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
@@ -997,15 +992,15 @@ BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 3;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -1020,7 +1015,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.92;
     nbpsv.tensor[loc] = 0.93;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
@@ -1032,19 +1027,18 @@ BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -1064,7 +1058,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.82;
     nbpsv.tensor[loc] = 0.83;
     delete[] loc;
-    int edmans = 1;
+    unsigned int edmans = 1;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
@@ -1075,12 +1069,11 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     shape[2] = 2;
@@ -1088,7 +1081,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1109,7 +1102,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.272;
     nbpsv.tensor[loc] = 0.273;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
@@ -1120,19 +1113,18 @@ BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_different_probability_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -1143,7 +1135,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_different_probability_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.72;
     nbpsv.tensor[loc] = 0.73;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 0.123456789;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
@@ -1152,12 +1144,11 @@ BOOST_AUTO_TEST_CASE(improve_fit_different_probability_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector fpsv1(order, shape);
@@ -1167,7 +1158,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     PeptideStateVector bpsv2(order, shape);
     PeptideStateVector nbpsv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv1.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -1184,7 +1175,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     bpsv2.tensor[loc] = 0.272;
     nbpsv2.tensor[loc] = 0.273;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double prob1 = 0.123456789;
     double prob2 = 0.987654321;
     ParameterFitter pf;

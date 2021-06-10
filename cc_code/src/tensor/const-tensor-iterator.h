@@ -13,9 +13,9 @@ namespace whatprot {
 
 class ConstTensorIterator {
 public:
-    ConstTensorIterator(int order,
-                        const int* shape,
-                        int size,
+    ConstTensorIterator(unsigned int order,
+                        const unsigned int* shape,
+                        unsigned int size,
                         const double* values);
     ~ConstTensorIterator();
     void reset();
@@ -24,11 +24,11 @@ public:
     bool done();
 
     const double* values;  // not owned
-    const int* shape;  // not owned
-    int* loc;
-    const int order;
-    int index;  // current index directly into values
-    const int size;  // length of values
+    const unsigned int* shape;  // not owned
+    unsigned int* loc;
+    const unsigned int order;
+    unsigned int index;  // current index directly into values
+    const unsigned int size;  // length of values
 };
 
 }  // namespace whatprot

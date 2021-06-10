@@ -33,21 +33,24 @@ using std::move;
 using std::vector;
 }  // namespace
 
-HMMFitter::HMMFitter(int num_timesteps,
-                     int num_channels,
+HMMFitter::HMMFitter(unsigned int num_timesteps,
+                     unsigned int num_channels,
                      double stopping_threshold,
                      const SequencingModel& seq_model,
                      const DyeSeq& dye_seq)
-        : num_timesteps(num_timesteps),
-          num_channels(num_channels),
-          stopping_threshold(stopping_threshold),
+        : dye_seq(dye_seq),
           seq_model(seq_model),
-          dye_seq(dye_seq) {
+          stopping_threshold(stopping_threshold),
+          num_timesteps(num_timesteps),
+          num_channels(num_channels) {
     max_num_dyes = 0;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         int num_dyes = 0;
-        for (int i = 0; i < dye_seq.length; i++) {
-            if (dye_seq[i] == c) {
+        for (unsigned int i = 0; i < dye_seq.length; i++) {
+            // Can safely compare with type-cast. c is unsigned because it is
+            // a channel index, the DyeSeq [] operator is signed because values
+            // of -1 indicate no dye in that position.
+            if (dye_seq[i] == (int) c) {
                 num_dyes++;
             }
         }
@@ -77,7 +80,7 @@ SequencingModel HMMFitter::fit(
                            universal_precomputations);
             SequencingModelFitter peptide_fitter(num_channels);
             double peptide_ratio = 1.0;
-            for (int c = 0; c < num_channels; c++) {
+            for (unsigned int c = 0; c < num_channels; c++) {
                 peptide_ratio -= sm.channel_models[c]->stuck_dye_ratio;
             }
             double peptide_prob =
@@ -85,7 +88,7 @@ SequencingModel HMMFitter::fit(
             vector<SequencingModelFitter> stuck_dye_fitters;
             vector<double> stuck_dye_probs;
             double total_prob = peptide_prob;
-            for (int c = 0; c < num_channels; c++) {
+            for (unsigned int c = 0; c < num_channels; c++) {
                 stuck_dye_fitters.push_back(
                         SequencingModelFitter(num_channels));
                 StuckDyeHMM stuck_dye_hmm(num_timesteps,
@@ -101,7 +104,7 @@ SequencingModel HMMFitter::fit(
             if (total_prob != 0.0) {
                 peptide_fitter *= (peptide_prob / total_prob);
                 fitter += peptide_fitter;
-                for (int c = 0; c < num_channels; c++) {
+                for (unsigned int c = 0; c < num_channels; c++) {
                     stuck_dye_fitters[c] *= (stuck_dye_probs[c] / total_prob);
                     fitter += stuck_dye_fitters[c];
                     fitter.channel_fits[c]->stuck_dye_ratio_fit.numerator +=

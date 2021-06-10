@@ -17,19 +17,19 @@ namespace whatprot {
 
 class Tensor {
 public:
-    Tensor(int order, const int* shape);
+    Tensor(unsigned int order, const unsigned int* shape);
     Tensor(Tensor&& other);
     ~Tensor();
-    double& operator[](int* loc);
+    double& operator[](unsigned int* loc);
     TensorIterator* iterator();
     ConstTensorIterator* const_iterator() const;
     double sum() const;
 
     double* values;
-    int* shape;
+    unsigned int* shape;
     int* strides;
-    int size;
-    int order;
+    unsigned int size;
+    unsigned int order;
 };
 
 }  // namespace whatprot

@@ -58,8 +58,8 @@ int hybrid_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    int num_channels;
-    int total_num_dye_seqs;  // redundant, not needed.
+    unsigned int num_channels;
+    unsigned int total_num_dye_seqs;  // redundant, not needed.
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
     read_dye_seqs(
             dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
@@ -67,8 +67,8 @@ int hybrid_main(int argc, char** argv) {
     print_read_dye_seqs(dye_seqs.size(), end_time - start_time);
 
     start_time = wall_time();
-    int num_timesteps;
-    int duplicate_num_channels;  // also get this from dye seqs file
+    unsigned int num_timesteps;
+    unsigned int duplicate_num_channels;  // also get this from dye seqs file
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> dye_tracks;
     read_dye_tracks(dye_tracks_filename,
                     &num_timesteps,
@@ -78,9 +78,9 @@ int hybrid_main(int argc, char** argv) {
     print_read_dye_tracks(dye_tracks.size(), end_time - start_time);
 
     start_time = wall_time();
-    int duplicate_num_timesteps;  // also get this from dye track file.
-    int triplicate_num_channels;  // also in dye tracks and dye seqs files.
-    int total_num_radiometries;  // number of radiometries across all procs.
+    unsigned int duplicate_num_timesteps;  // also get this from dye track file.
+    unsigned int triplicate_num_channels;  // see dye tracks and dye seqs files.
+    unsigned int total_num_radiometries;  // num radiometries across all procs.
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
                       &duplicate_num_timesteps,
@@ -94,7 +94,7 @@ int hybrid_main(int argc, char** argv) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[c]->p_bleach = 0.05;
         seq_model.channel_models[c]->p_dud = 0.07;

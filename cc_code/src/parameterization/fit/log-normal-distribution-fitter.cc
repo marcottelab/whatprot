@@ -27,6 +27,8 @@ LogNormalDistributionFitter::LogNormalDistributionFitter()
           w_sum_log_x_over_n_sq(0.0),
           total_weight(0.0) {}
 
+LogNormalDistributionFitter::~LogNormalDistributionFitter() {}
+
 void LogNormalDistributionFitter::add_sample(double x, int n, double weight) {
     if (n == 0 || x == 0.0) {
         return;

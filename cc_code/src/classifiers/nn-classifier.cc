@@ -34,7 +34,6 @@ using std::sqrt;
 using std::unordered_map;
 using std::vector;
 using whatprot::KDTEntry;  // in namespace std for swap
-double PI = 3.141592653589793238;
 }  // namespace
 
 namespace whatprot {
@@ -78,18 +77,17 @@ double KDTQuery::operator[](int i) const {
 }
 
 NNClassifier::NNClassifier(
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         const SequencingModel& seq_model,
         int k,
         double sigma,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks)
-        : num_timesteps(num_timesteps),
+        : num_train(dye_tracks->size()),
+          num_timesteps(num_timesteps),
           num_channels(num_channels),
           k(k),
-          num_train(dye_tracks->size()),
           two_sigma_sq(2.0 * sigma * sigma) {
-    int stride = num_timesteps * num_channels;
     vector<KDTEntry> kdt_entries;
     kdt_entries.reserve(num_train);
     for (int i = 0; i < num_train; i++) {
@@ -112,7 +110,7 @@ double NNClassifier::classify_helper(const Radiometry& radiometry,
     vector<double> dists_sq;
     kd_tree->search(query, &k_nearest, &dists_sq);
     double total_score = 0.0;
-    for (int i = 0; i < k_nearest.size(); i++) {
+    for (unsigned int i = 0; i < k_nearest.size(); i++) {
         const SourcedData<DyeTrack, SourceCountHitsList<int>>& dye_track =
                 k_nearest[i]->dye_track;
         double dist_sq = dists_sq[i];
@@ -162,7 +160,7 @@ ScoredClassification NNClassifier::classify(const Radiometry& radiometry) {
 }
 
 vector<ScoredClassification> NNClassifier::classify(
-        const Radiometry& radiometry, int h) {
+        const Radiometry& radiometry, unsigned int h) {
     unordered_map<int, double> id_score_map;
     double total_score = classify_helper(radiometry, &id_score_map);
     priority_queue<ScoredClassification,
@@ -193,7 +191,7 @@ vector<ScoredClassification> NNClassifier::classify(
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
 #pragma omp parallel for
-    for (int i = 0; i < radiometries.size(); i++) {
+    for (unsigned int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }
     return results;

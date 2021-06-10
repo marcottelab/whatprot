@@ -25,8 +25,8 @@ namespace whatprot {
 
 class HMMFitter {
 public:
-    HMMFitter(int num_timesteps,
-              int num_channels,
+    HMMFitter(unsigned int num_timesteps,
+              unsigned int num_channels,
               double stopping_threshold,
               const SequencingModel& seq_model,
               const DyeSeq& dye_seq);
@@ -35,8 +35,8 @@ public:
     std::vector<DyeSeq> stuck_dyes;
     const SequencingModel& seq_model;
     double stopping_threshold;
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
     int max_num_dyes;
 };
 

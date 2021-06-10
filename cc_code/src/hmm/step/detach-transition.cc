@@ -17,7 +17,7 @@ namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
+void DetachTransition::forward(unsigned int* num_edmans, PeptideStateVector* psv) const {
     int i_max = (*num_edmans + 1) * psv->tensor.strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {
@@ -30,7 +30,7 @@ void DetachTransition::forward(int* num_edmans, PeptideStateVector* psv) const {
 }
 
 void DetachTransition::backward(const PeptideStateVector& input,
-                                int* num_edmans,
+                                unsigned int* num_edmans,
                                 PeptideStateVector* output) const {
     int i_max = (*num_edmans + 1) * input.tensor.strides[0];
     double if_detach =
@@ -44,17 +44,17 @@ void DetachTransition::backward(const PeptideStateVector& input,
 void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& backward_psv,
                                    const PeptideStateVector& next_backward_psv,
-                                   int num_edmans,
+                                   unsigned int num_edmans,
                                    double probability,
                                    SequencingModelFitter* fitter) const {
     int t_stride = forward_psv.tensor.strides[0];
     double forward_sum = 0.0;
     double forward_backward_sum = 0.0;
-    for (int t = 0; t < num_edmans + 1; t++) {
+    for (unsigned int t = 0; t < num_edmans + 1; t++) {
         // Here we omit the zeroth entry of every timestep because this is the
         // entry for zero of every dye color. These entries are unable to
         // provide tangible evidence of detachment one way or the other.
-        for (int i = t * t_stride + 1; i < (t + 1) * t_stride; i++) {
+        for (unsigned int i = t * t_stride + 1; i < (t + 1) * t_stride; i++) {
             forward_sum += forward_psv.tensor.values[i];
             forward_backward_sum += forward_psv.tensor.values[i]
                                     * backward_psv.tensor.values[i];

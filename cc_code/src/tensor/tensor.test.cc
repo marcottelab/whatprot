@@ -31,28 +31,28 @@ BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(tensor_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_order_one_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 1);
+    BOOST_TEST(t.shape[0] == 1u);
     BOOST_TEST(t.strides[0] == 1);
-    BOOST_ASSERT(t.size == 1);
+    BOOST_ASSERT(t.size == 1u);
     BOOST_TEST(t.values[0] == 0.0);
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 10;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 10);
+    BOOST_TEST(t.shape[0] == 10u);
     BOOST_TEST(t.strides[0] == 1);
-    BOOST_TEST(t.size == 10);
+    BOOST_TEST(t.size == 10u);
     BOOST_TEST(t.values[0] == 0.0);
     BOOST_TEST(t.values[1] == 0.0);
     BOOST_TEST(t.values[2] == 0.0);
@@ -66,18 +66,18 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_two_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 5;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 3);
-    BOOST_TEST(t.shape[1] == 5);
+    BOOST_TEST(t.shape[0] == 3u);
+    BOOST_TEST(t.shape[1] == 5u);
     BOOST_TEST(t.strides[0] == 5);
     BOOST_TEST(t.strides[1] == 1);
-    BOOST_ASSERT(t.size == 3 * 5);
+    BOOST_ASSERT(t.size == 3u * 5u);
     BOOST_TEST(t.values[0] == 0.0);
     BOOST_TEST(t.values[1] == 0.0);
     BOOST_TEST(t.values[2] == 0.0);
@@ -96,21 +96,21 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_three_test, *tolerance(TOL)) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 4;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 2);
-    BOOST_TEST(t.shape[1] == 3);
-    BOOST_TEST(t.shape[2] == 4);
+    BOOST_TEST(t.shape[0] == 2u);
+    BOOST_TEST(t.shape[1] == 3u);
+    BOOST_TEST(t.shape[2] == 4u);
     BOOST_TEST(t.strides[0] == 3 * 4);
     BOOST_TEST(t.strides[1] == 4);
     BOOST_TEST(t.strides[2] == 1);
-    BOOST_ASSERT(t.size == 2 * 3 * 4);  // size is 24
+    BOOST_ASSERT(t.size == 2u * 3u * 4u);  // size is 24
     BOOST_TEST(t.values[0] == 0.0);
     BOOST_TEST(t.values[1] == 0.0);
     BOOST_TEST(t.values[2] == 0.0);
@@ -138,8 +138,8 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 4;
@@ -150,13 +150,13 @@ BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
     BOOST_TEST(t1.shape == (void*)NULL);
     BOOST_TEST(t1.strides == (void*)NULL);
     BOOST_TEST(t2.order == order);
-    BOOST_TEST(t2.shape[0] == 2);
-    BOOST_TEST(t2.shape[1] == 3);
-    BOOST_TEST(t2.shape[2] == 4);
+    BOOST_TEST(t2.shape[0] == 2u);
+    BOOST_TEST(t2.shape[1] == 3u);
+    BOOST_TEST(t2.shape[2] == 4u);
     BOOST_TEST(t2.strides[0] == 3 * 4);
     BOOST_TEST(t2.strides[1] == 4);
     BOOST_TEST(t2.strides[2] == 1);
-    BOOST_ASSERT(t2.size == 2 * 3 * 4);  // size is 24
+    BOOST_ASSERT(t2.size == 2u * 3u * 4u);  // size is 24
     BOOST_TEST(t2.values[0] == 0.0);
     BOOST_TEST(t2.values[1] == 0.0);
     BOOST_TEST(t2.values[2] == 0.0);
@@ -184,13 +184,13 @@ BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(bracket_op_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     Tensor t(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     t[loc] = 600;
@@ -223,13 +223,13 @@ BOOST_AUTO_TEST_CASE(bracket_op_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     Tensor t(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     t[loc] = 500;
@@ -289,13 +289,13 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     Tensor t(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     t[loc] = 500;
@@ -349,12 +349,12 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     tsr[loc] = 3.14;
     BOOST_TEST(tsr.sum() == 3.14);
@@ -362,12 +362,12 @@ BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(sum_bigger_size_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     tsr[loc] = 7.0;
     loc[0] = 1;
@@ -379,14 +379,14 @@ BOOST_AUTO_TEST_CASE(sum_bigger_size_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(sum_more_dimensions_test, *tolerance(TOL)) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
     shape[2] = 1;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -396,13 +396,13 @@ BOOST_AUTO_TEST_CASE(sum_more_dimensions_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     tsr[loc] = 7.00;

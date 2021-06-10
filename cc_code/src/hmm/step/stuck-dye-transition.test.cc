@@ -38,21 +38,21 @@ BOOST_AUTO_TEST_CASE(forward_test, *tolerance(TOL)) {
     int channel = 0;
     double loss_rate = 0.035;
     StuckDyeTransition sdt(loss_rate, channel);
-    int num_edmans = 0;
+    unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv;
     sdsv.dye = 0.3;
     sdsv.no_dye = 0.7;
     sdt.forward(&num_edmans, &sdsv);
     BOOST_TEST(sdsv.dye == 0.3 * (1 - loss_rate));
     BOOST_TEST(sdsv.no_dye == 0.7 + 0.3 * loss_rate);
-    BOOST_TEST(num_edmans == 1);
+    BOOST_TEST(num_edmans == 1u);
 }
 
 BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
     int channel = 0;
     double loss_rate = 0.035;
     StuckDyeTransition sdt(loss_rate, channel);
-    int num_edmans = 1;
+    unsigned int num_edmans = 1;
     StuckDyeStateVector input;
     input.dye = 0.3;
     input.no_dye = 0.7;
@@ -60,14 +60,14 @@ BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
     sdt.backward(input, &num_edmans, &output);
     BOOST_TEST(output.dye == loss_rate * 0.7 + (1 - loss_rate) * 0.3);
     BOOST_TEST(output.no_dye == 0.7);
-    BOOST_TEST(num_edmans == 0);
+    BOOST_TEST(num_edmans == 0u);
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     int channel = 0;
     double loss_rate = 0.035;
     StuckDyeTransition sdt(loss_rate, channel);
-    int num_edmans = 1;
+    unsigned int num_edmans = 1;
     double probability = 0.98765;
     StuckDyeStateVector forward_sdsv;
     forward_sdsv.dye = 0.3;
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_different_channel_test, *tolerance(TOL)) {
     int channel = 1;
     double loss_rate = 0.035;
     StuckDyeTransition sdt(loss_rate, channel);
-    int num_edmans = 1;
+    unsigned int num_edmans = 1;
     double probability = 0.98765;
     StuckDyeStateVector forward_sdsv;
     forward_sdsv.dye = 0.3;

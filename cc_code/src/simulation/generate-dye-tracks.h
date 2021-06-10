@@ -25,8 +25,8 @@ namespace whatprot {
 void generate_dye_tracks(
         const SequencingModel& seq_model,
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         int dye_tracks_per_peptide,
         std::default_random_engine* generator,
         std::vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks);

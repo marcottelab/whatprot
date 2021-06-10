@@ -20,13 +20,13 @@ using std::copy;
 using std::string;
 }  // namespace
 
-DyeSeq::DyeSeq(int num_channels, const string& s) : num_channels(num_channels) {
+DyeSeq::DyeSeq(unsigned int num_channels, const string& s) : num_channels(num_channels) {
     length = s.length();
-    while (s[length - 1] == '.') {
+    while (length > 0 && s[length - 1] == '.') {
         length--;
     }
     seq = new short[length];
-    for (int i = 0; i < length; i++) {
+    for (unsigned int i = 0; i < length; i++) {
         const char& c = s[i];
         if (c == '.') {
             seq[i] = -1;
@@ -39,7 +39,7 @@ DyeSeq::DyeSeq(int num_channels, const string& s) : num_channels(num_channels) {
 }
 
 DyeSeq::DyeSeq(const DyeSeq& other)
-        : num_channels(other.num_channels), length(other.length) {
+        : length(other.length), num_channels(other.num_channels) {
     seq = new short[length];
     copy(other.seq, &other.seq[length], seq);
 }
@@ -48,7 +48,7 @@ DyeSeq::~DyeSeq() {
     delete[] seq;
 }
 
-short DyeSeq::operator[](int i) const {
+short DyeSeq::operator[](unsigned int i) const {
     if (i < length) {
         return seq[i];
     } else {
@@ -56,7 +56,7 @@ short DyeSeq::operator[](int i) const {
     }
 }
 
-short& DyeSeq::operator[](int i) {
+short& DyeSeq::operator[](unsigned int i) {
     return seq[i];
 }
 

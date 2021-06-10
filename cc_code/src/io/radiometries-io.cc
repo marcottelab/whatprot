@@ -29,11 +29,11 @@ using std::vector;
 }  // namespace
 
 void read_radiometries(const string& filename,
-                       int* num_timesteps,
-                       int* num_channels,
-                       int* total_num_radiometries,
+                       unsigned int* num_timesteps,
+                       unsigned int* num_channels,
+                       unsigned int* total_num_radiometries,
                        vector<Radiometry>* radiometries) {
-    int num_radiometries;
+    unsigned int num_radiometries;
     double* intensities;
     read_radiometries_raw(filename,
                           num_timesteps,
@@ -51,10 +51,10 @@ void read_radiometries(const string& filename,
 }
 
 void read_radiometries_raw(const string& filename,
-                           int* num_timesteps,
-                           int* num_channels,
-                           int* total_num_radiometries,
-                           int* num_radiometries,
+                           unsigned int* num_timesteps,
+                           unsigned int* num_channels,
+                           unsigned int* total_num_radiometries,
+                           unsigned int* num_radiometries,
                            double** intensities) {
     ifstream f(filename);
     f >> *num_timesteps;
@@ -63,7 +63,7 @@ void read_radiometries_raw(const string& filename,
     *num_radiometries = *total_num_radiometries;
     *intensities = new double[(*total_num_radiometries) * (*num_timesteps)
                               * (*num_channels)];
-    for (int i = 0;
+    for (unsigned int i = 0;
          i < (*total_num_radiometries) * (*num_timesteps) * (*num_channels);
          i++) {
         f >> (*intensities)[i];
@@ -71,15 +71,15 @@ void read_radiometries_raw(const string& filename,
     f.close();
 }
 
-void convert_radiometries_from_raw(int num_timesteps,
-                                   int num_channels,
-                                   int num_radiometries,
+void convert_radiometries_from_raw(unsigned int num_timesteps,
+                                   unsigned int num_channels,
+                                   unsigned int num_radiometries,
                                    double* intensities,
                                    vector<Radiometry>* radiometries) {
     radiometries->reserve(num_radiometries);
-    for (int i = 0; i < num_radiometries; i++) {
+    for (unsigned int i = 0; i < num_radiometries; i++) {
         radiometries->push_back(Radiometry(num_timesteps, num_channels));
-        for (int j = 0; j < num_timesteps * num_channels; j++) {
+        for (unsigned int j = 0; j < num_timesteps * num_channels; j++) {
             radiometries->back().intensities[j] =
                     intensities[i * (num_timesteps * num_channels) + j];
         }
@@ -88,8 +88,8 @@ void convert_radiometries_from_raw(int num_timesteps,
 
 void write_radiometries(
         const string& filename,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries) {
     double* intensities;
     convert_raw_from_radiometries(
@@ -106,11 +106,11 @@ void write_radiometries(
 
 void convert_raw_from_radiometries(
         const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries,
-        int radiometry_size,
+        unsigned int radiometry_size,
         double** intensities) {
     *intensities = new double[radiometries.size() * radiometry_size];
-    for (int i = 0; i < radiometries.size(); i++) {
-        for (int j = 0; j < radiometry_size; j++) {
+    for (unsigned int i = 0; i < radiometries.size(); i++) {
+        for (unsigned int j = 0; j < radiometry_size; j++) {
             (*intensities)[i * radiometry_size + j] =
                     radiometries[i].value.intensities[j];
         }
@@ -118,16 +118,16 @@ void convert_raw_from_radiometries(
 }
 
 void write_radiometries_raw(const std::string& filename,
-                            int num_timesteps,
-                            int num_channels,
-                            int num_radiometries,
+                            unsigned int num_timesteps,
+                            unsigned int num_channels,
+                            unsigned int num_radiometries,
                             double* intensities) {
     ofstream f(filename);
     f << num_timesteps << "\n";
     f << num_channels << "\n";
     f << num_radiometries << "\n";
-    for (int i = 0; i < num_radiometries; i++) {
-        for (int j = 0; j < num_timesteps * num_channels; j++) {
+    for (unsigned int i = 0; i < num_radiometries; i++) {
+        for (unsigned int j = 0; j < num_timesteps * num_channels; j++) {
             if (j != 0) {
                 f << "\t";
             }
@@ -155,15 +155,15 @@ void get_raw_ys(
         const vector<SourcedData<Radiometry, SourceCount<int>>>& radiometries,
         int** ys) {
     *ys = new int[radiometries.size()];
-    for (int i = 0; i < radiometries.size(); i++) {
+    for (unsigned int i = 0; i < radiometries.size(); i++) {
         (*ys)[i] = radiometries[i].source.source;
     }
 }
 
-void write_ys_raw(const string& filename, int num_radiometries, int* ys) {
+void write_ys_raw(const string& filename, unsigned int num_radiometries, int* ys) {
     ofstream f(filename);
     f << num_radiometries << "\n";
-    for (int i = 0; i < num_radiometries; i++) {
+    for (unsigned int i = 0; i < num_radiometries; i++) {
         f << ys[i] << "\n";
     }
     f.close();

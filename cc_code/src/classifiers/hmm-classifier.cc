@@ -32,21 +32,21 @@ using std::vector;
 }  // namespace
 
 HMMClassifier::HMMClassifier(
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         const SequencingModel& seq_model,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
-        : num_timesteps(num_timesteps),
-          num_channels(num_channels),
-          seq_model(seq_model),
+        : seq_model(seq_model),
+          universal_precomputations(seq_model, num_channels),
           dye_seqs(dye_seqs),
-          universal_precomputations(seq_model, num_channels) {
+          num_timesteps(num_timesteps),
+          num_channels(num_channels) {
     max_num_dyes = 0;
     for (const SourcedData<DyeSeq, SourceCount<int>>& dye_seq : dye_seqs) {
         dye_seq_precomputations_vec.emplace_back(
                 dye_seq.value, seq_model, num_timesteps, num_channels);
         const DyeSeqPrecomputations& back = dye_seq_precomputations_vec.back();
-        for (int c = 0; c < num_channels; c++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             // Two things to be aware of for the next line of code.
             //   * The first dimension of the tensor shape is always the
             //     timestep, so we need to add one to the channel to index to
@@ -77,7 +77,7 @@ vector<ScoredClassification> HMMClassifier::classify(
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
 #pragma omp parallel for
-    for (int i = 0; i < radiometries.size(); i++) {
+    for (unsigned int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }
     return results;

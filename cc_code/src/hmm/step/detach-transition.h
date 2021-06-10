@@ -19,15 +19,15 @@ namespace whatprot {
 class DetachTransition : public Step<PeptideStateVector> {
 public:
     DetachTransition(double p_detach);
-    virtual void forward(int* num_edmans,
+    virtual void forward(unsigned int* num_edmans,
                          PeptideStateVector* psv) const override;
     virtual void backward(const PeptideStateVector& input,
-                          int* num_edmans,
+                          unsigned int* num_edmans,
                           PeptideStateVector* output) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
 

@@ -25,13 +25,13 @@ namespace whatprot {
 
 class PeptideHMM : public GenericHMM<PeptideStateVector> {
 public:
-    PeptideHMM(int num_timesteps,
-               int num_channels,
+    PeptideHMM(unsigned int num_timesteps,
+               unsigned int num_channels,
                const DyeSeqPrecomputations& dye_seq_precomputations,
                const RadiometryPrecomputations& radiometry_precomputations,
                const UniversalPrecomputations& universal_precomputations);
     virtual PeptideStateVector create_states() const override;
-    std::vector<int> tensor_shape;
+    std::vector<unsigned int> tensor_shape;
 };
 
 }  // namespace whatprot

@@ -37,19 +37,18 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     double q = 0.05;
-    double p = 0.95;
     int channel = 0;
     BleachTransition bt(q, channel);
     bt.reserve(1);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -60,7 +59,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.72;
     nbpsv.tensor[loc] = 0.73;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 1.0;
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());

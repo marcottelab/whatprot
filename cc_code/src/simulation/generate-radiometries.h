@@ -24,8 +24,8 @@ namespace whatprot {
 void generate_radiometries(
         const SequencingModel& seq_model,
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         int radiometries_per_peptide,
         std::default_random_engine* generator,
         std::vector<SourcedData<Radiometry, SourceCount<int>>>* radiometries);

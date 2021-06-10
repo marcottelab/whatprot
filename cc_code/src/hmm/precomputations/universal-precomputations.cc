@@ -22,9 +22,9 @@
 namespace whatprot {
 
 UniversalPrecomputations::UniversalPrecomputations(
-        const SequencingModel& seq_model, int num_channels)
+        const SequencingModel& seq_model, unsigned int num_channels)
         : detach_transition(seq_model.p_detach), num_channels(num_channels) {
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         dud_transitions.emplace_back(seq_model.channel_models[i]->p_dud, i);
         bleach_transitions.emplace_back(seq_model.channel_models[i]->p_bleach,
                                         i);
@@ -34,7 +34,7 @@ UniversalPrecomputations::UniversalPrecomputations(
 }
 
 void UniversalPrecomputations::set_max_num_dyes(int max_num_dyes) {
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         dud_transitions[i].reserve(max_num_dyes);
         bleach_transitions[i].reserve(max_num_dyes);
     }

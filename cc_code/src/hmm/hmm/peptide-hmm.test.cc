@@ -51,11 +51,11 @@ BOOST_AUTO_TEST_SUITE(hmm_suite)
 BOOST_AUTO_TEST_SUITE(peptide_hmm_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
-    int num_channels = 2;
+    unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
     seq_model.p_detach = 0.02;
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
-    int num_timesteps = 4;
+    unsigned int num_timesteps = 4;
     DyeSeq ds(num_channels, ".1.0.1.0.1");  // two in ch 0, three in ch 1.
     DyeSeqPrecomputations dye_seq_precomputations(
             ds, seq_model, num_timesteps, num_channels);
@@ -89,8 +89,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
                    universal_precomputations);
     BOOST_ASSERT(hmm.tensor_shape.size() == 1 + num_channels);
     BOOST_TEST(hmm.tensor_shape[0] == num_timesteps);
-    BOOST_TEST(hmm.tensor_shape[1] == 2 + 1);  // extra is to have 0 & num dyes.
-    BOOST_TEST(hmm.tensor_shape[2] == 3 + 1);  // extra is to have 0 & num dyes.
+    BOOST_TEST(hmm.tensor_shape[1] == 2u + 1u);  // extra for 0 & num dyes.
+    BOOST_TEST(hmm.tensor_shape[2] == 3u + 1u);  // extra for 0 & num dyes.
     BOOST_ASSERT(hmm.steps.size()
                  == (3 + num_channels) * (num_timesteps - 1) + 1
                             + num_channels);
@@ -135,11 +135,11 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on November 10, 2020.
-    int num_channels = 2;
+    unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     int max_num_dyes = 5;
     UniversalPrecomputations up(seq_model, num_channels);
     up.set_max_num_dyes(max_num_dyes);
-    int num_timesteps = 3;
+    unsigned int num_timesteps = 3;
     DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
     DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
@@ -167,11 +167,11 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
-    int num_channels = 2;
+    unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
     seq_model.p_detach = 0.02;
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
-    int num_timesteps = 4;
+    unsigned int num_timesteps = 4;
     DyeSeq ds(num_channels, ".1.0.1.0.1");  // two in ch 0, three in ch 1.
     DyeSeqPrecomputations dye_seq_precomputations(
             ds, seq_model, num_timesteps, num_channels);

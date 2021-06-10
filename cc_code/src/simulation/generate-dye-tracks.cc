@@ -34,8 +34,8 @@ using std::vector;
 void generate_dye_tracks(
         const SequencingModel& seq_model,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         int dye_tracks_per_peptide,
         default_random_engine* generator,
         vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks) {
@@ -57,7 +57,7 @@ void generate_dye_tracks(
                 // detectable. Any DyeTrack with all 0s at the 0th timestep will
                 // have all 0s throughout.
                 bool nontrivial = false;
-                for (int c = 0; c < num_channels; c++) {
+                for (unsigned int c = 0; c < num_channels; c++) {
                     if (dye_track(0, c) != 0) {
                         nontrivial = true;
                     }

@@ -22,7 +22,7 @@ namespace whatprot {
 class SequencingModelFitter {
 public:
     SequencingModelFitter();
-    SequencingModelFitter(int num_channels);
+    SequencingModelFitter(unsigned int num_channels);
     SequencingModelFitter(const SequencingModelFitter& other);
     SequencingModelFitter(SequencingModelFitter&& other);
     ~SequencingModelFitter();

@@ -31,7 +31,6 @@ void write_scored_classifications(
         const string& filename,
         int total_num_scored_classifications,
         const vector<ScoredClassification>& scored_classifications) {
-    int num_scored_classifications = scored_classifications.size();
     int* ids;
     double* scores;
     convert_raw_from_scored_classifications(
@@ -46,7 +45,7 @@ void convert_raw_from_scored_classifications(
         double** scores) {
     *ids = new int[scored_classifications.size()];
     *scores = new double[scored_classifications.size()];
-    for (int i = 0; i < scored_classifications.size(); i++) {
+    for (unsigned int i = 0; i < scored_classifications.size(); i++) {
         (*ids)[i] = scored_classifications[i].id;
         (*scores)[i] = scored_classifications[i].adjusted_score();
     }

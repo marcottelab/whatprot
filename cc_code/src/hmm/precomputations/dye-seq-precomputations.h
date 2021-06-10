@@ -23,9 +23,9 @@ class DyeSeqPrecomputations {
 public:
     DyeSeqPrecomputations(const DyeSeq& dye_seq,
                           const SequencingModel& seq_model,
-                          int num_timesteps,
-                          int num_channels);
-    std::vector<int> tensor_shape;
+                          unsigned int num_timesteps,
+                          unsigned int num_channels);
+    std::vector<unsigned int> tensor_shape;
     EdmanTransition edman_transition;
 };
 

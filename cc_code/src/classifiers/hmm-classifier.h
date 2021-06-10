@@ -28,8 +28,8 @@ namespace whatprot {
 class HMMClassifier {
 public:
     HMMClassifier(
-            int num_timesteps,
-            int num_channels,
+            unsigned int num_timesteps,
+            unsigned int num_channels,
             const SequencingModel& seq_model,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ScoredClassification classify(const Radiometry& radiometry);
@@ -46,7 +46,6 @@ public:
         int best_i = -1;
         double best_score = -1.0;
         double total_score = 0.0;
-        int i = 0;
         for (int i : indices) {
             PeptideHMM hmm(num_timesteps,
                            num_channels,
@@ -68,8 +67,8 @@ public:
     UniversalPrecomputations universal_precomputations;
     std::vector<DyeSeqPrecomputations> dye_seq_precomputations_vec;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
     int max_num_dyes;
 };
 

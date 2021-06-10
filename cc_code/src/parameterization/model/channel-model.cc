@@ -29,6 +29,8 @@ using std::to_string;
 double PI = 3.141592653589793238;
 }  // namespace
 
+ChannelModel::~ChannelModel() {}
+
 double ChannelModel::pdf(double observed, int state) const {
     if (state > 0) {
         if (observed == 0.0) {

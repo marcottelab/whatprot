@@ -31,8 +31,8 @@ const double TOL = 0.000000001;
 // [] operator. This is OK. It's not needed by KBest<E>.
 class Str {
 public:
-    Str(string s) : s(s), hits(1) {}
-    Str(string s, int hits) : s(s), hits(hits) {}
+    Str(string s) : hits(1), s(s) {}
+    Str(string s, int hits) : hits(hits), s(s) {}
     int hits;
     string s;
 };
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(empty_test, *tolerance(TOL)) {
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
     BOOST_REQUIRE(v.size() == 0);
-    BOOST_TEST(dists_sq.size() == 0);
+    BOOST_TEST(dists_sq.size() == 0u);
 }
 
 BOOST_AUTO_TEST_CASE(under_capacity_test, *tolerance(TOL)) {
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(at_capacity_test, *tolerance(TOL)) {
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
     BOOST_REQUIRE(v.size() == 3);
-    BOOST_TEST(dists_sq.size() == 3);
+    BOOST_TEST(dists_sq.size() == 3u);
     BOOST_TEST(v[0]->s == "three point zero");
     BOOST_TEST(v[0]->hits == 1);
     BOOST_TEST(dists_sq[0] == 3.0);
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(at_capacity_hits_gt1_test, *tolerance(TOL)) {
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
     BOOST_REQUIRE(v.size() == 2);
-    BOOST_TEST(dists_sq.size() == 2);
+    BOOST_TEST(dists_sq.size() == 2u);
     BOOST_TEST(v[0]->s == "two point zero");
     BOOST_TEST(v[0]->hits == 2);
     BOOST_TEST(dists_sq[0] == 2.0);
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(over_capacity_test, *tolerance(TOL)) {
     vector<double> dists_sq;
     kb.fill(&v, &dists_sq);
     BOOST_REQUIRE(v.size() == 3);
-    BOOST_TEST(dists_sq.size() == 3);
+    BOOST_TEST(dists_sq.size() == 3u);
     BOOST_TEST(v[0]->s == "two point two");
     BOOST_TEST(v[0]->hits == 1);
     BOOST_TEST(dists_sq[0] == 2.2);

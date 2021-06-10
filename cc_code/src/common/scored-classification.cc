@@ -15,10 +15,10 @@
 namespace whatprot {
 
 ScoredClassification::ScoredClassification(int id, double score, double total)
-        : id(id), score(score), total(total) {}
+        : score(score), total(total), id(id) {}
 
 ScoredClassification::ScoredClassification()
-        : id(-1), score(INT_MIN), total(0.0) {}
+        : score(INT_MIN), total(0.0), id(-1) {}
 
 double ScoredClassification::adjusted_score() const {
     return score / total;

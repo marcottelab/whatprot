@@ -32,8 +32,8 @@ StuckDyeEmission::StuckDyeEmission(const Radiometry& radiometry,
           num_channels(radiometry.num_channels),
           channel(channel) {
     values.resize(num_timesteps * num_channels * 2);
-    for (int t = 0; t < num_timesteps; t++) {
-        for (int c = 0; c < num_channels; c++) {
+    for (unsigned int t = 0; t < num_timesteps; t++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             for (int d = 0; d < 2; d++) {
                 prob(t, c, d) =
                         seq_model.channel_models[c]->pdf(radiometry(t, c), d);
@@ -50,10 +50,10 @@ double StuckDyeEmission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * 2 + d];
 }
 
-void StuckDyeEmission::forward(int* num_edmans,
+void StuckDyeEmission::forward(unsigned int* num_edmans,
                                StuckDyeStateVector* sdsv) const {
     double product = 1.0;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         if (c == channel) {
             continue;
         }
@@ -64,10 +64,10 @@ void StuckDyeEmission::forward(int* num_edmans,
 }
 
 void StuckDyeEmission::backward(const StuckDyeStateVector& input,
-                                int* num_edmans,
+                                unsigned int* num_edmans,
                                 StuckDyeStateVector* output) const {
     double product = 1.0;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         if (c == channel) {
             continue;
         }
@@ -81,7 +81,7 @@ void StuckDyeEmission::improve_fit(
         const StuckDyeStateVector& forward_sdsv,
         const StuckDyeStateVector& backward_sdsv,
         const StuckDyeStateVector& next_backward_sdsv,
-        int num_edmans,
+        unsigned int num_edmans,
         double probability,
         SequencingModelFitter* fitter) const {
     double intensity = radiometry(num_edmans, channel);
@@ -92,7 +92,7 @@ void StuckDyeEmission::improve_fit(
     fitter->channel_fits[channel]->distribution_fit->add_sample(
             intensity, 1, p_dye);
     double p_total = p_no_dye + p_dye;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         if (c == channel) {
             continue;
         }

@@ -23,14 +23,14 @@
 namespace whatprot {
 
 StuckDyeHMM::StuckDyeHMM(
-        int num_timesteps,
-        int num_channels,
-        int channel,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
+        unsigned int channel,
         const RadiometryPrecomputations& radiometry_precomputations,
         const UniversalPrecomputations& universal_precomputations)
         : GenericHMM(num_timesteps) {
     steps.push_back(&radiometry_precomputations.stuck_dye_emissions[channel]);
-    for (int i = 1; i < num_timesteps; i++) {
+    for (unsigned int i = 1; i < num_timesteps; i++) {
         steps.push_back(
                 &universal_precomputations.stuck_dye_transitions[channel]);
         steps.push_back(

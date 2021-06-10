@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(peptide_emission_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     int max_num_dyes = 0;
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.num_channels == num_channels);
@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(1, 0) = 1.0;
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(1, 0) = 1.0;
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     const PeptideEmission& ce = e;
@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     const PeptideEmission& ce = e;
@@ -181,8 +181,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
             });
     seq_model.channel_models.push_back(&cm_mock_2.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock_0.get().pdf(0.0, 0));
@@ -219,8 +219,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     int max_num_dyes = 2;
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -243,8 +243,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     int max_num_dyes = 2;
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     const PeptideEmission& ce = e;
@@ -268,8 +268,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 2;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -301,8 +301,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 2;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int expected_size = num_timesteps * num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_timesteps == num_timesteps);
     const PeptideEmission& ce = e;
@@ -335,8 +335,8 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     int max_num_dyes = 0;
@@ -348,17 +348,17 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 3.14;  // loc is {0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     e.forward(&edmans, &psv);
     BOOST_TEST(psv.tensor[loc]
                == 3.14 * cm_mock.get().pdf(1.0, 0));  // loc is {0, 0}
@@ -368,8 +368,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.0;
     int max_num_dyes = 0;
@@ -381,17 +381,17 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 3.14;  // loc is {0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     e.forward(&edmans, &psv);
     e.forward(&edmans, &psv);
     BOOST_TEST(psv.tensor[loc]
@@ -404,8 +404,8 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(1, 0) = 1.0;
@@ -419,13 +419,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 13.0;  // loc is {0, 0}
@@ -433,7 +433,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     psv.tensor[loc] = 13.1;  // loc is {1, 0}
     loc[0] = 2;
     psv.tensor[loc] = 13.2;  // loc is {2, 0}
-    int edmans = 2;
+    unsigned int edmans = 2;
     e.forward(&edmans, &psv);
     loc[0] = 0;
     BOOST_TEST(psv.tensor[loc]
@@ -450,8 +450,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
 }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -467,21 +467,21 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
     shape[2] = 1;
     shape[3] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
     loc[3] = 0;
     psv.tensor[loc] = 13.0;  // loc is {0, 0, 0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     e.forward(&edmans, &psv);
     // loc is {0, 0, 0, 0}
     BOOST_TEST(psv.tensor[loc]
@@ -494,8 +494,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 3;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -521,21 +521,21 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
             });
     seq_model.channel_models.push_back(&cm_mock_2.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
     shape[2] = 1;
     shape[3] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
     loc[3] = 0;
     psv.tensor[loc] = 13.0;  // loc is {0, 0, 0, 0}
-    int edmans = 0;
+    unsigned int edmans = 0;
     e.forward(&edmans, &psv);
     // loc is {0, 0, 0, 0}
     BOOST_TEST(psv.tensor[loc]
@@ -549,8 +549,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     int max_num_dyes = 2;
@@ -562,13 +562,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 13.0;  // loc is {0, 0}
@@ -576,7 +576,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
     psv.tensor[loc] = 13.1;  // loc is {0, 1}
     loc[1] = 2;
     psv.tensor[loc] = 13.2;  // loc is {0, 2}
-    int edmans = 0;
+    unsigned int edmans = 0;
     e.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -595,8 +595,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
 
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
                      *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 2;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 0.0;
     rad(0, 1) = 0.1;
@@ -612,14 +612,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -642,7 +642,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     psv.tensor[loc] = 7.110;  // loc is {1, 1, 0}
     loc[2] = 1;
     psv.tensor[loc] = 7.111;  // loc is {1, 1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     e.forward(&edmans, &psv);
     loc[0] = 0;
     loc[1] = 0;
@@ -696,8 +696,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.009;
     int max_num_dyes = 2;
@@ -706,15 +706,15 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 1.72;  // loc is {0, 0}
@@ -729,7 +729,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 2.18;
     nbpsv.tensor[loc] = 3.18;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 3.14159;
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());
@@ -762,8 +762,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
-    int num_timesteps = 1;
-    int num_channels = 2;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.009;
     rad(0, 1) = 1.019;
@@ -774,8 +774,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     shape[2] = max_num_dyes + 1;
@@ -783,7 +783,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -804,7 +804,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 2.25;
     nbpsv.tensor[loc] = 3.25;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 3.14159;
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());
@@ -870,8 +870,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
     rad(0, 0) = 1.009;
     rad(1, 0) = 1.109;
@@ -881,15 +881,15 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     PeptideEmission e(rad, max_num_dyes, seq_model);
-    int order = 1 + num_channels;
-    int* shape = new int[order];
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 1.72;  // loc is {0, 0}
@@ -909,7 +909,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 2.25;
     nbpsv.tensor[loc] = 3.25;
     delete[] loc;
-    int edmans = 1;
+    unsigned int edmans = 1;
     double probability = 3.14159;
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());

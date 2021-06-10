@@ -21,9 +21,9 @@ namespace whatprot {
 
 class DyeTrack {
 public:
-    DyeTrack(int num_timesteps, int num_channels, const DyeSeq& dye_seq);
-    DyeTrack(int num_timesteps, int num_channels, short* counts);
-    DyeTrack(int num_timesteps, int num_channels);
+    DyeTrack(unsigned int num_timesteps, unsigned int num_channels, const DyeSeq& dye_seq);
+    DyeTrack(unsigned int num_timesteps, unsigned int num_channels, short* counts);
+    DyeTrack(unsigned int num_timesteps, unsigned int num_channels);
     DyeTrack(const DyeTrack& other);
     DyeTrack(DyeTrack&& other);
     DyeTrack& operator=(DyeTrack&& other);
@@ -32,8 +32,8 @@ public:
     short operator()(int t, int c) const;
 
     std::vector<short> counts;
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
 };
 
 }  // namespace whatprot

@@ -29,12 +29,12 @@ using std::vector;
 }  // namespace
 
 void read_dye_seqs(const string& filename,
-                   int* num_channels,
-                   int* total_num_dye_seqs,
+                   unsigned int* num_channels,
+                   unsigned int* total_num_dye_seqs,
                    vector<SourcedData<DyeSeq, SourceCount<int>>>* dye_seqs) {
-    int* dye_string_lengths;
+    unsigned int* dye_string_lengths;
     char** dye_strings;
-    int* dye_seqs_num_peptides;
+    unsigned int* dye_seqs_num_peptides;
     int* dye_seqs_ids;
     read_dye_seqs_raw(filename,
                       num_channels,
@@ -43,7 +43,7 @@ void read_dye_seqs(const string& filename,
                       &dye_strings,
                       &dye_seqs_num_peptides,
                       &dye_seqs_ids);
-    int num_dye_seqs = *total_num_dye_seqs;
+    unsigned int num_dye_seqs = *total_num_dye_seqs;
     convert_dye_seqs_from_raw(*num_channels,
                               num_dye_seqs,
                               dye_string_lengths,
@@ -52,7 +52,7 @@ void read_dye_seqs(const string& filename,
                               dye_seqs_ids,
                               dye_seqs);
     delete[] dye_string_lengths;
-    for (int i = 0; i < num_dye_seqs; i++) {
+    for (unsigned int i = 0; i < num_dye_seqs; i++) {
         delete[] dye_strings[i];
     }
     delete[] dye_strings;
@@ -61,20 +61,20 @@ void read_dye_seqs(const string& filename,
 }
 
 void read_dye_seqs_raw(const string& filename,
-                       int* num_channels,
-                       int* num_dye_seqs,
-                       int** dye_string_lengths,
+                       unsigned int* num_channels,
+                       unsigned int* num_dye_seqs,
+                       unsigned int** dye_string_lengths,
                        char*** dye_strings,
-                       int** dye_seqs_num_peptides,
+                       unsigned int** dye_seqs_num_peptides,
                        int** dye_seqs_ids) {
     ifstream f(filename);
     f >> *num_channels;
     f >> *num_dye_seqs;
-    *dye_string_lengths = new int[*num_dye_seqs];
+    *dye_string_lengths = new unsigned int[*num_dye_seqs];
     *dye_strings = new char*[*num_dye_seqs];
-    *dye_seqs_num_peptides = new int[*num_dye_seqs];
+    *dye_seqs_num_peptides = new unsigned int[*num_dye_seqs];
     *dye_seqs_ids = new int[*num_dye_seqs];
-    for (int i = 0; i < *num_dye_seqs; i++) {
+    for (unsigned int i = 0; i < *num_dye_seqs; i++) {
         string dye_string;
         f >> dye_string;
         (*dye_string_lengths)[i] = dye_string.length();
@@ -89,15 +89,15 @@ void read_dye_seqs_raw(const string& filename,
 }
 
 void convert_dye_seqs_from_raw(
-        int num_channels,
-        int num_dye_seqs,
-        int* dye_string_lengths,
+        unsigned int num_channels,
+        unsigned int num_dye_seqs,
+        unsigned int* dye_string_lengths,
         char** dye_strings,
-        int* dye_seqs_num_peptides,
+        unsigned int* dye_seqs_num_peptides,
         int* dye_seqs_ids,
         vector<SourcedData<DyeSeq, SourceCount<int>>>* dye_seqs) {
     dye_seqs->reserve(num_dye_seqs);
-    for (int i = 0; i < num_dye_seqs; i++) {
+    for (unsigned int i = 0; i < num_dye_seqs; i++) {
         string dye_string(dye_strings[i], dye_string_lengths[i]);
         dye_seqs->push_back(SourcedData<DyeSeq, SourceCount<int>>(
                 DyeSeq(num_channels, dye_string),

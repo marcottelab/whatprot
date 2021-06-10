@@ -13,7 +13,7 @@ namespace whatprot {
 
 class TensorIterator {
 public:
-    TensorIterator(int order, int* shape, int size, double* values);
+    TensorIterator(unsigned int order, unsigned int* shape, unsigned int size, double* values);
     ~TensorIterator();
     void reset();
     void advance();
@@ -21,11 +21,11 @@ public:
     bool done();
 
     double* values;  // not owned
-    int* shape;  // not owned
-    int* loc;
-    int order;
-    int index;  // current index directly into values
-    int size;  // length of values
+    unsigned int* shape;  // not owned
+    unsigned int* loc;
+    unsigned int order;
+    unsigned int index;  // current index directly into values
+    unsigned int size;  // length of values
 };
 
 }  // namespace whatprot

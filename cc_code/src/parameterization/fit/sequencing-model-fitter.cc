@@ -25,9 +25,9 @@ namespace whatprot {
 
 SequencingModelFitter::SequencingModelFitter() {}
 
-SequencingModelFitter::SequencingModelFitter(int num_channels) {
+SequencingModelFitter::SequencingModelFitter(unsigned int num_channels) {
     channel_fits.resize(num_channels);
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         channel_fits[i] = new ChannelModelFitter();
     }
 }
@@ -36,7 +36,7 @@ SequencingModelFitter::SequencingModelFitter(
         const SequencingModelFitter& other) {
     p_edman_failure_fit = other.p_edman_failure_fit;
     p_detach_fit = other.p_detach_fit;
-    for (int c = 0; c < other.channel_fits.size(); c++) {
+    for (unsigned int c = 0; c < other.channel_fits.size(); c++) {
         channel_fits.push_back(new ChannelModelFitter(*other.channel_fits[c]));
     }
 }
@@ -71,7 +71,7 @@ SequencingModelFitter SequencingModelFitter::operator+(
     result_fitter.p_edman_failure_fit =
             p_edman_failure_fit + other.p_edman_failure_fit;
     result_fitter.p_detach_fit = p_detach_fit + other.p_detach_fit;
-    for (int c = 0; c < channel_fits.size(); c++) {
+    for (unsigned int c = 0; c < channel_fits.size(); c++) {
         result_fitter.channel_fits.push_back(new ChannelModelFitter(
                 (*channel_fits[c]) + (*other.channel_fits[c])));
     }
@@ -81,7 +81,7 @@ SequencingModelFitter SequencingModelFitter::operator+(
 void SequencingModelFitter::operator+=(const SequencingModelFitter& other) {
     p_edman_failure_fit += other.p_edman_failure_fit;
     p_detach_fit += other.p_detach_fit;
-    for (int c = 0; c < channel_fits.size(); c++) {
+    for (unsigned int c = 0; c < channel_fits.size(); c++) {
         *channel_fits[c] += *other.channel_fits[c];
     }
 }
@@ -89,7 +89,7 @@ void SequencingModelFitter::operator+=(const SequencingModelFitter& other) {
 void SequencingModelFitter::operator*=(double weight_adjustment) {
     p_edman_failure_fit *= weight_adjustment;
     p_detach_fit *= weight_adjustment;
-    for (int c = 0; c < channel_fits.size(); c++) {
+    for (unsigned int c = 0; c < channel_fits.size(); c++) {
         *channel_fits[c] *= weight_adjustment;
     }
 }

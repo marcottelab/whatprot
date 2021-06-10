@@ -42,9 +42,9 @@ int fit_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    int num_timesteps;
-    int num_channels;
-    int total_num_radiometries;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
+    unsigned int total_num_radiometries;
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
                       &num_timesteps,
@@ -62,7 +62,7 @@ int fit_main(int argc, char** argv) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[c]->p_bleach = 0.05;
         seq_model.channel_models[c]->p_dud = 0.07;
@@ -81,7 +81,11 @@ int fit_main(int argc, char** argv) {
                      seq_model,
                      dye_seq);
     fitter.fit(radiometries);
+    print_finished_parameter_fitting(end_time - start_time);
     end_time = wall_time();
+
+    double total_end_time = wall_time();
+    print_total_time(total_end_time - total_start_time);
 
     return 0;
 }

@@ -19,22 +19,22 @@ BOOST_AUTO_TEST_SUITE(state_vector_suite)
 BOOST_AUTO_TEST_SUITE(peptide_state_vector_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 5;
     shape[2] = 7;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    BOOST_TEST(psv.tensor.order == 3);
-    BOOST_TEST(psv.tensor.shape[0] == 3);
-    BOOST_TEST(psv.tensor.shape[1] == 5);
-    BOOST_TEST(psv.tensor.shape[2] == 7);
+    BOOST_TEST(psv.tensor.order == 3u);
+    BOOST_TEST(psv.tensor.shape[0] == 3u);
+    BOOST_TEST(psv.tensor.shape[1] == 5u);
+    BOOST_TEST(psv.tensor.shape[2] == 7u);
 }
 
 BOOST_AUTO_TEST_CASE(initialize_from_start_test) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 2;
@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE(initialize_from_start_test) {
 }
 
 BOOST_AUTO_TEST_CASE(initialize_from_finish_test) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 2;
@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE(initialize_from_finish_test) {
 }
 
 BOOST_AUTO_TEST_CASE(source_test) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 2;

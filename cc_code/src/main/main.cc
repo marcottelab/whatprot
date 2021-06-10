@@ -39,6 +39,7 @@ int main(int argc, char** argv) {
     } else if (0 == strcmp(mode, "fit")) {
         return_code = fit_main(argc, argv);
     } else {
+        return_code = 1;
         print_invalid_command();
     }
     return return_code;

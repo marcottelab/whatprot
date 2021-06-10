@@ -18,18 +18,18 @@ BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(vector_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
-    int length = 1;
+    unsigned int length = 1;
     int stride = 1;
     double* values = new double[length * stride];
     Vector v(length, stride, values);
-    BOOST_TEST(v.length == 1);
+    BOOST_TEST(v.length == 1u);
     BOOST_TEST(v.stride == 1);
     BOOST_TEST(v.values != (void*)NULL);
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(bracket_op_test) {
-    int length = 1;
+    unsigned int length = 1;
     int stride = 1;
     double* values = new double[length];
     values[0] = 42;
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(bracket_op_test) {
 }
 
 BOOST_AUTO_TEST_CASE(stride_one_test) {
-    int length = 5;
+    unsigned int length = 5;
     int stride = 1;
     double* values = new double[length * stride];
     values[0] = 420;
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(stride_one_test) {
 }
 
 BOOST_AUTO_TEST_CASE(stride_two_test) {
-    int length = 3;
+    unsigned int length = 3;
     int stride = 2;
     double* values = new double[length * stride];
     values[0] = 420;
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(stride_two_test) {
 }
 
 BOOST_AUTO_TEST_CASE(const_stride_one_test) {
-    int length = 5;
+    unsigned int length = 5;
     int stride = 1;
     double* values = new double[length * stride];
     values[0] = 420;
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(const_stride_one_test) {
 }
 
 BOOST_AUTO_TEST_CASE(const_stride_two_test) {
-    int length = 3;
+    unsigned int length = 3;
     int stride = 2;
     double* values = new double[length * stride];
     values[0] = 420;

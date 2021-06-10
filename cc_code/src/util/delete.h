@@ -20,13 +20,13 @@ void delete_if_pointer(T* t) {
 }
 
 template <class T>
-void delete_array(int size, T* array) {
+void delete_array(unsigned int size, T* array) {
     delete[] array;
 }
 
 template <class T>
-void delete_array(int size, T** array) {
-    for (int i = 0; i < size; i++) {
+void delete_array(unsigned int size, T** array) {
+    for (unsigned int i = 0; i < size; i++) {
         delete array[i];
     }
     delete[] array;

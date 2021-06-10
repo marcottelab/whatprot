@@ -41,7 +41,7 @@ int rad_main(int argc, char** argv) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    int num_timesteps = atoi(argv[3]);
+    unsigned int num_timesteps = atoi(argv[3]);
     int radiometries_per_peptide = atoi(argv[4]);
     char* dye_seqs_filename = argv[5];
     char* radiometries_filename = argv[6];
@@ -51,8 +51,8 @@ int rad_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    int num_channels;
-    int total_num_dye_seqs;
+    unsigned int num_channels;
+    unsigned int total_num_dye_seqs;
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
     read_dye_seqs(
             dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
@@ -63,7 +63,7 @@ int rad_main(int argc, char** argv) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[c]->p_bleach = 0.05;
         seq_model.channel_models[c]->p_dud = 0.07;

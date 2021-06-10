@@ -24,20 +24,20 @@ namespace whatprot {
 class BinomialTransition : public Step<PeptideStateVector> {
 public:
     BinomialTransition(double q, int channel);
-    void reserve(int max_n);
-    double& prob(int from, int to);
-    double prob(int from, int to) const;
-    virtual void forward(int* num_edmans,
+    void reserve(unsigned int max_n);
+    double& prob(unsigned int from,unsigned  int to);
+    double prob(unsigned int from,unsigned  int to) const;
+    virtual void forward(unsigned int* num_edmans,
                          PeptideStateVector* psv) const override;
     void forward(Vector* v) const;
     virtual void backward(const PeptideStateVector& input,
-                          int* num_edmans,
+                          unsigned int* num_edmans,
                           PeptideStateVector* output) const override;
     void backward(const Vector& input, Vector* output) const;
     void improve_fit(const PeptideStateVector& forward_psv,
                      const PeptideStateVector& backward_psv,
                      const PeptideStateVector& next_backward_psv,
-                     int num_edmans,
+                     unsigned int num_edmans,
                      double probability,
                      ParameterFitter* fitter) const;
     void improve_fit(const Vector& forward_vector,
@@ -48,8 +48,8 @@ public:
     std::vector<double> values;
     const double q;
     int channel;
-    int length;  // length of array in one dimension.
-    int size;  // length of values.
+    unsigned int length;  // length of array in one dimension.
+    unsigned int size;  // length of values.
 };
 
 }  // namespace whatprot

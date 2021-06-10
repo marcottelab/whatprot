@@ -11,12 +11,12 @@
 
 namespace whatprot {
 
-ConstTensorIterator::ConstTensorIterator(int order,
-                                         const int* shape,
-                                         int size,
+ConstTensorIterator::ConstTensorIterator(unsigned int order,
+                                         const unsigned int* shape,
+                                         unsigned int size,
                                          const double* values)
-        : order(order), shape(shape), size(size), values(values), index(0) {
-    loc = new int[order]();
+        : values(values), shape(shape), order(order), index(0), size(size) {
+    loc = new unsigned int[order]();
     reset();
 }
 
@@ -25,7 +25,7 @@ ConstTensorIterator::~ConstTensorIterator() {
 }
 
 void ConstTensorIterator::reset() {
-    for (int o = 0; o < order; o++) {
+    for (unsigned int o = 0; o < order; o++) {
         loc[o] = 0;
     }
     index = 0;
@@ -33,6 +33,7 @@ void ConstTensorIterator::reset() {
 
 void ConstTensorIterator::advance() {
     index++;
+    // Need to use signed int o to detect when out of entries to decrease.
     for (int o = order - 1; o >= 0; o--) {
         loc[o]++;
         if (loc[o] < shape[o]) {

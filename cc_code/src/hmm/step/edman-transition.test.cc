@@ -29,9 +29,8 @@ BOOST_AUTO_TEST_SUITE(edman_transition_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     double p_fail = 0.05;
-    double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
@@ -44,26 +43,26 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 1.0;  // loc is {0, 0}
     loc[0] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
-    int edmans = 0;
+    unsigned int edmans = 0;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 1.0 * p_fail);  // loc is {0, 0}
@@ -75,27 +74,27 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 // BOOST_AUTO_TEST_CASE(forward_new_tsr_trivial_test, *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 1;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 1;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 2;
 //     shape[1] = 1;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 1.0;  // loc is {0, 0}
 //     loc[0] = 1;
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 1);
+//     BOOST_TEST(edmans == 1u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 1.0 * p_fail);  // loc is {0, 0}
@@ -107,18 +106,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -129,9 +128,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-    int edmans = 0;
+    unsigned int edmans = 0;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -148,19 +147,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
 // BOOST_AUTO_TEST_CASE(forward_new_tsr_basic_test, *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 1;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 1;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 2;
 //     shape[1] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -171,9 +170,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 1);
+//     BOOST_TEST(edmans == 1u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -190,18 +189,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 4;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -211,9 +210,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.5;  // loc is {2, 0}
     loc[0] = 3;
     psv.tensor[loc] = -1000.0;  // loc is {3, 0} -- to be ignored.
-    int edmans = 2;
+    unsigned int edmans = 2;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 3);
+    BOOST_TEST(edmans == 3u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 0.2 * p_fail);  // loc is {0, 0}
@@ -229,19 +228,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
 // BOOST_AUTO_TEST_CASE(forward_new_tsr_more_edmans_test, *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 3;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 3;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 4;
 //     shape[1] = 1;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -251,9 +250,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
 //     psv1.tensor[loc] = 0.5;  // loc is {2, 0}
 //     loc[0] = 3;
 //     psv1.tensor[loc] = -1000.0;  // loc is {3, 0} -- to be ignored.
-//     int edmans = 2;
+//     unsigned int edmans = 2;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 3);
+//     BOOST_TEST(edmans == 3u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.2 * p_fail);  // loc is {0, 0}
@@ -273,19 +272,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -308,9 +307,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
     psv.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- to be ignored.
     loc[2] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- to be ignored.
-    int edmans = 0;
+    unsigned int edmans = 0;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -340,20 +339,20 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
 //                      *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 1;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 1;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 3;
-//     int* shape = new int[order];
+//     unsigned int order = 3;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 2;
 //     shape[1] = 2;
 //     shape[2] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
@@ -376,9 +375,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 0} -- to be ignored.
 //     loc[2] = 1;
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 1, 1} -- to be ignored.
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 1);
+//     BOOST_TEST(edmans == 1u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
@@ -408,18 +407,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, ".0");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -430,9 +429,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
     psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-    int edmans = 0;
+    unsigned int edmans = 0;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -450,19 +449,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
 // *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 1;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 1;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, ".0");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 2;
 //     shape[1] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -473,9 +472,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 1);
+//     BOOST_TEST(edmans == 1u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -493,18 +492,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "0");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -515,9 +514,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
     psv.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
     loc[1] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-    int edmans = 0;
+    unsigned int edmans = 0;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -535,19 +534,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
 //                      *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 1;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 1;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "0");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 2;
 //     shape[1] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -558,9 +557,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 0} -- to be ignored.
 //     loc[1] = 1;
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 1);
+//     BOOST_TEST(edmans == 1u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.3 * p_fail);  // loc is {0, 0}
@@ -578,18 +577,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "00");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 3;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -611,9 +610,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
     psv.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
     loc[1] = 2;
     psv.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 2);
+    BOOST_TEST(edmans == 2u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -644,19 +643,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
 //                      *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 2;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 2;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "00");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 3;
 //     shape[1] = 3;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -678,9 +677,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
 //     psv1.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
 //     loc[1] = 2;
 //     psv1.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
-//     int edmans = 1;
+//     unsigned int edmans = 1;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 2);
+//     BOOST_TEST(edmans == 2u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -711,18 +710,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "000");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 4;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -741,9 +740,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
     psv.tensor[loc] = -1000.0;  // loc is {1, 2} -- to be ignored.
     loc[1] = 3;
     psv.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
-    int edmans = 0;
+    unsigned int edmans = 0;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -770,19 +769,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
 //                      *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 3;
-//     int num_channels = 1;
+//     unsigned int num_timesteps = 3;
+//     unsigned int num_channels = 1;
 //     DyeSeq ds(num_channels, "000");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 2;
-//     int* shape = new int[order];
+//     unsigned int order = 2;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 2;
 //     shape[1] = 4;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     psv1.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -801,9 +800,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 2} -- to be ignored.
 //     loc[1] = 3;
 //     psv1.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
-//     int edmans = 0;
+//     unsigned int edmans = 0;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 1);
+//     BOOST_TEST(edmans == 1u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     BOOST_TEST(psv2.tensor[loc] == 0.1 * p_fail);  // loc is {0, 0}
@@ -833,19 +832,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 2;
-    int num_channels = 2;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 2;
     DyeSeq ds(num_channels, "01");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -879,9 +878,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
     psv.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored.
     loc[2] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.forward(&edmans, &psv);
-    BOOST_TEST(edmans == 2);
+    BOOST_TEST(edmans == 2u);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -924,20 +923,20 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
 //                      *tolerance(TOL)) {
 //     double p_fail = 0.05;
 //     double p_pop = 0.95;
-//     int num_timesteps = 2;
-//     int num_channels = 2;
+//     unsigned int num_timesteps = 2;
+//     unsigned int num_channels = 2;
 //     DyeSeq ds(num_channels, "01");
 //     DyeTrack dt(num_timesteps, num_channels, ds);
 //     EdmanTransition et(p_fail, ds, dt);
-//     int order = 3;
-//     int* shape = new int[order];
+//     unsigned int order = 3;
+//     unsigned int* shape = new unsigned int[order];
 //     shape[0] = 3;
 //     shape[1] = 2;
 //     shape[2] = 2;
 //     PeptideStateVector psv1(order, shape);
 //     PeptideStateVector psv2(order, shape);
 //     delete[] shape;
-//     int* loc = new int[order];
+//     unsigned int* loc = new unsigned int[order];
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
@@ -971,9 +970,9 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
 //     psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored
 //     loc[2] = 1;
 //     psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
-//     int edmans = 1;
+//     unsigned int edmans = 1;
 //     et.forward(tsr1, &edmans, &psv2);
-//     BOOST_TEST(edmans == 2);
+//     BOOST_TEST(edmans == 2u);
 //     loc[0] = 0;
 //     loc[1] = 0;
 //     loc[2] = 0;
@@ -1014,26 +1013,26 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
 BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
     loc[0] = 1;
     psv.tensor[loc] = 0.7;  // loc is {1, 0}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == p_fail * 0.3 + p_pop * 0.7);  // loc is {0, 0}
@@ -1044,27 +1043,27 @@ BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 1;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
     loc[0] = 1;
     psv1.tensor[loc] = 0.7;  // loc is {1, 0}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1076,18 +1075,18 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(backward_in_place_basic_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -1098,9 +1097,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_basic_test, *tolerance(TOL)) {
     psv.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     psv.tensor[loc] = 1.77;  // loc is {1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc]
@@ -1115,19 +1114,19 @@ BOOST_AUTO_TEST_CASE(backward_in_place_basic_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -1138,9 +1137,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_test, *tolerance(TOL)) {
     psv1.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     psv1.tensor[loc] = 1.77;  // loc is {1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1155,18 +1154,18 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(backward_in_place_more_edmans_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 4;
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -1176,9 +1175,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_more_edmans_test, *tolerance(TOL)) {
     psv.tensor[loc] = 0.5;  // loc is {2, 0}
     loc[0] = 3;
     psv.tensor[loc] = 0.7;  // loc is {3, 0}
-    int edmans = 3;
+    unsigned int edmans = 3;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 2);
+    BOOST_TEST(edmans == 2u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == p_fail * 0.2 + p_pop * 0.3);  // loc is {0, 0}
@@ -1193,19 +1192,19 @@ BOOST_AUTO_TEST_CASE(backward_in_place_more_edmans_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(backward_new_tsr_more_edmans_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 4;
     shape[1] = 1;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.2;  // loc is {0, 0}
@@ -1215,9 +1214,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_more_edmans_test, *tolerance(TOL)) {
     psv1.tensor[loc] = 0.5;  // loc is {2, 0}
     loc[0] = 3;
     psv1.tensor[loc] = 0.7;  // loc is {3, 0}
-    int edmans = 3;
+    unsigned int edmans = 3;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 2);
+    BOOST_TEST(edmans == 2u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1236,19 +1235,19 @@ BOOST_AUTO_TEST_CASE(backward_in_place_multiple_dye_colors_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1271,9 +1270,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_multiple_dye_colors_test,
     psv.tensor[loc] = 1.33;  // loc is {1, 1, 0}
     loc[2] = 1;
     psv.tensor[loc] = 1.44;  // loc is {1, 1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1298,20 +1297,20 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_dye_colors_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1334,9 +1333,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_dye_colors_test,
     psv1.tensor[loc] = 1.33;  // loc is {1, 1, 0}
     loc[2] = 1;
     psv1.tensor[loc] = 1.44;  // loc is {1, 1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1361,18 +1360,18 @@ BOOST_AUTO_TEST_CASE(backward_in_place_irrelevant_dye_seq_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, ".0");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -1383,9 +1382,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_irrelevant_dye_seq_test,
     psv.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     psv.tensor[loc] = 1.77;  // loc is {1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc]
@@ -1401,19 +1400,19 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_irrelevant_dye_seq_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, ".0");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -1424,9 +1423,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_irrelevant_dye_seq_test,
     psv1.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     psv1.tensor[loc] = 1.77;  // loc is {1, 1}
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1442,18 +1441,18 @@ BOOST_AUTO_TEST_CASE(backward_in_place_one_dye_first_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "0");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -1464,9 +1463,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_one_dye_first_edman_test,
     psv.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc]
@@ -1482,19 +1481,19 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_one_dye_first_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "0");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.3;  // loc is {0, 0}
@@ -1505,9 +1504,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_one_dye_first_edman_test,
     psv1.tensor[loc] = 1.33;  // loc is {1, 0}
     loc[1] = 1;
     psv1.tensor[loc] = -1000.0;  // loc is {1, 1} -- to be ignored.
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1523,18 +1522,18 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dyes_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "00");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 3;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -1556,9 +1555,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dyes_second_edman_test,
     psv.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
     loc[1] = 2;
     psv.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
-    int edmans = 2;
+    unsigned int edmans = 2;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc] == p_fail * 0.1 + p_pop * 0.4);  // loc is {0, 0}
@@ -1584,19 +1583,19 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dyes_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 2;
-    int num_channels = 1;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "00");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 3;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -1618,9 +1617,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dyes_second_edman_test,
     psv1.tensor[loc] = -1000.0;  // loc is {2, 1} -- to be ignored.
     loc[1] = 2;
     psv1.tensor[loc] = -1000.0;  // loc is {2, 2} -- to be ignored.
-    int edmans = 2;
+    unsigned int edmans = 2;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1648,18 +1647,18 @@ BOOST_AUTO_TEST_CASE(backward_in_place_three_dyes_first_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "000");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 4;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -1678,9 +1677,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_three_dyes_first_edman_test,
     psv.tensor[loc] = 1.33;  // loc is {1, 2}
     loc[1] = 3;
     psv.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv.tensor[loc]
@@ -1704,19 +1703,19 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_three_dyes_first_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 3;
-    int num_channels = 1;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "000");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 4;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     psv1.tensor[loc] = 0.1;  // loc is {0, 0}
@@ -1735,9 +1734,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_three_dyes_first_edman_test,
     psv1.tensor[loc] = 1.33;  // loc is {1, 2}
     loc[1] = 3;
     psv1.tensor[loc] = -1000.0;  // loc is {1, 3} -- to be ignored.
-    int edmans = 1;
+    unsigned int edmans = 1;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 0);
+    BOOST_TEST(edmans == 0u);
     loc[0] = 0;
     loc[1] = 0;
     BOOST_TEST(psv2.tensor[loc]
@@ -1761,19 +1760,19 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dye_colors_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 2;
-    int num_channels = 2;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 2;
     DyeSeq ds(num_channels, "01");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1807,9 +1806,9 @@ BOOST_AUTO_TEST_CASE(backward_in_place_two_dye_colors_second_edman_test,
     psv.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored.
     loc[2] = 1;
     psv.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
-    int edmans = 2;
+    unsigned int edmans = 2;
     et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1842,20 +1841,20 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dye_colors_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
-    int num_timesteps = 2;
-    int num_channels = 2;
+    unsigned int num_timesteps = 2;
+    unsigned int num_channels = 2;
     DyeSeq ds(num_channels, "01");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
     shape[2] = 2;
     PeptideStateVector psv1(order, shape);
     PeptideStateVector psv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1889,9 +1888,9 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dye_colors_second_edman_test,
     psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 0} -- to be ignored.
     loc[2] = 1;
     psv1.tensor[loc] = -1000.0;  // loc is {2, 1, 1} -- to be ignored.
-    int edmans = 2;
+    unsigned int edmans = 2;
     et.backward(psv1, &edmans, &psv2);
-    BOOST_TEST(edmans == 1);
+    BOOST_TEST(edmans == 1u);
     loc[0] = 0;
     loc[1] = 0;
     loc[2] = 0;
@@ -1922,21 +1921,20 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dye_colors_second_edman_test,
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     double p_fail = 0.05;
-    double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector fpsv(order, shape);
     PeptideStateVector bpsv(order, shape);
     PeptideStateVector nbpsv(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv.tensor[loc] = 0.61;  // loc is {0, 0}
@@ -1956,7 +1954,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     bpsv.tensor[loc] = 0.82;
     nbpsv.tensor[loc] = 0.72;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double probability = 1.0;
     SequencingModelFitter smf;
     et.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
@@ -1966,14 +1964,13 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     double p_fail = 0.05;
-    double p_pop = 0.95;
-    int num_timesteps = 1;
-    int num_channels = 1;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     PeptideStateVector fpsv1(order, shape);
@@ -1983,7 +1980,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     PeptideStateVector bpsv2(order, shape);
     PeptideStateVector nbpsv2(order, shape);
     delete[] shape;
-    int* loc = new int[order];
+    unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
     fpsv1.tensor[loc] = 0.31;  // loc is {0, 0}
@@ -2015,7 +2012,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     bpsv2.tensor[loc] = 0.82;
     nbpsv2.tensor[loc] = 0.72;
     delete[] loc;
-    int edmans = 0;
+    unsigned int edmans = 0;
     double prob1 = 0.12345;
     double prob2 = 0.98765;
     SequencingModelFitter smf;

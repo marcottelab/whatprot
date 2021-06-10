@@ -30,8 +30,8 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
           num_channels(radiometry.num_channels),
           max_num_dyes(max_num_dyes) {
     values.resize(num_timesteps * num_channels * (max_num_dyes + 1));
-    for (int t = 0; t < num_timesteps; t++) {
-        for (int c = 0; c < num_channels; c++) {
+    for (unsigned int t = 0; t < num_timesteps; t++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             for (int d = 0; d < (max_num_dyes + 1); d++) {
                 prob(t, c, d) =
                         seq_model.channel_models[c]->pdf(radiometry(t, c), d);
@@ -48,11 +48,11 @@ double PeptideEmission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void PeptideEmission::forward(int* num_edmans, PeptideStateVector* psv) const {
+void PeptideEmission::forward(unsigned int* num_edmans, PeptideStateVector* psv) const {
     TensorIterator* it = psv->tensor.iterator();
     while (it->index < (*num_edmans + 1) * psv->tensor.strides[0]) {
         double product = 1.0;
-        for (int c = 0; c < num_channels; c++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             product *= prob((*num_edmans), c, it->loc[1 + c]);
         }
         *it->get() = *it->get() * product;
@@ -62,13 +62,13 @@ void PeptideEmission::forward(int* num_edmans, PeptideStateVector* psv) const {
 }
 
 void PeptideEmission::backward(const PeptideStateVector& input,
-                               int* num_edmans,
+                               unsigned int* num_edmans,
                                PeptideStateVector* output) const {
     ConstTensorIterator* inputit = input.tensor.const_iterator();
     TensorIterator* outputit = output->tensor.iterator();
     while (inputit->index < (*num_edmans + 1) * input.tensor.strides[0]) {
         double product = 1.0;
-        for (int c = 0; c < num_channels; c++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             product *= prob((*num_edmans), c, inputit->loc[1 + c]);
         }
         *outputit->get() = inputit->get() * product;
@@ -82,15 +82,14 @@ void PeptideEmission::backward(const PeptideStateVector& input,
 void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   const PeptideStateVector& backward_psv,
                                   const PeptideStateVector& next_backward_psv,
-                                  int num_edmans,
+                                  unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
     ConstTensorIterator* fit = forward_psv.tensor.const_iterator();
     ConstTensorIterator* bit = backward_psv.tensor.const_iterator();
     while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
         double p_state = fit->get() * bit->get() / probability;
-        for (int c = 0; c < num_channels; c++) {
-            int t = fit->loc[0];
+        for (unsigned int c = 0; c < num_channels; c++) {
             double intensity = radiometry(num_edmans, c);
             int dye_count = fit->loc[1 + c];
             fitter->channel_fits[c]->distribution_fit->add_sample(

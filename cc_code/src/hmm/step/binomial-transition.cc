@@ -25,33 +25,33 @@ BinomialTransition::BinomialTransition(double q, int channel)
     values[0] = 1.0;
 }
 
-void BinomialTransition::reserve(int max_n) {
+void BinomialTransition::reserve(unsigned int max_n) {
     if (max_n + 1 <= length) {
         return;
     }
-    int prev_length = length;
+    unsigned int prev_length = length;
     length = max_n + 1;
     size = length * (length + 1) / 2;
     values.resize(size);
     double p = (double)1 - q;
-    for (int i = prev_length; i < length; i++) {
+    for (unsigned int i = prev_length; i < length; i++) {
         prob(i, 0) = prob(i - 1, 0) * q;
-        for (int j = 1; j < i; j++) {
+        for (unsigned int j = 1; j < i; j++) {
             prob(i, j) = prob(i - 1, j) * q + prob(i - 1, j - 1) * p;
         }
         prob(i, i) = prob(i - 1, i - 1) * p;
     }
 }
 
-double& BinomialTransition::prob(int from, int to) {
+double& BinomialTransition::prob(unsigned int from,unsigned  int to) {
     return values[from * (from + 1) / 2 + to];
 }
 
-double BinomialTransition::prob(int from, int to) const {
+double BinomialTransition::prob(unsigned int from, unsigned int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::forward(int* num_edmans,
+void BinomialTransition::forward(unsigned int* num_edmans,
                                  PeptideStateVector* psv) const {
     int vector_stride = psv->tensor.strides[1 + channel];
     int vector_length = psv->tensor.shape[1 + channel];
@@ -68,9 +68,9 @@ void BinomialTransition::forward(int* num_edmans,
 }
 
 void BinomialTransition::forward(Vector* v) const {
-    for (int to = 0; to < v->length; to++) {
+    for (unsigned int to = 0; to < v->length; to++) {
         double v_to = 0.0;
-        for (int from = to; from < v->length; from++) {
+        for (unsigned int from = to; from < v->length; from++) {
             v_to += prob(from, to) * (*v)[from];
         }
         (*v)[to] = v_to;
@@ -78,7 +78,7 @@ void BinomialTransition::forward(Vector* v) const {
 }
 
 void BinomialTransition::backward(const PeptideStateVector& input,
-                                  int* num_edmans,
+                                  unsigned int* num_edmans,
                                   PeptideStateVector* output) const {
     int vector_stride = input.tensor.strides[1 + channel];
     int vector_length = input.tensor.shape[1 + channel];
@@ -111,7 +111,7 @@ void BinomialTransition::improve_fit(
         const PeptideStateVector& forward_psv,
         const PeptideStateVector& backward_psv,
         const PeptideStateVector& next_backward_psv,
-        int num_edmans,
+        unsigned int num_edmans,
         double probability,
         ParameterFitter* fitter) const {
     int vector_stride = forward_psv.tensor.strides[1 + channel];

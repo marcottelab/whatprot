@@ -32,8 +32,6 @@ BOOST_AUTO_TEST_SUITE(model_suite)
 BOOST_AUTO_TEST_SUITE(channel_model_suite)
 
 BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_zero_test) {
-    double p_edman_failure = .07;
-    double p_detach = .04;
     ChannelModel channel_model;
     channel_model.p_bleach = .05;
     channel_model.p_dud = .10;
@@ -47,8 +45,6 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_zero_test) {
 }
 
 BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_one_test) {
-    double p_edman_failure = .07;
-    double p_detach = .04;
     ChannelModel channel_model;
     channel_model.p_bleach = .05;
     channel_model.p_dud = .10;
@@ -62,8 +58,6 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_zero_obs_one_test) {
 }
 
 BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_zero_test) {
-    double p_edman_failure = .07;
-    double p_detach = .04;
     ChannelModel channel_model;
     channel_model.p_bleach = .05;
     channel_model.p_dud = .10;
@@ -77,8 +71,6 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_zero_test) {
 }
 
 BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_one_test, *tolerance(TOL)) {
-    double p_edman_failure = .07;
-    double p_detach = .04;
     ChannelModel channel_model;
     channel_model.p_bleach = .05;
     channel_model.p_dud = .10;
@@ -94,8 +86,6 @@ BOOST_AUTO_TEST_CASE(pdf_lognormal_state_one_obs_one_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(pdf_lognormal_state_eq_obs_ne_one_test, *tolerance(TOL)) {
-    double p_edman_failure = .07;
-    double p_detach = .04;
     ChannelModel channel_model;
     channel_model.p_bleach = .05;
     channel_model.p_dud = .10;

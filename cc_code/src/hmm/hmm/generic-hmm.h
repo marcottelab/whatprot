@@ -21,7 +21,7 @@ namespace whatprot {
 template <typename SV>  // SV is the state vector type.
 class GenericHMM {
 public:
-    GenericHMM(int num_timesteps) : num_timesteps(num_timesteps) {}
+    GenericHMM(unsigned int num_timesteps) : num_timesteps(num_timesteps) {}
 
     virtual SV create_states() const = 0;
 
@@ -29,7 +29,7 @@ public:
     // provided radiometry. To do this efficiently, it uses a modified version
     // of the forward algorithm.
     double probability() const {
-        int num_edmans = 0;
+        unsigned int num_edmans = 0;
         auto step = steps.begin();  // const_iterator type
         SV states = create_states();
         states.initialize_from_start();
@@ -46,7 +46,7 @@ public:
     double improve_fit(SequencingModelFitter* fitter) const {
         // There is one less Edman than the number of timesteps, because no
         // Edman is done before the zeroth timestep.
-        int num_edmans = num_timesteps - 1;
+        unsigned int num_edmans = num_timesteps - 1;
         auto step = steps.end();  // const_iterator type
         std::vector<SV> backward_sv;
         backward_sv.reserve(steps.size());
@@ -89,7 +89,7 @@ public:
         return probability;
     }
     std::vector<const Step<SV>*> steps;
-    int num_timesteps;
+    unsigned int num_timesteps;
 };
 
 }  // namespace whatprot

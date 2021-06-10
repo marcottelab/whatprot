@@ -21,8 +21,8 @@ namespace whatprot {
 
 void generate_dye_track(const SequencingModel& seq_model,
                         const DyeSeq& dye_seq,
-                        int num_timesteps,
-                        int num_channels,
+                        unsigned int num_timesteps,
+                        unsigned int num_channels,
                         std::default_random_engine* generator,
                         DyeTrack* dye_track);
 

@@ -28,8 +28,8 @@ namespace whatprot {
 class HybridClassifier {
 public:
     HybridClassifier(
-            int num_timesteps,
-            int num_channels,
+            unsigned int num_timesteps,
+            unsigned int num_channels,
             const SequencingModel& seq_model,
             int k,
             double sigma,

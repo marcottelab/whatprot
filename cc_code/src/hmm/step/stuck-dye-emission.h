@@ -28,22 +28,22 @@ public:
                      const SequencingModel& seq_model);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(int* num_edmans,
+    virtual void forward(unsigned int* num_edmans,
                          StuckDyeStateVector* sdsv) const override;
     virtual void backward(const StuckDyeStateVector& input,
-                          int* num_edmans,
+                          unsigned int* num_edmans,
                           StuckDyeStateVector* output) const override;
     virtual void improve_fit(const StuckDyeStateVector& forward_sdsv,
                              const StuckDyeStateVector& backward_sdsv,
                              const StuckDyeStateVector& next_backward_sdsv,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
     Radiometry radiometry;
     std::vector<double> values;
-    int num_timesteps;
-    int num_channels;
-    int channel;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
+    unsigned int channel;
 };
 
 }  // namespace whatprot

@@ -24,13 +24,13 @@ namespace whatprot {
 class UniversalPrecomputations {
 public:
     UniversalPrecomputations(const SequencingModel& seq_model,
-                             int num_channels);
+                             unsigned int num_channels);
     void set_max_num_dyes(int max_num_dyes);
     DetachTransition detach_transition;
     std::vector<DudTransition> dud_transitions;
     std::vector<BleachTransition> bleach_transitions;
     std::vector<StuckDyeTransition> stuck_dye_transitions;
-    int num_channels;
+    unsigned int num_channels;
 };
 
 }  // namespace whatprot

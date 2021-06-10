@@ -53,8 +53,8 @@ int nn_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> dye_tracks;
     read_dye_tracks(
             dye_tracks_filename, &num_timesteps, &num_channels, &dye_tracks);
@@ -62,9 +62,9 @@ int nn_main(int argc, char** argv) {
     print_read_dye_tracks(dye_tracks.size(), end_time - start_time);
 
     start_time = wall_time();
-    int duplicate_num_timesteps;  // also get this from dye track file.
-    int duplicate_num_channels;  // also get this from dye track file.
-    int total_num_radiometries;  // number of radiometries across all procs.
+    unsigned int duplicate_num_timesteps;  // also get this from dye track file.
+    unsigned int duplicate_num_channels;  // also get this from dye track file.
+    unsigned int total_num_radiometries;  // num radiometries across all procs.
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
                       &duplicate_num_timesteps,
@@ -78,7 +78,7 @@ int nn_main(int argc, char** argv) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[c]->p_bleach = 0.05;
         seq_model.channel_models[c]->p_dud = 0.07;

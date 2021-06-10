@@ -27,8 +27,8 @@ using std::lognormal_distribution;
 
 void generate_radiometry(const SequencingModel& seq_model,
                          const DyeSeq& dye_seq,
-                         int num_timesteps,
-                         int num_channels,
+                         unsigned int num_timesteps,
+                         unsigned int num_channels,
                          default_random_engine* generator,
                          Radiometry* radiometry) {
     DyeTrack dye_track(num_timesteps, num_channels);
@@ -38,8 +38,8 @@ void generate_radiometry(const SequencingModel& seq_model,
                        num_channels,
                        generator,
                        &dye_track);
-    for (int t = 0; t < num_timesteps; t++) {
-        for (int c = 0; c < num_channels; c++) {
+    for (unsigned int t = 0; t < num_timesteps; t++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             if (dye_track(t, c) > 0) {
                 double mu = seq_model.channel_models[c]->mu;
                 double sigma = seq_model.channel_models[c]->sigma;

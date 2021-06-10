@@ -22,8 +22,8 @@ namespace {
 using std::copy;
 }
 
-Tensor::Tensor(int order, const int* shape) : order(order) {
-    this->shape = new int[order];
+Tensor::Tensor(unsigned int order, const unsigned int* shape) : order(order) {
+    this->shape = new unsigned int[order];
     copy(shape, shape + order, this->shape);
     size = 1;
     strides = new int[order];
@@ -57,9 +57,9 @@ Tensor::~Tensor() {
     }
 }
 
-double& Tensor::operator[](int* loc) {
-    int index = 0;
-    for (int i = 0; i < order; i++) {
+double& Tensor::operator[](unsigned int* loc) {
+    unsigned int index = 0;
+    for (unsigned int i = 0; i < order; i++) {
         index += strides[i] * loc[i];
     }
     return values[index];
@@ -75,7 +75,7 @@ ConstTensorIterator* Tensor::const_iterator() const {
 
 double Tensor::sum() const {
     double total = 0.0;
-    for (int i = 0; i < size; i++) {
+    for (unsigned int i = 0; i < size; i++) {
         total += values[i];
     }
     return total;
