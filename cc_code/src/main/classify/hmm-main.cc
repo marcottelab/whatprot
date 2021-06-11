@@ -33,13 +33,14 @@ namespace whatprot {
 namespace {
 using std::string;
 using std::vector;
+using std::cout;
 }  // namespace
 
 int hmm_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
     if (argc != 6) {
-        print_wrong_number_of_inputs();
+        cout << "Usage: whatprot classify hmm dye_seqs_filename radiometries_filename predictions_filename\n";
         return EXIT_FAILURE;
     }
     char* dye_seqs_filename = argv[3];

@@ -8,6 +8,7 @@
 
 // Standard C++ library headers:
 #include <cstring>
+#include <iostream>
 
 // Local project headers:
 #include "main/classify/hmm-main.h"
@@ -17,9 +18,13 @@
 
 namespace whatprot {
 
+namespace {
+using std::cout;
+}  // namespace
+
 int classify_main(int argc, char** argv) {
     if (argc < 3) {
-        print_bad_inputs();
+        cout << "Usage: whatprot classify [hmm|hybrid|nn]\n";
         return 1;
     }
     char* mode = argv[2];

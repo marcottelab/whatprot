@@ -2,3 +2,5 @@
 cc_code/bin/
 cc_code/build/
 python/**/__pycache__
+.idea/
+

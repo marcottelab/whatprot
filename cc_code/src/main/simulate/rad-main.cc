@@ -32,12 +32,14 @@ namespace {
 using std::atoi;
 using std::default_random_engine;
 using std::vector;
+using std::cout;
 }  // namespace
 
 int rad_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
     if (argc != 8) {
+        cout << "Usage: whatprot simulate [rad|dt]\n";
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }

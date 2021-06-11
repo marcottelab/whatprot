@@ -8,6 +8,7 @@
 
 // Standard C++ library headers:
 #include <cstring>
+#include <iostream>
 
 // Local project headers:
 #include "main/cmd-line-out.h"
@@ -16,9 +17,13 @@
 
 namespace whatprot {
 
+namespace {
+using std::cout;
+}  // namespace
+
 int simulate_main(int argc, char** argv) {
     if (argc < 3) {
-        print_bad_inputs();
+        cout << "Usage: whatprot simulate [rad|dt]\n";
         return 1;
     }
     char* mode = argv[2];
