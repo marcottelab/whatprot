@@ -48,7 +48,8 @@ double PeptideEmission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * (max_num_dyes + 1) + d];
 }
 
-void PeptideEmission::forward(unsigned int* num_edmans, PeptideStateVector* psv) const {
+void PeptideEmission::forward(unsigned int* num_edmans,
+                              PeptideStateVector* psv) const {
     TensorIterator* it = psv->tensor.iterator();
     while (it->index < (*num_edmans + 1) * psv->tensor.strides[0]) {
         double product = 1.0;

@@ -17,7 +17,8 @@ namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::forward(unsigned int* num_edmans, PeptideStateVector* psv) const {
+void DetachTransition::forward(unsigned int* num_edmans,
+                               PeptideStateVector* psv) const {
     int i_max = (*num_edmans + 1) * psv->tensor.strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {

@@ -23,7 +23,9 @@ using std::move;
 using std::vector;
 }  // namespace
 
-DyeTrack::DyeTrack(unsigned int num_timesteps, unsigned int num_channels, const DyeSeq& dye_seq)
+DyeTrack::DyeTrack(unsigned int num_timesteps,
+                   unsigned int num_channels,
+                   const DyeSeq& dye_seq)
         : num_timesteps(num_timesteps), num_channels(num_channels) {
     counts.resize(num_timesteps * num_channels);
     vector<short> cs;
@@ -34,13 +36,15 @@ DyeTrack::DyeTrack(unsigned int num_timesteps, unsigned int num_channels, const 
         if (dye != -1) {
             cs[dye]++;
         }
-        if (t < (int) num_timesteps) {
+        if (t < (int)num_timesteps) {
             copy(cs.begin(), cs.end(), &counts[t * num_channels]);
         }
     }
 }
 
-DyeTrack::DyeTrack(unsigned int num_timesteps, unsigned int num_channels, short* counts)
+DyeTrack::DyeTrack(unsigned int num_timesteps,
+                   unsigned int num_channels,
+                   short* counts)
         : num_timesteps(num_timesteps), num_channels(num_channels) {
     this->counts.resize(num_timesteps * num_channels);
     copy(counts, &counts[num_timesteps * num_channels], this->counts.begin());

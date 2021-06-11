@@ -17,7 +17,8 @@
 
 namespace whatprot {
 
-PeptideStateVector::PeptideStateVector(unsigned int order, const unsigned int* shape)
+PeptideStateVector::PeptideStateVector(unsigned int order,
+                                       const unsigned int* shape)
         : tensor(order, shape) {}
 
 void PeptideStateVector::initialize_from_start() {

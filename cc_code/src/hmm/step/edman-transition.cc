@@ -24,7 +24,8 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_track(dye_track),
           p_edman_failure(p_edman_failure) {}
 
-void EdmanTransition::forward(unsigned int* num_edmans, PeptideStateVector* psv) const {
+void EdmanTransition::forward(unsigned int* num_edmans,
+                              PeptideStateVector* psv) const {
     (*num_edmans)++;
     unsigned int t_stride = psv->tensor.strides[0];
     // i here must be a signed integer because we decrement towards 0.

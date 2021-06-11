@@ -25,8 +25,8 @@ class BinomialTransition : public Step<PeptideStateVector> {
 public:
     BinomialTransition(double q, int channel);
     void reserve(unsigned int max_n);
-    double& prob(unsigned int from,unsigned  int to);
-    double prob(unsigned int from,unsigned  int to) const;
+    double& prob(unsigned int from, unsigned int to);
+    double prob(unsigned int from, unsigned int to) const;
     virtual void forward(unsigned int* num_edmans,
                          PeptideStateVector* psv) const override;
     void forward(Vector* v) const;

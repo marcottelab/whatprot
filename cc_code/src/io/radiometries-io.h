@@ -65,7 +65,9 @@ void get_raw_ys(const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
                         radiometries,
                 int** ys);
 
-void write_ys_raw(const std::string& filename, unsigned int num_radiometries, int* ys);
+void write_ys_raw(const std::string& filename,
+                  unsigned int num_radiometries,
+                  int* ys);
 
 }  // namespace whatprot
 

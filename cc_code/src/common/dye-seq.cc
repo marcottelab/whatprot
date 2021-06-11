@@ -20,7 +20,8 @@ using std::copy;
 using std::string;
 }  // namespace
 
-DyeSeq::DyeSeq(unsigned int num_channels, const string& s) : num_channels(num_channels) {
+DyeSeq::DyeSeq(unsigned int num_channels, const string& s)
+        : num_channels(num_channels) {
     length = s.length();
     while (length > 0 && s[length - 1] == '.') {
         length--;

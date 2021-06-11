@@ -50,7 +50,7 @@ HMMFitter::HMMFitter(unsigned int num_timesteps,
             // Can safely compare with type-cast. c is unsigned because it is
             // a channel index, the DyeSeq [] operator is signed because values
             // of -1 indicate no dye in that position.
-            if (dye_seq[i] == (int) c) {
+            if (dye_seq[i] == (int)c) {
                 num_dyes++;
             }
         }

@@ -43,7 +43,7 @@ void BinomialTransition::reserve(unsigned int max_n) {
     }
 }
 
-double& BinomialTransition::prob(unsigned int from,unsigned  int to) {
+double& BinomialTransition::prob(unsigned int from, unsigned int to) {
     return values[from * (from + 1) / 2 + to];
 }
 

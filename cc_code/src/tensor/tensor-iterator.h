@@ -13,7 +13,10 @@ namespace whatprot {
 
 class TensorIterator {
 public:
-    TensorIterator(unsigned int order, unsigned int* shape, unsigned int size, double* values);
+    TensorIterator(unsigned int order,
+                   unsigned int* shape,
+                   unsigned int size,
+                   double* values);
     ~TensorIterator();
     void reset();
     void advance();

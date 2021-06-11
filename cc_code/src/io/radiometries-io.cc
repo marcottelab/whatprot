@@ -160,7 +160,9 @@ void get_raw_ys(
     }
 }
 
-void write_ys_raw(const string& filename, unsigned int num_radiometries, int* ys) {
+void write_ys_raw(const string& filename,
+                  unsigned int num_radiometries,
+                  int* ys) {
     ofstream f(filename);
     f << num_radiometries << "\n";
     for (unsigned int i = 0; i < num_radiometries; i++) {

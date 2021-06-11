@@ -11,7 +11,10 @@
 
 namespace whatprot {
 
-TensorIterator::TensorIterator(unsigned int order, unsigned int* shape, unsigned int size, double* values)
+TensorIterator::TensorIterator(unsigned int order,
+                               unsigned int* shape,
+                               unsigned int size,
+                               double* values)
         : values(values), shape(shape), order(order), index(0), size(size) {
     loc = new unsigned int[order]();
     reset();

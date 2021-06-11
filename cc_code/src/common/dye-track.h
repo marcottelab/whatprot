@@ -21,8 +21,12 @@ namespace whatprot {
 
 class DyeTrack {
 public:
-    DyeTrack(unsigned int num_timesteps, unsigned int num_channels, const DyeSeq& dye_seq);
-    DyeTrack(unsigned int num_timesteps, unsigned int num_channels, short* counts);
+    DyeTrack(unsigned int num_timesteps,
+             unsigned int num_channels,
+             const DyeSeq& dye_seq);
+    DyeTrack(unsigned int num_timesteps,
+             unsigned int num_channels,
+             short* counts);
     DyeTrack(unsigned int num_timesteps, unsigned int num_channels);
     DyeTrack(const DyeTrack& other);
     DyeTrack(DyeTrack&& other);
