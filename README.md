@@ -43,9 +43,14 @@ Tab delimited file.
 First two lines are special standalone ints that represent: n_channels and n_dye_seqs
 
 Followed by `n_dye_seqs` lines each of which is tab delimited with three terms:
-    * a "dye_string"
-    * the number of peptides that generated this dye_seq. TODO: Verify
-    * the id of this dye_seq. TODO: Verify
+* a "dye_string"
+* the number of peptides that generated this dye_seq.
+* the id of this dye_seq.
+
+Note that when the id of a dye_seq is produced from peptides, the dye seq is assigned an id
+from one of the peptides. The c++ code doesn't know how to read peptide data
+though so may not be super relevant, just helps with analysis to be able
+to guess at a particular peptide.
 
 ### dye_string
 A "dye_string" is a summary of a labeling.
