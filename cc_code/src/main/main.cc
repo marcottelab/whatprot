@@ -8,6 +8,7 @@
 
 // Standard C++ library headers:
 #include <cstring>
+#include <iostream>
 
 // Local project headers:
 #include "main/classify/classify-main.h"
@@ -22,11 +23,16 @@ using whatprot::print_bad_inputs;
 using whatprot::print_invalid_command;
 using whatprot::print_omp_info;
 using whatprot::simulate_main;
+using std::cout;
 }  // namespace
+
+void main_usage() {
+    cout << "Usage: whatprot [classify|simulate|fit]\n";
+}
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        print_bad_inputs();
+        main_usage();
         return 1;
     }
     print_omp_info();
@@ -39,6 +45,7 @@ int main(int argc, char** argv) {
     } else if (0 == strcmp(mode, "fit")) {
         return_code = fit_main(argc, argv);
     } else {
+        main_usage();
         print_invalid_command();
     }
     return return_code;

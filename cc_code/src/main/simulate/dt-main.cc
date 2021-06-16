@@ -33,12 +33,14 @@ namespace {
 using std::atoi;
 using std::default_random_engine;
 using std::vector;
+using std::cout;
 }  // namespace
 
 int dt_main(int argc, char** argv) {
     double total_start_time = wall_time();
 
     if (argc != 7) {
+        cout << "Usage : whatprot simulate dt num_timesteps dye_tracks_per_peptide dye_seqs_filename dye_tracks_filename\n";
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
