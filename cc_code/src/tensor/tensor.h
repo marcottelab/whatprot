@@ -21,8 +21,9 @@ public:
     Tensor(Tensor&& other);
     ~Tensor();
     double& operator[](unsigned int* loc);
-    TensorIterator* iterator();
-    ConstTensorIterator* const_iterator() const;
+    TensorIterator* iterator(const unsigned int* min, const unsigned int* max);
+    ConstTensorIterator* const_iterator(const unsigned int* min,
+                                        const unsigned int* max) const;
     double sum() const;
 
     double* values;

@@ -9,26 +9,14 @@
 #ifndef WHATPROT_TENSOR_CONST_TENSOR_ITERATOR_H
 #define WHATPROT_TENSOR_CONST_TENSOR_ITERATOR_H
 
+#include "tensor/base-tensor-iterator.h"
+
 namespace whatprot {
 
-class ConstTensorIterator {
+class ConstTensorIterator : public BaseTensorIterator<const double*> {
 public:
-    ConstTensorIterator(unsigned int order,
-                        const unsigned int* shape,
-                        unsigned int size,
-                        const double* values);
-    ~ConstTensorIterator();
-    void reset();
-    void advance();
-    double get() const;
-    bool done();
-
-    const double* values;  // not owned
-    const unsigned int* shape;  // not owned
-    unsigned int* loc;
-    const unsigned int order;
-    unsigned int index;  // current index directly into values
-    const unsigned int size;  // length of values
+    // This next line inherits all constructors of base class.
+    using BaseTensorIterator<const double*>::BaseTensorIterator;
 };
 
 }  // namespace whatprot

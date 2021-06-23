@@ -9,26 +9,14 @@
 #ifndef WHATPROT_TENSOR_TENSOR_ITERATOR_H
 #define WHATPROT_TENSOR_TENSOR_ITERATOR_H
 
+#include "tensor/base-tensor-iterator.h"
+
 namespace whatprot {
 
-class TensorIterator {
+class TensorIterator : public BaseTensorIterator<double*> {
 public:
-    TensorIterator(unsigned int order,
-                   unsigned int* shape,
-                   unsigned int size,
-                   double* values);
-    ~TensorIterator();
-    void reset();
-    void advance();
-    double* get();
-    bool done();
-
-    double* values;  // not owned
-    unsigned int* shape;  // not owned
-    unsigned int* loc;
-    unsigned int order;
-    unsigned int index;  // current index directly into values
-    unsigned int size;  // length of values
+    // This next line inherits all constructors of base class.
+    using BaseTensorIterator<double*>::BaseTensorIterator;
 };
 
 }  // namespace whatprot

@@ -228,7 +228,9 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     shape[0] = 2;
     shape[1] = 3;
     Tensor t(order, shape);
-    delete[] shape;
+    unsigned int* zeros = new unsigned int[order];
+    zeros[0] = 0;
+    zeros[1] = 0;
     unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
@@ -244,7 +246,7 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     t[loc] = 511;
     loc[1] = 2;
     t[loc] = 512;
-    TensorIterator* itr = t.iterator();
+    TensorIterator* itr = t.iterator(zeros, shape);
     BOOST_TEST(itr->done() == false);
     BOOST_TEST(*itr->get() == 500);
     *itr->get() = 600;
@@ -286,6 +288,8 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     BOOST_TEST(t[loc] == 612);
     delete[] loc;
     delete itr;
+    delete[] shape;
+    delete[] zeros;
 }
 
 BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
@@ -294,7 +298,9 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     shape[0] = 2;
     shape[1] = 3;
     Tensor t(order, shape);
-    delete[] shape;
+    unsigned int* zeros = new unsigned int[order];
+    zeros[0] = 0;
+    zeros[1] = 0;
     unsigned int* loc = new unsigned int[order];
     loc[0] = 0;
     loc[1] = 0;
@@ -310,24 +316,24 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     t[loc] = 511;
     loc[1] = 2;
     t[loc] = 512;
-    ConstTensorIterator* itr = t.const_iterator();
+    ConstTensorIterator* itr = t.const_iterator(zeros, shape);
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 500);
+    BOOST_TEST(*itr->get() == 500);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 501);
+    BOOST_TEST(*itr->get() == 501);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 502);
+    BOOST_TEST(*itr->get() == 502);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 510);
+    BOOST_TEST(*itr->get() == 510);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 511);
+    BOOST_TEST(*itr->get() == 511);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 512);
+    BOOST_TEST(*itr->get() == 512);
     itr->advance();
     BOOST_TEST(itr->done() == true);
     loc[0] = 0;
@@ -346,6 +352,8 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     BOOST_TEST(t[loc] == 512);
     delete[] loc;
     delete itr;
+    delete[] shape;
+    delete[] zeros;
 }
 
 BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {

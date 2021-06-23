@@ -65,12 +65,14 @@ double& Tensor::operator[](unsigned int* loc) {
     return values[index];
 }
 
-TensorIterator* Tensor::iterator() {
-    return new TensorIterator(order, shape, size, values);
+TensorIterator* Tensor::iterator(const unsigned int* min,
+                                 const unsigned int* max) {
+    return new TensorIterator(order, min, max, shape, size, values);
 }
 
-ConstTensorIterator* Tensor::const_iterator() const {
-    return new ConstTensorIterator(order, shape, size, values);
+ConstTensorIterator* Tensor::const_iterator(const unsigned int* min,
+                                            const unsigned int* max) const {
+    return new ConstTensorIterator(order, min, max, shape, size, values);
 }
 
 double Tensor::sum() const {
