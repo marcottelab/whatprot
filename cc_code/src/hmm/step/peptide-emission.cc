@@ -34,8 +34,8 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
     values.resize(num_channels * (max_num_dyes + 1));
     for (unsigned int c = 0; c < num_channels; c++) {
         for (int d = 0; d < (max_num_dyes + 1); d++) {
-            prob(c, d) =
-                    seq_model.channel_models[c]->pdf(radiometry(timestep, c), d);
+            prob(c, d) = seq_model.channel_models[c]->pdf(
+                    radiometry(timestep, c), d);
         }
     }
 }
