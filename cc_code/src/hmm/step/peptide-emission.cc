@@ -82,7 +82,8 @@ void PeptideEmission::backward(const PeptideStateVector& input,
         min[o] = 0;
         max[o] = input.tensor.shape[o];
     }
-    ConstTensorIterator* inputit = input.tensor.const_iterator(&min[0], &max[0]);
+    ConstTensorIterator* inputit =
+            input.tensor.const_iterator(&min[0], &max[0]);
     TensorIterator* outputit = output->tensor.iterator(&min[0], &max[0]);
     while (inputit->index < (*num_edmans + 1) * input.tensor.strides[0]) {
         double product = 1.0;
@@ -111,8 +112,10 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
         min[o] = 0;
         max[o] = forward_psv.tensor.shape[o];
     }
-    ConstTensorIterator* fit = forward_psv.tensor.const_iterator(&min[0], &max[0]);
-    ConstTensorIterator* bit = backward_psv.tensor.const_iterator(&min[0], &max[0]);
+    ConstTensorIterator* fit =
+            forward_psv.tensor.const_iterator(&min[0], &max[0]);
+    ConstTensorIterator* bit =
+            backward_psv.tensor.const_iterator(&min[0], &max[0]);
     while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
         double p_state = (*fit->get()) * (*bit->get()) / probability;
         for (unsigned int c = 0; c < num_channels; c++) {

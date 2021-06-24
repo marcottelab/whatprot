@@ -45,20 +45,15 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     shape[0] = 1;
     shape[1] = 2;
     PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0}] = 0.31;
+    fpsv.tensor[{0, 1}] = 0.71;
     PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0}] = 0.32;
+    bpsv.tensor[{0, 1}] = 0.72;
     PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0}] = 0.33;
+    nbpsv.tensor[{0, 1}] = 0.73;
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    fpsv.tensor[loc] = 0.31;  // loc is {0, 0}
-    bpsv.tensor[loc] = 0.32;
-    nbpsv.tensor[loc] = 0.33;
-    loc[1] = 1;
-    fpsv.tensor[loc] = 0.71;  // loc is {0, 1}
-    bpsv.tensor[loc] = 0.72;
-    nbpsv.tensor[loc] = 0.73;
-    delete[] loc;
     unsigned int edmans = 0;
     double probability = 1.0;
     SequencingModelFitter smf;

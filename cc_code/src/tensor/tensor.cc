@@ -11,6 +11,7 @@
 
 // Standard C++ library headers:
 #include <algorithm>  // needed for std::copy
+#include <initializer_list>
 
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
@@ -20,7 +21,8 @@ namespace whatprot {
 
 namespace {
 using std::copy;
-}
+using std::initializer_list;
+}  // namespace
 
 Tensor::Tensor(unsigned int order, const unsigned int* shape) : order(order) {
     this->shape = new unsigned int[order];
@@ -57,12 +59,16 @@ Tensor::~Tensor() {
     }
 }
 
-double& Tensor::operator[](unsigned int* loc) {
+double& Tensor::operator[](const unsigned int* loc) {
     unsigned int index = 0;
     for (unsigned int i = 0; i < order; i++) {
         index += strides[i] * loc[i];
     }
     return values[index];
+}
+
+double& Tensor::operator[](initializer_list<unsigned int> loc) {
+    return (*this)[loc.begin()];
 }
 
 TensorIterator* Tensor::iterator(const unsigned int* min,

@@ -364,15 +364,10 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    psv.tensor[loc] = 3.14;  // loc is {0, 0}
+    psv.tensor[{0, 0}] = 3.14;
     unsigned int edmans = 0;
     e.forward(&edmans, &psv);
-    BOOST_TEST(psv.tensor[loc]
-               == 3.14 * cm_mock.get().pdf(1.0, 0));  // loc is {0, 0}
-    delete[] loc;
+    BOOST_TEST((psv.tensor[{0, 0}]) == 3.14 * cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -397,17 +392,12 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    psv.tensor[loc] = 3.14;  // loc is {0, 0}
+    psv.tensor[{0, 0}] = 3.14;
     unsigned int edmans = 0;
     e.forward(&edmans, &psv);
     e.forward(&edmans, &psv);
-    BOOST_TEST(psv.tensor[loc]
-               == 3.14 * cm_mock.get().pdf(1.0, 0)
-                          * cm_mock.get().pdf(1.0, 0));  // loc is {0, 0}
-    delete[] loc;
+    BOOST_TEST((psv.tensor[{0, 0}])
+               == 3.14 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -435,26 +425,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     shape[1] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    psv.tensor[loc] = 13.0;  // loc is {0, 0}
-    loc[0] = 1;
-    psv.tensor[loc] = 13.1;  // loc is {1, 0}
-    loc[0] = 2;
-    psv.tensor[loc] = 13.2;  // loc is {2, 0}
+    psv.tensor[{0, 0}] = 13.0;
+    psv.tensor[{1, 0}] = 13.1;
+    psv.tensor[{2, 0}] = 13.2;
     unsigned int edmans = 2;
     e.forward(&edmans, &psv);
-    loc[0] = 0;
-    BOOST_TEST(psv.tensor[loc]
-               == 13.0 * cm_mock.get().pdf(2.0, 0));  // loc is {0, 0}
-    loc[0] = 1;
-    BOOST_TEST(psv.tensor[loc]
-               == 13.1 * cm_mock.get().pdf(2.0, 0));  // loc is {1, 0}
-    loc[0] = 2;
-    BOOST_TEST(psv.tensor[loc]
-               == 13.2 * cm_mock.get().pdf(2.0, 0));  // loc is {2, 0}
-    delete[] loc;
+    BOOST_TEST((psv.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv.tensor[{1, 0}]) == 13.1 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv.tensor[{2, 0}]) == 13.2 * cm_mock.get().pdf(2.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -485,19 +463,12 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     shape[3] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    loc[3] = 0;
-    psv.tensor[loc] = 13.0;  // loc is {0, 0, 0, 0}
+    psv.tensor[{0, 0, 0, 0}] = 13.0;
     unsigned int edmans = 0;
     e.forward(&edmans, &psv);
-    // loc is {0, 0, 0, 0}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
                           * cm_mock.get().pdf(0.2, 0));
-    delete[] loc;
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -539,20 +510,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
     shape[3] = 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    loc[3] = 0;
-    psv.tensor[loc] = 13.0;  // loc is {0, 0, 0, 0}
+    psv.tensor[{0, 0, 0, 0}] = 13.0;
     unsigned int edmans = 0;
     e.forward(&edmans, &psv);
-    // loc is {0, 0, 0, 0}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock_0.get().pdf(0.0, 0)
                           * cm_mock_1.get().pdf(0.1, 0)
                           * cm_mock_2.get().pdf(0.2, 0));
-    delete[] loc;
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -578,27 +542,14 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
     shape[1] = max_num_dyes + 1;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    psv.tensor[loc] = 13.0;  // loc is {0, 0}
-    loc[1] = 1;
-    psv.tensor[loc] = 13.1;  // loc is {0, 1}
-    loc[1] = 2;
-    psv.tensor[loc] = 13.2;  // loc is {0, 2}
+    psv.tensor[{0, 0}] = 13.0;
+    psv.tensor[{0, 1}] = 13.1;
+    psv.tensor[{0, 2}] = 13.2;
     unsigned int edmans = 0;
     e.forward(&edmans, &psv);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(psv.tensor[loc]
-               == 13.0 * cm_mock.get().pdf(0.0, 0));  // loc is {0, 0}
-    loc[1] = 1;
-    BOOST_TEST(psv.tensor[loc]
-               == 13.1 * cm_mock.get().pdf(0.0, 1));  // loc is {0, 1}
-    loc[1] = 2;
-    BOOST_TEST(psv.tensor[loc]
-               == 13.2 * cm_mock.get().pdf(0.0, 2));  // loc is {0, 2}
-    delete[] loc;
+    BOOST_TEST((psv.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST((psv.tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST((psv.tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -629,78 +580,40 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     shape[2] = 2;
     PeptideStateVector psv(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    psv.tensor[loc] = 7.000;  // loc is {0, 0, 0}
-    loc[2] = 1;
-    psv.tensor[loc] = 7.001;  // loc is {0, 0, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    psv.tensor[loc] = 7.010;  // loc is {0, 1, 0}
-    loc[2] = 1;
-    psv.tensor[loc] = 7.011;  // loc is {0, 1, 1}
-    loc[0] = 1;
-    loc[1] = 0;
-    loc[2] = 0;
-    psv.tensor[loc] = 7.100;  // loc is {1, 0, 0}
-    loc[2] = 1;
-    psv.tensor[loc] = 7.101;  // loc is {1, 0, 1}
-    loc[1] = 1;
-    loc[2] = 0;
-    psv.tensor[loc] = 7.110;  // loc is {1, 1, 0}
-    loc[2] = 1;
-    psv.tensor[loc] = 7.111;  // loc is {1, 1, 1}
+    psv.tensor[{0, 0, 0}] = 7.000;
+    psv.tensor[{0, 0, 1}] = 7.001;
+    psv.tensor[{0, 1, 0}] = 7.010;
+    psv.tensor[{0, 1, 1}] = 7.011;
+    psv.tensor[{1, 0, 0}] = 7.100;
+    psv.tensor[{1, 0, 1}] = 7.101;
+    psv.tensor[{1, 1, 0}] = 7.110;
+    psv.tensor[{1, 1, 1}] = 7.111;
     unsigned int edmans = 1;
     e.forward(&edmans, &psv);
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    // loc is {0, 0, 0}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{0, 0, 0}])
                == 7.000 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {0, 0, 1}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{0, 0, 1}])
                == 7.001 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 1));
-    loc[1] = 1;
-    loc[2] = 0;
-    // loc is {0, 1, 0}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{0, 1, 0}])
                == 7.010 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {0, 1, 1}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{0, 1, 1}])
                == 7.011 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 1));
-    loc[0] = 1;
-    loc[1] = 0;
-    loc[2] = 0;
-    // loc is {1, 0, 0}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{1, 0, 0}])
                == 7.100 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {1, 0, 1}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{1, 0, 1}])
                == 7.101 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 1));
-    loc[1] = 1;
-    loc[2] = 0;
-    // loc is {1, 1, 0}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{1, 1, 0}])
                == 7.110 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 0));
-    loc[2] = 1;
-    // loc is {1, 1, 1}
-    BOOST_TEST(psv.tensor[loc]
+    BOOST_TEST((psv.tensor[{1, 1, 1}])
                == 7.111 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 1));
-    delete[] loc;
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -721,24 +634,18 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0}] = 1.72;
+    fpsv.tensor[{0, 1}] = 1.36;
+    fpsv.tensor[{0, 2}] = 1.18;
     PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0}] = 2.72;
+    bpsv.tensor[{0, 1}] = 2.36;
+    bpsv.tensor[{0, 2}] = 2.18;
     PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0}] = 3.72;
+    nbpsv.tensor[{0, 1}] = 3.36;
+    nbpsv.tensor[{0, 2}] = 3.18;
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    fpsv.tensor[loc] = 1.72;  // loc is {0, 0}
-    bpsv.tensor[loc] = 2.72;
-    nbpsv.tensor[loc] = 3.72;
-    loc[1] = 1;
-    fpsv.tensor[loc] = 1.36;  // loc is {0, 1}
-    bpsv.tensor[loc] = 2.36;
-    nbpsv.tensor[loc] = 3.36;
-    loc[1] = 2;
-    fpsv.tensor[loc] = 1.18;  // loc is {0, 2}
-    bpsv.tensor[loc] = 2.18;
-    nbpsv.tensor[loc] = 3.18;
-    delete[] loc;
     unsigned int edmans = 0;
     double probability = 3.14159;
     SequencingModelFitter smf;
@@ -790,30 +697,21 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     shape[1] = max_num_dyes + 1;
     shape[2] = max_num_dyes + 1;
     PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0, 0}] = 1.72;
+    fpsv.tensor[{0, 0, 1}] = 1.64;
+    fpsv.tensor[{0, 1, 0}] = 1.36;
+    fpsv.tensor[{0, 1, 1}] = 1.25;
     PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0, 0}] = 2.72;
+    bpsv.tensor[{0, 0, 1}] = 2.64;
+    bpsv.tensor[{0, 1, 0}] = 2.36;
+    bpsv.tensor[{0, 1, 1}] = 2.25;
     PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0, 0}] = 3.72;
+    nbpsv.tensor[{0, 0, 1}] = 3.64;
+    nbpsv.tensor[{0, 1, 0}] = 3.36;
+    nbpsv.tensor[{0, 1, 1}] = 3.25;
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    fpsv.tensor[loc] = 1.72;  // loc is {0, 0, 0}
-    bpsv.tensor[loc] = 2.72;
-    nbpsv.tensor[loc] = 3.72;
-    loc[2] = 1;
-    fpsv.tensor[loc] = 1.64;  // loc is {0, 0, 1}
-    bpsv.tensor[loc] = 2.64;
-    nbpsv.tensor[loc] = 3.64;
-    loc[1] = 1;
-    loc[2] = 0;
-    fpsv.tensor[loc] = 1.36;  // loc is {0, 1, 0}
-    bpsv.tensor[loc] = 2.36;
-    nbpsv.tensor[loc] = 3.36;
-    loc[2] = 1;
-    fpsv.tensor[loc] = 1.25;  // loc is {0, 1, 1}
-    bpsv.tensor[loc] = 2.25;
-    nbpsv.tensor[loc] = 3.25;
-    delete[] loc;
     unsigned int edmans = 0;
     double probability = 3.14159;
     SequencingModelFitter smf;
@@ -896,29 +794,21 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0}] = 1.72;
+    fpsv.tensor[{0, 1}] = 1.36;
+    fpsv.tensor[{1, 0}] = 1.64;
+    fpsv.tensor[{1, 1}] = 1.25;
     PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0}] = 2.72;
+    bpsv.tensor[{0, 1}] = 2.36;
+    bpsv.tensor[{1, 0}] = 2.64;
+    bpsv.tensor[{1, 1}] = 2.25;
     PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0}] = 3.72;
+    nbpsv.tensor[{0, 1}] = 3.36;
+    nbpsv.tensor[{1, 0}] = 3.64;
+    nbpsv.tensor[{1, 1}] = 3.25;
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    fpsv.tensor[loc] = 1.72;  // loc is {0, 0}
-    bpsv.tensor[loc] = 2.72;
-    nbpsv.tensor[loc] = 3.72;
-    loc[1] = 1;
-    fpsv.tensor[loc] = 1.36;  // loc is {0, 1}
-    bpsv.tensor[loc] = 2.36;
-    nbpsv.tensor[loc] = 3.36;
-    loc[0] = 1;
-    loc[1] = 0;
-    fpsv.tensor[loc] = 1.64;  // loc is {1, 0}
-    bpsv.tensor[loc] = 2.64;
-    nbpsv.tensor[loc] = 3.64;
-    loc[1] = 1;
-    fpsv.tensor[loc] = 1.25;  // loc is {1, 1}
-    bpsv.tensor[loc] = 2.25;
-    nbpsv.tensor[loc] = 3.25;
-    delete[] loc;
     unsigned int edmans = 1;
     double probability = 3.14159;
     SequencingModelFitter smf;

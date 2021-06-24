@@ -190,36 +190,18 @@ BOOST_AUTO_TEST_CASE(bracket_op_test, *tolerance(TOL)) {
     shape[1] = 3;
     Tensor t(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    t[loc] = 600;
-    loc[1] = 1;
-    t[loc] = 601;
-    loc[1] = 2;
-    t[loc] = 602;
-    loc[0] = 1;
-    loc[1] = 0;
-    t[loc] = 610;
-    loc[1] = 1;
-    t[loc] = 611;
-    loc[1] = 2;
-    t[loc] = 612;
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 600);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 601);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 602);
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 610);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 611);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 612);
-    delete[] loc;
+    t[{0, 0}] = 600;
+    t[{0, 1}] = 601;
+    t[{0, 2}] = 602;
+    t[{1, 0}] = 610;
+    t[{1, 1}] = 611;
+    t[{1, 2}] = 612;
+    BOOST_TEST((t[{0, 0}]) == 600);
+    BOOST_TEST((t[{0, 1}]) == 601);
+    BOOST_TEST((t[{0, 2}]) == 602);
+    BOOST_TEST((t[{1, 0}]) == 610);
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
 }
 
 BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
@@ -227,25 +209,16 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    Tensor t(order, shape);
     unsigned int* zeros = new unsigned int[order];
     zeros[0] = 0;
     zeros[1] = 0;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    t[loc] = 500;
-    loc[1] = 1;
-    t[loc] = 501;
-    loc[1] = 2;
-    t[loc] = 502;
-    loc[0] = 1;
-    loc[1] = 0;
-    t[loc] = 510;
-    loc[1] = 1;
-    t[loc] = 511;
-    loc[1] = 2;
-    t[loc] = 512;
+    Tensor t(order, shape);
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
     TensorIterator* itr = t.iterator(zeros, shape);
     BOOST_TEST(itr->done() == false);
     BOOST_TEST(*itr->get() == 500);
@@ -272,21 +245,12 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     *itr->get() = 612;
     itr->advance();
     BOOST_TEST(itr->done() == true);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 600);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 601);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 602);
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 610);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 611);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 612);
-    delete[] loc;
+    BOOST_TEST((t[{0, 0}]) == 600);
+    BOOST_TEST((t[{0, 1}]) == 601);
+    BOOST_TEST((t[{0, 2}]) == 602);
+    BOOST_TEST((t[{1, 0}]) == 610);
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
     delete itr;
     delete[] shape;
     delete[] zeros;
@@ -297,25 +261,16 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    Tensor t(order, shape);
     unsigned int* zeros = new unsigned int[order];
     zeros[0] = 0;
     zeros[1] = 0;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    t[loc] = 500;
-    loc[1] = 1;
-    t[loc] = 501;
-    loc[1] = 2;
-    t[loc] = 502;
-    loc[0] = 1;
-    loc[1] = 0;
-    t[loc] = 510;
-    loc[1] = 1;
-    t[loc] = 511;
-    loc[1] = 2;
-    t[loc] = 512;
+    Tensor t(order, shape);
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
     ConstTensorIterator* itr = t.const_iterator(zeros, shape);
     BOOST_TEST(itr->done() == false);
     BOOST_TEST(*itr->get() == 500);
@@ -336,21 +291,12 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     BOOST_TEST(*itr->get() == 512);
     itr->advance();
     BOOST_TEST(itr->done() == true);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 500);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 501);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 502);
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 510);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 511);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 512);
-    delete[] loc;
+    BOOST_TEST((t[{0, 0}]) == 500);
+    BOOST_TEST((t[{0, 1}]) == 501);
+    BOOST_TEST((t[{0, 2}]) == 502);
+    BOOST_TEST((t[{1, 0}]) == 510);
+    BOOST_TEST((t[{1, 1}]) == 511);
+    BOOST_TEST((t[{1, 2}]) == 512);
     delete itr;
     delete[] shape;
     delete[] zeros;
@@ -362,11 +308,8 @@ BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {
     shape[0] = 1;
     Tensor tsr(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    tsr[loc] = 3.14;
+    tsr[{0}] = 3.14;
     BOOST_TEST(tsr.sum() == 3.14);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(sum_bigger_size_test, *tolerance(TOL)) {
@@ -375,15 +318,10 @@ BOOST_AUTO_TEST_CASE(sum_bigger_size_test, *tolerance(TOL)) {
     shape[0] = 3;
     Tensor tsr(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    tsr[loc] = 7.0;
-    loc[0] = 1;
-    tsr[loc] = 7.1;
-    loc[0] = 2;
-    tsr[loc] = 7.2;
+    tsr[{0}] = 7.0;
+    tsr[{1}] = 7.1;
+    tsr[{2}] = 7.2;
     BOOST_TEST(tsr.sum() == 7.0 + 7.1 + 7.2);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(sum_more_dimensions_test, *tolerance(TOL)) {
@@ -394,13 +332,8 @@ BOOST_AUTO_TEST_CASE(sum_more_dimensions_test, *tolerance(TOL)) {
     shape[2] = 1;
     Tensor tsr(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    tsr[loc] = 3.14;
+    tsr[{0, 0, 0}] = 3.14;
     BOOST_TEST(tsr.sum() == 3.14);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
@@ -410,19 +343,11 @@ BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
     shape[1] = 2;
     Tensor tsr(order, shape);
     delete[] shape;
-    unsigned int* loc = new unsigned int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr[loc] = 7.00;
-    loc[1] = 1;
-    tsr[loc] = 7.01;
-    loc[0] = 1;
-    loc[1] = 0;
-    tsr[loc] = 7.10;
-    loc[1] = 1;
-    tsr[loc] = 7.11;
+    tsr[{0, 0}] = 7.00;
+    tsr[{0, 1}] = 7.01;
+    tsr[{1, 0}] = 7.10;
+    tsr[{1, 1}] = 7.11;
     BOOST_TEST(tsr.sum() == 7.00 + 7.01 + 7.10 + 7.11);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
