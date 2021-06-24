@@ -31,14 +31,14 @@ PeptideHMM::PeptideHMM(
     for (unsigned int c = 0; c < num_channels; c++) {
         steps.push_back(&universal_precomputations.dud_transitions[c]);
     }
-    steps.push_back(&radiometry_precomputations.peptide_emission);
+    steps.push_back(&radiometry_precomputations.peptide_emissions[0]);
     for (unsigned int t = 1; t < num_timesteps; t++) {
         steps.push_back(&universal_precomputations.detach_transition);
         for (unsigned int c = 0; c < num_channels; c++) {
             steps.push_back(&universal_precomputations.bleach_transitions[c]);
         }
         steps.push_back(&dye_seq_precomputations.edman_transition);
-        steps.push_back(&radiometry_precomputations.peptide_emission);
+        steps.push_back(&radiometry_precomputations.peptide_emissions[t]);
     }
     tensor_shape = dye_seq_precomputations.tensor_shape;
 }

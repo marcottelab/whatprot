@@ -58,11 +58,10 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
     BOOST_TEST(e.num_channels == num_channels);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     BOOST_TEST(e.values[0] == 0.5);
@@ -85,14 +84,11 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
                 return observed + 0.042;
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 1;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
-    BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(e.prob(1, 0, 0) == cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(e.prob(2, 0, 0) == cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -112,15 +108,12 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
                 return observed + 0.042;
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 1;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
     const PeptideEmission& ce = e;
-    BOOST_TEST(ce.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(ce.prob(1, 0, 0) == cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(ce.prob(2, 0, 0) == cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -142,14 +135,13 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
-    BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(e.prob(0, 1, 0) == cm_mock.get().pdf(0.1, 0));
-    BOOST_TEST(e.prob(0, 2, 0) == cm_mock.get().pdf(0.2, 0));
+    BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST(e.prob(1, 0) == cm_mock.get().pdf(0.1, 0));
+    BOOST_TEST(e.prob(2, 0) == cm_mock.get().pdf(0.2, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -171,15 +163,14 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
     const PeptideEmission& ce = e;
-    BOOST_TEST(ce.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(ce.prob(0, 1, 0) == cm_mock.get().pdf(0.1, 0));
-    BOOST_TEST(ce.prob(0, 2, 0) == cm_mock.get().pdf(0.2, 0));
+    BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST(ce.prob(1, 0) == cm_mock.get().pdf(0.1, 0));
+    BOOST_TEST(ce.prob(2, 0) == cm_mock.get().pdf(0.2, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -212,14 +203,13 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
                 return observed * 2.7 + 0.187;
             });
     seq_model.channel_models.push_back(&cm_mock_2.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
-    BOOST_TEST(e.prob(0, 0, 0) == cm_mock_0.get().pdf(0.0, 0));
-    BOOST_TEST(e.prob(0, 1, 0) == cm_mock_1.get().pdf(0.1, 0));
-    BOOST_TEST(e.prob(0, 2, 0) == cm_mock_2.get().pdf(0.2, 0));
+    BOOST_TEST(e.prob(0, 0) == cm_mock_0.get().pdf(0.0, 0));
+    BOOST_TEST(e.prob(1, 0) == cm_mock_1.get().pdf(0.1, 0));
+    BOOST_TEST(e.prob(2, 0) == cm_mock_2.get().pdf(0.2, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -237,14 +227,14 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
                 return 1.0 / (double)(state + 7);
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
-    BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(e.prob(0, 0, 1) == cm_mock.get().pdf(0.0, 1));
-    BOOST_TEST(e.prob(0, 0, 2) == cm_mock.get().pdf(0.0, 2));
+    BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST(e.prob(0, 1) == cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST(e.prob(0, 2) == cm_mock.get().pdf(0.0, 2));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -262,15 +252,15 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
                 return 1.0 / (double)(state + 7);
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     const PeptideEmission& ce = e;
-    BOOST_TEST(ce.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(ce.prob(0, 0, 1) == cm_mock.get().pdf(0.0, 1));
-    BOOST_TEST(ce.prob(0, 0, 2) == cm_mock.get().pdf(0.0, 2));
+    BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST(ce.prob(0, 1) == cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST(ce.prob(0, 2) == cm_mock.get().pdf(0.0, 2));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -292,19 +282,14 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 1;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
-    BOOST_TEST(e.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(e.prob(0, 0, 1) == cm_mock.get().pdf(0.0, 1));
-    BOOST_TEST(e.prob(0, 1, 0) == cm_mock.get().pdf(0.1, 0));
-    BOOST_TEST(e.prob(0, 1, 1) == cm_mock.get().pdf(0.1, 1));
-    BOOST_TEST(e.prob(1, 0, 0) == cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(e.prob(1, 0, 1) == cm_mock.get().pdf(1.0, 1));
-    BOOST_TEST(e.prob(1, 1, 0) == cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(e.prob(1, 1, 1) == cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST(e.prob(0, 1) == cm_mock.get().pdf(1.0, 1));
+    BOOST_TEST(e.prob(1, 0) == cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST(e.prob(1, 1) == cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -326,20 +311,15 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
-    unsigned int expected_size =
-            num_timesteps * num_channels * (max_num_dyes + 1);
+    unsigned int timestep = 1;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
-    BOOST_TEST(e.num_timesteps == num_timesteps);
     const PeptideEmission& ce = e;
-    BOOST_TEST(ce.prob(0, 0, 0) == cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST(ce.prob(0, 0, 1) == cm_mock.get().pdf(0.0, 1));
-    BOOST_TEST(ce.prob(0, 1, 0) == cm_mock.get().pdf(0.1, 0));
-    BOOST_TEST(ce.prob(0, 1, 1) == cm_mock.get().pdf(0.1, 1));
-    BOOST_TEST(ce.prob(1, 0, 0) == cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(ce.prob(1, 0, 1) == cm_mock.get().pdf(1.0, 1));
-    BOOST_TEST(ce.prob(1, 1, 0) == cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(ce.prob(1, 1, 1) == cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST(ce.prob(0, 1) == cm_mock.get().pdf(1.0, 1));
+    BOOST_TEST(ce.prob(1, 0) == cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST(ce.prob(1, 1) == cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -357,7 +337,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
                 return 0.5;
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -385,7 +366,8 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
                 return 0.5;
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -418,7 +400,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
                 return observed + 0.042;
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 2;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -454,7 +437,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -501,7 +485,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
                 return observed * 2.7 + 0.187;
             });
     seq_model.channel_models.push_back(&cm_mock_2.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -535,7 +520,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
                 return 1.0 / (double)(state + 7);
             });
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -572,7 +558,8 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
             });
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 1;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -628,7 +615,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -690,7 +678,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 0;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -788,7 +777,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
-    PeptideEmission e(rad, max_num_dyes, seq_model);
+    unsigned int timestep = 1;
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model);
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;

@@ -24,10 +24,11 @@ namespace whatprot {
 class PeptideEmission : public Step<PeptideStateVector> {
 public:
     PeptideEmission(const Radiometry& radiometry,
+                    unsigned int timestep,
                     int max_num_dyes,
                     const SequencingModel& seq_model);
-    double& prob(int timestep, int channel, int num_dyes);
-    double prob(int timestep, int channel, int num_dyes) const;
+    double& prob(int channel, int num_dyes);
+    double prob(int channel, int num_dyes) const;
     virtual void forward(unsigned int* num_edmans,
                          PeptideStateVector* psv) const override;
     virtual void backward(const PeptideStateVector& input,
@@ -40,8 +41,8 @@ public:
                              double probability,
                              SequencingModelFitter* fitter) const override;
     Radiometry radiometry;
+    unsigned int timestep;
     std::vector<double> values;
-    unsigned int num_timesteps;
     unsigned int num_channels;
     int max_num_dyes;
 };

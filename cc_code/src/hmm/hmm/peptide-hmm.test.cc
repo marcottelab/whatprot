@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &universal_precomputations.dud_transitions[1]);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[0]);
     step++;
     BOOST_TEST(*step == &universal_precomputations.detach_transition);
     step++;
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[1]);
     step++;
     BOOST_TEST(*step == &universal_precomputations.detach_transition);
     step++;
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[2]);
     step++;
     BOOST_TEST(*step == &universal_precomputations.detach_transition);
     step++;
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emission);
+    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[3]);
 }
 
 BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
