@@ -7,10 +7,10 @@ from numpy import load
 from numpy import transpose
 
 NUM_CHANNELS = 2
-NUM_CYCLES = 16
+NUM_CYCLES = 14
 BETA = 15000
-RADMAT_FILE = 'C:/Users/Matthew/OneDrive/OdenInstitute/MarcotteLab/data/classification/yoda_2_decoys_lysc_de_c_15k/radmat.npy'
-OUTPUT_FILE = 'C:/Users/Matthew/OneDrive/OdenInstitute/MarcotteLab/data/classification/yoda_2_decoys_lysc_de_c_15k/radiometries.tsv'
+RADMAT_FILE = 'C:/Users/Matthew/OneDrive/OdenInstitute/MarcotteLab/data/classification/esn_mx074_tau441/full_signal_radmat.npy'
+OUTPUT_FILE = 'C:/Users/Matthew/OneDrive/OdenInstitute/MarcotteLab/data/classification/esn_mx074_tau441/radiometries.tsv'
 
 radmat = load(RADMAT_FILE)
 
@@ -28,10 +28,6 @@ for rad in radmat:
         for j in range(NUM_CHANNELS):
             if i > 0 or j > 0:
                 f.write("\t")
-            # Zero out anything less than half the one dye intensity
-            if rad[i, j] < 0.5:
-                f.write(str(0.0))
-            else:
-                f.write(str(rad[i, j]))
+            f.write(str(rad[i, j]))
     f.write("\n")
 f.close()
