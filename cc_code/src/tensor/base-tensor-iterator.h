@@ -9,6 +9,9 @@
 #ifndef WHATPROT_TENSOR_BASE_TENSOR_ITERATOR_H
 #define WHATPROT_TENSOR_BASE_TENSOR_ITERATOR_H
 
+// Local project headers:
+#include "util/kd-box-range.h"
+
 namespace whatprot {
 
 // Templatizing constness to share code between const and non-const iterators.
@@ -16,14 +19,12 @@ template <typename P>
 class BaseTensorIterator {
 public:
     BaseTensorIterator(unsigned int order,
-                       const unsigned int* min,
-                       const unsigned int* max,
+                       const KDBoxRange& range,
                        const unsigned int* shape,
                        unsigned int size,
                        P values)
             : values(values),
-              min(min),
-              max(max),
+              range(range),
               shape(shape),
               order(order),
               index(0),
@@ -41,8 +42,8 @@ public:
         unsigned int stride = 1;  // step size for current value of o.
         // Need to use signed int o to detect when out of entries to decrease.
         for (int o = order - 1; o >= 0; o--) {
-            loc[o] = min[o];
-            index += stride * min[o];
+            loc[o] = range.min[o];
+            index += stride * range.min[o];
             stride *= shape[o];
         }
     }
@@ -53,16 +54,16 @@ public:
         // Need to use signed int o to detect when out of entries to decrease.
         for (int o = order - 1; o >= 0; o--) {
             loc[o]++;
-            if (loc[o] < max[o]) {
+            if (loc[o] < range.max[o]) {
                 break;
             } else {
-                // (min[o] + shape[o] - max[o]) is the number of entries for
-                // this order between the max of one set of numbers in range to
-                // the min of the next.
-                index += stride * (min[o] + shape[o] - max[o]);
+                // (range.min[o] + shape[o] - range.max[o]) is the number of
+                // entries for this order between the max of one set of numbers
+                // in range to the min of the next.
+                index += stride * (range.min[o] + shape[o] - range.max[o]);
                 // Stride needs to be raised to account for one more dimension.
                 stride *= shape[o];
-                loc[o] = min[o];
+                loc[o] = range.min[o];
             }
         }
     }
@@ -76,8 +77,7 @@ public:
     }
 
     P values;  // not owned
-    const unsigned int* min;  // not owned
-    const unsigned int* max;  // not owned
+    const KDBoxRange& range;  // not owned
     const unsigned int* shape;  // not owned
     unsigned int* loc;
     const unsigned int order;

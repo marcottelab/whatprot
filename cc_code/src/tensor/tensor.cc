@@ -16,6 +16,7 @@
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "util/kd-box-range.h"
 
 namespace whatprot {
 
@@ -71,14 +72,12 @@ double& Tensor::operator[](initializer_list<unsigned int> loc) {
     return (*this)[loc.begin()];
 }
 
-TensorIterator* Tensor::iterator(const unsigned int* min,
-                                 const unsigned int* max) {
-    return new TensorIterator(order, min, max, shape, size, values);
+TensorIterator* Tensor::iterator(const KDBoxRange& range) {
+    return new TensorIterator(order, range, shape, size, values);
 }
 
-ConstTensorIterator* Tensor::const_iterator(const unsigned int* min,
-                                            const unsigned int* max) const {
-    return new ConstTensorIterator(order, min, max, shape, size, values);
+ConstTensorIterator* Tensor::const_iterator(const KDBoxRange& range) const {
+    return new ConstTensorIterator(order, range, shape, size, values);
 }
 
 double Tensor::sum() const {

@@ -16,6 +16,7 @@
 #include "parameterization/model/sequencing-model.h"
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "util/kd-box-range.h"
 
 namespace whatprot {
 
@@ -50,15 +51,14 @@ double PeptideEmission::prob(int channel, int num_dyes) const {
 
 void PeptideEmission::forward(unsigned int* num_edmans,
                               PeptideStateVector* psv) const {
-    std::vector<unsigned int> min;
-    std::vector<unsigned int> max;
-    min.resize(1 + num_channels);
-    max.resize(1 + num_channels);
+    KDBoxRange range;
+    range.min.resize(1 + num_channels);
+    range.max.resize(1 + num_channels);
     for (unsigned int o = 0; o < 1 + num_channels; o++) {
-        min[o] = 0;
-        max[o] = psv->tensor.shape[o];
+        range.min[o] = 0;
+        range.max[o] = psv->tensor.shape[o];
     }
-    TensorIterator* it = psv->tensor.iterator(&min[0], &max[0]);
+    TensorIterator* it = psv->tensor.iterator(range);
     while (it->index < (*num_edmans + 1) * psv->tensor.strides[0]) {
         double product = 1.0;
         for (unsigned int c = 0; c < num_channels; c++) {
@@ -73,17 +73,15 @@ void PeptideEmission::forward(unsigned int* num_edmans,
 void PeptideEmission::backward(const PeptideStateVector& input,
                                unsigned int* num_edmans,
                                PeptideStateVector* output) const {
-    std::vector<unsigned int> min;
-    std::vector<unsigned int> max;
-    min.resize(1 + num_channels);
-    max.resize(1 + num_channels);
+    KDBoxRange range;
+    range.min.resize(1 + num_channels);
+    range.max.resize(1 + num_channels);
     for (unsigned int o = 0; o < 1 + num_channels; o++) {
-        min[o] = 0;
-        max[o] = input.tensor.shape[o];
+        range.min[o] = 0;
+        range.max[o] = input.tensor.shape[o];
     }
-    ConstTensorIterator* inputit =
-            input.tensor.const_iterator(&min[0], &max[0]);
-    TensorIterator* outputit = output->tensor.iterator(&min[0], &max[0]);
+    ConstTensorIterator* inputit = input.tensor.const_iterator(range);
+    TensorIterator* outputit = output->tensor.iterator(range);
     while (inputit->index < (*num_edmans + 1) * input.tensor.strides[0]) {
         double product = 1.0;
         for (unsigned int c = 0; c < num_channels; c++) {
@@ -103,18 +101,15 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    std::vector<unsigned int> min;
-    std::vector<unsigned int> max;
-    min.resize(1 + num_channels);
-    max.resize(1 + num_channels);
+    KDBoxRange range;
+    range.min.resize(1 + num_channels);
+    range.max.resize(1 + num_channels);
     for (unsigned int o = 0; o < 1 + num_channels; o++) {
-        min[o] = 0;
-        max[o] = forward_psv.tensor.shape[o];
+        range.min[o] = 0;
+        range.max[o] = forward_psv.tensor.shape[o];
     }
-    ConstTensorIterator* fit =
-            forward_psv.tensor.const_iterator(&min[0], &max[0]);
-    ConstTensorIterator* bit =
-            backward_psv.tensor.const_iterator(&min[0], &max[0]);
+    ConstTensorIterator* fit = forward_psv.tensor.const_iterator(range);
+    ConstTensorIterator* bit = backward_psv.tensor.const_iterator(range);
     while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
         double p_state = (*fit->get()) * (*bit->get()) / probability;
         for (unsigned int c = 0; c < num_channels; c++) {

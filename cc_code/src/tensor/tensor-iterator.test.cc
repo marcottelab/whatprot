@@ -12,6 +12,9 @@
 // File under test:
 #include "tensor-iterator.h"
 
+// Local project headers:
+#include "util/kd-box-range.h"
+
 namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(tensor_suite)
@@ -20,36 +23,36 @@ BOOST_AUTO_TEST_SUITE(tensor_iterator_suite)
 BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     unsigned int order = 1;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 1;
-    min[0] = 0;
-    max[0] = 1;
+    range.min[0] = 0;
+    range.max[0] = 1;
     unsigned int size = 1;
     double* values = new double[size];
     values[0] = 13;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     BOOST_TEST(itr.order == order);
     BOOST_TEST(itr.shape[0] == 1u);
     BOOST_TEST(itr.size == 1u);
     BOOST_TEST(itr.values[0] == 13);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 2;
     shape[1] = 3;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 6;
     double* values = new double[size];
     values[0] = 600;
@@ -58,7 +61,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
     values[3] = 610;
     values[4] = 611;
     values[5] = 612;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     BOOST_TEST(itr.order == order);
     BOOST_TEST(itr.shape[0] == 2u);
     BOOST_TEST(itr.shape[1] == 3u);
@@ -70,25 +73,24 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
     BOOST_TEST(itr.values[4] == 611);
     BOOST_TEST(itr.values[5] == 612);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     unsigned int order = 3;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
-    min[0] = 0;
-    min[1] = 0;
-    min[2] = 0;
-    max[0] = 2;
-    max[1] = 2;
-    max[2] = 2;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.min[2] = 0;
+    range.max[0] = 2;
+    range.max[1] = 2;
+    range.max[2] = 2;
     unsigned int size = 8;
     double* values = new double[size];
     values[0] = 8000;
@@ -99,7 +101,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     values[5] = 8101;
     values[6] = 8110;
     values[7] = 8111;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     BOOST_TEST(itr.order == order);
     BOOST_TEST(itr.shape[0] == 2u);
     BOOST_TEST(itr.shape[1] == 2u);
@@ -114,25 +116,24 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     BOOST_TEST(itr.values[6] == 8110);
     BOOST_TEST(itr.values[7] == 8111);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(reset_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 2;
     shape[1] = 3;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 6;
     double* values = new double[size];
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.loc[0] = 17;
     itr.loc[1] = 19;
     itr.reset();
@@ -140,22 +141,21 @@ BOOST_AUTO_TEST_CASE(reset_test) {
     BOOST_TEST(itr.loc[1] == 0u);
     BOOST_TEST(itr.index == 0u);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(get_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 2;
     shape[1] = 3;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 6;
     double* values = new double[size];
     values[0] = 600;
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(get_test) {
     values[3] = 610;
     values[4] = 611;
     values[5] = 612;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     *itr.get() = 42;
     BOOST_TEST(itr.order == order);
@@ -181,22 +181,21 @@ BOOST_AUTO_TEST_CASE(get_test) {
     BOOST_TEST(itr.loc[1] == 0u);
     BOOST_TEST(itr.index == 0u);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(advance_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 2;
     shape[1] = 3;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 6;
     double* values = new double[size];
     values[0] = 500;
@@ -205,7 +204,7 @@ BOOST_AUTO_TEST_CASE(advance_test) {
     values[3] = 510;
     values[4] = 511;
     values[5] = 512;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     BOOST_TEST(*itr.get() == 500);
     BOOST_TEST(itr.loc[0] == 0u);
@@ -255,22 +254,21 @@ BOOST_AUTO_TEST_CASE(advance_test) {
     BOOST_TEST(itr.values[4] == 611);
     BOOST_TEST(itr.values[5] == 612);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(advance_higher_min_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 3;
     shape[1] = 4;
-    min[0] = 1;
-    min[1] = 1;
-    max[0] = 3;
-    max[1] = 4;
+    range.min[0] = 1;
+    range.min[1] = 1;
+    range.max[0] = 3;
+    range.max[1] = 4;
     unsigned int size = 12;
     double* values = new double[size];
     values[0] = 500;
@@ -285,7 +283,7 @@ BOOST_AUTO_TEST_CASE(advance_higher_min_test) {
     values[9] = 521;
     values[10] = 522;
     values[11] = 523;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     BOOST_TEST(*itr.get() == 511);
     BOOST_TEST(itr.loc[0] == 1u);
@@ -341,22 +339,21 @@ BOOST_AUTO_TEST_CASE(advance_higher_min_test) {
     BOOST_TEST(itr.values[10] == 622);
     BOOST_TEST(itr.values[11] == 623);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(advance_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 3;
     shape[1] = 4;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 12;
     double* values = new double[size];
     values[0] = 500;
@@ -371,7 +368,7 @@ BOOST_AUTO_TEST_CASE(advance_lower_max_test) {
     values[9] = 521;
     values[10] = 522;
     values[11] = 523;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     BOOST_TEST(*itr.get() == 500);
     BOOST_TEST(itr.loc[0] == 0u);
@@ -427,22 +424,21 @@ BOOST_AUTO_TEST_CASE(advance_lower_max_test) {
     BOOST_TEST(itr.values[10] == 522);
     BOOST_TEST(itr.values[11] == 523);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(advance_higher_min_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 4;
     shape[1] = 5;
-    min[0] = 1;
-    min[1] = 1;
-    max[0] = 3;
-    max[1] = 4;
+    range.min[0] = 1;
+    range.min[1] = 1;
+    range.max[0] = 3;
+    range.max[1] = 4;
     unsigned int size = 20;
     double* values = new double[size];
     values[0] = 500;
@@ -465,7 +461,7 @@ BOOST_AUTO_TEST_CASE(advance_higher_min_lower_max_test) {
     values[17] = 532;
     values[18] = 533;
     values[19] = 534;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     BOOST_TEST(*itr.get() == 511);
     BOOST_TEST(itr.loc[0] == 1u);
@@ -529,25 +525,24 @@ BOOST_AUTO_TEST_CASE(advance_higher_min_lower_max_test) {
     BOOST_TEST(itr.values[18] == 533);
     BOOST_TEST(itr.values[19] == 534);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(done_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 2;
     shape[1] = 3;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 6;
     double* values = new double[size];
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     BOOST_TEST(itr.done() == false);
     itr.advance();
@@ -563,25 +558,24 @@ BOOST_AUTO_TEST_CASE(done_test) {
     itr.advance();
     BOOST_TEST(itr.done() == true);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(done_higher_min_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 3;
     shape[1] = 4;
-    min[0] = 1;
-    min[1] = 1;
-    max[0] = 3;
-    max[1] = 4;
+    range.min[0] = 1;
+    range.min[1] = 1;
+    range.max[0] = 3;
+    range.max[1] = 4;
     unsigned int size = 12;
     double* values = new double[size];
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();  // at (1, 1)
     BOOST_TEST(itr.done() == false);
     itr.advance();  // at (1, 2)
@@ -597,25 +591,24 @@ BOOST_AUTO_TEST_CASE(done_higher_min_test) {
     itr.advance();  // should be done
     BOOST_TEST(itr.done() == true);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(done_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 3;
     shape[1] = 4;
-    min[0] = 0;
-    min[1] = 0;
-    max[0] = 2;
-    max[1] = 3;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max[0] = 2;
+    range.max[1] = 3;
     unsigned int size = 12;
     double* values = new double[size];
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();  // at (0, 0)
     BOOST_TEST(itr.done() == false);
     itr.advance();  // at (0, 1)
@@ -631,25 +624,24 @@ BOOST_AUTO_TEST_CASE(done_lower_max_test) {
     itr.advance();  // should be done
     BOOST_TEST(itr.done() == true);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(done_higher_min_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 4;
     shape[1] = 5;
-    min[0] = 1;
-    min[1] = 1;
-    max[0] = 3;
-    max[1] = 4;
+    range.min[0] = 1;
+    range.min[1] = 1;
+    range.max[0] = 3;
+    range.max[1] = 4;
     unsigned int size = 20;
     double* values = new double[size];
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();  // at (1, 1)
     BOOST_TEST(itr.done() == false);
     itr.advance();  // at (1, 2)
@@ -665,37 +657,34 @@ BOOST_AUTO_TEST_CASE(done_higher_min_lower_max_test) {
     itr.advance();  // should be done
     BOOST_TEST(itr.done() == true);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(order_three_size_one_test) {
     unsigned int order = 3;
     unsigned int* shape = new unsigned int[order];
-    unsigned int* min = new unsigned int[order];
-    unsigned int* max = new unsigned int[order];
+    KDBoxRange range;
+    range.min.resize(order);
+    range.max.resize(order);
     shape[0] = 1;
     shape[1] = 1;
     shape[2] = 1;
-    min[0] = 0;
-    min[1] = 0;
-    min[2] = 0;
-    max[0] = 1;
-    max[1] = 1;
-    max[2] = 1;
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.min[2] = 0;
+    range.max[0] = 1;
+    range.max[1] = 1;
+    range.max[2] = 1;
     unsigned int size = 1;
     double* values = new double[size];
     values[0] = 13;
-    TensorIterator itr(order, min, max, shape, size, values);
+    TensorIterator itr(order, range, shape, size, values);
     itr.reset();
     BOOST_TEST(itr.done() == false);
     BOOST_TEST(*itr.get() == 13);
     itr.advance();
     BOOST_TEST(itr.done() == true);
     delete[] shape;
-    delete[] min;
-    delete[] max;
     delete[] values;
 }
 

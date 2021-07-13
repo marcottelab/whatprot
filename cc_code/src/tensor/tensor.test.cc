@@ -18,6 +18,7 @@
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "util/kd-box-range.h"
 
 namespace whatprot {
 
@@ -209,9 +210,13 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    unsigned int* zeros = new unsigned int[order];
-    zeros[0] = 0;
-    zeros[1] = 0;
+    KDBoxRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
     Tensor t(order, shape);
     t[{0, 0}] = 500;
     t[{0, 1}] = 501;
@@ -219,7 +224,7 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     t[{1, 0}] = 510;
     t[{1, 1}] = 511;
     t[{1, 2}] = 512;
-    TensorIterator* itr = t.iterator(zeros, shape);
+    TensorIterator* itr = t.iterator(range);
     BOOST_TEST(itr->done() == false);
     BOOST_TEST(*itr->get() == 500);
     *itr->get() = 600;
@@ -253,7 +258,6 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     BOOST_TEST((t[{1, 2}]) == 612);
     delete itr;
     delete[] shape;
-    delete[] zeros;
 }
 
 BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
@@ -261,9 +265,13 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    unsigned int* zeros = new unsigned int[order];
-    zeros[0] = 0;
-    zeros[1] = 0;
+    KDBoxRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
     Tensor t(order, shape);
     t[{0, 0}] = 500;
     t[{0, 1}] = 501;
@@ -271,7 +279,7 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     t[{1, 0}] = 510;
     t[{1, 1}] = 511;
     t[{1, 2}] = 512;
-    ConstTensorIterator* itr = t.const_iterator(zeros, shape);
+    ConstTensorIterator* itr = t.const_iterator(range);
     BOOST_TEST(itr->done() == false);
     BOOST_TEST(*itr->get() == 500);
     itr->advance();
@@ -299,7 +307,6 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     BOOST_TEST((t[{1, 2}]) == 512);
     delete itr;
     delete[] shape;
-    delete[] zeros;
 }
 
 BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {

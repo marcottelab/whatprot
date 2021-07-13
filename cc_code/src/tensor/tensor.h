@@ -15,6 +15,7 @@
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "util/kd-box-range.h"
 
 namespace whatprot {
 
@@ -32,9 +33,8 @@ public:
     //   - BOOST_TEST((t[{1, 2}]) == 314);
     // Notice the additional set of parenthesis in the corrected example line.
     double& operator[](std::initializer_list<unsigned int> loc);
-    TensorIterator* iterator(const unsigned int* min, const unsigned int* max);
-    ConstTensorIterator* const_iterator(const unsigned int* min,
-                                        const unsigned int* max) const;
+    TensorIterator* iterator(const KDBoxRange& range);
+    ConstTensorIterator* const_iterator(const KDBoxRange& range) const;
     double sum() const;
 
     double* values;
