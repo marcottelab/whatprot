@@ -18,7 +18,7 @@
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
-#include "util/kd-box-range.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.min[0] = 0;
     range.min[1] = 0;
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.min[0] = 0;
     range.min[1] = 0;

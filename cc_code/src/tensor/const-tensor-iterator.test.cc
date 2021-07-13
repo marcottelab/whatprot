@@ -13,7 +13,7 @@
 #include "const-tensor-iterator.h"
 
 // Local project headers:
-#include "util/kd-box-range.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_SUITE(const_tensor_iterator_suite)
 BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     unsigned int order = 1;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 1;
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
 BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 2;
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test) {
 BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     unsigned int order = 3;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 2;
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
 BOOST_AUTO_TEST_CASE(reset_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 2;
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(reset_test) {
 BOOST_AUTO_TEST_CASE(get_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 2;
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(get_test) {
 BOOST_AUTO_TEST_CASE(advance_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 2;
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(advance_test) {
 BOOST_AUTO_TEST_CASE(advance_higher_min_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 3;
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE(advance_higher_min_test) {
 BOOST_AUTO_TEST_CASE(advance_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 3;
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(advance_lower_max_test) {
 BOOST_AUTO_TEST_CASE(advance_higher_min_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 4;
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE(advance_higher_min_lower_max_test) {
 BOOST_AUTO_TEST_CASE(done_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 2;
@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE(done_test) {
 BOOST_AUTO_TEST_CASE(done_higher_min_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 3;
@@ -548,7 +548,7 @@ BOOST_AUTO_TEST_CASE(done_higher_min_test) {
 BOOST_AUTO_TEST_CASE(done_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 3;
@@ -581,7 +581,7 @@ BOOST_AUTO_TEST_CASE(done_lower_max_test) {
 BOOST_AUTO_TEST_CASE(done_higher_min_lower_max_test) {
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 4;
@@ -614,7 +614,7 @@ BOOST_AUTO_TEST_CASE(done_higher_min_lower_max_test) {
 BOOST_AUTO_TEST_CASE(order_three_size_one_test) {
     unsigned int order = 3;
     unsigned int* shape = new unsigned int[order];
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(order);
     range.max.resize(order);
     shape[0] = 1;

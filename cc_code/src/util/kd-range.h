@@ -6,17 +6,17 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_UTIL_KD_BOX_RANGE_H
-#define WHATPROT_UTIL_KD_BOX_RANGE_H
+#ifndef WHATPROT_UTIL_KD_RANGE_H
+#define WHATPROT_UTIL_KD_RANGE_H
 
 // Standard C++ library headers:
 #include <vector>
 
 namespace whatprot {
 
-class KDBoxRange {
+class KDRange {
 public:
-    KDBoxRange* intersect(const KDBoxRange& other) const;
+    KDRange* intersect(const KDRange& other) const;
     bool is_empty() const;
 
     std::vector<unsigned int> min;
@@ -25,4 +25,4 @@ public:
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_UTIL_KD_BOX_RANGE_H
+#endif  // WHATPROT_UTIL_KD_RANGE_H

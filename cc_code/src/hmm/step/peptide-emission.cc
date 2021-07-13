@@ -16,7 +16,7 @@
 #include "parameterization/model/sequencing-model.h"
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
-#include "util/kd-box-range.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -51,7 +51,7 @@ double PeptideEmission::prob(int channel, int num_dyes) const {
 
 void PeptideEmission::forward(unsigned int* num_edmans,
                               PeptideStateVector* psv) const {
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(1 + num_channels);
     range.max.resize(1 + num_channels);
     for (unsigned int o = 0; o < 1 + num_channels; o++) {
@@ -73,7 +73,7 @@ void PeptideEmission::forward(unsigned int* num_edmans,
 void PeptideEmission::backward(const PeptideStateVector& input,
                                unsigned int* num_edmans,
                                PeptideStateVector* output) const {
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(1 + num_channels);
     range.max.resize(1 + num_channels);
     for (unsigned int o = 0; o < 1 + num_channels; o++) {
@@ -101,7 +101,7 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    KDBoxRange range;
+    KDRange range;
     range.min.resize(1 + num_channels);
     range.max.resize(1 + num_channels);
     for (unsigned int o = 0; o < 1 + num_channels; o++) {

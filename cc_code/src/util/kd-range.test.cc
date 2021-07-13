@@ -10,7 +10,7 @@
 #include <boost/test/unit_test.hpp>
 
 // File under test:
-#include "kd-box-range.h"
+#include "kd-range.h"
 
 namespace whatprot {
 
@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_SUITE(util_suite)
 BOOST_AUTO_TEST_SUITE(kd_box_range_suite)
 
 BOOST_AUTO_TEST_CASE(intersect_test) {
-    KDBoxRange x;
+    KDRange x;
     x.min.resize(3);
     x.min[0] = 2;
     x.min[1] = 5;
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(intersect_test) {
     x.max[0] = 4;
     x.max[1] = 9;
     x.max[2] = 11;
-    KDBoxRange y;
+    KDRange y;
     y.min.resize(3);
     y.min[0] = 1;
     y.min[1] = 7;
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(intersect_test) {
     y.max[0] = 5;
     y.max[1] = 13;
     y.max[2] = 10;
-    KDBoxRange* z = x.intersect(y);
+    KDRange* z = x.intersect(y);
     BOOST_TEST(z->min[0] == 2u);
     BOOST_TEST(z->min[1] == 7u);
     BOOST_TEST(z->min[2] == 7u);
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(intersect_test) {
 }
 
 BOOST_AUTO_TEST_CASE(is_empty_false_test) {
-    KDBoxRange x;
+    KDRange x;
     x.min.resize(3);
     x.min[0] = 2;
     x.min[1] = 5;
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(is_empty_false_test) {
 }
 
 BOOST_AUTO_TEST_CASE(is_empty_true_test) {
-    KDBoxRange x;
+    KDRange x;
     x.min.resize(3);
     x.min[0] = 2;
     x.min[1] = 5;

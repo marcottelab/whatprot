@@ -7,7 +7,7 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "kd-box-range.h"
+#include "kd-range.h"
 
 // Standard C++ library headers:
 #include <algorithm>
@@ -15,8 +15,8 @@
 
 namespace whatprot {
 
-KDBoxRange* KDBoxRange::intersect(const KDBoxRange& other) const {
-    KDBoxRange* result = new KDBoxRange();
+KDRange* KDRange::intersect(const KDRange& other) const {
+    KDRange* result = new KDRange();
     result->min.resize(min.size());
     result->max.resize(max.size());
     for (unsigned int i = 0; i < result->min.size(); i++) {
@@ -26,7 +26,7 @@ KDBoxRange* KDBoxRange::intersect(const KDBoxRange& other) const {
     return result;
 }
 
-bool KDBoxRange::is_empty() const {
+bool KDRange::is_empty() const {
     for (unsigned int i = 0; i < min.size(); i++) {
         if (min[i] >= max[i]) {
             return true;

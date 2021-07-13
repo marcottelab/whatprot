@@ -10,7 +10,7 @@
 #define WHATPROT_TENSOR_BASE_TENSOR_ITERATOR_H
 
 // Local project headers:
-#include "util/kd-box-range.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -19,7 +19,7 @@ template <typename P>
 class BaseTensorIterator {
 public:
     BaseTensorIterator(unsigned int order,
-                       const KDBoxRange& range,
+                       const KDRange& range,
                        const unsigned int* shape,
                        unsigned int size,
                        P values)
@@ -77,7 +77,7 @@ public:
     }
 
     P values;  // not owned
-    const KDBoxRange& range;  // not owned
+    const KDRange& range;  // not owned
     const unsigned int* shape;  // not owned
     unsigned int* loc;
     const unsigned int order;
