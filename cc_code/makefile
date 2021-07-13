@@ -130,8 +130,11 @@ clean:
 	rm -rf $(BUILD_DIR)/*
 
 # Run clang-format
-format:
-	clang-format -style=file -i $(SRCS) $(HEADERS)
+format: $(BUILD_DIR)/format
+
+$(BUILD_DIR)/format: $(SRCS) $(HEADERS)
+	clang-format -style=file -i $?
+	touch -a $(BUILD_DIR)/format
 
 # "-include" includes other makefiles.
 #   * Each file included is a makefile with one rule for making a .o file with
