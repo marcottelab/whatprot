@@ -16,7 +16,7 @@ namespace whatprot {
 
 class KDRange {
 public:
-    KDRange* intersect(const KDRange& other) const;
+    KDRange intersect(const KDRange& other) const;
     bool is_empty() const;
 
     std::vector<unsigned int> min;

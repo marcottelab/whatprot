@@ -15,13 +15,13 @@
 
 namespace whatprot {
 
-KDRange* KDRange::intersect(const KDRange& other) const {
-    KDRange* result = new KDRange();
-    result->min.resize(min.size());
-    result->max.resize(max.size());
-    for (unsigned int i = 0; i < result->min.size(); i++) {
-        result->min[i] = std::max(min[i], other.min[i]);
-        result->max[i] = std::min(max[i], other.max[i]);
+KDRange KDRange::intersect(const KDRange& other) const {
+    KDRange result;
+    result.min.resize(min.size());
+    result.max.resize(max.size());
+    for (unsigned int i = 0; i < result.min.size(); i++) {
+        result.min[i] = std::max(min[i], other.min[i]);
+        result.max[i] = std::min(max[i], other.max[i]);
     }
     return result;
 }

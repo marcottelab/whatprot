@@ -36,14 +36,13 @@ BOOST_AUTO_TEST_CASE(intersect_test) {
     y.max[0] = 5;
     y.max[1] = 13;
     y.max[2] = 10;
-    KDRange* z = x.intersect(y);
-    BOOST_TEST(z->min[0] == 2u);
-    BOOST_TEST(z->min[1] == 7u);
-    BOOST_TEST(z->min[2] == 7u);
-    BOOST_TEST(z->max[0] == 4u);
-    BOOST_TEST(z->max[1] == 9u);
-    BOOST_TEST(z->max[2] == 10u);
-    delete z;
+    KDRange z = x.intersect(y);
+    BOOST_TEST(z.min[0] == 2u);
+    BOOST_TEST(z.min[1] == 7u);
+    BOOST_TEST(z.min[2] == 7u);
+    BOOST_TEST(z.max[0] == 4u);
+    BOOST_TEST(z.max[1] == 9u);
+    BOOST_TEST(z.max[2] == 10u);
 }
 
 BOOST_AUTO_TEST_CASE(is_empty_false_test) {
