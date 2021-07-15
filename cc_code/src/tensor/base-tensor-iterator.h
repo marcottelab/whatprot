@@ -9,20 +9,23 @@
 #ifndef WHATPROT_TENSOR_BASE_TENSOR_ITERATOR_H
 #define WHATPROT_TENSOR_BASE_TENSOR_ITERATOR_H
 
+// Standard C++ library headers:
+#include <type_traits>
+
 // Local project headers:
 #include "util/kd-range.h"
 
 namespace whatprot {
 
 // Templatizing constness to share code between const and non-const iterators.
-template <typename P>
+template <bool is_const>
 class BaseTensorIterator {
 public:
     BaseTensorIterator(unsigned int order,
                        const KDRange& range,
                        const unsigned int* shape,
                        unsigned int size,
-                       P values)
+                       typename std::conditional<is_const, const double*, double*>::type values)
             : values(values),
               range(range),
               shape(shape),
@@ -68,7 +71,7 @@ public:
         }
     }
 
-    P get() {
+    typename std::conditional<is_const, const double*, double*>::type get() {
         return &values[index];
     }
 
@@ -76,7 +79,7 @@ public:
         return index >= size;
     }
 
-    P values;  // not owned
+    typename std::conditional<is_const, const double*, double*>::type values;  // not owned
     const KDRange& range;  // not owned
     const unsigned int* shape;  // not owned
     unsigned int* loc;

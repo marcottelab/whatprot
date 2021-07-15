@@ -73,6 +73,29 @@ BOOST_AUTO_TEST_CASE(stride_two_test) {
     delete[] values;
 }
 
+BOOST_AUTO_TEST_CASE(mutable_values_test) {
+    unsigned int length = 5;
+    int stride = 1;
+    double* values = new double[length * stride];
+    values[0] = 420;
+    values[1] = 421;
+    values[2] = 422;
+    values[3] = 423;
+    values[4] = 424;
+    Vector v(length, stride, values);
+    v[0] = 720;
+    v[1] = 721;
+    v[2] = 722;
+    v[3] = 723;
+    v[4] = 724;
+    BOOST_TEST(v[0] == 720);
+    BOOST_TEST(v[1] == 721);
+    BOOST_TEST(v[2] == 722);
+    BOOST_TEST(v[3] == 723);
+    BOOST_TEST(v[4] == 724);
+    delete[] values;
+}
+
 BOOST_AUTO_TEST_CASE(const_stride_one_test) {
     unsigned int length = 5;
     int stride = 1;

@@ -6,20 +6,20 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_TENSOR_CONST_TENSOR_ITERATOR_H
-#define WHATPROT_TENSOR_CONST_TENSOR_ITERATOR_H
+#ifndef WHATPROT_TENSOR_CONST_TENSOR_VECTOR_ITERATOR_H
+#define WHATPROT_TENSOR_CONST_TENSOR_VECTOR_ITERATOR_H
 
 // Local project headers:
-#include "tensor/base-tensor-iterator.h"
+#include "tensor/base-tensor-vector-iterator.h"
 
 namespace whatprot {
 
-class ConstTensorIterator : public BaseTensorIterator<true> {
+class ConstTensorVectorIterator : public BaseTensorVectorIterator<true> {
 public:
     // This next line inherits all constructors of base class.
-    using BaseTensorIterator<true>::BaseTensorIterator;
+    using BaseTensorVectorIterator<true>::BaseTensorVectorIterator;
 };
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_TENSOR_CONST_TENSOR_ITERATOR_H
+#endif  // WHATPROT_TENSOR_CONST_TENSOR_VECTOR_ITERATOR_H
