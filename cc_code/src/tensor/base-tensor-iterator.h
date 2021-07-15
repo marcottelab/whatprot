@@ -21,11 +21,13 @@ namespace whatprot {
 template <bool is_const>
 class BaseTensorIterator {
 public:
-    BaseTensorIterator(unsigned int order,
-                       const KDRange& range,
-                       const unsigned int* shape,
-                       unsigned int size,
-                       typename std::conditional<is_const, const double*, double*>::type values)
+    BaseTensorIterator(
+            unsigned int order,
+            const KDRange& range,
+            const unsigned int* shape,
+            unsigned int size,
+            typename std::conditional<is_const, const double*, double*>::type
+                    values)
             : values(values),
               range(range),
               shape(shape),
@@ -79,7 +81,8 @@ public:
         return index >= size;
     }
 
-    typename std::conditional<is_const, const double*, double*>::type values;  // not owned
+    typename std::conditional<is_const, const double*, double*>::type
+            values;  // not owned
     const KDRange& range;  // not owned
     const unsigned int* shape;  // not owned
     unsigned int* loc;

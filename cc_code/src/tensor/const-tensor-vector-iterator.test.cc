@@ -35,7 +35,8 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     unsigned int size = 1;
     double* values = new double[size];
     values[0] = 13;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     BOOST_TEST(itr.iter.order == order);
     BOOST_TEST(itr.iter.shape[0] == 1u);
     BOOST_TEST(itr.iter.size == 1u);
@@ -69,7 +70,8 @@ BOOST_AUTO_TEST_CASE(constructor_modifies_range_test) {
     values[0] = 13;
     values[1] = 14;
     values[2] = 15;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     BOOST_TEST(itr.iter.order == order);
     BOOST_TEST(itr.iter.shape[0] == 3u);
     BOOST_TEST(itr.iter.size == 3u);
@@ -112,7 +114,8 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_vectorize_dim_0_test) {
     values[3] = 610;
     values[4] = 611;
     values[5] = 612;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     BOOST_TEST(itr.iter.order == order);
     BOOST_TEST(itr.iter.shape[0] == 2u);
     BOOST_TEST(itr.iter.shape[1] == 3u);
@@ -164,7 +167,8 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_vectorize_dim_1_test) {
     values[3] = 610;
     values[4] = 611;
     values[5] = 612;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     BOOST_TEST(itr.iter.order == order);
     BOOST_TEST(itr.iter.shape[0] == 2u);
     BOOST_TEST(itr.iter.shape[1] == 3u);
@@ -222,7 +226,8 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     values[5] = 8101;
     values[6] = 8110;
     values[7] = 8111;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     BOOST_TEST(itr.iter.order == order);
     BOOST_TEST(itr.iter.shape[0] == 2u);
     BOOST_TEST(itr.iter.shape[1] == 2u);
@@ -288,7 +293,8 @@ BOOST_AUTO_TEST_CASE(advance_get_and_end_test) {
     values[5] = 8101;
     values[6] = 8110;
     values[7] = 8111;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     const Vector* v;
     BOOST_TEST(itr.done() == false);
     v = itr.get();
@@ -366,7 +372,8 @@ BOOST_AUTO_TEST_CASE(advance_get_and_end_ignore_selected_higher_min_test) {
     values[5] = 8101;
     values[6] = 8110;
     values[7] = 8111;
-    ConstTensorVectorIterator itr(order, range, shape, stride, size, values, vector_dimension);
+    ConstTensorVectorIterator itr(
+            order, range, shape, stride, size, values, vector_dimension);
     const Vector* v;
     BOOST_TEST(itr.done() == false);
     v = itr.get();
