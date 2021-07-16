@@ -15,7 +15,9 @@
 
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
+#include "tensor/const-tensor-vector-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "tensor/tensor-vector-iterator.h"
 #include "util/kd-range.h"
 
 namespace whatprot {
@@ -78,6 +80,18 @@ TensorIterator* Tensor::iterator(const KDRange& range) {
 
 ConstTensorIterator* Tensor::const_iterator(const KDRange& range) const {
     return new ConstTensorIterator(order, range, shape, size, values);
+}
+
+TensorVectorIterator* Tensor::vector_iterator(const KDRange& range,
+                                              unsigned int vector_dimension) {
+    return new TensorVectorIterator(
+            order, range, shape, strides, size, values, vector_dimension);
+}
+
+ConstTensorVectorIterator* Tensor::const_vector_iterator(
+        const KDRange& range, unsigned int vector_dimension) const {
+    return new ConstTensorVectorIterator(
+            order, range, shape, strides, size, values, vector_dimension);
 }
 
 double Tensor::sum() const {

@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     unsigned int order = 1;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 1;
     unsigned int vector_dimension = 0;
     KDRange range;
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test) {
     BOOST_TEST(itr.iter.size == 1u);
     BOOST_TEST(itr.iter.values[0] == 13);
     BOOST_TEST(itr.vector_length == 1u);
-    BOOST_TEST(itr.vector_stride == 1u);
+    BOOST_TEST(itr.vector_stride == 1);
     BOOST_TEST(itr.modified_range.min[0] == 0u);
     BOOST_TEST(itr.iter.range.min[0] == 0u);
     BOOST_TEST(itr.iter.loc[0] == 0u);
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(constructor_modifies_range_test) {
     unsigned int order = 1;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 1;
     unsigned int vector_dimension = 0;
     KDRange range;
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(constructor_modifies_range_test) {
     BOOST_TEST(itr.iter.values[1] == 14);
     BOOST_TEST(itr.iter.values[2] == 15);
     BOOST_TEST(itr.vector_length == 3u);
-    BOOST_TEST(itr.vector_stride == 1u);
+    BOOST_TEST(itr.vector_stride == 1);
     BOOST_TEST(itr.modified_range.min[0] == 0u);
     BOOST_TEST(itr.iter.range.min[0] == 0u);
     BOOST_TEST(itr.iter.loc[0] == 0u);
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_vectorize_dim_0_test) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 3;
     stride[1] = 1;
     unsigned int vector_dimension = 0;
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_vectorize_dim_0_test) {
     BOOST_TEST(itr.iter.values[4] == 611);
     BOOST_TEST(itr.iter.values[5] == 612);
     BOOST_TEST(itr.vector_length == 2u);
-    BOOST_TEST(itr.vector_stride == 3u);
+    BOOST_TEST(itr.vector_stride == 3);
     BOOST_TEST(itr.modified_range.min[0] == 0u);
     BOOST_TEST(itr.iter.range.min[0] == 0u);
     BOOST_TEST(itr.iter.loc[0] == 0u);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_vectorize_dim_1_test) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 3;
     stride[1] = 1;
     unsigned int vector_dimension = 1;
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_vectorize_dim_1_test) {
     BOOST_TEST(itr.iter.values[4] == 611);
     BOOST_TEST(itr.iter.values[5] == 612);
     BOOST_TEST(itr.vector_length == 3u);
-    BOOST_TEST(itr.vector_stride == 1u);
+    BOOST_TEST(itr.vector_stride == 1);
     BOOST_TEST(itr.modified_range.min[0] == 0u);
     BOOST_TEST(itr.iter.range.min[0] == 0u);
     BOOST_TEST(itr.iter.loc[0] == 0u);
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 4;
     stride[1] = 2;
     stride[2] = 1;
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test) {
     BOOST_TEST(itr.iter.values[6] == 8110);
     BOOST_TEST(itr.iter.values[7] == 8111);
     BOOST_TEST(itr.vector_length == 2u);
-    BOOST_TEST(itr.vector_stride == 2u);
+    BOOST_TEST(itr.vector_stride == 2);
     BOOST_TEST(itr.modified_range.min[0] == 0u);
     BOOST_TEST(itr.iter.range.min[0] == 0u);
     BOOST_TEST(itr.iter.loc[0] == 0u);
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(advance_get_and_end_test) {
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 4;
     stride[1] = 2;
     stride[2] = 1;
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(advance_get_and_end_ignore_selected_higher_min_test) {
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
-    unsigned int* stride = new unsigned int[order];
+    int* stride = new int[order];
     stride[0] = 4;
     stride[1] = 2;
     stride[2] = 1;

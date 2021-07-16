@@ -26,7 +26,7 @@ public:
     BaseTensorVectorIterator(unsigned int order,
                              const KDRange& range,
                              const unsigned int* shape,
-                             const unsigned int* stride,
+                             const int* stride,
                              unsigned int size,
                              double* values,
                              unsigned int vector_dimension)
@@ -56,7 +56,7 @@ public:
     }
 
     unsigned int vector_length;
-    unsigned int vector_stride;
+    int vector_stride;
     KDRange modified_range;
 
     // iter is not a ConstTensorIterator, even if is_const is true. This may
