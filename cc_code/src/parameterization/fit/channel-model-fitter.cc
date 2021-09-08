@@ -13,7 +13,6 @@
 #include <utility>
 
 // Local project headers:
-#include "parameterization/fit/log-normal-distribution-fitter.h"
 #include "parameterization/fit/normal-distribution-fitter.h"
 #include "parameterization/model/channel-model.h"
 
@@ -24,13 +23,13 @@ using std::move;
 namespace whatprot {
 
 ChannelModelFitter::ChannelModelFitter() {
-    distribution_fit = new LogNormalDistributionFitter();
+    distribution_fit = new NormalDistributionFitter();
 }
 
 ChannelModelFitter::ChannelModelFitter(const ChannelModelFitter& other) {
     p_bleach_fit = other.p_bleach_fit;
     p_dud_fit = other.p_dud_fit;
-    distribution_fit = new LogNormalDistributionFitter(*other.distribution_fit);
+    distribution_fit = new NormalDistributionFitter(*other.distribution_fit);
     stuck_dye_ratio_fit = other.stuck_dye_ratio_fit;
     p_stuck_dye_loss_fit = other.p_stuck_dye_loss_fit;
 }
@@ -54,6 +53,7 @@ ChannelModel ChannelModelFitter::get() const {
     ChannelModel model;
     model.p_bleach = p_bleach_fit.get();
     model.p_dud = p_dud_fit.get();
+    model.bg_sigma = 0.00667;  // TODO: THIS IS NOT RIGHT.
     model.mu = distribution_fit->get_mu();
     model.sigma = distribution_fit->get_sigma();
     model.stuck_dye_ratio = stuck_dye_ratio_fit.get();

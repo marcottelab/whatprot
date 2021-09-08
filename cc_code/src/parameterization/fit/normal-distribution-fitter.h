@@ -17,7 +17,8 @@ namespace whatprot {
 class NormalDistributionFitter {
 public:
     NormalDistributionFitter();
-    void add_sample(double x, int n, double weight);
+    virtual ~NormalDistributionFitter();
+    virtual void add_sample(double x, int n, double weight);
     double get_mu() const;
     double get_sigma() const;
     NormalDistributionFitter operator+(

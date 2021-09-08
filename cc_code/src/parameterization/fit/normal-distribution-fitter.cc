@@ -27,6 +27,8 @@ NormalDistributionFitter::NormalDistributionFitter()
           w_sum_n(0.0),
           total_weight(0.0) {}
 
+NormalDistributionFitter::~NormalDistributionFitter() {}
+
 void NormalDistributionFitter::add_sample(double x, int n, double weight) {
     if (n == 0) {
         return;

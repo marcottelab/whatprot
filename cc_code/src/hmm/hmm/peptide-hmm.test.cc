@@ -133,8 +133,6 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
-    // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on November 10, 2020.
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
@@ -143,7 +141,8 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
-        seq_model.channel_models[i]->mu = log(1.0);
+        seq_model.channel_models[i]->bg_sigma = 0.00667;
+        seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sigma = 0.16;
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
@@ -163,7 +162,9 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     r(2, 1) = 1.0;
     RadiometryPrecomputations rp(r, seq_model, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
-    BOOST_TEST(hmm.probability() == 3.2324422559808915e-23);
+    // This is essentially a "no change" test. It assumes that the function was
+    // giving the correct result on September 8, 2021.
+    BOOST_TEST(hmm.probability() == 1.876822091893613e-96);
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
@@ -175,6 +176,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
+        seq_model.channel_models[i]->bg_sigma = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sigma = 0.05;
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
@@ -203,7 +205,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                    dye_seq_precomputations,
                    radiometry_precomputations,
                    universal_precomputations);
-    SequencingModelFitter smf;
+    SequencingModelFitter smf(num_channels);
     hmm.improve_fit(&smf);
     // There are no BOOST_TEST statements because setting up a proper test for
     // this function is very difficult. We still have the test though as a no

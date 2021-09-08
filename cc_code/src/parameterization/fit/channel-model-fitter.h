@@ -10,7 +10,7 @@
 #define WHATPROT_PARAMETERIZATION_FIT_CHANNEL_MODEL_FITTER_H
 
 // Local project headers:
-#include "parameterization/fit/log-normal-distribution-fitter.h"
+#include "parameterization/fit/normal-distribution-fitter.h"
 #include "parameterization/fit/parameter-fitter.h"
 
 namespace whatprot {
@@ -27,7 +27,7 @@ public:
     void operator*=(double weight_adjustment);
     ParameterFitter p_bleach_fit;
     ParameterFitter p_dud_fit;
-    LogNormalDistributionFitter* distribution_fit;
+    NormalDistributionFitter* distribution_fit;
     ParameterFitter stuck_dye_ratio_fit;
     ParameterFitter p_stuck_dye_loss_fit;
 };

@@ -100,8 +100,6 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
-    // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on April 7, 2021.
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
@@ -110,7 +108,8 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
-        seq_model.channel_models[i]->mu = log(1.0);
+        seq_model.channel_models[i]->bg_sigma = 0.00667;
+        seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sigma = 0.05;
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
@@ -134,7 +133,9 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
                     channel,
                     radiometry_precomputations,
                     universal_precomputations);
-    BOOST_TEST(hmm.probability() == 4.6855215246253996);
+    // This is essentially a "no change" test. It assumes that the function was
+    // giving the correct result on September 8, 2021.
+    BOOST_TEST(hmm.probability() == 58916143.722609662);
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
@@ -148,7 +149,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
-        seq_model.channel_models[i]->mu = log(1.0);
+        seq_model.channel_models[i]->bg_sigma = 0.00667;
+        seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sigma = 0.05;
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
@@ -172,7 +174,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                     channel,
                     radiometry_precomputations,
                     universal_precomputations);
-    SequencingModelFitter smf;
+    SequencingModelFitter smf(num_channels);
     smf.channel_fits.push_back(new ChannelModelFitter());
     smf.channel_fits.push_back(new ChannelModelFitter());
     hmm.improve_fit(&smf);

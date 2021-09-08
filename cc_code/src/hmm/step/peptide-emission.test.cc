@@ -638,9 +638,9 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     double probability = 3.14159;
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());
-    LogNormalDistributionFitter* original_dist_fit =
+    NormalDistributionFitter* original_dist_fit =
             smf.channel_fits[0]->distribution_fit;
-    Mock<LogNormalDistributionFitter> df_mock;
+    Mock<NormalDistributionFitter> df_mock;
     Fake(Method(df_mock, add_sample));
     smf.channel_fits[0]->distribution_fit = &df_mock.get();
     e.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
@@ -706,14 +706,14 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());
     smf.channel_fits.push_back(new ChannelModelFitter());
-    LogNormalDistributionFitter* original_dist_fit_0 =
+    NormalDistributionFitter* original_dist_fit_0 =
             smf.channel_fits[0]->distribution_fit;
-    Mock<LogNormalDistributionFitter> df_mock_0;
+    Mock<NormalDistributionFitter> df_mock_0;
     Fake(Method(df_mock_0, add_sample));
     smf.channel_fits[0]->distribution_fit = &df_mock_0.get();
-    LogNormalDistributionFitter* original_dist_fit_1 =
+    NormalDistributionFitter* original_dist_fit_1 =
             smf.channel_fits[1]->distribution_fit;
-    Mock<LogNormalDistributionFitter> df_mock_1;
+    Mock<NormalDistributionFitter> df_mock_1;
     Fake(Method(df_mock_1, add_sample));
     smf.channel_fits[1]->distribution_fit = &df_mock_1.get();
     e.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
@@ -803,9 +803,9 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     double probability = 3.14159;
     SequencingModelFitter smf;
     smf.channel_fits.push_back(new ChannelModelFitter());
-    LogNormalDistributionFitter* original_dist_fit =
+    NormalDistributionFitter* original_dist_fit =
             smf.channel_fits[0]->distribution_fit;
-    Mock<LogNormalDistributionFitter> df_mock;
+    Mock<NormalDistributionFitter> df_mock;
     Fake(Method(df_mock, add_sample));
     smf.channel_fits[0]->distribution_fit = &df_mock.get();
     e.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
