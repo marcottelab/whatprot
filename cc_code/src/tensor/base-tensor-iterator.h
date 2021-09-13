@@ -33,7 +33,8 @@ public:
               shape(shape),
               order(order),
               index(0),
-              size(size) {
+              size(size),
+              is_done(range.is_empty()) {
         loc = new unsigned int[order]();
         reset();
     }
@@ -60,7 +61,7 @@ public:
         for (int o = order - 1; o >= 0; o--) {
             loc[o]++;
             if (loc[o] < range.max[o]) {
-                break;
+                return;
             } else {
                 // (range.min[o] + shape[o] - range.max[o]) is the number of
                 // entries for this order between the max of one set of numbers
@@ -71,6 +72,9 @@ public:
                 loc[o] = range.min[o];
             }
         }
+        // Can only get here if we reset every order of the tensor, which means
+        // we're done.
+        is_done = true;
     }
 
     typename std::conditional<is_const, const double*, double*>::type get() {
@@ -78,7 +82,7 @@ public:
     }
 
     bool done() {
-        return index >= size;
+        return is_done;
     }
 
     typename std::conditional<is_const, const double*, double*>::type
@@ -89,6 +93,7 @@ public:
     const unsigned int order;
     unsigned int index;  // current index directly into values
     const unsigned int size;  // length of values
+    bool is_done;
 };
 
 }  // namespace whatprot

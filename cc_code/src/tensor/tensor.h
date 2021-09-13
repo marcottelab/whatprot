@@ -42,6 +42,7 @@ public:
     ConstTensorVectorIterator* const_vector_iterator(
             const KDRange& range, unsigned int vector_dimension) const;
     double sum() const;
+    double sum(const KDRange& range) const;
 
     double* values;
     unsigned int* shape;

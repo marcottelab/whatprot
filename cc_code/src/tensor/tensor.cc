@@ -102,4 +102,15 @@ double Tensor::sum() const {
     return total;
 }
 
+double Tensor::sum(const KDRange& range) const {
+    ConstTensorIterator* itr = const_iterator(range);
+    double total = 0.0;
+    while (!itr->done()) {
+        total += *itr->get();
+        itr->advance();
+    }
+    delete itr;
+    return total;
+}
+
 }  // namespace whatprot

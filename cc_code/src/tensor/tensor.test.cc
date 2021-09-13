@@ -14,6 +14,7 @@
 
 // Standard C++ library headers:
 #include <utility>
+#include <vector>
 
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
@@ -25,6 +26,7 @@ namespace whatprot {
 namespace {
 using boost::unit_test::tolerance;
 using std::move;
+using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
 
@@ -555,6 +557,91 @@ BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
     tsr[{1, 0}] = 7.10;
     tsr[{1, 1}] = 7.11;
     BOOST_TEST(tsr.sum() == 7.00 + 7.01 + 7.10 + 7.11);
+}
+
+BOOST_AUTO_TEST_CASE(sum_trivial_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0}] = 3.14;
+    KDRange r;
+    r.min.push_back(0);
+    r.max.push_back(1);
+    BOOST_TEST(tsr.sum(r) == 3.14);
+}
+
+BOOST_AUTO_TEST_CASE(sum_empty_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0}] = 3.14;
+    KDRange r;
+    r.min.push_back(0);
+    r.max.push_back(0);
+    BOOST_TEST(tsr.sum(r) == 0.0);
+}
+
+BOOST_AUTO_TEST_CASE(sum_bigger_size_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 3;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0}] = 7.0;
+    tsr[{1}] = 7.1;
+    tsr[{2}] = 7.2;
+    KDRange r;
+    r.min.push_back(1);
+    r.max.push_back(2);
+    BOOST_TEST(tsr.sum(r) == 7.1);
+}
+
+BOOST_AUTO_TEST_CASE(sum_more_dimensions_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    shape[1] = 1;
+    shape[2] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0, 0, 0}] = 3.14;
+    KDRange r;
+    r.min = vector<unsigned int>(order, 0);
+    r.max = vector<unsigned int>(order, 1);
+    BOOST_TEST(tsr.sum(r) == 3.14);
+}
+
+BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 4;
+    shape[1] = 4;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0, 0}] = 7.00;
+    tsr[{0, 1}] = 7.01;
+    tsr[{0, 2}] = 7.02;
+    tsr[{0, 3}] = 7.03;
+    tsr[{1, 0}] = 7.10;
+    tsr[{1, 1}] = 7.11;
+    tsr[{1, 2}] = 7.12;
+    tsr[{1, 3}] = 7.13;
+    tsr[{2, 0}] = 7.20;
+    tsr[{2, 1}] = 7.21;
+    tsr[{2, 2}] = 7.22;
+    tsr[{2, 3}] = 7.23;
+    tsr[{3, 0}] = 7.30;
+    tsr[{3, 1}] = 7.31;
+    tsr[{3, 2}] = 7.32;
+    tsr[{3, 3}] = 7.33;
+    KDRange r;
+    r.min = vector<unsigned int>(order, 1);
+    r.max = vector<unsigned int>(order, 3);
+    BOOST_TEST(tsr.sum(r) == 7.11 + 7.12 + 7.21 + 7.22);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite
