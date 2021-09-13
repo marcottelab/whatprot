@@ -45,6 +45,7 @@ void generate_radiometry(const SequencingModel& seq_model,
                 double sig = seq_model.channel_models[c]->sigma(num_dyes);
                 normal_distribution<double> normal(mu, sig);
                 (*radiometry)(t, c) = normal(*generator);
+            }
         }
     }
 }
