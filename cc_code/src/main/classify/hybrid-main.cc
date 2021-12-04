@@ -27,6 +27,7 @@
 #include "io/scored-classifications-io.h"
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 #include "util/delete.h"
 #include "util/time.h"
 
@@ -104,6 +105,8 @@ int hybrid_main(int argc, char** argv) {
         seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = 3.0;
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 
@@ -111,6 +114,7 @@ int hybrid_main(int argc, char** argv) {
     HybridClassifier classifier(num_timesteps,
                                 num_channels,
                                 seq_model,
+                                seq_settings,
                                 k,
                                 sigma,
                                 &dye_tracks,

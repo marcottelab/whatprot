@@ -17,6 +17,7 @@
 #include "hmm/step/peptide-emission.h"
 #include "hmm/step/stuck-dye-emission.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -24,6 +25,7 @@ class RadiometryPrecomputations {
 public:
     RadiometryPrecomputations(const Radiometry& radiometry,
                               const SequencingModel& seq_model,
+                              const SequencingSettings& seq_settings,
                               int max_num_dyes);
     std::vector<PeptideEmission> peptide_emissions;
     std::vector<StuckDyeEmission> stuck_dye_emissions;

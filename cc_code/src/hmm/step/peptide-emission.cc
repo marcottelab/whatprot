@@ -14,6 +14,7 @@
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
 #include "util/kd-range.h"
@@ -27,7 +28,8 @@ using std::function;
 PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                                  unsigned int timestep,
                                  int max_num_dyes,
-                                 const SequencingModel& seq_model)
+                                 const SequencingModel& seq_model,
+                                 const SequencingSettings& seq_settings)
         : radiometry(radiometry),
           timestep(timestep),
           num_channels(radiometry.num_channels),

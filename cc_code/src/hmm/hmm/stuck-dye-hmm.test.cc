@@ -26,6 +26,7 @@
 #include "hmm/step/stuck-dye-transition.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace {
 using boost::unit_test::tolerance;
@@ -54,6 +55,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -68,7 +70,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     r(3, 0) = 1.0;
     r(3, 1) = 1.0;
     RadiometryPrecomputations radiometry_precomputations(
-            r, seq_model, max_num_dyes);
+            r, seq_model, seq_settings, max_num_dyes);
     int channel = 0;
     StuckDyeHMM hmm(num_timesteps,
                     num_channels,
@@ -114,6 +116,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -126,7 +129,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     r(2, 0) = 0.0;
     r(2, 1) = 0.0;
     RadiometryPrecomputations radiometry_precomputations(
-            r, seq_model, max_num_dyes);
+            r, seq_model, seq_settings, max_num_dyes);
     int channel = 0;
     StuckDyeHMM hmm(num_timesteps,
                     num_channels,
@@ -155,6 +158,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -167,7 +171,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     r(2, 0) = 0.0;
     r(2, 1) = 0.0;
     RadiometryPrecomputations radiometry_precomputations(
-            r, seq_model, max_num_dyes);
+            r, seq_model, seq_settings, max_num_dyes);
     int channel = 0;
     StuckDyeHMM hmm(num_timesteps,
                     num_channels,

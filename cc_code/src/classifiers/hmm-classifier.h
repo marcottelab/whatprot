@@ -22,6 +22,7 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -31,6 +32,7 @@ public:
             unsigned int num_timesteps,
             unsigned int num_channels,
             const SequencingModel& seq_model,
+            const SequencingSettings& seq_settings,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
@@ -42,7 +44,7 @@ public:
     ScoredClassification classify_helper(const Radiometry& radiometry,
                                          I indices) {
         RadiometryPrecomputations radiometry_precomputations(
-                radiometry, seq_model, max_num_dyes);
+                radiometry, seq_model, seq_settings, max_num_dyes);
         int best_i = -1;
         double best_score = -1.0;
         double total_score = 0.0;
@@ -64,6 +66,7 @@ public:
     }
 
     const SequencingModel& seq_model;
+    const SequencingSettings& seq_settings;
     UniversalPrecomputations universal_precomputations;
     std::vector<DyeSeqPrecomputations> dye_seq_precomputations_vec;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;

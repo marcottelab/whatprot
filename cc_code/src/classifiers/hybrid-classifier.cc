@@ -22,6 +22,7 @@
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -34,12 +35,14 @@ HybridClassifier::HybridClassifier(
         unsigned int num_timesteps,
         unsigned int num_channels,
         const SequencingModel& seq_model,
+        const SequencingSettings& seq_settings,
         int k,
         double sigma,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
-        : hmm_classifier(num_timesteps, num_channels, seq_model, dye_seqs),
+        : hmm_classifier(
+                num_timesteps, num_channels, seq_model, seq_settings, dye_seqs),
           nn_classifier(
                   num_timesteps, num_channels, seq_model, k, sigma, dye_tracks),
           h(h) {

@@ -17,6 +17,7 @@
 #include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 #include "util/time.h"
 
 namespace whatprot {
@@ -72,6 +73,8 @@ int fit_main(int argc, char** argv) {
         seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = 3.0;
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 
@@ -80,6 +83,7 @@ int fit_main(int argc, char** argv) {
                      num_channels,
                      stopping_threshold,
                      seq_model,
+                     seq_settings,
                      dye_seq);
     fitter.fit(radiometries);
     print_finished_parameter_fitting(end_time - start_time);

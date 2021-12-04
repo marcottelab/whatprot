@@ -31,6 +31,7 @@
 #include "hmm/step/step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 #include "tensor/tensor.h"
 
 namespace whatprot {
@@ -64,6 +65,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -81,7 +83,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     r(3, 0) = 1.0;
     r(3, 1) = 1.0;
     RadiometryPrecomputations radiometry_precomputations(
-            r, seq_model, max_num_dyes);
+            r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps,
                    num_channels,
                    dye_seq_precomputations,
@@ -147,6 +149,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
     int max_num_dyes = 5;
     UniversalPrecomputations up(seq_model, num_channels);
     up.set_max_num_dyes(max_num_dyes);
@@ -160,7 +163,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     r(1, 1) = 1.0;
     r(2, 0) = 4.0;
     r(2, 1) = 1.0;
-    RadiometryPrecomputations rp(r, seq_model, max_num_dyes);
+    RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on September 8, 2021.
@@ -182,6 +185,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
+    SequencingSettings seq_settings;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -199,7 +203,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     r(3, 0) = 1.0;
     r(3, 1) = 1.0;
     RadiometryPrecomputations radiometry_precomputations(
-            r, seq_model, max_num_dyes);
+            r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps,
                    num_channels,
                    dye_seq_precomputations,

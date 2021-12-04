@@ -18,6 +18,7 @@
 #include "hmm/step/step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -26,7 +27,8 @@ public:
     PeptideEmission(const Radiometry& radiometry,
                     unsigned int timestep,
                     int max_num_dyes,
-                    const SequencingModel& seq_model);
+                    const SequencingModel& seq_model,
+                    const SequencingSettings& seq_settings);
     double& prob(int channel, int num_dyes);
     double prob(int channel, int num_dyes) const;
     virtual void forward(unsigned int* num_edmans,

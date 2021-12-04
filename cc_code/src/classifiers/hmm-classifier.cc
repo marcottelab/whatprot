@@ -22,6 +22,7 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 #include "util/range.h"
 
 namespace whatprot {
@@ -35,8 +36,10 @@ HMMClassifier::HMMClassifier(
         unsigned int num_timesteps,
         unsigned int num_channels,
         const SequencingModel& seq_model,
+        const SequencingSettings& seq_settings,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : seq_model(seq_model),
+          seq_settings(seq_settings),
           universal_precomputations(seq_model, num_channels),
           dye_seqs(dye_seqs),
           num_timesteps(num_timesteps),

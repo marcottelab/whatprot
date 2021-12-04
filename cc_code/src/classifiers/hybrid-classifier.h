@@ -22,6 +22,7 @@
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -31,6 +32,7 @@ public:
             unsigned int num_timesteps,
             unsigned int num_channels,
             const SequencingModel& seq_model,
+            const SequencingSettings& seq_settings,
             int k,
             double sigma,
             std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
