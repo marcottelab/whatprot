@@ -102,7 +102,7 @@ INCLUDE += -I./extern/FakeIt/single_header/boost/
 GENDEPS = -MMD -MP -MT '$@'
 
 # Here we set any additional flags for the compiler.
-CFLAGS = -Wall -Wextra -Wno-unused-parameter -Wpedantic -Werror -fopenmp
+CFLAGS = -Wall -Wextra -Wno-cast-function-type -Wno-deprecated-copy -Wno-unused-parameter -Wpedantic -Werror -fopenmp
 
 # Generate binary. This is first so that it will be the default rule.
 all: CFLAGS += -Og -ggdb
