@@ -22,6 +22,7 @@ namespace whatprot {
 namespace {
 using std::default_random_engine;
 using std::normal_distribution;
+using std::sqrt;
 }  // namespace
 
 void generate_radiometry(const SequencingModel& seq_model,
@@ -42,7 +43,8 @@ void generate_radiometry(const SequencingModel& seq_model,
             if (dye_track(t, c) > 0) {
                 int num_dyes = dye_track(t, c);
                 double mu = seq_model.channel_models[c]->mu * num_dyes;
-                double sig = seq_model.channel_models[c]->sigma(num_dyes);
+                double sig = seq_model.channel_models[c]->sigma
+                             * sqrt((double)num_dyes);
                 normal_distribution<double> normal(mu, sig);
                 (*radiometry)(t, c) = normal(*generator);
             }
