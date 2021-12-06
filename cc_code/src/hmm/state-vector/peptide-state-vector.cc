@@ -19,7 +19,12 @@ namespace whatprot {
 
 PeptideStateVector::PeptideStateVector(unsigned int order,
                                        const unsigned int* shape)
-        : tensor(order, shape) {}
+        : tensor(order, shape), p_detached(0.0), allow_detached(true) {
+    for (unsigned int o = 0; o < order; o++) {
+        range.min.push_back(0);
+        range.max.push_back(shape[o]);
+    }
+}
 
 void PeptideStateVector::initialize_from_start() {
     tensor.values[tensor.strides[0] - 1] = 1.0;
@@ -29,10 +34,11 @@ void PeptideStateVector::initialize_from_finish() {
     for (unsigned int i = 0; i < tensor.size; i++) {
         tensor.values[i] = 1.0;
     }
+    p_detached = 1.0;
 }
 
 double PeptideStateVector::sum() const {
-    return tensor.sum();
+    return tensor.sum(range) + p_detached;
 }
 
 double PeptideStateVector::source() const {

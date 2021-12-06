@@ -30,6 +30,14 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     BOOST_TEST(psv.tensor.shape[0] == 3u);
     BOOST_TEST(psv.tensor.shape[1] == 5u);
     BOOST_TEST(psv.tensor.shape[2] == 7u);
+    BOOST_TEST(psv.range.min[0] == 0u);
+    BOOST_TEST(psv.range.min[1] == 0u);
+    BOOST_TEST(psv.range.min[2] == 0u);
+    BOOST_TEST(psv.range.max[0] == 3u);
+    BOOST_TEST(psv.range.max[1] == 5u);
+    BOOST_TEST(psv.range.max[2] == 7u);
+    BOOST_TEST(psv.p_detached == 0.0);
+    BOOST_TEST(psv.allow_detached == true);
 }
 
 BOOST_AUTO_TEST_CASE(initialize_from_start_test) {
@@ -53,6 +61,8 @@ BOOST_AUTO_TEST_CASE(initialize_from_start_test) {
     BOOST_TEST(psv.tensor.values[9] == 0.0);
     BOOST_TEST(psv.tensor.values[10] == 0.0);
     BOOST_TEST(psv.tensor.values[11] == 0.0);
+    BOOST_TEST(psv.p_detached == 0.0);
+    BOOST_TEST(psv.allow_detached == true);
 }
 
 BOOST_AUTO_TEST_CASE(initialize_from_finish_test) {
@@ -76,6 +86,8 @@ BOOST_AUTO_TEST_CASE(initialize_from_finish_test) {
     BOOST_TEST(psv.tensor.values[9] == 1.0);
     BOOST_TEST(psv.tensor.values[10] == 1.0);
     BOOST_TEST(psv.tensor.values[11] == 1.0);
+    BOOST_TEST(psv.p_detached == 1.0);
+    BOOST_TEST(psv.allow_detached == true);
 }
 
 BOOST_AUTO_TEST_CASE(source_test) {

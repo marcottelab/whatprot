@@ -14,6 +14,7 @@
 
 // Local project headers:
 #include "tensor/tensor.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -32,6 +33,9 @@ public:
     double source() const;
 
     Tensor tensor;
+    KDRange range;
+    double p_detached;  // probability of detached state.
+    bool allow_detached;  // detached state "in range"
 };
 
 }  // namespace whatprot
