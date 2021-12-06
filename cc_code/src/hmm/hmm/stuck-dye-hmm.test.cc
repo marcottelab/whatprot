@@ -14,6 +14,7 @@
 
 // Standard C++ library headers:
 #include <cmath>
+#include <typeinfo>
 #include <vector>
 
 // Local project headers:
@@ -21,8 +22,8 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
-#include "hmm/step/step.h"
 #include "hmm/step/stuck-dye-emission.h"
+#include "hmm/step/stuck-dye-step.h"
 #include "hmm/step/stuck-dye-transition.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
@@ -78,27 +79,20 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
                     radiometry_precomputations,
                     universal_precomputations);
     BOOST_ASSERT(hmm.steps.size() == 2 * num_timesteps - 1);
-    vector<const Step<StuckDyeStateVector>*>::iterator step = hmm.steps.begin();
-    BOOST_TEST(*step
-               == &radiometry_precomputations.stuck_dye_emissions[channel]);
+    vector<StuckDyeStep*>::iterator step = hmm.steps.begin();
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeEmission).name());
     step++;
-    BOOST_TEST(*step
-               == &universal_precomputations.stuck_dye_transitions[channel]);
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeTransition).name());
     step++;
-    BOOST_TEST(*step
-               == &radiometry_precomputations.stuck_dye_emissions[channel]);
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeEmission).name());
     step++;
-    BOOST_TEST(*step
-               == &universal_precomputations.stuck_dye_transitions[channel]);
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeTransition).name());
     step++;
-    BOOST_TEST(*step
-               == &radiometry_precomputations.stuck_dye_emissions[channel]);
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeEmission).name());
     step++;
-    BOOST_TEST(*step
-               == &universal_precomputations.stuck_dye_transitions[channel]);
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeTransition).name());
     step++;
-    BOOST_TEST(*step
-               == &radiometry_precomputations.stuck_dye_emissions[channel]);
+    BOOST_TEST(typeid(**step).name() == typeid(StuckDyeEmission).name());
 }
 
 BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {

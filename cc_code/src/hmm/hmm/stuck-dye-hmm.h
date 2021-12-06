@@ -17,12 +17,12 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/stuck-dye-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-class StuckDyeHMM : public GenericHMM<StuckDyeStateVector> {
+class StuckDyeHMM : public GenericHMM<StuckDyeStateVector, StuckDyeStep> {
 public:
     StuckDyeHMM(unsigned int num_timesteps,
                 unsigned int num_channels,

@@ -15,13 +15,13 @@
 // Local project headers:
 #include "common/radiometry.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/stuck-dye-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
-class StuckDyeEmission : public Step<StuckDyeStateVector> {
+class StuckDyeEmission : public StuckDyeStep {
 public:
     StuckDyeEmission(const Radiometry& radiometry,
                      int channel,

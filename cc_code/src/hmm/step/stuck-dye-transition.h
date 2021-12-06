@@ -11,12 +11,12 @@
 
 // Local project headers:
 #include "hmm/state-vector/stuck-dye-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/stuck-dye-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-class StuckDyeTransition : public Step<StuckDyeStateVector> {
+class StuckDyeTransition : public StuckDyeStep {
 public:
     StuckDyeTransition(double loss_rate, int channel);
     virtual void forward(unsigned int* num_edmans,

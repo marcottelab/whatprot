@@ -18,12 +18,12 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-class PeptideHMM : public GenericHMM<PeptideStateVector> {
+class PeptideHMM : public GenericHMM<PeptideStateVector, PeptideStep> {
 public:
     PeptideHMM(unsigned int num_timesteps,
                unsigned int num_channels,

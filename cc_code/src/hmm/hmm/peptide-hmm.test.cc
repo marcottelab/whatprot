@@ -15,6 +15,7 @@
 // Standard C++ library headers:
 #include <cmath>
 #include <functional>
+#include <typeinfo>
 #include <vector>
 
 // Local project headers:
@@ -28,7 +29,7 @@
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
 #include "hmm/step/peptide-emission.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
@@ -96,42 +97,42 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     BOOST_ASSERT(hmm.steps.size()
                  == (3 + num_channels) * (num_timesteps - 1) + 1
                             + num_channels);
-    vector<const Step<PeptideStateVector>*>::iterator step = hmm.steps.begin();
-    BOOST_TEST(*step == &universal_precomputations.dud_transitions[0]);
+    vector<PeptideStep*>::iterator step = hmm.steps.begin();
+    BOOST_TEST(typeid(**step).name() == typeid(DudTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.dud_transitions[1]);
+    BOOST_TEST(typeid(**step).name() == typeid(DudTransition).name());
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[0]);
+    BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.detach_transition);
+    BOOST_TEST(typeid(**step).name() == typeid(DetachTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.bleach_transitions[0]);
+    BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.bleach_transitions[1]);
+    BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
     step++;
-    BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
+    BOOST_TEST(typeid(**step).name() == typeid(EdmanTransition).name());
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[1]);
+    BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.detach_transition);
+    BOOST_TEST(typeid(**step).name() == typeid(DetachTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.bleach_transitions[0]);
+    BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.bleach_transitions[1]);
+    BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
     step++;
-    BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
+    BOOST_TEST(typeid(**step).name() == typeid(EdmanTransition).name());
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[2]);
+    BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.detach_transition);
+    BOOST_TEST(typeid(**step).name() == typeid(DetachTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.bleach_transitions[0]);
+    BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
     step++;
-    BOOST_TEST(*step == &universal_precomputations.bleach_transitions[1]);
+    BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
     step++;
-    BOOST_TEST(*step == &dye_seq_precomputations.edman_transition);
+    BOOST_TEST(typeid(**step).name() == typeid(EdmanTransition).name());
     step++;
-    BOOST_TEST(*step == &radiometry_precomputations.peptide_emissions[3]);
+    BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
 }
 
 BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {

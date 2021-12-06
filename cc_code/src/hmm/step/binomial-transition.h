@@ -14,14 +14,14 @@
 
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
 #include "parameterization/fit/parameter-fitter.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
 
 namespace whatprot {
 
-class BinomialTransition : public Step<PeptideStateVector> {
+class BinomialTransition : public PeptideStep {
 public:
     BinomialTransition(double q, int channel);
     void reserve(unsigned int max_n);

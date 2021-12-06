@@ -29,12 +29,13 @@ StuckDyeHMM::StuckDyeHMM(
         const RadiometryPrecomputations& radiometry_precomputations,
         const UniversalPrecomputations& universal_precomputations)
         : GenericHMM(num_timesteps) {
-    steps.push_back(&radiometry_precomputations.stuck_dye_emissions[channel]);
+    steps.push_back(new StuckDyeEmission(
+            radiometry_precomputations.stuck_dye_emissions[channel]));
     for (unsigned int i = 1; i < num_timesteps; i++) {
-        steps.push_back(
-                &universal_precomputations.stuck_dye_transitions[channel]);
-        steps.push_back(
-                &radiometry_precomputations.stuck_dye_emissions[channel]);
+        steps.push_back(new StuckDyeTransition(
+                universal_precomputations.stuck_dye_transitions[channel]));
+        steps.push_back(new StuckDyeEmission(
+                radiometry_precomputations.stuck_dye_emissions[channel]));
     }
 }
 

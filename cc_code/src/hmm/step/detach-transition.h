@@ -11,12 +11,12 @@
 
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-class DetachTransition : public Step<PeptideStateVector> {
+class DetachTransition : public PeptideStep {
 public:
     DetachTransition(double p_detach);
     virtual void forward(unsigned int* num_edmans,
