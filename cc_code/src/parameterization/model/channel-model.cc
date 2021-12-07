@@ -33,8 +33,12 @@ ChannelModel::~ChannelModel() {}
 
 double ChannelModel::pdf(double observed, int state) const {
     double offset = observed - mu * (double)state;
-    double s = sqrt(bg_sig * bg_sig + (double)state * sig * sig);
+    double s = sigma(state);
     return (1.0 / (s * sqrt(2.0 * PI))) * exp(-offset * offset / (2.0 * s * s));
+}
+
+double ChannelModel::sigma(int state) const {
+    return sqrt(bg_sig * bg_sig + (double)state * sig * sig);
 }
 
 double ChannelModel::relative_distance(

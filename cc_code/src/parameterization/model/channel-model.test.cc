@@ -24,6 +24,7 @@ using boost::unit_test::tolerance;
 using std::exp;
 using std::function;
 using std::log;
+using std::sqrt;
 const double TOL = 0.000000001;
 }  // namespace
 
@@ -99,6 +100,19 @@ BOOST_AUTO_TEST_CASE(pdf_state_eq_obs_ne_one_test, *tolerance(TOL)) {
     double observed = 1.3;
     int state = 1;
     BOOST_TEST(channel_model.pdf(observed, state) == 0.43085303703574312);
+}
+
+BOOST_AUTO_TEST_CASE(sigma_test, *tolerance(TOL)) {
+    ChannelModel channel_model;
+    channel_model.p_bleach = .05;
+    channel_model.p_dud = .10;
+    channel_model.bg_sig = 0.00667;
+    channel_model.mu = 1.0;
+    channel_model.sig = .16;
+    channel_model.stuck_dye_ratio = 0.5;
+    channel_model.p_stuck_dye_loss = 0.08;
+    BOOST_TEST(channel_model.sigma(3)
+               == sqrt(0.00667 * 0.00667 + 3.0 * .16 * .16));
 }
 
 BOOST_AUTO_TEST_CASE(relative_distance_p_bleach_test, *tolerance(TOL)) {
