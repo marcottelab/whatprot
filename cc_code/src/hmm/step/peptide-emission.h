@@ -19,6 +19,7 @@
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -31,6 +32,8 @@ public:
                     const SequencingSettings& seq_settings);
     double& prob(int channel, int num_dyes);
     double prob(int channel, int num_dyes) const;
+    virtual void prune_forward(KDRange* range, bool* allow_detached) override;
+    virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     virtual void forward(unsigned int* num_edmans,
                          PeptideStateVector* psv) const override;
     virtual void backward(const PeptideStateVector& input,

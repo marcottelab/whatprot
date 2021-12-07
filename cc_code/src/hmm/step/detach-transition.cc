@@ -12,10 +12,14 @@
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
+
+void DetachTransition::prune_forward(KDRange* range, bool* allow_detached) {}
+void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {}
 
 void DetachTransition::forward(unsigned int* num_edmans,
                                PeptideStateVector* psv) const {

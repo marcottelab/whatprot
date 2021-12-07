@@ -14,6 +14,7 @@
 #include "parameterization/fit/parameter-fitter.h"
 #include "tensor/tensor.h"
 #include "tensor/vector.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -50,6 +51,9 @@ double& BinomialTransition::prob(unsigned int from, unsigned int to) {
 double BinomialTransition::prob(unsigned int from, unsigned int to) const {
     return values[from * (from + 1) / 2 + to];
 }
+
+void BinomialTransition::prune_forward(KDRange* range, bool* allow_detached) {}
+void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {}
 
 void BinomialTransition::forward(unsigned int* num_edmans,
                                  PeptideStateVector* psv) const {

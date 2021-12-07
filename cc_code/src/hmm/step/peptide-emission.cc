@@ -51,6 +51,9 @@ double PeptideEmission::prob(int channel, int num_dyes) const {
     return values[channel * (max_num_dyes + 1) + num_dyes];
 }
 
+void PeptideEmission::prune_forward(KDRange* range, bool* allow_detached) {}
+void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {}
+
 void PeptideEmission::forward(unsigned int* num_edmans,
                               PeptideStateVector* psv) const {
     KDRange range;

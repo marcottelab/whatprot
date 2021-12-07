@@ -13,12 +13,15 @@
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
 class DetachTransition : public PeptideStep {
 public:
     DetachTransition(double p_detach);
+    virtual void prune_forward(KDRange* range, bool* allow_detached) override;
+    virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     virtual void forward(unsigned int* num_edmans,
                          PeptideStateVector* psv) const override;
     virtual void backward(const PeptideStateVector& input,

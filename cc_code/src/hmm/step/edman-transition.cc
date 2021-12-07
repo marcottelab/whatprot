@@ -14,6 +14,7 @@
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "tensor/vector.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -23,6 +24,9 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
         : dye_seq(dye_seq),
           dye_track(dye_track),
           p_edman_failure(p_edman_failure) {}
+
+void EdmanTransition::prune_forward(KDRange* range, bool* allow_detached) {}
+void EdmanTransition::prune_backward(KDRange* range, bool* allow_detached) {}
 
 void EdmanTransition::forward(unsigned int* num_edmans,
                               PeptideStateVector* psv) const {
