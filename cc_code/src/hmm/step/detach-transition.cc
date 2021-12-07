@@ -18,8 +18,14 @@ namespace whatprot {
 
 DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
-void DetachTransition::prune_forward(KDRange* range, bool* allow_detached) {}
-void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {}
+void DetachTransition::prune_forward(KDRange* range, bool* allow_detached) {
+    pruned_range = *range;
+}
+
+void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {
+    pruned_range = pruned_range.intersect(*range);
+    *range = pruned_range;
+}
 
 void DetachTransition::forward(unsigned int* num_edmans,
                                PeptideStateVector* psv) const {

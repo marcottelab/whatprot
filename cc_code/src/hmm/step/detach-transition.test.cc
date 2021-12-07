@@ -9,14 +9,19 @@
 // Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
+// Standard C++ library headers:
+#include <vector>
+
 // File under test:
 #include "detach-transition.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
+using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
 
@@ -28,6 +33,20 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     double p_detach = 0.05;
     DetachTransition dt(p_detach);
     BOOST_CHECK_EQUAL(dt.p_detach, p_detach);
+}
+
+BOOST_AUTO_TEST_CASE(prune_forward_test, *tolerance(TOL)) {
+    double p_detach = 0.05;
+    DetachTransition dt(p_detach);
+    KDRange range;
+    range.min = vector<unsigned int>(2, 1u);
+    range.max = vector<unsigned int>(2, 3u);
+    bool allow_detached;
+    dt.prune_forward(&range, &allow_detached);
+    BOOST_TEST(dt.pruned_range.min[0] == 1u);
+    BOOST_TEST(dt.pruned_range.min[1] == 1u);
+    BOOST_TEST(dt.pruned_range.max[0] == 3u);
+    BOOST_TEST(dt.pruned_range.max[1] == 3u);
 }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {

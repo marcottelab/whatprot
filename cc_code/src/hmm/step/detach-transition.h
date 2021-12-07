@@ -35,6 +35,7 @@ public:
                              SequencingModelFitter* fitter) const override;
 
     double p_detach;
+    KDRange pruned_range;
 };
 
 }  // namespace whatprot
