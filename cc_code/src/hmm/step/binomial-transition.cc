@@ -9,6 +9,9 @@
 // Defining symbols from header:
 #include "binomial-transition.h"
 
+// Standard C++ library headers:
+#include <limits>
+
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "parameterization/fit/parameter-fitter.h"
@@ -17,6 +20,10 @@
 #include "util/kd-range.h"
 
 namespace whatprot {
+
+namespace {
+using std::numeric_limits;
+}  // namespace
 
 BinomialTransition::BinomialTransition(double q, int channel)
         : q(q), channel(channel) {
@@ -52,8 +59,19 @@ double BinomialTransition::prob(unsigned int from, unsigned int to) const {
     return values[from * (from + 1) / 2 + to];
 }
 
-void BinomialTransition::prune_forward(KDRange* range, bool* allow_detached) {}
-void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {}
+void BinomialTransition::prune_forward(KDRange* range, bool* allow_detached) {
+    forward_range = *range;
+    range->min[1 + channel] = 0;
+    backward_range = *range;
+}
+
+void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {
+    backward_range = backward_range.intersect(*range);
+    *range = backward_range;
+    range->max[1 + channel] = numeric_limits<unsigned int>::max();
+    forward_range = forward_range.intersect(*range);
+    *range = forward_range;
+}
 
 void BinomialTransition::forward(unsigned int* num_edmans,
                                  PeptideStateVector* psv) const {

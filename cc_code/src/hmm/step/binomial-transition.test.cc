@@ -15,6 +15,7 @@
 // Local project headers:
 #include "parameterization/fit/parameter-fitter.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -127,6 +128,121 @@ BOOST_AUTO_TEST_CASE(reserve_no_shrink_test, *tolerance(TOL)) {
     BOOST_TEST(bt.prob(3, 3) == p * p * p);
 }
 
+BOOST_AUTO_TEST_CASE(prune_forward_test, *tolerance(TOL)) {
+    double q = 0.05;
+    int channel = 0;  // remember, first dimension is time, so this is dim 1.
+    TestableBinomialTransition bt(q, channel);
+    unsigned int order = 2;
+    KDRange range;
+    range.min.resize(order, 3);
+    range.max.resize(order, 5);
+    bool allow_detached = false;
+    bt.prune_forward(&range, &allow_detached);
+    BOOST_TEST(bt.forward_range.min[0] == 3u);
+    BOOST_TEST(bt.forward_range.min[1] == 3u);
+    BOOST_TEST(bt.forward_range.max[0] == 5u);
+    BOOST_TEST(bt.forward_range.max[1] == 5u);
+    BOOST_TEST(bt.backward_range.min[0] == 3u);
+    BOOST_TEST(bt.backward_range.min[1] == 0u);
+    BOOST_TEST(bt.backward_range.max[0] == 5u);
+    BOOST_TEST(bt.backward_range.max[1] == 5u);
+    BOOST_TEST(range.min[0] == 3u);
+    BOOST_TEST(range.min[1] == 0u);
+    BOOST_TEST(range.max[0] == 5u);
+    BOOST_TEST(range.max[1] == 5u);
+}
+
+BOOST_AUTO_TEST_CASE(prune_forward_other_channel_test, *tolerance(TOL)) {
+    double q = 0.05;
+    int channel = 1;  // remember, first dimension is time, so this is dim 2.
+    TestableBinomialTransition bt(q, channel);
+    unsigned int order = 3;
+    KDRange range;
+    range.min.resize(order, 3);
+    range.max.resize(order, 5);
+    bool allow_detached = false;
+    bt.prune_forward(&range, &allow_detached);
+    BOOST_TEST(bt.forward_range.min[0] == 3u);
+    BOOST_TEST(bt.forward_range.min[1] == 3u);
+    BOOST_TEST(bt.forward_range.min[2] == 3u);
+    BOOST_TEST(bt.forward_range.max[0] == 5u);
+    BOOST_TEST(bt.forward_range.max[1] == 5u);
+    BOOST_TEST(bt.forward_range.max[2] == 5u);
+    BOOST_TEST(bt.backward_range.min[0] == 3u);
+    BOOST_TEST(bt.backward_range.min[1] == 3u);
+    BOOST_TEST(bt.backward_range.min[2] == 0u);
+    BOOST_TEST(bt.backward_range.max[0] == 5u);
+    BOOST_TEST(bt.backward_range.max[1] == 5u);
+    BOOST_TEST(bt.backward_range.max[2] == 5u);
+    BOOST_TEST(range.min[0] == 3u);
+    BOOST_TEST(range.min[1] == 3u);
+    BOOST_TEST(range.min[2] == 0u);
+    BOOST_TEST(range.max[0] == 5u);
+    BOOST_TEST(range.max[1] == 5u);
+    BOOST_TEST(range.max[2] == 5u);
+}
+
+BOOST_AUTO_TEST_CASE(prune_backward_test, *tolerance(TOL)) {
+    double q = 0.05;
+    int channel = 0;  // remember, first dimension is time, so this is dim 1.
+    TestableBinomialTransition bt(q, channel);
+    unsigned int order = 2;
+    bt.forward_range.min.resize(order, 0);
+    bt.forward_range.max.resize(order, 10);
+    bt.backward_range.min.resize(order, 0);
+    bt.backward_range.max.resize(order, 10);
+    KDRange range;
+    range.min.resize(order, 3);
+    range.max.resize(order, 5);
+    bool allow_detached = false;
+    bt.prune_backward(&range, &allow_detached);
+    BOOST_TEST(bt.forward_range.min[0] == 3u);
+    BOOST_TEST(bt.forward_range.min[1] == 3u);
+    BOOST_TEST(bt.forward_range.max[0] == 5u);
+    BOOST_TEST(bt.forward_range.max[1] == 10u);
+    BOOST_TEST(bt.backward_range.min[0] == 3u);
+    BOOST_TEST(bt.backward_range.min[1] == 3u);
+    BOOST_TEST(bt.backward_range.max[0] == 5u);
+    BOOST_TEST(bt.backward_range.max[1] == 5u);
+    BOOST_TEST(range.min[0] == 3u);
+    BOOST_TEST(range.min[1] == 3u);
+    BOOST_TEST(range.max[0] == 5u);
+    BOOST_TEST(range.max[1] == 10u);
+}
+
+BOOST_AUTO_TEST_CASE(prune_backward_other_channel_test, *tolerance(TOL)) {
+    double q = 0.05;
+    int channel = 1;  // remember, first dimension is time, so this is dim 2.
+    TestableBinomialTransition bt(q, channel);
+    unsigned int order = 3;
+    bt.forward_range.min.resize(order, 0);
+    bt.forward_range.max.resize(order, 10);
+    bt.backward_range.min.resize(order, 0);
+    bt.backward_range.max.resize(order, 10);
+    KDRange range;
+    range.min.resize(order, 3);
+    range.max.resize(order, 5);
+    bool allow_detached = false;
+    bt.prune_backward(&range, &allow_detached);
+    BOOST_TEST(bt.forward_range.min[0] == 3u);
+    BOOST_TEST(bt.forward_range.min[1] == 3u);
+    BOOST_TEST(bt.forward_range.min[2] == 3u);
+    BOOST_TEST(bt.forward_range.max[0] == 5u);
+    BOOST_TEST(bt.forward_range.max[1] == 5u);
+    BOOST_TEST(bt.forward_range.max[2] == 10u);
+    BOOST_TEST(bt.backward_range.min[0] == 3u);
+    BOOST_TEST(bt.backward_range.min[1] == 3u);
+    BOOST_TEST(bt.backward_range.min[2] == 3u);
+    BOOST_TEST(bt.backward_range.max[0] == 5u);
+    BOOST_TEST(bt.backward_range.max[1] == 5u);
+    BOOST_TEST(bt.backward_range.max[2] == 5u);
+    BOOST_TEST(range.min[0] == 3u);
+    BOOST_TEST(range.min[1] == 3u);
+    BOOST_TEST(range.min[2] == 3u);
+    BOOST_TEST(range.max[0] == 5u);
+    BOOST_TEST(range.max[1] == 5u);
+    BOOST_TEST(range.max[2] == 10u);
+}
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
     int channel = 0;

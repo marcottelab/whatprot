@@ -48,6 +48,8 @@ public:
                      const Vector& next_backward_vector,
                      double probability,
                      ParameterFitter* fitter) const;
+    KDRange forward_range;
+    KDRange backward_range;
     std::vector<double> values;
     const double q;
     int channel;
