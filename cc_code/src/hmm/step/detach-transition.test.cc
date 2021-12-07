@@ -47,6 +47,30 @@ BOOST_AUTO_TEST_CASE(prune_forward_test, *tolerance(TOL)) {
     BOOST_TEST(dt.pruned_range.min[1] == 1u);
     BOOST_TEST(dt.pruned_range.max[0] == 3u);
     BOOST_TEST(dt.pruned_range.max[1] == 3u);
+    BOOST_TEST(range.min[0] == 1u);
+    BOOST_TEST(range.min[1] == 1u);
+    BOOST_TEST(range.max[0] == 3u);
+    BOOST_TEST(range.max[1] == 3u);
+}
+
+BOOST_AUTO_TEST_CASE(prune_backward_test, *tolerance(TOL)) {
+    double p_detach = 0.05;
+    DetachTransition dt(p_detach);
+    KDRange range;
+    range.min = vector<unsigned int>(2, 1u);
+    range.max = vector<unsigned int>(2, 3u);
+    dt.pruned_range.min = vector<unsigned int>(2, 2u);
+    dt.pruned_range.max = vector<unsigned int>(2, 4u);
+    bool allow_detached;
+    dt.prune_backward(&range, &allow_detached);
+    BOOST_TEST(dt.pruned_range.min[0] == 2u);
+    BOOST_TEST(dt.pruned_range.min[1] == 2u);
+    BOOST_TEST(dt.pruned_range.max[0] == 3u);
+    BOOST_TEST(dt.pruned_range.max[1] == 3u);
+    BOOST_TEST(range.min[0] == 2u);
+    BOOST_TEST(range.min[1] == 2u);
+    BOOST_TEST(range.max[0] == 3u);
+    BOOST_TEST(range.max[1] == 3u);
 }
 
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
