@@ -81,13 +81,13 @@ NNClassifier::NNClassifier(
         unsigned int num_channels,
         const SequencingModel& seq_model,
         int k,
-        double sigma,
+        double sig,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks)
         : num_train(dye_tracks->size()),
           num_timesteps(num_timesteps),
           num_channels(num_channels),
           k(k),
-          two_sigma_sq(2.0 * sigma * sigma) {
+          two_sig_sq(2.0 * sig * sig) {
     vector<KDTEntry> kdt_entries;
     kdt_entries.reserve(num_train);
     for (int i = 0; i < num_train; i++) {
@@ -115,13 +115,13 @@ double NNClassifier::classify_helper(const Radiometry& radiometry,
                 k_nearest[i]->dye_track;
         double dist_sq = dists_sq[i];
         // For computing a gaussian kernel.
-        //   * The normalization factor, 1/(sigma*2*PI), is ignored here,
+        //   * The normalization factor, 1/(sig*2*PI), is ignored here,
         //     because it is a constant factor, so all weights should be
         //     affected equally.
         //   * We use the dist_sq from the KDTree. This works because a guassian
         //     kernel is radially symmetric. It is also far more efficient to
         //     compute it this way, which is why we do it.
-        double weight = exp(-dist_sq / two_sigma_sq);
+        double weight = exp(-dist_sq / two_sig_sq);
         for (int j = 0; j < dye_track.source.num_sources; j++) {
             int id = dye_track.source.sources[j]->source;
             double count = (double)dye_track.source.sources[j]->count;

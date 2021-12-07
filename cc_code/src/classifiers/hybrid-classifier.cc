@@ -37,14 +37,14 @@ HybridClassifier::HybridClassifier(
         const SequencingModel& seq_model,
         const SequencingSettings& seq_settings,
         int k,
-        double sigma,
+        double sig,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : hmm_classifier(
                 num_timesteps, num_channels, seq_model, seq_settings, dye_seqs),
           nn_classifier(
-                  num_timesteps, num_channels, seq_model, k, sigma, dye_tracks),
+                  num_timesteps, num_channels, seq_model, k, sig, dye_tracks),
           h(h) {
     for (unsigned int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;

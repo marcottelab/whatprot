@@ -24,9 +24,9 @@ public:
 
     double p_bleach;
     double p_dud;
-    double bg_sigma;
+    double bg_sig;
     double mu;
-    double sigma;
+    double sig;
     double stuck_dye_ratio;
     double p_stuck_dye_loss;
 };

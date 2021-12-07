@@ -53,9 +53,9 @@ ChannelModel ChannelModelFitter::get() const {
     ChannelModel model;
     model.p_bleach = p_bleach_fit.get();
     model.p_dud = p_dud_fit.get();
-    model.bg_sigma = 0.00667;  // TODO: THIS IS NOT RIGHT.
+    model.bg_sig = 0.00667;  // TODO: THIS IS NOT RIGHT.
     model.mu = distribution_fit->get_mu();
-    model.sigma = distribution_fit->get_sigma();
+    model.sig = distribution_fit->get_sig();
     model.stuck_dye_ratio = stuck_dye_ratio_fit.get();
     model.p_stuck_dye_loss = p_stuck_dye_loss_fit.get();
     return model;

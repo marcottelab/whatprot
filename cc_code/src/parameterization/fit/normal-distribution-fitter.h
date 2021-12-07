@@ -20,7 +20,7 @@ public:
     virtual ~NormalDistributionFitter();
     virtual void add_sample(double x, int n, double weight);
     double get_mu() const;
-    double get_sigma() const;
+    double get_sig() const;
     NormalDistributionFitter operator+(
             const NormalDistributionFitter& other) const;
     void operator+=(const NormalDistributionFitter& other);

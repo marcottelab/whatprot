@@ -48,7 +48,7 @@ int hybrid_main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     int k = atoi(argv[3]);
-    double sigma = atof(argv[4]);
+    double sig = atof(argv[4]);
     int h = atoi(argv[5]);
     char* dye_seqs_filename = argv[6];
     char* dye_tracks_filename = argv[7];
@@ -99,9 +99,9 @@ int hybrid_main(int argc, char** argv) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[c]->p_bleach = 0.05;
         seq_model.channel_models[c]->p_dud = 0.07;
-        seq_model.channel_models[c]->bg_sigma = 0.00667;
+        seq_model.channel_models[c]->bg_sig = 0.00667;
         seq_model.channel_models[c]->mu = 1.0;
-        seq_model.channel_models[c]->sigma = 0.16;
+        seq_model.channel_models[c]->sig = 0.16;
         seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
@@ -116,7 +116,7 @@ int hybrid_main(int argc, char** argv) {
                                 seq_model,
                                 seq_settings,
                                 k,
-                                sigma,
+                                sig,
                                 &dye_tracks,
                                 h,
                                 dye_seqs);

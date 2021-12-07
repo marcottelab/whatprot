@@ -57,7 +57,7 @@ public:
                  unsigned int num_channels,
                  const SequencingModel& seq_model,
                  int k,
-                 double sigma,
+                 double sig,
                  std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                          dye_tracks);
     ~NNClassifier();
@@ -74,7 +74,7 @@ public:
     unsigned int num_timesteps;
     unsigned int num_channels;
     int k;  // number of nearest neighbors to use
-    double two_sigma_sq;  // sigma to use for kernel weighting
+    double two_sig_sq;  // sig to use for kernel weighting
 };
 
 }  // namespace whatprot

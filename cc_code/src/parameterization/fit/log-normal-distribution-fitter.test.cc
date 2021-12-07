@@ -144,18 +144,18 @@ BOOST_AUTO_TEST_CASE(get_mu_two_samples_test, *tolerance(TOL)) {
                           / (w1 + w2));
 }
 
-BOOST_AUTO_TEST_CASE(get_sigma_one_sample_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(get_sig_one_sample_test, *tolerance(TOL)) {
     LogNormalDistributionFitter lndf;
     double x1 = 3.43;
     int n1 = 3;
     double w1 = 0.98;
     lndf.add_sample(x1, n1, w1);
     double mu = lndf.get_mu();
-    BOOST_TEST(lndf.get_sigma()
+    BOOST_TEST(lndf.get_sig()
                == sqrt((log(x1 / n1) - mu) * (log(x1 / n1) - mu)));
 }
 
-BOOST_AUTO_TEST_CASE(get_sigma_two_samples_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(get_sig_two_samples_test, *tolerance(TOL)) {
     LogNormalDistributionFitter lndf;
     double x1 = 3.43;
     int n1 = 3;
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(get_sigma_two_samples_test, *tolerance(TOL)) {
     lndf.add_sample(x1, n1, w1);
     lndf.add_sample(x2, n2, w2);
     double mu = lndf.get_mu();
-    BOOST_TEST(lndf.get_sigma()
+    BOOST_TEST(lndf.get_sig()
                == sqrt(((log(x1 / n1) - mu) * (log(x1 / n1) - mu) * w1
                         + (log(x2 / n2) - mu) * (log(x2 / n2) - mu) * w2)
                        / (w1 + w2)));

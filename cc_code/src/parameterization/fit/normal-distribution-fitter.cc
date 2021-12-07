@@ -46,10 +46,10 @@ double NormalDistributionFitter::get_mu() const {
     return w_sum_x / w_sum_n;
 }
 
-double NormalDistributionFitter::get_sigma() const {
+double NormalDistributionFitter::get_sig() const {
     double mu = get_mu();
-    double sigma_sq = (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight;
-    return sqrt(sigma_sq);
+    double sig_sq = (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight;
+    return sqrt(sig_sq);
 }
 
 NormalDistributionFitter NormalDistributionFitter::operator+(

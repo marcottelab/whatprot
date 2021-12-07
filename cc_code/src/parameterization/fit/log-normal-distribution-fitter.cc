@@ -47,7 +47,7 @@ double LogNormalDistributionFitter::get_mu() const {
     return w_sum_log_x_over_n / total_weight;
 }
 
-double LogNormalDistributionFitter::get_sigma() const {
+double LogNormalDistributionFitter::get_sig() const {
     double mu = get_mu();
     return sqrt(w_sum_log_x_over_n_sq / total_weight - mu * mu);
 }

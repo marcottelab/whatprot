@@ -43,7 +43,7 @@ void generate_radiometry(const SequencingModel& seq_model,
             if (dye_track(t, c) > 0) {
                 int num_dyes = dye_track(t, c);
                 double mu = seq_model.channel_models[c]->mu * num_dyes;
-                double sig = seq_model.channel_models[c]->sigma
+                double sig = seq_model.channel_models[c]->sig
                              * sqrt((double)num_dyes);
                 normal_distribution<double> normal(mu, sig);
                 (*radiometry)(t, c) = normal(*generator);
