@@ -9,6 +9,9 @@
 // Defining symbols from header:
 #include "peptide-hmm.h"
 
+// Standard C++ library headers:
+#include <vector>
+
 // Local project headers:
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
@@ -20,6 +23,10 @@
 #include "hmm/step/peptide-emission.h"
 
 namespace whatprot {
+
+namespace {
+using std::vector;
+}
 
 PeptideHMM::PeptideHMM(
         unsigned int num_timesteps,
@@ -47,6 +54,17 @@ PeptideHMM::PeptideHMM(
                 radiometry_precomputations.peptide_emissions[t]));
     }
     tensor_shape = dye_seq_precomputations.tensor_shape;
+    // Now we prune to improve efficiency when run.
+    KDRange range;
+    range.min = vector<unsigned int>(tensor_shape.size(), 0u);
+    range.max = tensor_shape;
+    bool allow_detached;
+    for (unsigned int i = 0; i < steps.size(); i++) {
+        steps[i]->prune_forward(&range, &allow_detached);
+    }
+    for (int i = steps.size() - 1; i >= 0; i--) {
+        steps[i]->prune_backward(&range, &allow_detached);
+    }
 }
 
 PeptideStateVector PeptideHMM::create_states() const {
