@@ -40,6 +40,74 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     // write right now. Anyways this should be covered by the forward tests.
 }
 
+BOOST_AUTO_TEST_CASE(prune_forward_test) {
+    double p_fail = 0.05;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
+    DyeSeq ds(num_channels, "");
+    DyeTrack dt(num_timesteps, num_channels, ds);
+    EdmanTransition et(p_fail, ds, dt);
+    KDRange range;
+    range.min = {1u, 2u, 3u};
+    range.max = {3u, 4u, 5u};
+    bool allow_detached;
+    et.prune_forward(&range, &allow_detached);
+    BOOST_TEST(et.forward_range.min[0] == 1u);
+    BOOST_TEST(et.forward_range.min[1] == 2u);
+    BOOST_TEST(et.forward_range.min[2] == 3u);
+    BOOST_TEST(et.forward_range.max[0] == 3u);
+    BOOST_TEST(et.forward_range.max[1] == 4u);
+    BOOST_TEST(et.forward_range.max[2] == 5u);
+    BOOST_TEST(range.min[0] == 1u);
+    BOOST_TEST(range.min[1] == 1u);
+    BOOST_TEST(range.min[2] == 2u);
+    BOOST_TEST(range.max[0] == 4u);
+    BOOST_TEST(range.max[1] == 4u);
+    BOOST_TEST(range.max[2] == 5u);
+    BOOST_TEST(et.backward_range.min[0] == 1u);
+    BOOST_TEST(et.backward_range.min[1] == 1u);
+    BOOST_TEST(et.backward_range.min[2] == 2u);
+    BOOST_TEST(et.backward_range.max[0] == 4u);
+    BOOST_TEST(et.backward_range.max[1] == 4u);
+    BOOST_TEST(et.backward_range.max[2] == 5u);
+}
+
+BOOST_AUTO_TEST_CASE(prune_backward_test) {
+    double p_fail = 0.05;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
+    DyeSeq ds(num_channels, "");
+    DyeTrack dt(num_timesteps, num_channels, ds);
+    EdmanTransition et(p_fail, ds, dt);
+    KDRange range;
+    range.min = {1u, 2u, 3u};
+    range.max = {5u, 6u, 7u};
+    et.backward_range.min = {1u, 2u, 4u};
+    et.backward_range.max = {5u, 5u, 7u};
+    et.forward_range.min = {0u, 1u, 1u};
+    et.forward_range.max = {4u, 8u, 8u};
+    bool allow_detached;
+    et.prune_backward(&range, &allow_detached);
+    BOOST_TEST(et.backward_range.min[0] == 1u);
+    BOOST_TEST(et.backward_range.min[1] == 2u);
+    BOOST_TEST(et.backward_range.min[2] == 4u);
+    BOOST_TEST(et.backward_range.max[0] == 5u);
+    BOOST_TEST(et.backward_range.max[1] == 5u);
+    BOOST_TEST(et.backward_range.max[2] == 7u);
+    BOOST_TEST(range.min[0] == 0u);
+    BOOST_TEST(range.min[1] == 2u);
+    BOOST_TEST(range.min[2] == 4u);
+    BOOST_TEST(range.max[0] == 4u);
+    BOOST_TEST(range.max[1] == 6u);
+    BOOST_TEST(range.max[2] == 8u);
+    BOOST_TEST(et.forward_range.min[0] == 0u);
+    BOOST_TEST(et.forward_range.min[1] == 2u);
+    BOOST_TEST(et.forward_range.min[2] == 4u);
+    BOOST_TEST(et.forward_range.max[0] == 4u);
+    BOOST_TEST(et.forward_range.max[1] == 6u);
+    BOOST_TEST(et.forward_range.max[2] == 8u);
+}
+
 BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;

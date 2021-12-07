@@ -40,6 +40,8 @@ public:
     DyeSeq dye_seq;
     DyeTrack dye_track;
     double p_edman_failure;
+    KDRange forward_range;
+    KDRange backward_range;
 };
 
 }  // namespace whatprot

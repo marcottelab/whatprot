@@ -25,8 +25,29 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_track(dye_track),
           p_edman_failure(p_edman_failure) {}
 
-void EdmanTransition::prune_forward(KDRange* range, bool* allow_detached) {}
-void EdmanTransition::prune_backward(KDRange* range, bool* allow_detached) {}
+void EdmanTransition::prune_forward(KDRange* range, bool* allow_detached) {
+    forward_range = *range;
+    range->max[0]++;
+    for (unsigned int c = 0; c < range->min.size(); c++) {
+        if (range->min[1 + c] != 0) {
+            range->min[1 + c]--;
+        }
+    }
+    backward_range = *range;
+}
+
+void EdmanTransition::prune_backward(KDRange* range, bool* allow_detached) {
+    backward_range = backward_range.intersect(*range);
+    *range = backward_range;
+    if (range->min[0] != 0) {
+        range->min[0]--;
+    }
+    for (unsigned int c = 0; c < range->min.size(); c++) {
+        range->max[1 + c]++;
+    }
+    *range = forward_range.intersect(*range);
+    forward_range = *range;
+}
 
 void EdmanTransition::forward(unsigned int* num_edmans,
                               PeptideStateVector* psv) const {
