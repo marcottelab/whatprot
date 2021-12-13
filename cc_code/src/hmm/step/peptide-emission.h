@@ -47,6 +47,7 @@ public:
                              SequencingModelFitter* fitter) const override;
     Radiometry radiometry;
     unsigned int timestep;
+    KDRange pruned_range;
     std::vector<double> values;
     unsigned int num_channels;
     int max_num_dyes;

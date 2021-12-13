@@ -18,6 +18,7 @@
 
 // Standard C++ library headers:
 #include <functional>
+#include <limits>
 
 // External headers:
 #include "fakeit.hpp"
@@ -53,20 +54,59 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     unsigned int num_timesteps = 1;
     unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    int max_num_dyes = 0;
+    rad(0, 0) = 2.0;
+    int max_num_dyes = 5;
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.6);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = 2.0;
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
     BOOST_TEST(e.values.size() == expected_size);
     BOOST_TEST(e.num_channels == num_channels);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     BOOST_TEST(e.values[0] == 0.5);
+    BOOST_TEST(e.pruned_range.min.size() == 2u);
+    BOOST_TEST(e.pruned_range.min[0] == 0u);
+    BOOST_TEST(e.pruned_range.min[1] == 1u);
+    BOOST_TEST(e.pruned_range.max.size() == 2u);
+    BOOST_TEST(e.pruned_range.max[0] == 1u);
+    BOOST_TEST(e.pruned_range.max[1] == 4u);
+    // Avoid double clean-up:
+    seq_model.channel_models.resize(0);
+}
+
+BOOST_AUTO_TEST_CASE(constructor_no_cutoff_test, *tolerance(TOL)) {
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
+    Radiometry rad(num_timesteps, num_channels);
+    rad(0, 0) = 2.0;
+    int max_num_dyes = 5;
+    SequencingModel seq_model;
+    Mock<ChannelModel> cm_mock;
+    When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.6);
+    seq_model.channel_models.push_back(&cm_mock.get());
+    unsigned int timestep = 0;
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    unsigned int expected_size = num_channels * (max_num_dyes + 1);
+    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.num_channels == num_channels);
+    BOOST_TEST(e.max_num_dyes == max_num_dyes);
+    BOOST_TEST(e.values[0] == 0.5);
+    BOOST_TEST(e.pruned_range.min.size() == 2u);
+    BOOST_TEST(e.pruned_range.min[0] == 0u);
+    BOOST_TEST(e.pruned_range.min[1] == 0u);
+    BOOST_TEST(e.pruned_range.max.size() == 2u);
+    BOOST_TEST(e.pruned_range.max[0] == 1u);
+    BOOST_TEST(e.pruned_range.max[1]
+               == std::numeric_limits<unsigned int>::max());
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -85,6 +125,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 1;
     SequencingSettings seq_settings;
@@ -110,6 +151,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 1;
     SequencingSettings seq_settings;
@@ -136,6 +178,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
@@ -165,6 +208,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
@@ -196,18 +240,21 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock_0, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock_0.get());
     Mock<ChannelModel> cm_mock_1;
     When(Method(cm_mock_1, pdf))
             .AlwaysDo([](double observed, int state) -> double {
                 return observed * 1.9 + 0.098;
             });
+    When(Method(cm_mock_1, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock_1.get());
     Mock<ChannelModel> cm_mock_2;
     When(Method(cm_mock_2, pdf))
             .AlwaysDo([](double observed, int state) -> double {
                 return observed * 2.7 + 0.187;
             });
+    When(Method(cm_mock_2, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock_2.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -233,6 +280,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return 1.0 / (double)(state + 7);
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -259,6 +307,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return 1.0 / (double)(state + 7);
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -289,6 +338,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return (observed + 0.042) / (double)(state + 7);
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 1;
@@ -319,6 +369,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return (observed + 0.042) / (double)(state + 7);
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 1;
@@ -347,6 +398,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return 0.5;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -377,6 +429,7 @@ BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return 0.5;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -412,6 +465,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 2;
     SequencingSettings seq_settings;
@@ -448,6 +502,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
@@ -487,18 +542,21 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
             .AlwaysDo([](double observed, int state) -> double {
                 return observed + 0.042;
             });
+    When(Method(cm_mock_0, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock_0.get());
     Mock<ChannelModel> cm_mock_1;
     When(Method(cm_mock_1, pdf))
             .AlwaysDo([](double observed, int state) -> double {
                 return observed * 1.9 + 0.098;
             });
+    When(Method(cm_mock_1, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock_1.get());
     Mock<ChannelModel> cm_mock_2;
     When(Method(cm_mock_2, pdf))
             .AlwaysDo([](double observed, int state) -> double {
                 return observed * 2.7 + 0.187;
             });
+    When(Method(cm_mock_2, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock_2.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -535,6 +593,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
             .AlwaysDo([](double observed, int state) -> double {
                 return 1.0 / (double)(state + 7);
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -573,6 +632,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
             .AlwaysDo([](double observed, int state) -> double {
                 return (observed + 0.042) / (double)(state + 7);
             });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 1;
@@ -632,6 +692,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
     SequencingSettings seq_settings;
@@ -695,6 +756,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 0;
@@ -796,6 +858,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     Mock<ChannelModel> cm_mock;
     When(Method(cm_mock, pdf)).AlwaysReturn(0.5);
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
     seq_model.channel_models.push_back(&cm_mock.get());
     unsigned int timestep = 1;
     SequencingSettings seq_settings;

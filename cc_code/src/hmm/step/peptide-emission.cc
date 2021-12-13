@@ -9,6 +9,9 @@
 // Defining symbols from header:
 #include "peptide-emission.h"
 
+// Standard C++ library headers:
+#include <limits>
+
 // Local project headers:
 #include "common/radiometry.h"
 #include "hmm/state-vector/peptide-state-vector.h"
@@ -41,6 +44,35 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                     radiometry(timestep, c), d);
         }
     }
+    pruned_range.min.resize(1 + num_channels);
+    pruned_range.max.resize(1 + num_channels);
+    pruned_range.min[0] = 0;
+    pruned_range.max[0] = timestep + 1;
+    if (seq_settings.dist_cutoff == std::numeric_limits<double>::max()) {
+        for (unsigned int c = 0; c < num_channels; c++) {
+            pruned_range.min[1 + c] = 0;
+            pruned_range.max[1 + c] = std::numeric_limits<unsigned int>::max();
+        }
+    } else {
+        for (unsigned int c = 0; c < num_channels; c++) {
+            for (int d = 0; d < max_num_dyes; d++) {
+                double s = seq_settings.dist_cutoff
+                           * seq_model.channel_models[c]->sigma(d);
+                if ((double)d + s > radiometry(timestep, c)) {
+                    pruned_range.min[1 + c] = d;
+                    break;
+                }
+            }
+            for (int d = pruned_range.min[1 + c]; d < max_num_dyes; d++) {
+                double s = seq_settings.dist_cutoff
+                           * seq_model.channel_models[c]->sigma(d);
+                if ((double)d - s > radiometry(timestep, c)) {
+                    pruned_range.max[1 + c] = d;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 double& PeptideEmission::prob(int channel, int num_dyes) {
@@ -51,8 +83,15 @@ double PeptideEmission::prob(int channel, int num_dyes) const {
     return values[channel * (max_num_dyes + 1) + num_dyes];
 }
 
-void PeptideEmission::prune_forward(KDRange* range, bool* allow_detached) {}
-void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {}
+void PeptideEmission::prune_forward(KDRange* range, bool* allow_detached) {
+    pruned_range = pruned_range.intersect(*range);
+    *range = pruned_range;
+}
+
+void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
+    pruned_range = pruned_range.intersect(*range);
+    *range = pruned_range;
+}
 
 void PeptideEmission::forward(unsigned int* num_edmans,
                               PeptideStateVector* psv) const {

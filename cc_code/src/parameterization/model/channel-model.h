@@ -19,7 +19,7 @@ class ChannelModel {
 public:
     virtual ~ChannelModel();
     virtual double pdf(double observed, int state) const;
-    double sigma(int state) const;
+    virtual double sigma(int state) const;
     double relative_distance(const ChannelModel& channel_model) const;
     std::string debug_string() const;
 
