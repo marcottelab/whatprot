@@ -9,6 +9,7 @@
 // Standard C++ library headers:
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 
 // Local project headers:
 #include "common/dye-seq.h"
@@ -74,7 +75,7 @@ int fit_main(int argc, char** argv) {
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = 3.0;
+    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 
