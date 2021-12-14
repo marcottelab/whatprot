@@ -25,6 +25,12 @@ class GenericHMM {
 public:
     GenericHMM(unsigned int num_timesteps) : num_timesteps(num_timesteps) {}
 
+    ~GenericHMM() {
+        for (S* s : steps) {
+            delete s;
+        }
+    }
+
     virtual V create_states() const = 0;
 
     // This computes the probability of the provided dye seq producing the

@@ -341,6 +341,7 @@ BOOST_AUTO_TEST_CASE(vector_iterator_dimension_0_test, *tolerance(TOL)) {
     (*v)[1] = 610;
     itr->advance();
     BOOST_TEST(itr->done() == false);
+    delete v;
     v = itr->get();
     BOOST_TEST((*v)[0] == 501);
     BOOST_TEST((*v)[1] == 511);
@@ -348,6 +349,7 @@ BOOST_AUTO_TEST_CASE(vector_iterator_dimension_0_test, *tolerance(TOL)) {
     (*v)[1] = 611;
     itr->advance();
     BOOST_TEST(itr->done() == false);
+    delete v;
     v = itr->get();
     BOOST_TEST((*v)[0] == 502);
     BOOST_TEST((*v)[1] == 512);
@@ -355,6 +357,7 @@ BOOST_AUTO_TEST_CASE(vector_iterator_dimension_0_test, *tolerance(TOL)) {
     (*v)[1] = 612;
     itr->advance();
     BOOST_TEST(itr->done() == true);
+    delete v;
     BOOST_TEST((t[{0, 0}]) == 600);
     BOOST_TEST((t[{0, 1}]) == 601);
     BOOST_TEST((t[{0, 2}]) == 602);
@@ -397,6 +400,7 @@ BOOST_AUTO_TEST_CASE(vector_iterator_dimension_1_test, *tolerance(TOL)) {
     (*v)[2] = 602;
     itr->advance();
     BOOST_TEST(itr->done() == false);
+    delete v;
     v = itr->get();
     BOOST_TEST((*v)[0] == 510);
     BOOST_TEST((*v)[1] == 511);
@@ -406,6 +410,7 @@ BOOST_AUTO_TEST_CASE(vector_iterator_dimension_1_test, *tolerance(TOL)) {
     (*v)[2] = 612;
     itr->advance();
     BOOST_TEST(itr->done() == true);
+    delete v;
     BOOST_TEST((t[{0, 0}]) == 600);
     BOOST_TEST((t[{0, 1}]) == 601);
     BOOST_TEST((t[{0, 2}]) == 602);
@@ -445,16 +450,19 @@ BOOST_AUTO_TEST_CASE(const_vector_iterator_dimension_0_test, *tolerance(TOL)) {
     BOOST_TEST((*v)[1] == 510);
     itr->advance();
     BOOST_TEST(itr->done() == false);
+    delete v;
     v = itr->get();
     BOOST_TEST((*v)[0] == 501);
     BOOST_TEST((*v)[1] == 511);
     itr->advance();
     BOOST_TEST(itr->done() == false);
+    delete v;
     v = itr->get();
     BOOST_TEST((*v)[0] == 502);
     BOOST_TEST((*v)[1] == 512);
     itr->advance();
     BOOST_TEST(itr->done() == true);
+    delete v;
     BOOST_TEST((t[{0, 0}]) == 500);
     BOOST_TEST((t[{0, 1}]) == 501);
     BOOST_TEST((t[{0, 2}]) == 502);
@@ -495,12 +503,14 @@ BOOST_AUTO_TEST_CASE(const_vector_iterator_dimension_1_test, *tolerance(TOL)) {
     BOOST_TEST((*v)[2] == 502);
     itr->advance();
     BOOST_TEST(itr->done() == false);
+    delete v;
     v = itr->get();
     BOOST_TEST((*v)[0] == 510);
     BOOST_TEST((*v)[1] == 511);
     BOOST_TEST((*v)[2] == 512);
     itr->advance();
     BOOST_TEST(itr->done() == true);
+    delete v;
     BOOST_TEST((t[{0, 0}]) == 500);
     BOOST_TEST((t[{0, 1}]) == 501);
     BOOST_TEST((t[{0, 2}]) == 502);

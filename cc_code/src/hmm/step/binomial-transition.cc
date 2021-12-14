@@ -78,9 +78,12 @@ void BinomialTransition::forward(unsigned int* num_edmans,
     TensorVectorIterator* itr =
             psv->tensor.vector_iterator(forward_range, 1 + channel);
     while (!itr->done()) {
-        this->forward(itr->get());
+        Vector* v = itr->get();
+        this->forward(v);
+        delete v;
         itr->advance();
     }
+    delete itr;
     psv->range = backward_range;
 }
 
@@ -106,10 +109,16 @@ void BinomialTransition::backward(const PeptideStateVector& input,
     TensorVectorIterator* out_itr =
             output->tensor.vector_iterator(forward_range, 1 + channel);
     while (!out_itr->done()) {
-        this->backward(*in_itr->get(), out_itr->get());
+        const Vector* in_v = in_itr->get();
+        Vector* out_v = out_itr->get();
+        this->backward(*in_v, out_v);
+        delete in_v;
+        delete out_v;
         in_itr->advance();
         out_itr->advance();
     }
+    delete in_itr;
+    delete out_itr;
     output->range = forward_range;
 }
 

@@ -15,7 +15,10 @@
 
 namespace whatprot {
 
-class StuckDyeStep : public Step<StuckDyeStateVector> {};
+class StuckDyeStep : public Step<StuckDyeStateVector> {
+public:
+    virtual ~StuckDyeStep() {}
+};
 
 }  // namespace whatprot
 

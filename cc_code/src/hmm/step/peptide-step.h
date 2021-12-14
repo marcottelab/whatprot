@@ -22,6 +22,8 @@ namespace whatprot {
 // the KDRange is empty, the implementations do not need to worry about this.
 class PeptideStep : public Step<PeptideStateVector> {
 public:
+    virtual ~PeptideStep() {}
+
     // The range given is the result from the previous step. Modifications to
     // the range for use by the next step should be stored back into the
     // provided range object. Similarly allow_detached indicates whether the
