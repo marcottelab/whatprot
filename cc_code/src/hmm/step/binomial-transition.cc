@@ -155,11 +155,7 @@ void BinomialTransition::improve_fit(
         const Vector* f_v = f_itr->get();
         const Vector* b_v = b_itr->get();
         const Vector* nb_v = nb_itr->get();
-        this->improve_fit(*f_v,
-                          *b_v,
-                          *nb_v,
-                          probability,
-                          fitter);
+        this->improve_fit(*f_v, *b_v, *nb_v, probability, fitter);
         delete f_v;
         delete b_v;
         delete nb_v;
