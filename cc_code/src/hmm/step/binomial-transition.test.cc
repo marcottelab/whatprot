@@ -248,6 +248,10 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 1};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 1};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -266,6 +270,10 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -286,6 +294,10 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 3};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -302,12 +314,45 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     BOOST_TEST((psv.tensor[{0, 2}]) == 0.7 * p * p);
 }
 
+BOOST_AUTO_TEST_CASE(forward_in_place_pruned_transition_test, *tolerance(TOL)) {
+    double q = 0.05;
+    double p = 0.95;
+    int channel = 0;
+    TestableBinomialTransition bt(q, channel);
+    bt.reserve(2);
+    bt.forward_range.min = {0, 2};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 1};
+    bt.backward_range.max = {1, 2};
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    shape[1] = 4;
+    PeptideStateVector psv(order, shape);
+    delete[] shape;
+    psv.tensor[{0, 0}] = 0.2;
+    psv.tensor[{0, 1}] = 0.3;
+    psv.tensor[{0, 2}] = 0.7;
+    psv.tensor[{0, 3}] = 0.9;
+    unsigned int edmans = 0;
+    bt.forward(&edmans, &psv);
+    BOOST_TEST((psv.tensor[{0, 1}]) == 0.7 * 2 * q * p);
+    BOOST_TEST(psv.range.min[0] == 0u);
+    BOOST_TEST(psv.range.min[1] == 1u);
+    BOOST_TEST(psv.range.max[0] == 1u);
+    BOOST_TEST(psv.range.max[1] == 2u);
+}
+
 BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {3, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {3, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
@@ -336,6 +381,10 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     int channel = 1;  // corresponds to 2nd dim of tensor
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0, 0, 0};
+    bt.forward_range.max = {1, 2, 2, 2};
+    bt.backward_range.min = {0, 0, 0, 0};
+    bt.backward_range.max = {1, 2, 2, 2};
     unsigned int order = 4;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -369,6 +418,10 @@ BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 1};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 1};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -386,6 +439,10 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 1};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 1};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -405,6 +462,10 @@ BOOST_AUTO_TEST_CASE(backward_in_place_basic_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -425,6 +486,10 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -447,6 +512,10 @@ BOOST_AUTO_TEST_CASE(backward_in_place_bigger_transition_test,
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 3};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -470,6 +539,10 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 3};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -488,12 +561,76 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
                == q * q * 0.2 + 2 * q * p * 0.3 + p * p * 0.7);
 }
 
+BOOST_AUTO_TEST_CASE(backward_in_place_pruned_transition_test,
+                     *tolerance(TOL)) {
+    double q = 0.05;
+    double p = 0.95;
+    int channel = 0;
+    TestableBinomialTransition bt(q, channel);
+    bt.reserve(2);
+    bt.forward_range.min = {0, 2};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 1};
+    bt.backward_range.max = {1, 2};
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    shape[1] = 4;
+    PeptideStateVector psv(order, shape);
+    delete[] shape;
+    psv.tensor[{0, 0}] = 0.2;
+    psv.tensor[{0, 1}] = 0.3;
+    psv.tensor[{0, 2}] = 0.7;
+    psv.tensor[{0, 3}] = 0.9;
+    unsigned int edmans = 0;
+    bt.backward(psv, &edmans, &psv);
+    BOOST_TEST((psv.tensor[{0, 2}]) == 2 * q * p * 0.3);
+    BOOST_TEST(psv.range.min[0] == 0u);
+    BOOST_TEST(psv.range.min[1] == 2u);
+    BOOST_TEST(psv.range.max[0] == 1u);
+    BOOST_TEST(psv.range.max[1] == 3u);
+}
+
+BOOST_AUTO_TEST_CASE(backward_new_tsr_pruned_transition_test, *tolerance(TOL)) {
+    double q = 0.05;
+    double p = 0.95;
+    int channel = 0;
+    TestableBinomialTransition bt(q, channel);
+    bt.reserve(2);
+    bt.forward_range.min = {0, 2};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 1};
+    bt.backward_range.max = {1, 2};
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    shape[1] = 4;
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
+    delete[] shape;
+    psv1.tensor[{0, 0}] = 0.2;
+    psv1.tensor[{0, 1}] = 0.3;
+    psv1.tensor[{0, 2}] = 0.7;
+    psv1.tensor[{0, 3}] = 0.9;
+    unsigned int edmans = 0;
+    bt.backward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 2}]) == 2 * q * p * 0.3);
+    BOOST_TEST(psv2.range.min[0] == 0u);
+    BOOST_TEST(psv2.range.min[1] == 2u);
+    BOOST_TEST(psv2.range.max[0] == 1u);
+    BOOST_TEST(psv2.range.max[1] == 3u);
+}
+
 BOOST_AUTO_TEST_CASE(backward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {3, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {3, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
@@ -522,6 +659,10 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {3, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {3, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
@@ -551,6 +692,10 @@ BOOST_AUTO_TEST_CASE(backward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     int channel = 1;  // corresponds to 2nd dim of tensor
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0, 0, 0};
+    bt.forward_range.max = {1, 2, 2, 2};
+    bt.backward_range.min = {0, 0, 0, 0};
+    bt.backward_range.max = {1, 2, 2, 2};
     unsigned int order = 4;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -585,6 +730,10 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
     int channel = 1;  // corresponds to 2nd dim of tensor
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0, 0, 0};
+    bt.forward_range.max = {1, 2, 2, 2};
+    bt.backward_range.min = {0, 0, 0, 0};
+    bt.backward_range.max = {1, 2, 2, 2};
     unsigned int order = 4;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -619,6 +768,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_trivial_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(0);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 1};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 1};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -643,6 +796,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -670,6 +827,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(2);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 3};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 3};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -702,6 +863,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {2, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {2, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
@@ -736,6 +901,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0, 0};
+    bt.forward_range.max = {1, 2, 2};
+    bt.backward_range.min = {0, 0, 0};
+    bt.backward_range.max = {1, 2, 2};
     unsigned int order = 3;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -771,6 +940,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_different_probability_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -797,6 +970,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
