@@ -143,24 +143,33 @@ void BinomialTransition::improve_fit(
         unsigned int num_edmans,
         double probability,
         ParameterFitter* fitter) const {
-    int vector_stride = forward_psv.tensor.strides[1 + channel];
-    int vector_length = forward_psv.tensor.shape[1 + channel];
-    int outer_stride = vector_stride * vector_length;
-    int outer_max = forward_psv.tensor.strides[0] * (num_edmans + 1);
-    for (int outer = 0; outer < outer_max; outer += outer_stride) {
-        for (int inner = 0; inner < vector_stride; inner++) {
-            const Vector fv(vector_length,
-                            vector_stride,
-                            &forward_psv.tensor.values[outer + inner]);
-            const Vector bv(vector_length,
-                            vector_stride,
-                            &backward_psv.tensor.values[outer + inner]);
-            const Vector nbv(vector_length,
-                             vector_stride,
-                             &next_backward_psv.tensor.values[outer + inner]);
-            this->improve_fit(fv, bv, nbv, probability, fitter);
-        }
+    ConstTensorVectorIterator* f_itr = forward_psv.tensor.const_vector_iterator(
+            forward_range, 1 + channel);
+    ConstTensorVectorIterator* b_itr =
+            backward_psv.tensor.const_vector_iterator(forward_range,
+                                                      1 + channel);
+    ConstTensorVectorIterator* nb_itr =
+            next_backward_psv.tensor.const_vector_iterator(backward_range,
+                                                           1 + channel);
+    while (!f_itr->done()) {
+        const Vector* f_v = f_itr->get();
+        const Vector* b_v = b_itr->get();
+        const Vector* nb_v = nb_itr->get();
+        this->improve_fit(*f_v,
+                          *b_v,
+                          *nb_v,
+                          probability,
+                          fitter);
+        delete f_v;
+        delete b_v;
+        delete nb_v;
+        f_itr->advance();
+        b_itr->advance();
+        nb_itr->advance();
     }
+    delete f_itr;
+    delete b_itr;
+    delete nb_itr;
 }
 
 void BinomialTransition::improve_fit(const Vector& forward_vector,
@@ -168,16 +177,20 @@ void BinomialTransition::improve_fit(const Vector& forward_vector,
                                      const Vector& next_backward_vector,
                                      double probability,
                                      ParameterFitter* fitter) const {
+    int from_min = forward_range.min[1 + channel];
+    int from_max = forward_range.max[1 + channel];
     // Note that we can ignore when starting location (from) is 0 because then
     // there are no dyes, it's irrelevant. We would be adding 0s.
-    for (int from = forward_vector.length - 1; from > 0; from--) {
+    for (int from = from_max - 1; from >= std::max(from_min, 1); from--) {
         double p_state =
                 forward_vector[from] * backward_vector[from] / probability;
         fitter->denominator += p_state * (double)from;
+        int to_min = backward_range.min[1 + channel];
+        int to_max = backward_range.max[1 + channel];
         // We can ignore when to and from are equal, because no dyes are lost
         // then, so it gives us nothing else for the numerator; we would be
         // adding zero.
-        for (int to = 0; to < from; to++) {
+        for (int to = to_min; to < std::min(to_max, from); to++) {
             double p_transition = forward_vector[from] * prob(from, to)
                                   * next_backward_vector[to] / probability;
             fitter->numerator += p_transition * (double)(from - to);

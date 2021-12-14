@@ -40,6 +40,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     int channel = 0;
     BleachTransition bt(q, channel);
     bt.reserve(1);
+    bt.forward_range.min = {0, 0};
+    bt.forward_range.max = {1, 2};
+    bt.backward_range.min = {0, 0};
+    bt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;

@@ -40,6 +40,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     int channel = 0;
     DudTransition dt(q, channel);
     dt.reserve(1);
+    dt.forward_range.min = {0, 0};
+    dt.forward_range.max = {1, 2};
+    dt.backward_range.min = {0, 0};
+    dt.backward_range.max = {1, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
