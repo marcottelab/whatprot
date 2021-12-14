@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(prune_forward_test) {
     double p_fail = 0.05;
     unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
+    unsigned int num_channels = 2;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(prune_forward_test) {
 BOOST_AUTO_TEST_CASE(prune_backward_test) {
     double p_fail = 0.05;
     unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
+    unsigned int num_channels = 2;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);

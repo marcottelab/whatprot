@@ -57,6 +57,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = 3.0;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -111,6 +112,7 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = 3.0;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);
@@ -153,6 +155,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = 3.0;
     int max_num_dyes = 3;
     UniversalPrecomputations universal_precomputations(seq_model, num_channels);
     universal_precomputations.set_max_num_dyes(max_num_dyes);

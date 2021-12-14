@@ -28,7 +28,7 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
 void EdmanTransition::prune_forward(KDRange* range, bool* allow_detached) {
     forward_range = *range;
     range->max[0]++;
-    for (unsigned int c = 0; c < range->min.size(); c++) {
+    for (unsigned int c = 0; c < range->min.size() - 1; c++) {
         if (range->min[1 + c] != 0) {
             range->min[1 + c]--;
         }
@@ -42,7 +42,7 @@ void EdmanTransition::prune_backward(KDRange* range, bool* allow_detached) {
     if (range->min[0] != 0) {
         range->min[0]--;
     }
-    for (unsigned int c = 0; c < range->min.size(); c++) {
+    for (unsigned int c = 0; c < range->min.size() - 1; c++) {
         range->max[1 + c]++;
     }
     *range = forward_range.intersect(*range);
