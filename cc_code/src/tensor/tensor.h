@@ -29,7 +29,7 @@ public:
     double& operator[](const unsigned int* loc);
     // This next function is probably not useful in production, but is very
     // helpful for readable tests. Note that, unfortunately, lines of code like
-    //   - BOOST_TEST((t[{1, 2}]) == 314);
+    //   - BOOST_TEST(t[{1, 2}] == 314);
     // will not work because they mess up the Boost testing templates. Instead
     // do something like
     //   - BOOST_TEST((t[{1, 2}]) == 314);
