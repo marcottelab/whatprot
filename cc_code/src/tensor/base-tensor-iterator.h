@@ -54,6 +54,17 @@ public:
         }
     }
 
+    void set_to_last() {
+        index = 0;
+        unsigned int stride = 1;  // step size for current value of o.
+        // Need to use signed int o to detect when out of entries to decrease.
+        for (int o = order - 1; o >= 0; o--) {
+            loc[o] = range.max[o] - 1;
+            index += stride * (range.max[o] - 1);
+            stride *= shape[o];
+        }
+    }
+
     void advance() {
         index++;
         unsigned int stride = 1;  // step size for current value of o.
@@ -70,6 +81,28 @@ public:
                 // Stride needs to be raised to account for one more dimension.
                 stride *= shape[o];
                 loc[o] = range.min[o];
+            }
+        }
+        // Can only get here if we reset every order of the tensor, which means
+        // we're done.
+        is_done = true;
+    }
+
+    void retreat() {
+        index--;
+        unsigned int stride = 1;  // step size for current value of o.
+        // Need to use signed int o to detect when out of entries to decrease.
+        for (int o = order - 1; o >= 0; o--) {
+            if (loc[o] > range.min[o]) {
+                loc[o]--;
+                return;
+            } else {
+                // (range.min[o] + shape[o] - range.max[o]) is the number of
+                // entries for this order between the max of one set of numbers
+                // in range to the min of the next.
+                index -= stride * (range.min[o] + shape[o] - range.max[o]);
+                stride *= shape[o];
+                loc[o] = range.max[o] - 1;
             }
         }
         // Can only get here if we reset every order of the tensor, which means
