@@ -6,10 +6,6 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-// These tests may benefit from using a mocking framework. If a mocking
-// framework is added to this code base in the future many of these tests should
-// be revisited with that in mind.
-
 // Boost unit test framework (recommended to be the first include):
 #include <boost/test/unit_test.hpp>
 
