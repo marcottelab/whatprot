@@ -73,21 +73,30 @@ void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {
     *range = forward_range;
 }
 
-void BinomialTransition::forward(unsigned int* num_edmans,
-                                 PeptideStateVector* psv) const {
-    TensorVectorIterator* itr =
-            psv->tensor.vector_iterator(forward_range, 1 + channel);
-    while (!itr->done()) {
-        Vector* v = itr->get();
-        this->forward(v);
-        delete v;
-        itr->advance();
+void BinomialTransition::forward(const PeptideStateVector& input,
+                                 unsigned int* num_edmans,
+                                 PeptideStateVector* output) const {
+    // Mismatched range is OK, range should only differ on the channel being
+    // processed.
+    ConstTensorVectorIterator* in_itr =
+            input.tensor.const_vector_iterator(forward_range, 1 + channel);
+    TensorVectorIterator* out_itr =
+            output->tensor.vector_iterator(backward_range, 1 + channel);
+    while (!in_itr->done()) {
+        const Vector* in_v = in_itr->get();
+        Vector* out_v = out_itr->get();
+        this->forward(*in_v, out_v);
+        delete in_v;
+        delete out_v;
+        in_itr->advance();
+        out_itr->advance();
     }
-    delete itr;
-    psv->range = backward_range;
+    delete in_itr;
+    delete out_itr;
+    output->range = backward_range;
 }
 
-void BinomialTransition::forward(Vector* v) const {
+void BinomialTransition::forward(const Vector& input, Vector* output) const {
     unsigned int to_min = backward_range.min[1 + channel];
     unsigned int to_max = backward_range.max[1 + channel];
     for (unsigned int to = to_min; to < to_max; to++) {
@@ -95,9 +104,9 @@ void BinomialTransition::forward(Vector* v) const {
         unsigned int from_min = std::max(to, forward_range.min[1 + channel]);
         unsigned int from_max = forward_range.max[1 + channel];
         for (unsigned int from = from_min; from < from_max; from++) {
-            v_to += prob(from, to) * (*v)[from];
+            v_to += prob(from, to) * input[from];
         }
-        (*v)[to] = v_to;
+        (*output)[to] = v_to;
     }
 }
 

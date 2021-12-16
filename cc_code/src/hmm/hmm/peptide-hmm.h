@@ -30,7 +30,7 @@ public:
                const DyeSeqPrecomputations& dye_seq_precomputations,
                const RadiometryPrecomputations& radiometry_precomputations,
                const UniversalPrecomputations& universal_precomputations);
-    virtual PeptideStateVector create_states() const override;
+    virtual PeptideStateVector* create_states() const override;
     std::vector<unsigned int> tensor_shape;
 };
 

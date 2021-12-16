@@ -93,30 +93,9 @@ void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
     *range = pruned_range;
 }
 
-void PeptideEmission::forward(unsigned int* num_edmans,
-                              PeptideStateVector* psv) const {
-    KDRange range;
-    range.min.resize(1 + num_channels);
-    range.max.resize(1 + num_channels);
-    for (unsigned int o = 0; o < 1 + num_channels; o++) {
-        range.min[o] = 0;
-        range.max[o] = psv->tensor.shape[o];
-    }
-    TensorIterator* it = psv->tensor.iterator(range);
-    while (it->index < (*num_edmans + 1) * psv->tensor.strides[0]) {
-        double product = 1.0;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            product *= prob(c, it->loc[1 + c]);
-        }
-        *it->get() = *it->get() * product;
-        it->advance();
-    }
-    delete it;
-}
-
-void PeptideEmission::backward(const PeptideStateVector& input,
-                               unsigned int* num_edmans,
-                               PeptideStateVector* output) const {
+void PeptideEmission::forward(const PeptideStateVector& input,
+                              unsigned int* num_edmans,
+                              PeptideStateVector* output) const {
     KDRange range;
     range.min.resize(1 + num_channels);
     range.max.resize(1 + num_channels);
@@ -137,6 +116,12 @@ void PeptideEmission::backward(const PeptideStateVector& input,
     }
     delete inputit;
     delete outputit;
+}
+
+void PeptideEmission::backward(const PeptideStateVector& input,
+                               unsigned int* num_edmans,
+                               PeptideStateVector* output) const {
+    forward(input, num_edmans, output);
 }
 
 void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,

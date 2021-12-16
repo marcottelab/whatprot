@@ -28,8 +28,9 @@ public:
                      const SequencingModel& seq_model);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(unsigned int* num_edmans,
-                         StuckDyeStateVector* sdsv) const override;
+    virtual void forward(const StuckDyeStateVector& input,
+                         unsigned int* num_edmans,
+                         StuckDyeStateVector* output) const override;
     virtual void backward(const StuckDyeStateVector& input,
                           unsigned int* num_edmans,
                           StuckDyeStateVector* output) const override;

@@ -235,12 +235,13 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
-    StuckDyeStateVector sdsv;
-    sdsv.dye = 0.7;
-    sdsv.no_dye = 0.3;
-    e.forward(&num_edmans, &sdsv);
-    BOOST_TEST(sdsv.no_dye == 0.3 * cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(sdsv.dye == 0.7 * cm_mock.get().pdf(1.0, 1));
+    StuckDyeStateVector sdsv1;
+    StuckDyeStateVector sdsv2;
+    sdsv1.dye = 0.7;
+    sdsv1.no_dye = 0.3;
+    e.forward(sdsv1, &num_edmans, &sdsv2);
+    BOOST_TEST(sdsv2.no_dye == 0.3 * cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST(sdsv2.dye == 0.7 * cm_mock.get().pdf(1.0, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -261,12 +262,13 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timestamps_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 1;
-    StuckDyeStateVector sdsv;
-    sdsv.dye = 0.7;
-    sdsv.no_dye = 0.3;
-    e.forward(&num_edmans, &sdsv);
-    BOOST_TEST(sdsv.no_dye == 0.3 * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv.dye == 0.7 * cm_mock.get().pdf(1.1, 1));
+    StuckDyeStateVector sdsv1;
+    StuckDyeStateVector sdsv2;
+    sdsv1.dye = 0.7;
+    sdsv1.no_dye = 0.3;
+    e.forward(sdsv1, &num_edmans, &sdsv2);
+    BOOST_TEST(sdsv2.no_dye == 0.3 * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST(sdsv2.dye == 0.7 * cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -288,13 +290,14 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
-    StuckDyeStateVector sdsv;
-    sdsv.dye = 0.7;
-    sdsv.no_dye = 0.3;
-    e.forward(&num_edmans, &sdsv);
-    BOOST_TEST(sdsv.no_dye
+    StuckDyeStateVector sdsv1;
+    StuckDyeStateVector sdsv2;
+    sdsv1.dye = 0.7;
+    sdsv1.no_dye = 0.3;
+    e.forward(sdsv1, &num_edmans, &sdsv2);
+    BOOST_TEST(sdsv2.no_dye
                == 0.3 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv.dye
+    BOOST_TEST(sdsv2.dye
                == 0.7 * cm_mock.get().pdf(1.0, 1) * cm_mock.get().pdf(1.1, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -318,13 +321,14 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_other_channel_test,
     seq_model.channel_models.push_back(&cm_mock.get());
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
-    StuckDyeStateVector sdsv;
-    sdsv.dye = 0.7;
-    sdsv.no_dye = 0.3;
-    e.forward(&num_edmans, &sdsv);
-    BOOST_TEST(sdsv.no_dye
+    StuckDyeStateVector sdsv1;
+    StuckDyeStateVector sdsv2;
+    sdsv1.dye = 0.7;
+    sdsv1.no_dye = 0.3;
+    e.forward(sdsv1, &num_edmans, &sdsv2);
+    BOOST_TEST(sdsv2.no_dye
                == 0.3 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv.dye
+    BOOST_TEST(sdsv2.dye
                == 0.7 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -353,166 +357,15 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     seq_model.channel_models.push_back(&cm_mock_1.get());
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
-    StuckDyeStateVector sdsv;
-    sdsv.dye = 0.7;
-    sdsv.no_dye = 0.3;
-    e.forward(&num_edmans, &sdsv);
-    BOOST_TEST(sdsv.no_dye
+    StuckDyeStateVector sdsv1;
+    StuckDyeStateVector sdsv2;
+    sdsv1.dye = 0.7;
+    sdsv1.no_dye = 0.3;
+    e.forward(sdsv1, &num_edmans, &sdsv2);
+    BOOST_TEST(sdsv2.no_dye
                == 0.3 * cm_mock_0.get().pdf(1.0, 0)
                           * cm_mock_1.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv.dye
-               == 0.7 * cm_mock_0.get().pdf(1.0, 1)
-                          * cm_mock_1.get().pdf(1.1, 0));
-    // Avoid double clean-up:
-    seq_model.channel_models.resize(0);
-}
-
-BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    unsigned int channel = 0;
-    SequencingModel seq_model;
-    Mock<ChannelModel> cm_mock;
-    When(Method(cm_mock, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return observed + 0.23 * (double)state;
-            });
-    seq_model.channel_models.push_back(&cm_mock.get());
-    StuckDyeEmission e(rad, channel, seq_model);
-    unsigned int num_edmans = 0;
-    StuckDyeStateVector input;
-    input.dye = 0.7;
-    input.no_dye = 0.3;
-    StuckDyeStateVector output;
-    e.backward(input, &num_edmans, &output);
-    BOOST_TEST(output.no_dye == 0.3 * cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(output.dye == 0.7 * cm_mock.get().pdf(1.0, 1));
-    // Avoid double clean-up:
-    seq_model.channel_models.resize(0);
-}
-
-BOOST_AUTO_TEST_CASE(backward_multiple_timestamps_test, *tolerance(TOL)) {
-    unsigned int num_timesteps = 2;
-    unsigned int num_channels = 1;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    rad(1, 0) = 1.1;
-    unsigned int channel = 0;
-    SequencingModel seq_model;
-    Mock<ChannelModel> cm_mock;
-    When(Method(cm_mock, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return observed + 0.23 * (double)state;
-            });
-    seq_model.channel_models.push_back(&cm_mock.get());
-    StuckDyeEmission e(rad, channel, seq_model);
-    unsigned int num_edmans = 1;
-    StuckDyeStateVector input;
-    input.dye = 0.7;
-    input.no_dye = 0.3;
-    StuckDyeStateVector output;
-    e.backward(input, &num_edmans, &output);
-    BOOST_TEST(output.no_dye == 0.3 * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(output.dye == 0.7 * cm_mock.get().pdf(1.1, 1));
-    // Avoid double clean-up:
-    seq_model.channel_models.resize(0);
-}
-
-BOOST_AUTO_TEST_CASE(backward_multiple_channels_test, *tolerance(TOL)) {
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 2;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    rad(0, 1) = 1.1;
-    unsigned int channel = 0;
-    SequencingModel seq_model;
-    Mock<ChannelModel> cm_mock;
-    When(Method(cm_mock, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return observed + 0.23 * (double)state;
-            });
-    seq_model.channel_models.push_back(&cm_mock.get());
-    seq_model.channel_models.push_back(&cm_mock.get());
-    StuckDyeEmission e(rad, channel, seq_model);
-    unsigned int num_edmans = 0;
-    StuckDyeStateVector input;
-    input.dye = 0.7;
-    input.no_dye = 0.3;
-    StuckDyeStateVector output;
-    e.backward(input, &num_edmans, &output);
-    BOOST_TEST(output.no_dye
-               == 0.3 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(output.dye
-               == 0.7 * cm_mock.get().pdf(1.0, 1) * cm_mock.get().pdf(1.1, 0));
-    // Avoid double clean-up:
-    seq_model.channel_models.resize(0);
-}
-
-BOOST_AUTO_TEST_CASE(backward_multiple_channels_other_channel_test,
-                     *tolerance(TOL)) {
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 2;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    rad(0, 1) = 1.1;
-    unsigned int channel = 1;
-    SequencingModel seq_model;
-    Mock<ChannelModel> cm_mock;
-    When(Method(cm_mock, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return observed + 0.23 * (double)state;
-            });
-    seq_model.channel_models.push_back(&cm_mock.get());
-    seq_model.channel_models.push_back(&cm_mock.get());
-    StuckDyeEmission e(rad, channel, seq_model);
-    unsigned int num_edmans = 0;
-    StuckDyeStateVector input;
-    input.dye = 0.7;
-    input.no_dye = 0.3;
-    StuckDyeStateVector output;
-    e.backward(input, &num_edmans, &output);
-    BOOST_TEST(output.no_dye
-               == 0.3 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(output.dye
-               == 0.7 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 1));
-    // Avoid double clean-up:
-    seq_model.channel_models.resize(0);
-}
-
-BOOST_AUTO_TEST_CASE(backward_multiple_channels_different_pdfs_test,
-                     *tolerance(TOL)) {
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 2;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    rad(0, 1) = 1.1;
-    unsigned int channel = 0;
-    SequencingModel seq_model;
-    Mock<ChannelModel> cm_mock_0;
-    When(Method(cm_mock_0, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return observed + 0.23 * (double)state;
-            });
-    seq_model.channel_models.push_back(&cm_mock_0.get());
-    Mock<ChannelModel> cm_mock_1;
-    When(Method(cm_mock_1, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return 2.1 * observed + 0.49 * (double)state;
-            });
-    seq_model.channel_models.push_back(&cm_mock_1.get());
-    StuckDyeEmission e(rad, channel, seq_model);
-    unsigned int num_edmans = 0;
-    StuckDyeStateVector input;
-    input.dye = 0.7;
-    input.no_dye = 0.3;
-    StuckDyeStateVector output;
-    e.backward(input, &num_edmans, &output);
-    BOOST_TEST(output.no_dye
-               == 0.3 * cm_mock_0.get().pdf(1.0, 0)
-                          * cm_mock_1.get().pdf(1.1, 0));
-    BOOST_TEST(output.dye
+    BOOST_TEST(sdsv2.dye
                == 0.7 * cm_mock_0.get().pdf(1.0, 1)
                           * cm_mock_1.get().pdf(1.1, 0));
     // Avoid double clean-up:

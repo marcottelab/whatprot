@@ -67,8 +67,8 @@ PeptideHMM::PeptideHMM(
     }
 }
 
-PeptideStateVector PeptideHMM::create_states() const {
-    return PeptideStateVector(tensor_shape.size(), &tensor_shape[0]);
+PeptideStateVector* PeptideHMM::create_states() const {
+    return new PeptideStateVector(tensor_shape.size(), &tensor_shape[0]);
 }
 
 }  // namespace whatprot

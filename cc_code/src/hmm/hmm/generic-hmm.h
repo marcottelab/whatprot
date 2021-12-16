@@ -31,7 +31,7 @@ public:
         }
     }
 
-    virtual V create_states() const = 0;
+    virtual V* create_states() const = 0;
 
     // This computes the probability of the provided dye seq producing the
     // provided radiometry. To do this efficiently, it uses a modified version
@@ -39,13 +39,18 @@ public:
     double probability() const {
         unsigned int num_edmans = 0;
         auto step = steps.begin();  // const_iterator type
-        V states = create_states();
-        states.initialize_from_start();
+        V* states_in = create_states();
+        states_in->initialize_from_start();
         while (step != steps.end()) {
-            (*step)->forward(&num_edmans, &states);
+            V* states_out = create_states();
+            (*step)->forward(*states_in, &num_edmans, states_out);
+            delete states_in;
+            states_in = states_out;
             step++;
         }
-        return states.sum();
+        double result = states_in->sum();
+        delete states_in;
+        return result;
     }
 
     // This will fit the data the HMM was provided with. It also computes the
@@ -56,20 +61,20 @@ public:
         // Edman is done before the zeroth timestep.
         unsigned int num_edmans = num_timesteps - 1;
         auto step = steps.end();  // const_iterator type
-        std::vector<V> backward_sv;
+        std::vector<V*> backward_sv;
         backward_sv.reserve(steps.size());
         // For efficiency, backwards_states is in the reverse order of what we
         // would like. Yes this is confusing...
         backward_sv.push_back(create_states());
-        backward_sv.back().initialize_from_finish();
+        backward_sv.back()->initialize_from_finish();
         while (step != steps.begin()) {
             step--;
+            V* right_states = backward_sv.back();
             backward_sv.push_back(create_states());
-            V* left_states = &backward_sv.back();
-            const V& right_states = *(&backward_sv.back() - 1);
-            (*step)->backward(right_states, &num_edmans, left_states);
+            V* left_states = backward_sv.back();
+            (*step)->backward(*right_states, &num_edmans, left_states);
         }
-        double probability = backward_sv.back().source();
+        double probability = backward_sv.back()->source();
         // We will end up adding NaN results to the fitter if the probability is
         // 0, because the numerators and denominators of parameter estimates
         // will both be 0 - parameter estimates are less than or equal to the
@@ -81,19 +86,25 @@ public:
             return probability;
         }
         auto backward_states = backward_sv.end();  // iterator type
-        V forward_states = create_states();
-        forward_states.initialize_from_start();
+        V* forward_states = create_states();
+        forward_states->initialize_from_start();
         while (step != steps.end()) {
             backward_states--;
-            (*step)->improve_fit(forward_states,
-                                 *backward_states,
-                                 *(backward_states - 1),
+            (*step)->improve_fit(*forward_states,
+                                 **backward_states,
+                                 **(backward_states - 1),
                                  num_edmans,
                                  probability,
                                  fitter);
-            (*step)->forward(&num_edmans, &forward_states);
+            delete *backward_states;
+            V* next_forward_states = create_states();
+            (*step)->forward(*forward_states, &num_edmans, next_forward_states);
+            delete forward_states;
+            forward_states = next_forward_states;
             step++;
         }
+        delete forward_states;
+        delete *(backward_states - 1);
         return probability;
     }
     std::vector<S*> steps;

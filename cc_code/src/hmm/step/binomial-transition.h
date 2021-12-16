@@ -30,9 +30,10 @@ public:
     double prob(unsigned int from, unsigned int to) const;
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
-    virtual void forward(unsigned int* num_edmans,
-                         PeptideStateVector* psv) const override;
-    void forward(Vector* v) const;
+    virtual void forward(const PeptideStateVector& input,
+                         unsigned int* num_edmans,
+                         PeptideStateVector* output) const override;
+    void forward(const Vector& input, Vector* output) const;
     virtual void backward(const PeptideStateVector& input,
                           unsigned int* num_edmans,
                           PeptideStateVector* output) const override;

@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(prune_backward_other_channel_test, *tolerance(TOL)) {
     BOOST_TEST(range.max[1] == 5u);
     BOOST_TEST(range.max[2] == 10u);
 }
-BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
@@ -256,15 +256,16 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 1.0;
+    psv1.tensor[{0, 0}] = 1.0;
     unsigned int edmans = 0;
-    bt.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 1.0);
+    bt.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_basic_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -278,17 +279,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_transition_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
+    psv1.tensor[{0, 0}] = 0.3;
+    psv1.tensor[{0, 1}] = 0.7;
     unsigned int edmans = 0;
-    bt.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.3 + 0.7 * q);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.7 * p);
+    bt.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.3 + 0.7 * q);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.7 * p);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_bigger_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -302,19 +304,20 @@ BOOST_AUTO_TEST_CASE(forward_in_place_bigger_transition_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 3;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{0, 1}] = 0.3;
-    psv.tensor[{0, 2}] = 0.7;
+    psv1.tensor[{0, 0}] = 0.2;
+    psv1.tensor[{0, 1}] = 0.3;
+    psv1.tensor[{0, 2}] = 0.7;
     unsigned int edmans = 0;
-    bt.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.2 + 0.3 * q + 0.7 * q * q);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.3 * p + 0.7 * 2 * q * p);
-    BOOST_TEST((psv.tensor[{0, 2}]) == 0.7 * p * p);
+    bt.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.2 + 0.3 * q + 0.7 * q * q);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.3 * p + 0.7 * 2 * q * p);
+    BOOST_TEST((psv2.tensor[{0, 2}]) == 0.7 * p * p);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_pruned_transition_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_pruned_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -328,22 +331,23 @@ BOOST_AUTO_TEST_CASE(forward_in_place_pruned_transition_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 4;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{0, 1}] = 0.3;
-    psv.tensor[{0, 2}] = 0.7;
-    psv.tensor[{0, 3}] = 0.9;
+    psv1.tensor[{0, 0}] = 0.2;
+    psv1.tensor[{0, 1}] = 0.3;
+    psv1.tensor[{0, 2}] = 0.7;
+    psv1.tensor[{0, 3}] = 0.9;
     unsigned int edmans = 0;
-    bt.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.7 * 2 * q * p);
-    BOOST_TEST(psv.range.min[0] == 0u);
-    BOOST_TEST(psv.range.min[1] == 1u);
-    BOOST_TEST(psv.range.max[0] == 1u);
-    BOOST_TEST(psv.range.max[1] == 2u);
+    bt.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.7 * 2 * q * p);
+    BOOST_TEST(psv2.range.min[0] == 0u);
+    BOOST_TEST(psv2.range.min[1] == 1u);
+    BOOST_TEST(psv2.range.max[0] == 1u);
+    BOOST_TEST(psv2.range.max[1] == 2u);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -357,25 +361,26 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_edmans_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{0, 1}] = 0.8;
-    psv.tensor[{1, 0}] = 0.3;
-    psv.tensor[{1, 1}] = 0.7;
-    psv.tensor[{2, 0}] = 0.4;
-    psv.tensor[{2, 1}] = 0.6;
+    psv1.tensor[{0, 0}] = 0.2;
+    psv1.tensor[{0, 1}] = 0.8;
+    psv1.tensor[{1, 0}] = 0.3;
+    psv1.tensor[{1, 1}] = 0.7;
+    psv1.tensor[{2, 0}] = 0.4;
+    psv1.tensor[{2, 1}] = 0.6;
     unsigned int edmans = 2;
-    bt.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.2 + 0.8 * q);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.8 * p);
-    BOOST_TEST((psv.tensor[{1, 0}]) == 0.3 + 0.7 * q);
-    BOOST_TEST((psv.tensor[{1, 1}]) == 0.7 * p);
-    BOOST_TEST((psv.tensor[{2, 0}]) == 0.4 + 0.6 * q);
-    BOOST_TEST((psv.tensor[{2, 1}]) == 0.6 * p);
+    bt.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.2 + 0.8 * q);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.8 * p);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == 0.3 + 0.7 * q);
+    BOOST_TEST((psv2.tensor[{1, 1}]) == 0.7 * p);
+    BOOST_TEST((psv2.tensor[{2, 0}]) == 0.4 + 0.6 * q);
+    BOOST_TEST((psv2.tensor[{2, 1}]) == 0.6 * p);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_other_dye_colors_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 1;  // corresponds to 2nd dim of tensor
@@ -391,50 +396,30 @@ BOOST_AUTO_TEST_CASE(forward_in_place_other_dye_colors_test, *tolerance(TOL)) {
     shape[1] = 2;
     shape[2] = 2;
     shape[3] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0, 0, 0}] = 0.1;
-    psv.tensor[{0, 0, 0, 1}] = 0.2;
-    psv.tensor[{0, 0, 1, 0}] = 0.3;
-    psv.tensor[{0, 0, 1, 1}] = 0.4;
-    psv.tensor[{0, 1, 0, 0}] = 0.5;
-    psv.tensor[{0, 1, 0, 1}] = 0.6;
-    psv.tensor[{0, 1, 1, 0}] = 0.7;
-    psv.tensor[{0, 1, 1, 1}] = 0.8;
+    psv1.tensor[{0, 0, 0, 0}] = 0.1;
+    psv1.tensor[{0, 0, 0, 1}] = 0.2;
+    psv1.tensor[{0, 0, 1, 0}] = 0.3;
+    psv1.tensor[{0, 0, 1, 1}] = 0.4;
+    psv1.tensor[{0, 1, 0, 0}] = 0.5;
+    psv1.tensor[{0, 1, 0, 1}] = 0.6;
+    psv1.tensor[{0, 1, 1, 0}] = 0.7;
+    psv1.tensor[{0, 1, 1, 1}] = 0.8;
     unsigned int edmans = 0;
-    bt.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0, 0, 0}]) == 0.1 + 0.3 * q);
-    BOOST_TEST((psv.tensor[{0, 0, 0, 1}]) == 0.2 + 0.4 * q);
-    BOOST_TEST((psv.tensor[{0, 0, 1, 0}]) == 0.3 * p);
-    BOOST_TEST((psv.tensor[{0, 0, 1, 1}]) == 0.4 * p);
-    BOOST_TEST((psv.tensor[{0, 1, 0, 0}]) == 0.5 + 0.7 * q);
-    BOOST_TEST((psv.tensor[{0, 1, 0, 1}]) == 0.6 + 0.8 * q);
-    BOOST_TEST((psv.tensor[{0, 1, 1, 0}]) == 0.7 * p);
-    BOOST_TEST((psv.tensor[{0, 1, 1, 1}]) == 0.8 * p);
+    bt.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0, 0, 0}]) == 0.1 + 0.3 * q);
+    BOOST_TEST((psv2.tensor[{0, 0, 0, 1}]) == 0.2 + 0.4 * q);
+    BOOST_TEST((psv2.tensor[{0, 0, 1, 0}]) == 0.3 * p);
+    BOOST_TEST((psv2.tensor[{0, 0, 1, 1}]) == 0.4 * p);
+    BOOST_TEST((psv2.tensor[{0, 1, 0, 0}]) == 0.5 + 0.7 * q);
+    BOOST_TEST((psv2.tensor[{0, 1, 0, 1}]) == 0.6 + 0.8 * q);
+    BOOST_TEST((psv2.tensor[{0, 1, 1, 0}]) == 0.7 * p);
+    BOOST_TEST((psv2.tensor[{0, 1, 1, 1}]) == 0.8 * p);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
-    double q = 0.05;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(0);
-    bt.forward_range.min = {0, 0};
-    bt.forward_range.max = {1, 1};
-    bt.backward_range.min = {0, 0};
-    bt.backward_range.max = {1, 1};
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 1;
-    shape[1] = 1;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 1.0;
-    unsigned int edmans = 0;
-    bt.backward(psv, &edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 1.0);
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
     double q = 0.05;
     int channel = 0;
     TestableBinomialTransition bt(q, channel);
@@ -456,31 +441,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
     BOOST_TEST((psv2.tensor[{0, 0}]) == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_basic_transition_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(1);
-    bt.forward_range.min = {0, 0};
-    bt.forward_range.max = {1, 2};
-    bt.backward_range.min = {0, 0};
-    bt.backward_range.max = {1, 2};
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 1;
-    shape[1] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    unsigned int edmans = 0;
-    bt.backward(psv, &edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.3);
-    BOOST_TEST((psv.tensor[{0, 1}]) == q * 0.3 + p * 0.7);
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_transition_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_basic_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -505,35 +466,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_transition_test, *tolerance(TOL)) {
     BOOST_TEST((psv2.tensor[{0, 1}]) == q * 0.3 + p * 0.7);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_bigger_transition_test,
-                     *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(2);
-    bt.forward_range.min = {0, 0};
-    bt.forward_range.max = {1, 3};
-    bt.backward_range.min = {0, 0};
-    bt.backward_range.max = {1, 3};
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 1;
-    shape[1] = 3;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{0, 1}] = 0.3;
-    psv.tensor[{0, 2}] = 0.7;
-    unsigned int edmans = 0;
-    bt.backward(psv, &edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.2);
-    BOOST_TEST((psv.tensor[{0, 1}]) == q * 0.2 + p * 0.3);
-    BOOST_TEST((psv.tensor[{0, 2}])
-               == q * q * 0.2 + 2 * q * p * 0.3 + p * p * 0.7);
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_bigger_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -561,37 +494,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_bigger_transition_test, *tolerance(TOL)) {
                == q * q * 0.2 + 2 * q * p * 0.3 + p * p * 0.7);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_pruned_transition_test,
-                     *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(2);
-    bt.forward_range.min = {0, 2};
-    bt.forward_range.max = {1, 3};
-    bt.backward_range.min = {0, 1};
-    bt.backward_range.max = {1, 2};
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 1;
-    shape[1] = 4;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{0, 1}] = 0.3;
-    psv.tensor[{0, 2}] = 0.7;
-    psv.tensor[{0, 3}] = 0.9;
-    unsigned int edmans = 0;
-    bt.backward(psv, &edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 2}]) == 2 * q * p * 0.3);
-    BOOST_TEST(psv.range.min[0] == 0u);
-    BOOST_TEST(psv.range.min[1] == 2u);
-    BOOST_TEST(psv.range.max[0] == 1u);
-    BOOST_TEST(psv.range.max[1] == 3u);
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_pruned_transition_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_pruned_transition_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -621,39 +524,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_pruned_transition_test, *tolerance(TOL)) {
     BOOST_TEST(psv2.range.max[1] == 3u);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_multiple_edmans_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 0;
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(2);
-    bt.forward_range.min = {0, 0};
-    bt.forward_range.max = {3, 2};
-    bt.backward_range.min = {0, 0};
-    bt.backward_range.max = {3, 2};
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 3;
-    shape[1] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{0, 1}] = 0.8;
-    psv.tensor[{1, 0}] = 0.3;
-    psv.tensor[{1, 1}] = 0.7;
-    psv.tensor[{2, 0}] = 0.4;
-    psv.tensor[{2, 1}] = 0.6;
-    unsigned int edmans = 2;
-    bt.backward(psv, &edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.2);
-    BOOST_TEST((psv.tensor[{0, 1}]) == q * 0.2 + p * 0.8);
-    BOOST_TEST((psv.tensor[{1, 0}]) == 0.3);
-    BOOST_TEST((psv.tensor[{1, 1}]) == q * 0.3 + p * 0.7);
-    BOOST_TEST((psv.tensor[{2, 0}]) == 0.4);
-    BOOST_TEST((psv.tensor[{2, 1}]) == q * 0.4 + p * 0.6);
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_multiple_edmans_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 0;
@@ -686,45 +557,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_edmans_test, *tolerance(TOL)) {
     BOOST_TEST((psv2.tensor[{2, 1}]) == q * 0.4 + p * 0.6);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_other_dye_colors_test, *tolerance(TOL)) {
-    double q = 0.05;
-    double p = 0.95;
-    int channel = 1;  // corresponds to 2nd dim of tensor
-    TestableBinomialTransition bt(q, channel);
-    bt.reserve(1);
-    bt.forward_range.min = {0, 0, 0, 0};
-    bt.forward_range.max = {1, 2, 2, 2};
-    bt.backward_range.min = {0, 0, 0, 0};
-    bt.backward_range.max = {1, 2, 2, 2};
-    unsigned int order = 4;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 1;
-    shape[1] = 2;
-    shape[2] = 2;
-    shape[3] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0, 0, 0}] = 0.1;
-    psv.tensor[{0, 0, 0, 1}] = 0.2;
-    psv.tensor[{0, 0, 1, 0}] = 0.3;
-    psv.tensor[{0, 0, 1, 1}] = 0.4;
-    psv.tensor[{0, 1, 0, 0}] = 0.5;
-    psv.tensor[{0, 1, 0, 1}] = 0.6;
-    psv.tensor[{0, 1, 1, 0}] = 0.7;
-    psv.tensor[{0, 1, 1, 1}] = 0.8;
-    unsigned int edmans = 0;
-    bt.backward(psv, &edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0, 0, 0}]) == 0.1);
-    BOOST_TEST((psv.tensor[{0, 0, 0, 1}]) == 0.2);
-    BOOST_TEST((psv.tensor[{0, 0, 1, 0}]) == q * 0.1 + p * 0.3);
-    BOOST_TEST((psv.tensor[{0, 0, 1, 1}]) == q * 0.2 + p * 0.4);
-    BOOST_TEST((psv.tensor[{0, 1, 0, 0}]) == 0.5);
-    BOOST_TEST((psv.tensor[{0, 1, 0, 1}]) == 0.6);
-    BOOST_TEST((psv.tensor[{0, 1, 1, 0}]) == q * 0.5 + p * 0.7);
-    BOOST_TEST((psv.tensor[{0, 1, 1, 1}]) == q * 0.6 + p * 0.8);
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_other_dye_colors_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_other_dye_colors_test, *tolerance(TOL)) {
     double q = 0.05;
     double p = 0.95;
     int channel = 1;  // corresponds to 2nd dim of tensor

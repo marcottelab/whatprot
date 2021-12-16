@@ -18,10 +18,11 @@ namespace whatprot {
 StuckDyeTransition::StuckDyeTransition(double loss_rate, int channel)
         : channel(channel), loss_rate(loss_rate) {}
 
-void StuckDyeTransition::forward(unsigned int* num_edmans,
-                                 StuckDyeStateVector* sdsv) const {
-    sdsv->no_dye += sdsv->dye * loss_rate;
-    sdsv->dye *= (1 - loss_rate);
+void StuckDyeTransition::forward(const StuckDyeStateVector& input,
+                                 unsigned int* num_edmans,
+                                 StuckDyeStateVector* output) const {
+    output->no_dye = input.no_dye + input.dye * loss_rate;
+    output->dye = input.dye * (1 - loss_rate);
     (*num_edmans)++;
 }
 

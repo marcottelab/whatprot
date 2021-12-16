@@ -39,12 +39,13 @@ BOOST_AUTO_TEST_CASE(forward_test, *tolerance(TOL)) {
     double loss_rate = 0.035;
     StuckDyeTransition sdt(loss_rate, channel);
     unsigned int num_edmans = 0;
-    StuckDyeStateVector sdsv;
-    sdsv.dye = 0.3;
-    sdsv.no_dye = 0.7;
-    sdt.forward(&num_edmans, &sdsv);
-    BOOST_TEST(sdsv.dye == 0.3 * (1 - loss_rate));
-    BOOST_TEST(sdsv.no_dye == 0.7 + 0.3 * loss_rate);
+    StuckDyeStateVector sdsv1;
+    StuckDyeStateVector sdsv2;
+    sdsv1.dye = 0.3;
+    sdsv1.no_dye = 0.7;
+    sdt.forward(sdsv1, &num_edmans, &sdsv2);
+    BOOST_TEST(sdsv2.dye == 0.3 * (1 - loss_rate));
+    BOOST_TEST(sdsv2.no_dye == 0.7 + 0.3 * loss_rate);
     BOOST_TEST(num_edmans == 1u);
 }
 

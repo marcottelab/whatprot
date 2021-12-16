@@ -39,8 +39,8 @@ StuckDyeHMM::StuckDyeHMM(
     }
 }
 
-StuckDyeStateVector StuckDyeHMM::create_states() const {
-    return StuckDyeStateVector();
+StuckDyeStateVector* StuckDyeHMM::create_states() const {
+    return new StuckDyeStateVector();
 }
 
 }  // namespace whatprot

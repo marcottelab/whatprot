@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
     seq_model.channel_models.resize(0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     unsigned int num_timesteps = 1;
     unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -413,52 +413,18 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 3.14;
+    psv1.tensor[{0, 0}] = 3.14;
     unsigned int edmans = 0;
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 3.14 * cm_mock.get().pdf(1.0, 0));
+    e.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 3.14 * cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_tsr_reuse_test, *tolerance(TOL)) {
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    Radiometry rad(num_timesteps, num_channels);
-    rad(0, 0) = 1.0;
-    int max_num_dyes = 0;
-    SequencingModel seq_model;
-    Mock<ChannelModel> cm_mock;
-    When(Method(cm_mock, pdf))
-            .AlwaysDo([](double observed, int state) -> double {
-                return 0.5;
-            });
-    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
-    seq_model.channel_models.push_back(&cm_mock.get());
-    unsigned int timestep = 0;
-    SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
-    unsigned int order = 1 + num_channels;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = num_timesteps;
-    shape[1] = 1;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 3.14;
-    unsigned int edmans = 0;
-    e.forward(&edmans, &psv);
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}])
-               == 3.14 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.0, 0));
-    // Avoid double clean-up:
-    seq_model.channel_models.resize(0);
-}
-
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     unsigned int num_timesteps = 3;
     unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -482,21 +448,22 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_timesteps_test,
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 13.0;
-    psv.tensor[{1, 0}] = 13.1;
-    psv.tensor[{2, 0}] = 13.2;
+    psv1.tensor[{0, 0}] = 13.0;
+    psv1.tensor[{1, 0}] = 13.1;
+    psv1.tensor[{2, 0}] = 13.2;
     unsigned int edmans = 2;
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(2.0, 0));
-    BOOST_TEST((psv.tensor[{1, 0}]) == 13.1 * cm_mock.get().pdf(2.0, 0));
-    BOOST_TEST((psv.tensor[{2, 0}]) == 13.2 * cm_mock.get().pdf(2.0, 0));
+    e.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv2.tensor[{1, 0}]) == 13.1 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv2.tensor[{2, 0}]) == 13.2 * cm_mock.get().pdf(2.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     unsigned int num_timesteps = 1;
     unsigned int num_channels = 3;
     Radiometry rad(num_timesteps, num_channels);
@@ -524,19 +491,20 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_test, *tolerance(TOL)) {
     shape[1] = 1;
     shape[2] = 1;
     shape[3] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0, 0, 0}] = 13.0;
+    psv1.tensor[{0, 0, 0, 0}] = 13.0;
     unsigned int edmans = 0;
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0, 0, 0}])
+    e.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
                           * cm_mock.get().pdf(0.2, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
+BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
                      *tolerance(TOL)) {
     unsigned int num_timesteps = 1;
     unsigned int num_channels = 3;
@@ -577,12 +545,13 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
     shape[1] = 1;
     shape[2] = 1;
     shape[3] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0, 0, 0}] = 13.0;
+    psv1.tensor[{0, 0, 0, 0}] = 13.0;
     unsigned int edmans = 0;
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0, 0, 0}])
+    e.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock_0.get().pdf(0.0, 0)
                           * cm_mock_1.get().pdf(0.1, 0)
                           * cm_mock_2.get().pdf(0.2, 0));
@@ -590,8 +559,7 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_channels_different_pdfs_test,
     seq_model.channel_models.resize(0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     unsigned int num_timesteps = 1;
     unsigned int num_channels = 1;
     Radiometry rad(num_timesteps, num_channels);
@@ -613,22 +581,22 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_counts_test,
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 13.0;
-    psv.tensor[{0, 1}] = 13.1;
-    psv.tensor[{0, 2}] = 13.2;
+    psv1.tensor[{0, 0}] = 13.0;
+    psv1.tensor[{0, 1}] = 13.1;
+    psv1.tensor[{0, 2}] = 13.2;
     unsigned int edmans = 0;
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(0.0, 0));
-    BOOST_TEST((psv.tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
-    BOOST_TEST((psv.tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
+    e.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST((psv2.tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     unsigned int num_timesteps = 2;
     unsigned int num_channels = 2;
     Radiometry rad(num_timesteps, num_channels);
@@ -655,40 +623,41 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_everything_test,
     shape[0] = num_timesteps;
     shape[1] = 2;
     shape[2] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0, 0}] = 7.000;
-    psv.tensor[{0, 0, 1}] = 7.001;
-    psv.tensor[{0, 1, 0}] = 7.010;
-    psv.tensor[{0, 1, 1}] = 7.011;
-    psv.tensor[{1, 0, 0}] = 7.100;
-    psv.tensor[{1, 0, 1}] = 7.101;
-    psv.tensor[{1, 1, 0}] = 7.110;
-    psv.tensor[{1, 1, 1}] = 7.111;
+    psv1.tensor[{0, 0, 0}] = 7.000;
+    psv1.tensor[{0, 0, 1}] = 7.001;
+    psv1.tensor[{0, 1, 0}] = 7.010;
+    psv1.tensor[{0, 1, 1}] = 7.011;
+    psv1.tensor[{1, 0, 0}] = 7.100;
+    psv1.tensor[{1, 0, 1}] = 7.101;
+    psv1.tensor[{1, 1, 0}] = 7.110;
+    psv1.tensor[{1, 1, 1}] = 7.111;
     unsigned int edmans = 1;
-    e.forward(&edmans, &psv);
-    BOOST_TEST((psv.tensor[{0, 0, 0}])
+    e.forward(psv1, &edmans, &psv2);
+    BOOST_TEST((psv2.tensor[{0, 0, 0}])
                == 7.000 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST((psv.tensor[{0, 0, 1}])
+    BOOST_TEST((psv2.tensor[{0, 0, 1}])
                == 7.001 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 1));
-    BOOST_TEST((psv.tensor[{0, 1, 0}])
+    BOOST_TEST((psv2.tensor[{0, 1, 0}])
                == 7.010 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST((psv.tensor[{0, 1, 1}])
+    BOOST_TEST((psv2.tensor[{0, 1, 1}])
                == 7.011 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 1));
-    BOOST_TEST((psv.tensor[{1, 0, 0}])
+    BOOST_TEST((psv2.tensor[{1, 0, 0}])
                == 7.100 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST((psv.tensor[{1, 0, 1}])
+    BOOST_TEST((psv2.tensor[{1, 0, 1}])
                == 7.101 * cm_mock.get().pdf(1.0, 0)
                           * cm_mock.get().pdf(1.1, 1));
-    BOOST_TEST((psv.tensor[{1, 1, 0}])
+    BOOST_TEST((psv2.tensor[{1, 1, 0}])
                == 7.110 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST((psv.tensor[{1, 1, 1}])
+    BOOST_TEST((psv2.tensor[{1, 1, 1}])
                == 7.111 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:

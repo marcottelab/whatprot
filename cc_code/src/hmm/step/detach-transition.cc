@@ -27,16 +27,19 @@ void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {
     *range = pruned_range;
 }
 
-void DetachTransition::forward(unsigned int* num_edmans,
-                               PeptideStateVector* psv) const {
-    int i_max = (*num_edmans + 1) * psv->tensor.strides[0];
+void DetachTransition::forward(const PeptideStateVector& input,
+                               unsigned int* num_edmans,
+                               PeptideStateVector* output) const {
+    int i_max = (*num_edmans + 1) * input.tensor.strides[0];
     double sum = 0.0;
     for (int i = 0; i < i_max; i++) {
-        double value = psv->tensor.values[i];
-        psv->tensor.values[i] = value * (1 - p_detach);
+        double value = input.tensor.values[i];
+        output->tensor.values[i] = value * (1 - p_detach);
         sum += value;
     }
-    psv->tensor.values[(*num_edmans) * psv->tensor.strides[0]] +=
+    // += is fine here, we have already set a value to output at this location
+    // in the for loop above.
+    output->tensor.values[(*num_edmans) * output->tensor.strides[0]] +=
             p_detach * sum;
 }
 

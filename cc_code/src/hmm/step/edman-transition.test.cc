@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(prune_backward_test) {
     BOOST_TEST(et.forward_range.max[2] == 8u);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -120,18 +120,19 @@ BOOST_AUTO_TEST_CASE(forward_in_place_trivial_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 1.0;
-    psv.tensor[{1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 1.0;
+    psv1.tensor[{1, 0}] = -1000.0;  // to be ignored
     unsigned int edmans = 0;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 1.0 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}]) == 1.0 * p_pop);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 1.0 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == 1.0 * p_pop);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -143,22 +144,23 @@ BOOST_AUTO_TEST_CASE(forward_in_place_basic_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    psv.tensor[{1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 0.3;
+    psv1.tensor[{0, 1}] = 0.7;
+    psv1.tensor[{1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 1}] = -1000.0;  // to be ignored
     unsigned int edmans = 0;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.7 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}]) == 0.3 * p_pop);
-    BOOST_TEST((psv.tensor[{1, 1}]) == 0.7 * p_pop);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.7 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == 0.3 * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 1}]) == 0.7 * p_pop);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_more_edmans_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 3;
@@ -170,23 +172,23 @@ BOOST_AUTO_TEST_CASE(forward_in_place_more_edmans_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = 4;
     shape[1] = 1;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{1, 0}] = 0.3;
-    psv.tensor[{2, 0}] = 0.5;
-    psv.tensor[{3, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 0.2;
+    psv1.tensor[{1, 0}] = 0.3;
+    psv1.tensor[{2, 0}] = 0.5;
+    psv1.tensor[{3, 0}] = -1000.0;  // to be ignored
     unsigned int edmans = 2;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 3u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.2 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}]) == 0.2 * p_pop + 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{2, 0}]) == 0.3 * p_pop + 0.5 * p_fail);
-    BOOST_TEST((psv.tensor[{3, 0}]) == 0.5 * p_pop);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.2 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == 0.2 * p_pop + 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{2, 0}]) == 0.3 * p_pop + 0.5 * p_fail);
+    BOOST_TEST((psv2.tensor[{3, 0}]) == 0.5 * p_pop);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -199,31 +201,31 @@ BOOST_AUTO_TEST_CASE(forward_in_place_multiple_dye_colors_test,
     shape[0] = 2;
     shape[1] = 2;
     shape[2] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0, 0}] = 0.1;
-    psv.tensor[{0, 0, 1}] = 0.2;
-    psv.tensor[{0, 1, 0}] = 0.3;
-    psv.tensor[{0, 1, 1}] = 0.4;
-    psv.tensor[{1, 0, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 0, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0, 0}] = 0.1;
+    psv1.tensor[{0, 0, 1}] = 0.2;
+    psv1.tensor[{0, 1, 0}] = 0.3;
+    psv1.tensor[{0, 1, 1}] = 0.4;
+    psv1.tensor[{1, 0, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 0, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 1, 1}] = -1000.0;  // to be ignored
     unsigned int edmans = 0;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0, 0}]) == 0.1 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 0, 1}]) == 0.2 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1, 0}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1, 1}]) == 0.4 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0, 0}]) == 0.1 * p_pop);
-    BOOST_TEST((psv.tensor[{1, 0, 1}]) == 0.2 * p_pop);
-    BOOST_TEST((psv.tensor[{1, 1, 0}]) == 0.3 * p_pop);
-    BOOST_TEST((psv.tensor[{1, 1, 1}]) == 0.4 * p_pop);
+    BOOST_TEST((psv2.tensor[{0, 0, 0}]) == 0.1 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 0, 1}]) == 0.2 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1, 0}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1, 1}]) == 0.4 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0, 0}]) == 0.1 * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 0, 1}]) == 0.2 * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 1, 0}]) == 0.3 * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 1, 1}]) == 0.4 * p_pop);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_irrelevant_dye_seq_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -235,23 +237,23 @@ BOOST_AUTO_TEST_CASE(forward_in_place_irrelevant_dye_seq_test,
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    psv.tensor[{1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 0.3;
+    psv1.tensor[{0, 1}] = 0.7;
+    psv1.tensor[{1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 1}] = -1000.0;  // to be ignored
     unsigned int edmans = 0;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.7 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}]) == 0.3 * p_pop);
-    BOOST_TEST((psv.tensor[{1, 1}]) == 0.7 * p_pop);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.7 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == 0.3 * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 1}]) == 0.7 * p_pop);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_one_dye_first_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -263,23 +265,23 @@ BOOST_AUTO_TEST_CASE(forward_in_place_one_dye_first_edman_test,
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    psv.tensor[{1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 0.3;
+    psv1.tensor[{0, 1}] = 0.7;
+    psv1.tensor[{1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 1}] = -1000.0;  // to be ignored
     unsigned int edmans = 0;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.7 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}]) == (0.3 + 0.7) * p_pop);
-    BOOST_TEST((psv.tensor[{1, 1}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.7 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == (0.3 + 0.7) * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 1}]) == 0.0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_two_dyes_second_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 2;
@@ -291,35 +293,35 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dyes_second_edman_test,
     unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 3;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.1;
-    psv.tensor[{0, 1}] = 0.2;
-    psv.tensor[{0, 2}] = 0.3;
-    psv.tensor[{1, 0}] = 0.4;
-    psv.tensor[{1, 1}] = 0.5;
-    psv.tensor[{1, 2}] = 0.0;
-    psv.tensor[{2, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 2}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 0.1;
+    psv1.tensor[{0, 1}] = 0.2;
+    psv1.tensor[{0, 2}] = 0.3;
+    psv1.tensor[{1, 0}] = 0.4;
+    psv1.tensor[{1, 1}] = 0.5;
+    psv1.tensor[{1, 2}] = 0.0;
+    psv1.tensor[{2, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{2, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{2, 2}] = -1000.0;  // to be ignored
     unsigned int edmans = 1;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 2u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.1 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.2 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 2}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}])
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.1 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.2 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 2}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}])
                == (0.1 + 0.2 / 2.0) * p_pop + 0.4 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 1}])
+    BOOST_TEST((psv2.tensor[{1, 1}])
                == (0.2 / 2.0 + 0.3) * p_pop + 0.5 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 2}]) == 0.0);
-    BOOST_TEST((psv.tensor[{2, 0}]) == (0.4 + 0.5) * p_pop);
-    BOOST_TEST((psv.tensor[{2, 1}]) == 0.0);
-    BOOST_TEST((psv.tensor[{2, 2}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{1, 2}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{2, 0}]) == (0.4 + 0.5) * p_pop);
+    BOOST_TEST((psv2.tensor[{2, 1}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{2, 2}]) == 0.0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(forward_three_dyes_first_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 3;
@@ -331,31 +333,32 @@ BOOST_AUTO_TEST_CASE(forward_in_place_three_dyes_first_edman_test,
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 4;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0}] = 0.1;
-    psv.tensor[{0, 1}] = 0.2;
-    psv.tensor[{0, 2}] = 0.3;
-    psv.tensor[{0, 3}] = 0.4;
-    psv.tensor[{1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 2}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 3}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0}] = 0.1;
+    psv1.tensor[{0, 1}] = 0.2;
+    psv1.tensor[{0, 2}] = 0.3;
+    psv1.tensor[{0, 3}] = 0.4;
+    psv1.tensor[{1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 2}] = -1000.0;  // to be ignored
+    psv1.tensor[{1, 3}] = -1000.0;  // to be ignored
     unsigned int edmans = 0;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == 0.1 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1}]) == 0.2 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 2}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 3}]) == 0.4 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0}]) == (0.1 + 0.2 / 3.0) * p_pop);
-    BOOST_TEST((psv.tensor[{1, 1}])
+    BOOST_TEST((psv2.tensor[{0, 0}]) == 0.1 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 0.2 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 2}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 3}]) == 0.4 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0}]) == (0.1 + 0.2 / 3.0) * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 1}])
                == (0.2 * 2.0 / 3.0 + 0.3 * 2.0 / 3.0) * p_pop);
-    BOOST_TEST((psv.tensor[{1, 2}]) == (0.3 / 3.0 + 0.4) * p_pop);
-    BOOST_TEST((psv.tensor[{1, 3}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{1, 2}]) == (0.3 / 3.0 + 0.4) * p_pop);
+    BOOST_TEST((psv2.tensor[{1, 3}]) == 0.0);
 }
 
-BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
+BOOST_AUTO_TEST_CASE(forward_two_dye_colors_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
@@ -369,61 +372,39 @@ BOOST_AUTO_TEST_CASE(forward_in_place_two_dye_colors_second_edman_test,
     shape[0] = 3;
     shape[1] = 2;
     shape[2] = 2;
-    PeptideStateVector psv(order, shape);
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
     delete[] shape;
-    psv.tensor[{0, 0, 0}] = 0.1;
-    psv.tensor[{0, 0, 1}] = 0.2;
-    psv.tensor[{0, 1, 0}] = 0.3;
-    psv.tensor[{0, 1, 1}] = 0.4;
-    psv.tensor[{1, 0, 0}] = 0.5;
-    psv.tensor[{1, 0, 1}] = 0.6;
-    psv.tensor[{1, 1, 0}] = 0.0;
-    psv.tensor[{1, 1, 1}] = 0.0;
-    psv.tensor[{2, 0, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 0, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 1, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{0, 0, 0}] = 0.1;
+    psv1.tensor[{0, 0, 1}] = 0.2;
+    psv1.tensor[{0, 1, 0}] = 0.3;
+    psv1.tensor[{0, 1, 1}] = 0.4;
+    psv1.tensor[{1, 0, 0}] = 0.5;
+    psv1.tensor[{1, 0, 1}] = 0.6;
+    psv1.tensor[{1, 1, 0}] = 0.0;
+    psv1.tensor[{1, 1, 1}] = 0.0;
+    psv1.tensor[{2, 0, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{2, 0, 1}] = -1000.0;  // to be ignored
+    psv1.tensor[{2, 1, 0}] = -1000.0;  // to be ignored
+    psv1.tensor[{2, 1, 1}] = -1000.0;  // to be ignored
     unsigned int edmans = 1;
-    et.forward(&edmans, &psv);
+    et.forward(psv1, &edmans, &psv2);
     BOOST_TEST(edmans == 2u);
-    BOOST_TEST((psv.tensor[{0, 0, 0}]) == 0.1 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 0, 1}]) == 0.2 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1, 0}]) == 0.3 * p_fail);
-    BOOST_TEST((psv.tensor[{0, 1, 1}]) == 0.4 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0, 0}]) == (0.1 + 0.3) * p_pop + 0.5 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 0, 1}]) == (0.2 + 0.4) * p_pop + 0.6 * p_fail);
-    BOOST_TEST((psv.tensor[{1, 1, 0}]) == 0.0);
-    BOOST_TEST((psv.tensor[{1, 1, 1}]) == 0.0);
-    BOOST_TEST((psv.tensor[{2, 0, 0}]) == (0.5 + 0.6) * p_pop);
-    BOOST_TEST((psv.tensor[{2, 0, 1}]) == 0.0);
-    BOOST_TEST((psv.tensor[{2, 1, 0}]) == 0.0);
-    BOOST_TEST((psv.tensor[{2, 1, 1}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{0, 0, 0}]) == 0.1 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 0, 1}]) == 0.2 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1, 0}]) == 0.3 * p_fail);
+    BOOST_TEST((psv2.tensor[{0, 1, 1}]) == 0.4 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0, 0}]) == (0.1 + 0.3) * p_pop + 0.5 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 0, 1}]) == (0.2 + 0.4) * p_pop + 0.6 * p_fail);
+    BOOST_TEST((psv2.tensor[{1, 1, 0}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{1, 1, 1}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{2, 0, 0}]) == (0.5 + 0.6) * p_pop);
+    BOOST_TEST((psv2.tensor[{2, 0, 1}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{2, 1, 0}]) == 0.0);
+    BOOST_TEST((psv2.tensor[{2, 1, 1}]) == 0.0);
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_trivial_test, *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 2;
-    shape[1] = 1;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{1, 0}] = 0.7;
-    unsigned int edmans = 1;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.3 + p_pop * 0.7);
-    // We ignore the value at {1, 0}, it doesn't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -447,33 +428,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_trivial_test, *tolerance(TOL)) {
     // We ignore the value at {1, 0}, it doesn't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_basic_test, *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 2;
-    shape[1] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    psv.tensor[{1, 0}] = 1.33;
-    psv.tensor[{1, 1}] = 1.77;
-    unsigned int edmans = 1;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.3 + p_pop * 1.33);
-    BOOST_TEST((psv.tensor[{0, 1}]) == p_fail * 0.7 + p_pop * 1.77);
-    // We ignore the values at {1, 0} and {1, 1}, they don't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -500,34 +455,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_basic_test, *tolerance(TOL)) {
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_more_edmans_test, *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 3;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 4;
-    shape[1] = 1;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.2;
-    psv.tensor[{1, 0}] = 0.3;
-    psv.tensor[{2, 0}] = 0.5;
-    psv.tensor[{3, 0}] = 0.7;
-    unsigned int edmans = 3;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 2u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.2 + p_pop * 0.3);
-    BOOST_TEST((psv.tensor[{1, 0}]) == p_fail * 0.3 + p_pop * 0.5);
-    BOOST_TEST((psv.tensor[{2, 0}]) == p_fail * 0.5 + p_pop * 0.7);
-    // We ignore the value at {3, 0}, it doesn't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_more_edmans_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_more_edmans_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 3;
@@ -555,43 +483,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_more_edmans_test, *tolerance(TOL)) {
     // We ignore the value at {3, 0}, it doesn't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_multiple_dye_colors_test,
-                     *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 3;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 2;
-    shape[1] = 2;
-    shape[2] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0, 0}] = 0.1;
-    psv.tensor[{0, 0, 1}] = 0.2;
-    psv.tensor[{0, 1, 0}] = 0.3;
-    psv.tensor[{0, 1, 1}] = 0.4;
-    psv.tensor[{1, 0, 0}] = 1.11;
-    psv.tensor[{1, 0, 1}] = 1.22;
-    psv.tensor[{1, 1, 0}] = 1.33;
-    psv.tensor[{1, 1, 1}] = 1.44;
-    unsigned int edmans = 1;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0u);
-    BOOST_TEST((psv.tensor[{0, 0, 0}]) == p_fail * 0.1 + p_pop * 1.11);
-    BOOST_TEST((psv.tensor[{0, 0, 1}]) == p_fail * 0.2 + p_pop * 1.22);
-    BOOST_TEST((psv.tensor[{0, 1, 0}]) == p_fail * 0.3 + p_pop * 1.33);
-    BOOST_TEST((psv.tensor[{0, 1, 1}]) == p_fail * 0.4 + p_pop * 1.44);
-    // We ignore the values at {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, and {1, 1, 1}
-    // they don't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_dye_colors_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_multiple_dye_colors_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -626,35 +518,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_multiple_dye_colors_test,
     // they don't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_irrelevant_dye_seq_test,
-                     *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, ".0");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 2;
-    shape[1] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    psv.tensor[{1, 0}] = 1.33;
-    psv.tensor[{1, 1}] = 1.77;
-    unsigned int edmans = 1;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.3 + p_pop * 1.33);
-    BOOST_TEST((psv.tensor[{0, 1}]) == p_fail * 0.7 + p_pop * 1.77);
-    // We ignore the values at {1, 0} and {1, 1}, they don't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_irrelevant_dye_seq_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_irrelevant_dye_seq_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -681,35 +545,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_irrelevant_dye_seq_test,
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_one_dye_first_edman_test,
-                     *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 1;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "0");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 2;
-    shape[1] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.3;
-    psv.tensor[{0, 1}] = 0.7;
-    psv.tensor[{1, 0}] = 1.33;
-    psv.tensor[{1, 1}] = -1000.0;  // to be ignored
-    unsigned int edmans = 1;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.3 + p_pop * 1.33);
-    BOOST_TEST((psv.tensor[{0, 1}]) == p_fail * 0.7 + p_pop * 1.33);
-    // We ignore the values at {1, 0} and {1, 1}, they don't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_one_dye_first_edman_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_one_dye_first_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 1;
@@ -736,45 +572,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_one_dye_first_edman_test,
     // We ignore the values at {1, 0} and {1, 1}, they don't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_two_dyes_second_edman_test,
-                     *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 2;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "00");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 3;
-    shape[1] = 3;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.1;
-    psv.tensor[{0, 1}] = 0.2;
-    psv.tensor[{0, 2}] = 0.3;
-    psv.tensor[{1, 0}] = 0.4;
-    psv.tensor[{1, 1}] = 0.5;
-    psv.tensor[{1, 2}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 0}] = 0.6;
-    psv.tensor[{2, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 2}] = -1000.0;  // to be ignored
-    unsigned int edmans = 2;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.1 + p_pop * 0.4);
-    BOOST_TEST((psv.tensor[{0, 1}])
-               == p_fail * 0.2 + p_pop * (0.5 / 2.0 + 0.4 / 2.0));
-    BOOST_TEST((psv.tensor[{0, 2}]) == p_fail * 0.3 + p_pop * 0.5);
-    BOOST_TEST((psv.tensor[{1, 0}]) == p_fail * 0.4 + p_pop * 0.6);
-    BOOST_TEST((psv.tensor[{1, 1}]) == p_fail * 0.5 + p_pop * 0.6);
-    // We ignore the values at {1, 2}, {2, 0}, {2, 1}, and {2, 2}.
-    // They don't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dyes_second_edman_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_two_dyes_second_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 2;
@@ -811,43 +609,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dyes_second_edman_test,
     // They don't matter.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_three_dyes_first_edman_test,
-                     *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 3;
-    unsigned int num_channels = 1;
-    DyeSeq ds(num_channels, "000");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 2;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 2;
-    shape[1] = 4;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0}] = 0.1;
-    psv.tensor[{0, 1}] = 0.2;
-    psv.tensor[{0, 2}] = 0.3;
-    psv.tensor[{0, 3}] = 0.4;
-    psv.tensor[{1, 0}] = 1.11;
-    psv.tensor[{1, 1}] = 1.22;
-    psv.tensor[{1, 2}] = 1.33;
-    psv.tensor[{1, 3}] = -1000.0;  // to be ignored
-    unsigned int edmans = 1;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 0u);
-    BOOST_TEST((psv.tensor[{0, 0}]) == p_fail * 0.1 + p_pop * 1.11);
-    BOOST_TEST((psv.tensor[{0, 1}])
-               == p_fail * 0.2 + p_pop * (1.11 * 1.0 / 3.0 + 1.22 * 2.0 / 3.0));
-    BOOST_TEST((psv.tensor[{0, 2}])
-               == p_fail * 0.3 + p_pop * (1.22 * 2.0 / 3.0 + 1.33 * 1.0 / 3.0));
-    BOOST_TEST((psv.tensor[{0, 3}]) == p_fail * 0.4 + p_pop * 1.33);
-    // We ignore the values at {1, 0}, {1, 1}, {1, 2}, and {1, 3}.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_three_dyes_first_edman_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(backward_three_dyes_first_edman_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
     unsigned int num_timesteps = 3;
@@ -882,48 +644,7 @@ BOOST_AUTO_TEST_CASE(backward_new_tsr_three_dyes_first_edman_test,
     // We ignore the values at {1, 0}, {1, 1}, {1, 2}, and {1, 3}.
 }
 
-BOOST_AUTO_TEST_CASE(backward_in_place_two_dye_colors_second_edman_test,
-                     *tolerance(TOL)) {
-    double p_fail = 0.05;
-    double p_pop = 0.95;
-    unsigned int num_timesteps = 2;
-    unsigned int num_channels = 2;
-    DyeSeq ds(num_channels, "01");
-    DyeTrack dt(num_timesteps, num_channels, ds);
-    EdmanTransition et(p_fail, ds, dt);
-    unsigned int order = 3;
-    unsigned int* shape = new unsigned int[order];
-    shape[0] = 3;
-    shape[1] = 2;
-    shape[2] = 2;
-    PeptideStateVector psv(order, shape);
-    delete[] shape;
-    psv.tensor[{0, 0, 0}] = 0.1;
-    psv.tensor[{0, 0, 1}] = 0.2;
-    psv.tensor[{0, 1, 0}] = 0.3;
-    psv.tensor[{0, 1, 1}] = 0.4;
-    psv.tensor[{1, 0, 0}] = 0.5;
-    psv.tensor[{1, 0, 1}] = 0.6;
-    psv.tensor[{1, 1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{1, 1, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 0, 0}] = 0.7;
-    psv.tensor[{2, 0, 1}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 1, 0}] = -1000.0;  // to be ignored
-    psv.tensor[{2, 1, 1}] = -1000.0;  // to be ignored
-    unsigned int edmans = 2;
-    et.backward(psv, &edmans, &psv);
-    BOOST_TEST(edmans == 1u);
-    BOOST_TEST((psv.tensor[{0, 0, 0}]) == p_fail * 0.1 + p_pop * 0.5);
-    BOOST_TEST((psv.tensor[{0, 0, 1}]) == p_fail * 0.2 + p_pop * 0.6);
-    BOOST_TEST((psv.tensor[{0, 1, 0}]) == p_fail * 0.3 + p_pop * 0.5);
-    BOOST_TEST((psv.tensor[{0, 1, 1}]) == p_fail * 0.4 + p_pop * 0.6);
-    BOOST_TEST((psv.tensor[{1, 0, 0}]) == p_fail * 0.5 + p_pop * 0.7);
-    BOOST_TEST((psv.tensor[{1, 0, 1}]) == p_fail * 0.6 + p_pop * 0.7);
-    // We ignore the values at {1, 1, 0}, {1, 1, 1}, {2, 0, 0}, {2, 0, 1},
-    // {2, 1, 0}, and {2, 1, 1}. They don't matter.
-}
-
-BOOST_AUTO_TEST_CASE(backward_new_tsr_two_dye_colors_second_edman_test,
+BOOST_AUTO_TEST_CASE(backward_two_dye_colors_second_edman_test,
                      *tolerance(TOL)) {
     double p_fail = 0.05;
     double p_pop = 0.95;
