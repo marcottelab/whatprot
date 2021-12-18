@@ -53,95 +53,136 @@ void EdmanTransition::forward(const PeptideStateVector& input,
                               unsigned int* num_edmans,
                               PeptideStateVector* output) const {
     (*num_edmans)++;
-    unsigned int t_stride = input.tensor.strides[0];
-    // i here must be a signed integer because we decrement towards 0.
-    for (int i = t_stride * (*num_edmans) - 1; i >= 0; i--) {
-        output->tensor.values[i + t_stride] = input.tensor.values[i];
+    // First we set all of the output in the backward range to zero. This allows
+    // us to use += when gathering the various probabilities coming in from the
+    // input PeptideStateVector. This is way easier than the alternative, since
+    // the forward and backward ranges may not match up the way you expect.
+    TensorIterator* out_itr = output->tensor.iterator(backward_range);
+    while (!out_itr->done()) {
+        *out_itr->get() = 0.0;
+        out_itr->advance();
     }
-    for (unsigned int i = 0; i < t_stride; i++) {
-        output->tensor.values[i] = input.tensor.values[i] * p_edman_failure;
-    }
-    // From here on we've set all values of output using values from input. We
-    // can, and need to, ignore input from here on out.
-    for (unsigned int t = 0; t < (*num_edmans); t++) {
-        if (t > 0) {
-            for (unsigned int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                output->tensor.values[i] +=
-                        p_edman_failure * output->tensor.values[i + t_stride];
+    delete out_itr;
+    // Now we iterate through the input in the forward range, and multiply these
+    // values out into every receiving value in the output. We don't worry about
+    // whether we are writing to locations which are actually in the
+    // backward range, as this would be more trouble than it's worth, and likely
+    // would not improve the runtime (checking conditionals is expensive).
+    ConstTensorIterator* in_itr = input.tensor.const_iterator(forward_range);
+    unsigned int t_stride = output->tensor.strides[0];
+    while (!in_itr->done()) {
+        double f_val = *in_itr->get();
+        unsigned int i = in_itr->index;
+        unsigned int t = in_itr->loc[0];
+        int c = dye_seq[t];
+        // Probability of failure is straightforward.
+        output->tensor.values[i] += p_edman_failure * f_val;
+        // Probability of success is broken into smaller pieces.
+        if (c == -1) {
+            // If no fluorophore removed in the successful Edman cycle scenario,
+            // we just take the remaining portion of the probability to the next
+            // successful Edman count ('+ t_stride' does this)
+            output->tensor.values[i + t_stride] +=
+                    (1 - p_edman_failure) * f_val;
+        } else {
+            // If fluorophore removed, we need to split this probability
+            // further. As before we reindex to the next successful Edman count
+            // (with '+ t_stride').
+            unsigned int c_idx = in_itr->loc[1 + c];
+            unsigned int c_total = dye_track(t, c);
+            double ratio = (double)c_idx / (double)c_total;
+            unsigned int c_stride = output->tensor.strides[1 + c];
+            if (c_idx < c_total) {
+                // Here we multiply additionally by probability of no
+                // fluorophore removal.
+                output->tensor.values[i + t_stride] +=
+                        (1 - p_edman_failure) * (1 - ratio) * f_val;
+            }
+            if (c_idx > 0) {
+                // And here we handle probability of flurophore removal
+                // ('- c_stride' indexes to the correct location).
+                output->tensor.values[i + t_stride - c_stride] +=
+                        (1 - p_edman_failure) * ratio * f_val;
             }
         }
-        short channel = dye_seq[t];
-        if (channel != -1) {
-            unsigned int amt = dye_track(t, channel);
-            unsigned int vector_stride = output->tensor.strides[1 + channel];
-            unsigned int vector_length = output->tensor.shape[1 + channel];
-            unsigned int outer_stride = vector_stride * vector_length;
-            unsigned int outer_min = (t + 1) * t_stride;
-            unsigned int outer_max = (t + 2) * t_stride;
-            for (unsigned int outer = outer_min; outer < outer_max;
-                 outer += outer_stride) {
-                for (unsigned int inner = 0; inner < vector_stride; inner++) {
-                    Vector v(vector_length,
-                             vector_stride,
-                             &output->tensor.values[outer + inner]);
-                    for (unsigned int i = 1; i <= amt; i++) {
-                        double ratio = (double)i / (double)amt;
-                        v[i - 1] += v[i] * ratio;
-                        v[i] *= 1 - ratio;
-                    }
-                }
-            }
-        }
-        for (unsigned int i = (t + 1) * t_stride; i < (t + 2) * t_stride; i++) {
-            output->tensor.values[i] =
-                    output->tensor.values[i] * (1 - p_edman_failure);
-        }
+        in_itr->advance();
     }
+    delete in_itr;
+    output->range = backward_range;
 }
 
 void EdmanTransition::backward(const PeptideStateVector& input,
                                unsigned int* num_edmans,
                                PeptideStateVector* output) const {
-    unsigned int t_stride = input.tensor.strides[0];
-    for (unsigned int t = 0; t < (*num_edmans); t++) {
-        for (unsigned int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-            output->tensor.values[i] = p_edman_failure * input.tensor.values[i];
-        }
-        short channel = dye_seq[t];
-        if (channel == -1) {
-            for (unsigned int i = t * t_stride; i < (t + 1) * t_stride; i++) {
-                output->tensor.values[i] += (1 - p_edman_failure)
-                                            * input.tensor.values[i + t_stride];
-            }
-        } else {
-            unsigned int amt = dye_track(t, channel);
-            unsigned int vector_stride = output->tensor.strides[1 + channel];
-            unsigned int vector_length = output->tensor.shape[1 + channel];
-            unsigned int outer_stride = vector_stride * vector_length;
-            unsigned int outer_min = t * t_stride;
-            unsigned int outer_max = (t + 1) * t_stride;
-            for (unsigned int outer = outer_min; outer < outer_max;
-                 outer += outer_stride) {
-                for (unsigned int inner = 0; inner < vector_stride; inner++) {
-                    const Vector inv(
-                            vector_length,
-                            vector_stride,
-                            &input.tensor.values[outer + inner + t_stride]);
-                    Vector outv(vector_length,
-                                vector_stride,
-                                &output->tensor.values[outer + inner]);
-                    for (unsigned int i = 0; i <= amt; i++) {
-                        double ratio = (double)i / (double)amt;
-                        if (i != 0) {
-                            outv[i] +=
-                                    (1 - p_edman_failure) * ratio * inv[i - 1];
-                        }
-                        outv[i] += (1 - p_edman_failure) * (1 - ratio) * inv[i];
-                    }
+    // First we set all of the output in the forward range to zero. This allows
+    // us to use += when gathering the various probabilities coming in from the
+    // input PeptideStateVector. This is way easier than the alternative, since
+    // the forward and backward ranges may not match up the way you expect.
+    TensorIterator* out_itr = output->tensor.iterator(forward_range);
+    while (!out_itr->done()) {
+        *out_itr->get() = 0.0;
+        out_itr->advance();
+    }
+    delete out_itr;
+    // Now we iterate through the input in the backward range, and multiply
+    // these values out into every receiving value in the output. We don't worry
+    // about whether we are writing to locations which are actually in the
+    // backward range, as this would be more trouble than it's worth, and likely
+    // would not improve the runtime (checking conditionals is expensive).
+    ConstTensorIterator* in_itr = input.tensor.const_iterator(backward_range);
+    unsigned int t_stride = output->tensor.strides[0];
+    while (!in_itr->done()) {
+        double f_val = *in_itr->get();
+        unsigned int i = in_itr->index;
+        unsigned int t = in_itr->loc[0];
+        // Probability of failure is straightforward.
+        output->tensor.values[i] += p_edman_failure * f_val;
+        // Probability of success is broken into smaller pieces. Note that this
+        // is only relevant when t > 0, because the previous number of
+        // successful Edman cycles is t - 1, which is invalid at -1.
+        if (t > 0) {
+            int c = dye_seq[t - 1];
+            if (c == -1) {
+                // If no fluorophore removed in the successful Edman cycle
+                // scenario, we just take the remaining portion of the
+                // probability to the next successful Edman count ('- t_stride'
+                // does this).
+                output->tensor.values[i - t_stride] +=
+                        (1 - p_edman_failure) * f_val;
+            } else {
+                // If fluorophore removed, we need to split this probability
+                // further. As before we reindex to the next successful Edman
+                // count (with '- t_stride'). Note that we get different values
+                // for 'c_idx' and 'ratio' in the two cases, because we are
+                // computing 'backward' based on 'forward'. The 'forward' part
+                // may either have the same number of fluorophores as the target
+                // location in 'backward' (thus not losing a dye) or one more
+                // fluorophore, which it loses.
+                unsigned int c_total = dye_track(t - 1, c);
+                unsigned int c_stride = output->tensor.strides[1 + c];
+                unsigned int c_idx;
+                c_idx = in_itr->loc[1 + c];
+                if (c_idx < c_total) {
+                    // Here we multiply additionally by probability of no
+                    // fluorophore removal.
+                    double ratio = (double)c_idx / (double)c_total;
+                    output->tensor.values[i - t_stride] +=
+                            (1 - p_edman_failure) * (1 - ratio) * f_val;
+                }
+                c_idx = in_itr->loc[1 + c] + 1;
+                if (c_idx > 0) {
+                    // And here we handle probability of flurophore removal
+                    // ('+ c_stride' indexes to the correct location).
+                    double ratio = (double)c_idx / (double)c_total;
+                    output->tensor.values[i - t_stride + c_stride] +=
+                            (1 - p_edman_failure) * ratio * f_val;
                 }
             }
         }
+        in_itr->advance();
     }
+    delete in_itr;
+    output->range = forward_range;
     (*num_edmans)--;
 }
 
