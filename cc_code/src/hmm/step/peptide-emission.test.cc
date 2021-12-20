@@ -409,6 +409,8 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 0};
+    e.pruned_range.max = {num_timesteps, 1};
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -444,6 +446,8 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 0};
+    e.pruned_range.max = {num_timesteps, 1};
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -485,6 +489,8 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 0, 0, 0};
+    e.pruned_range.max = {num_timesteps, 1, 1, 1};
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -539,6 +545,8 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 0, 0, 0};
+    e.pruned_range.max = {num_timesteps, 1, 1, 1};
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -577,6 +585,8 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 0};
+    e.pruned_range.max = {num_timesteps, max_num_dyes + 1u};
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -590,6 +600,43 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     unsigned int edmans = 0;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST((psv2.tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST((psv2.tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
+    // Avoid double clean-up:
+    seq_model.channel_models.resize(0);
+}
+
+BOOST_AUTO_TEST_CASE(forward_reduced_range_test, *tolerance(TOL)) {
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
+    Radiometry rad(num_timesteps, num_channels);
+    rad(0, 0) = 0.0;
+    int max_num_dyes = 4;
+    SequencingModel seq_model;
+    Mock<ChannelModel> cm_mock;
+    When(Method(cm_mock, pdf))
+            .AlwaysDo([](double observed, int state) -> double {
+                return 1.0 / (double)(state + 7);
+            });
+    When(Method(cm_mock, sigma)).AlwaysReturn(0.5);
+    seq_model.channel_models.push_back(&cm_mock.get());
+    unsigned int timestep = 0;
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 1};
+    e.pruned_range.max = {num_timesteps, 3};
+    unsigned int order = 1 + num_channels;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = num_timesteps;
+    shape[1] = max_num_dyes + 1;
+    PeptideStateVector psv1(order, shape);
+    PeptideStateVector psv2(order, shape);
+    delete[] shape;
+    psv1.tensor[{0, 1}] = 13.1;
+    psv1.tensor[{0, 2}] = 13.2;
+    unsigned int edmans = 0;
+    e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
     BOOST_TEST((psv2.tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
     // Avoid double clean-up:
@@ -618,6 +665,8 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
+    e.pruned_range.min = {0, 0, 0};
+    e.pruned_range.max = {num_timesteps, 2, 2};
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
