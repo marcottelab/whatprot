@@ -35,4 +35,16 @@ bool KDRange::is_empty() const {
     return false;
 }
 
+bool KDRange::includes_zero() {
+    for (unsigned int i = 0; i < min.size(); i++) {
+        if (min[i] > 0) {
+            return false;
+        }
+        if (max[i] <= 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 }  // namespace whatprot

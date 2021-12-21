@@ -71,6 +71,27 @@ BOOST_AUTO_TEST_CASE(is_empty_true_test) {
     BOOST_TEST(x.is_empty() == true);
 }
 
+BOOST_AUTO_TEST_CASE(includes_zero_true_test) {
+    KDRange x;
+    x.min = {0, 0, 0};
+    x.max = {1, 2, 10};
+    BOOST_TEST(x.includes_zero() == true);
+}
+
+BOOST_AUTO_TEST_CASE(includes_zero_false_min_too_big_test) {
+    KDRange x;
+    x.min = {0, 1, 0};
+    x.max = {1, 2, 10};
+    BOOST_TEST(x.includes_zero() == false);
+}
+
+BOOST_AUTO_TEST_CASE(includes_zero_false_max_too_small_test) {
+    KDRange x;
+    x.min = {0, 0, 0};
+    x.max = {1, 0, 10};
+    BOOST_TEST(x.includes_zero() == false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // kd_box_range_suite
 BOOST_AUTO_TEST_SUITE_END()  // util_suite
 
