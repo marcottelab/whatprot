@@ -12,6 +12,8 @@
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
+#include "tensor/const-tensor-iterator.h"
+#include "tensor/tensor-iterator.h"
 #include "util/kd-range.h"
 
 namespace whatprot {
@@ -20,38 +22,61 @@ DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
 
 void DetachTransition::prune_forward(KDRange* range, bool* allow_detached) {
     pruned_range = *range;
+    detached_forward = *allow_detached;
+    *allow_detached = true;
 }
 
 void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {
     pruned_range = pruned_range.intersect(*range);
     *range = pruned_range;
+    detached_backward = allow_detached;
 }
 
 void DetachTransition::forward(const PeptideStateVector& input,
                                unsigned int* num_edmans,
                                PeptideStateVector* output) const {
-    int i_max = (*num_edmans + 1) * input.tensor.strides[0];
+    ConstTensorIterator* in_itr = input.tensor.const_iterator(pruned_range);
+    TensorIterator* out_itr = output->tensor.iterator(pruned_range);
     double sum = 0.0;
-    for (int i = 0; i < i_max; i++) {
-        double value = input.tensor.values[i];
-        output->tensor.values[i] = value * (1 - p_detach);
+    while (!in_itr->done()) {
+        double value = *in_itr->get();
+        *out_itr->get() = value * (1 - p_detach);
         sum += value;
+        in_itr->advance();
+        out_itr->advance();
     }
-    // += is fine here, we have already set a value to output at this location
-    // in the for loop above.
-    output->tensor.values[(*num_edmans) * output->tensor.strides[0]] +=
-            p_detach * sum;
+    delete in_itr;
+    delete out_itr;
+    if (detached_backward) {
+        if (detached_forward) {
+            output->p_detached = input.p_detached + p_detach * sum;
+        } else {
+            output->p_detached = p_detach * sum;
+        }
+    }
 }
 
 void DetachTransition::backward(const PeptideStateVector& input,
                                 unsigned int* num_edmans,
                                 PeptideStateVector* output) const {
-    int i_max = (*num_edmans + 1) * input.tensor.strides[0];
-    double if_detach =
-            input.tensor.values[(*num_edmans) * input.tensor.strides[0]];
-    for (int i = 0; i < i_max; i++) {
-        output->tensor.values[i] =
-                (1 - p_detach) * input.tensor.values[i] + p_detach * if_detach;
+    ConstTensorIterator* in_itr = input.tensor.const_iterator(pruned_range);
+    TensorIterator* out_itr = output->tensor.iterator(pruned_range);
+    while (!in_itr->done()) {
+        *out_itr->get() = (1 - p_detach) * (*in_itr->get());
+        if (detached_backward) {
+            *out_itr->get() += p_detach * input.p_detached;
+        }
+        in_itr->advance();
+        out_itr->advance();
+    }
+    delete in_itr;
+    delete out_itr;
+    if (detached_forward) {
+        if (detached_backward) {
+            output->p_detached = input.p_detached;
+        } else {
+            output->p_detached = 0.0;
+        }
     }
 }
 

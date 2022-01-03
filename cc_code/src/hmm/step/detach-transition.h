@@ -37,6 +37,8 @@ public:
 
     double p_detach;
     KDRange pruned_range;
+    bool detached_forward;
+    bool detached_backward;
 };
 
 }  // namespace whatprot
