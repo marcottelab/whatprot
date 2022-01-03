@@ -86,12 +86,17 @@ double PeptideEmission::prob(int channel, int num_dyes) const {
 void PeptideEmission::prune_forward(KDRange* range, bool* allow_detached) {
     pruned_range = pruned_range.intersect(*range);
     *range = pruned_range;
+    this->allow_detached = pruned_range.includes_zero();
+    *allow_detached = this->allow_detached;
 }
 
 void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
     pruned_range = pruned_range.intersect(*range);
     *range = pruned_range;
+    this->allow_detached = pruned_range.includes_zero();
+    *allow_detached = this->allow_detached;
 }
+
 void PeptideEmission::forward_or_backward(const PeptideStateVector& input,
                                           unsigned int* num_edmans,
                                           PeptideStateVector* output) const {
@@ -108,20 +113,27 @@ void PeptideEmission::forward_or_backward(const PeptideStateVector& input,
     }
     delete inputit;
     delete outputit;
+    if (allow_detached) {
+        double p_detached = input.p_detached;
+        for (unsigned int c = 0; c < num_channels; c++) {
+            p_detached *= prob(c, 0);
+        }
+        output->p_detached = p_detached;
+    }
+    output->range = pruned_range;
+    output->allow_detached = allow_detached;
 }
 
 void PeptideEmission::forward(const PeptideStateVector& input,
                               unsigned int* num_edmans,
                               PeptideStateVector* output) const {
     forward_or_backward(input, num_edmans, output);
-    output->range = pruned_range;
 }
 
 void PeptideEmission::backward(const PeptideStateVector& input,
                                unsigned int* num_edmans,
                                PeptideStateVector* output) const {
     forward_or_backward(input, num_edmans, output);
-    output->range = pruned_range;
 }
 
 void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,

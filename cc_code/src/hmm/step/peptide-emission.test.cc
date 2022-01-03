@@ -411,6 +411,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 0};
     e.pruned_range.max = {num_timesteps, 1};
+    e.allow_detached = true;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -419,9 +420,11 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     PeptideStateVector psv2(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0}] = 3.14;
+    psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0}]) == 3.14 * cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST(psv2.p_detached == 1.23 * cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -448,6 +451,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 0};
     e.pruned_range.max = {num_timesteps, 1};
+    e.allow_detached = true;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -458,11 +462,13 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     psv1.tensor[{0, 0}] = 13.0;
     psv1.tensor[{1, 0}] = 13.1;
     psv1.tensor[{2, 0}] = 13.2;
+    psv1.p_detached = 1.23;
     unsigned int edmans = 2;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(2.0, 0));
     BOOST_TEST((psv2.tensor[{1, 0}]) == 13.1 * cm_mock.get().pdf(2.0, 0));
     BOOST_TEST((psv2.tensor[{2, 0}]) == 13.2 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST(psv2.p_detached == 1.23 * cm_mock.get().pdf(2.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -491,6 +497,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 0, 0, 0};
     e.pruned_range.max = {num_timesteps, 1, 1, 1};
+    e.allow_detached = true;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -501,10 +508,14 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     PeptideStateVector psv2(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0, 0, 0}] = 13.0;
+    psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
+                          * cm_mock.get().pdf(0.2, 0));
+    BOOST_TEST(psv2.p_detached
+               == 1.23 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
                           * cm_mock.get().pdf(0.2, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -547,6 +558,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 0, 0, 0};
     e.pruned_range.max = {num_timesteps, 1, 1, 1};
+    e.allow_detached = true;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -557,10 +569,15 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     PeptideStateVector psv2(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0, 0, 0}] = 13.0;
+    psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock_0.get().pdf(0.0, 0)
+                          * cm_mock_1.get().pdf(0.1, 0)
+                          * cm_mock_2.get().pdf(0.2, 0));
+    BOOST_TEST(psv2.p_detached
+               == 1.23 * cm_mock_0.get().pdf(0.0, 0)
                           * cm_mock_1.get().pdf(0.1, 0)
                           * cm_mock_2.get().pdf(0.2, 0));
     // Avoid double clean-up:
@@ -587,6 +604,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 0};
     e.pruned_range.max = {num_timesteps, max_num_dyes + 1u};
+    e.allow_detached = true;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -597,11 +615,13 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     psv1.tensor[{0, 0}] = 13.0;
     psv1.tensor[{0, 1}] = 13.1;
     psv1.tensor[{0, 2}] = 13.2;
+    psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(0.0, 0));
     BOOST_TEST((psv2.tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
     BOOST_TEST((psv2.tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
+    BOOST_TEST(psv2.p_detached == 1.23 * cm_mock.get().pdf(0.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }
@@ -626,6 +646,7 @@ BOOST_AUTO_TEST_CASE(forward_reduced_range_test, *tolerance(TOL)) {
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 1};
     e.pruned_range.max = {num_timesteps, 3};
+    e.allow_detached = false;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -667,6 +688,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     e.pruned_range.min = {0, 0, 0};
     e.pruned_range.max = {num_timesteps, 2, 2};
+    e.allow_detached = true;
     unsigned int order = 1 + num_channels;
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
@@ -683,6 +705,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     psv1.tensor[{1, 0, 1}] = 7.101;
     psv1.tensor[{1, 1, 0}] = 7.110;
     psv1.tensor[{1, 1, 1}] = 7.111;
+    psv1.p_detached = 1.23;
     unsigned int edmans = 1;
     e.forward(psv1, &edmans, &psv2);
     BOOST_TEST((psv2.tensor[{0, 0, 0}])
@@ -709,6 +732,8 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     BOOST_TEST((psv2.tensor[{1, 1, 1}])
                == 7.111 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST(psv2.p_detached
+               == 1.23 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
 }

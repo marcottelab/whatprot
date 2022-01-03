@@ -52,6 +52,7 @@ public:
     Radiometry radiometry;
     unsigned int timestep;
     KDRange pruned_range;
+    bool allow_detached;
     std::vector<double> values;
     unsigned int num_channels;
     int max_num_dyes;
