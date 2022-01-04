@@ -94,6 +94,10 @@ void BinomialTransition::forward(const PeptideStateVector& input,
     delete in_itr;
     delete out_itr;
     output->range = backward_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
 }
 
 void BinomialTransition::forward(const Vector& input, Vector* output) const {
@@ -129,6 +133,10 @@ void BinomialTransition::backward(const PeptideStateVector& input,
     delete in_itr;
     delete out_itr;
     output->range = forward_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
 }
 
 void BinomialTransition::backward(const Vector& input, Vector* output) const {

@@ -174,6 +174,43 @@ BOOST_AUTO_TEST_CASE(probability_more_involved_test, *tolerance(TOL)) {
     BOOST_TEST(hmm.probability() == 1.876822091893613e-96);
 }
 
+BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
+    unsigned int num_channels = 2;
+    SequencingModel seq_model;
+    seq_model.p_edman_failure = 0.06;
+    seq_model.p_detach = 0.05;
+    for (unsigned int i = 0; i < num_channels; i++) {
+        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models[i]->p_bleach = 0.05;
+        seq_model.channel_models[i]->p_dud = 0.07;
+        seq_model.channel_models[i]->bg_sig = 0.00667;
+        seq_model.channel_models[i]->mu = 1.0;
+        seq_model.channel_models[i]->sig = 0.16;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
+    }
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    int max_num_dyes = 5;
+    UniversalPrecomputations up(seq_model, num_channels);
+    up.set_max_num_dyes(max_num_dyes);
+    unsigned int num_timesteps = 3;
+    DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
+    DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
+    Radiometry r(num_timesteps, num_channels);
+    r(0, 0) = 5.0;
+    r(0, 1) = 2.0;
+    r(1, 0) = 0.0;
+    r(1, 1) = 0.0;
+    r(2, 0) = 0.0;
+    r(2, 1) = 0.0;
+    RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
+    PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
+    // This is essentially a "no change" test. It assumes that the function was
+    // giving the correct result on January 4, 2022.
+    BOOST_TEST(hmm.probability() == 3.7811594779082656e-35);
+}
+
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;

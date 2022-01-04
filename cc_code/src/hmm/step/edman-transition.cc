@@ -109,6 +109,10 @@ void EdmanTransition::forward(const PeptideStateVector& input,
     }
     delete in_itr;
     output->range = backward_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
 }
 
 void EdmanTransition::backward(const PeptideStateVector& input,
@@ -183,6 +187,10 @@ void EdmanTransition::backward(const PeptideStateVector& input,
     }
     delete in_itr;
     output->range = forward_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
     (*num_edmans)--;
 }
 
