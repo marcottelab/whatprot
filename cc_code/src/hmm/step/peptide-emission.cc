@@ -55,22 +55,29 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
         }
     } else {
         for (unsigned int c = 0; c < num_channels; c++) {
+            // min might not get set, if not, the range should be empty, and
+            // this is the value we want.
+            int cmin = max_num_dyes + 1;
             for (int d = 0; d < max_num_dyes; d++) {
                 double s = seq_settings.dist_cutoff
                            * seq_model.channel_models[c]->sigma(d);
                 if ((double)d + s > radiometry(timestep, c)) {
-                    pruned_range.min[1 + c] = d;
+                    cmin = d;
                     break;
                 }
             }
+            pruned_range.min[1 + c] = cmin;
+            // max might not get set, if not, this is the value we want.
+            int cmax = max_num_dyes + 1;
             for (int d = pruned_range.min[1 + c]; d < max_num_dyes; d++) {
                 double s = seq_settings.dist_cutoff
                            * seq_model.channel_models[c]->sigma(d);
                 if ((double)d - s > radiometry(timestep, c)) {
-                    pruned_range.max[1 + c] = d;
+                    cmax = d;
                     break;
                 }
             }
+            pruned_range.max[1 + c] = cmax;
         }
     }
 }
