@@ -13,23 +13,24 @@
 #include <vector>
 
 // Local project headers:
-#include "common/error-model.h"
 #include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
 #include "hmm/step/stuck-dye-transition.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 class UniversalPrecomputations {
 public:
-    UniversalPrecomputations(const ErrorModel& error_model, int num_channels);
+    UniversalPrecomputations(const SequencingModel& seq_model,
+                             unsigned int num_channels);
     void set_max_num_dyes(int max_num_dyes);
     DetachTransition detach_transition;
     std::vector<DudTransition> dud_transitions;
     std::vector<BleachTransition> bleach_transitions;
-    StuckDyeTransition stuck_dye_transition;
-    int num_channels;
+    std::vector<StuckDyeTransition> stuck_dye_transitions;
+    unsigned int num_channels;
 };
 
 }  // namespace whatprot

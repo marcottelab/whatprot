@@ -13,23 +13,23 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/hmm/generic-hmm.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/stuck-dye-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/stuck-dye-step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-class StuckDyeHMM : public GenericHMM<StuckDyeStateVector> {
+class StuckDyeHMM : public GenericHMM<StuckDyeStateVector, StuckDyeStep> {
 public:
-    StuckDyeHMM(int num_timesteps,
-                int num_channels,
-                int channel,
+    StuckDyeHMM(unsigned int num_timesteps,
+                unsigned int num_channels,
+                unsigned int channel,
                 const RadiometryPrecomputations& radiometry_precomputations,
                 const UniversalPrecomputations& universal_precomputations);
-    virtual StuckDyeStateVector create_states() const override;
+    virtual StuckDyeStateVector* create_states() const override;
 };
 
 }  // namespace whatprot

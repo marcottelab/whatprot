@@ -13,15 +13,15 @@ namespace whatprot {
 
 class Radiometry {
 public:
-    Radiometry(int num_timesteps, int num_channels);
+    Radiometry(unsigned int num_timesteps, unsigned int num_channels);
     Radiometry(const Radiometry& other);
     ~Radiometry();
     double& operator()(int t, int c);
     double operator()(int t, int c) const;
 
     double* intensities;
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
 };
 
 }  // namespace whatprot

@@ -33,6 +33,7 @@ int simulate_main(int argc, char** argv) {
     } else if (0 == strcmp(mode, "dt")) {
         return_code = dt_main(argc, argv);
     } else {
+        return_code = 1;
         print_invalid_classifier();
     }
     return return_code;

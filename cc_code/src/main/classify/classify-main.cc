@@ -36,6 +36,7 @@ int classify_main(int argc, char** argv) {
     } else if (0 == strcmp(mode, "nn")) {
         return_code = nn_main(argc, argv);
     } else {
+        return_code = 1;
         print_invalid_classifier();
     }
     return return_code;

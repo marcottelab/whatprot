@@ -10,23 +10,29 @@
 #define WHATPROT_HMM_STEP_STEP_H
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
 template <typename SV>  // SV is the state vector type.
 class Step {
 public:
-    virtual void forward(int* num_edmans, SV* states) const = 0;
+    // DO NOT use the same SV object instance for both input and output, this
+    // has undefined behavior.
+    virtual void forward(const SV& input,
+                         unsigned int* num_edmans,
+                         SV* output) const = 0;
+    // DO NOT use the same SV object instance for both input and output, this
+    // has undefined behavior.
     virtual void backward(const SV& input,
-                          int* num_edmans,
+                          unsigned int* num_edmans,
                           SV* output) const = 0;
     virtual void improve_fit(const SV& forward_states,
                              const SV& backward_states,
                              const SV& next_backward_states,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const = 0;
+                             SequencingModelFitter* fitter) const = 0;
 };
 
 }  // namespace whatprot

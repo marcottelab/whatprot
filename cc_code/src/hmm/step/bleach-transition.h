@@ -13,9 +13,9 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/binomial-transition.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
@@ -25,9 +25,9 @@ public:
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const override;
+                             SequencingModelFitter* fitter) const override;
 };
 
 }  // namespace whatprot

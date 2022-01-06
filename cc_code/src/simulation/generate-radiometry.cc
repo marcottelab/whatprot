@@ -14,38 +14,39 @@
 #include <random>
 
 // Local project headers:
+#include "parameterization/model/sequencing-model.h"
 #include "simulation/generate-dye-track.h"
 
 namespace whatprot {
 
 namespace {
 using std::default_random_engine;
-using std::log;
-using std::lognormal_distribution;
+using std::normal_distribution;
+using std::sqrt;
 }  // namespace
 
-void generate_radiometry(const ErrorModel& error_model,
+void generate_radiometry(const SequencingModel& seq_model,
                          const DyeSeq& dye_seq,
-                         int num_timesteps,
-                         int num_channels,
+                         unsigned int num_timesteps,
+                         unsigned int num_channels,
                          default_random_engine* generator,
                          Radiometry* radiometry) {
     DyeTrack dye_track(num_timesteps, num_channels);
-    generate_dye_track(error_model,
+    generate_dye_track(seq_model,
                        dye_seq,
                        num_timesteps,
                        num_channels,
                        generator,
                        &dye_track);
-    for (int t = 0; t < num_timesteps; t++) {
-        for (int c = 0; c < num_channels; c++) {
+    for (unsigned int t = 0; t < num_timesteps; t++) {
+        for (unsigned int c = 0; c < num_channels; c++) {
             if (dye_track(t, c) > 0) {
-                lognormal_distribution<double> lognormal(
-                        error_model.mu + log((double)dye_track(t, c)),
-                        error_model.sigma);
-                (*radiometry)(t, c) = lognormal(*generator);
-            } else {
-                (*radiometry)(t, c) = 0.0;
+                int num_dyes = dye_track(t, c);
+                double mu = seq_model.channel_models[c]->mu * num_dyes;
+                double sig = seq_model.channel_models[c]->sig
+                             * sqrt((double)num_dyes);
+                normal_distribution<double> normal(mu, sig);
+                (*radiometry)(t, c) = normal(*generator);
             }
         }
     }

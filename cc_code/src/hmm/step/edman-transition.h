@@ -11,32 +11,38 @@
 
 // Local project headers:
 #include "common/dye-track.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
-class EdmanTransition : public Step<PeptideStateVector> {
+class EdmanTransition : public PeptideStep {
 public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
-    virtual void forward(int* num_edmans,
-                         PeptideStateVector* psv) const override;
+    virtual void prune_forward(KDRange* range, bool* allow_detached) override;
+    virtual void prune_backward(KDRange* range, bool* allow_detached) override;
+    virtual void forward(const PeptideStateVector& input,
+                         unsigned int* num_edmans,
+                         PeptideStateVector* output) const override;
     virtual void backward(const PeptideStateVector& input,
-                          int* num_edmans,
+                          unsigned int* num_edmans,
                           PeptideStateVector* output) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const override;
+                             SequencingModelFitter* fitter) const override;
 
     DyeSeq dye_seq;
     DyeTrack dye_track;
     double p_edman_failure;
+    KDRange forward_range;
+    KDRange backward_range;
 };
 
 }  // namespace whatprot

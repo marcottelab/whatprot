@@ -102,7 +102,7 @@ INCLUDE += -I./extern/FakeIt/single_header/boost/
 GENDEPS = -MMD -MP -MT '$@'
 
 # Here we set any additional flags for the compiler.
-CFLAGS = -Wpedantic -Werror -fopenmp
+CFLAGS = -Wall -Wextra -Wno-cast-function-type -Wno-deprecated-copy -Wno-unused-parameter -Wpedantic -Werror -fopenmp
 
 # Generate binary. This is first so that it will be the default rule.
 all: CFLAGS += -Og -ggdb
@@ -130,8 +130,11 @@ clean:
 	rm -rf $(BUILD_DIR)/*
 
 # Run clang-format
-format:
-	clang-format -style=file -i $(SRCS) $(HEADERS)
+format: $(BUILD_DIR)/format
+
+$(BUILD_DIR)/format: $(SRCS) $(HEADERS)
+	clang-format -style=file -i $?
+	touch $(BUILD_DIR)/format
 
 # "-include" includes other makefiles.
 #   * Each file included is a makefile with one rule for making a .o file with

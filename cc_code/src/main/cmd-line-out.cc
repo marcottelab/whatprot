@@ -54,6 +54,10 @@ void print_finished_generating_radiometries(int num, double time) {
          << "seconds).\n";
 }
 
+void print_finished_parameter_fitting(double time) {
+    cout << "Finished fitting parameters (" << time << "seconds).\n";
+}
+
 void print_finished_saving_results(double time) {
     cout << "Finished saving results (" << time << " seconds).\n";
 }

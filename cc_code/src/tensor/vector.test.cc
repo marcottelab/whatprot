@@ -18,18 +18,18 @@ BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(vector_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
-    int length = 1;
+    unsigned int length = 1;
     int stride = 1;
     double* values = new double[length * stride];
     Vector v(length, stride, values);
-    BOOST_TEST(v.length == 1);
+    BOOST_TEST(v.length == 1u);
     BOOST_TEST(v.stride == 1);
     BOOST_TEST(v.values != (void*)NULL);
     delete[] values;
 }
 
 BOOST_AUTO_TEST_CASE(bracket_op_test) {
-    int length = 1;
+    unsigned int length = 1;
     int stride = 1;
     double* values = new double[length];
     values[0] = 42;
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(bracket_op_test) {
 }
 
 BOOST_AUTO_TEST_CASE(stride_one_test) {
-    int length = 5;
+    unsigned int length = 5;
     int stride = 1;
     double* values = new double[length * stride];
     values[0] = 420;
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(stride_one_test) {
 }
 
 BOOST_AUTO_TEST_CASE(stride_two_test) {
-    int length = 3;
+    unsigned int length = 3;
     int stride = 2;
     double* values = new double[length * stride];
     values[0] = 420;
@@ -73,8 +73,31 @@ BOOST_AUTO_TEST_CASE(stride_two_test) {
     delete[] values;
 }
 
+BOOST_AUTO_TEST_CASE(mutable_values_test) {
+    unsigned int length = 5;
+    int stride = 1;
+    double* values = new double[length * stride];
+    values[0] = 420;
+    values[1] = 421;
+    values[2] = 422;
+    values[3] = 423;
+    values[4] = 424;
+    Vector v(length, stride, values);
+    v[0] = 720;
+    v[1] = 721;
+    v[2] = 722;
+    v[3] = 723;
+    v[4] = 724;
+    BOOST_TEST(v[0] == 720);
+    BOOST_TEST(v[1] == 721);
+    BOOST_TEST(v[2] == 722);
+    BOOST_TEST(v[3] == 723);
+    BOOST_TEST(v[4] == 724);
+    delete[] values;
+}
+
 BOOST_AUTO_TEST_CASE(const_stride_one_test) {
-    int length = 5;
+    unsigned int length = 5;
     int stride = 1;
     double* values = new double[length * stride];
     values[0] = 420;
@@ -93,7 +116,7 @@ BOOST_AUTO_TEST_CASE(const_stride_one_test) {
 }
 
 BOOST_AUTO_TEST_CASE(const_stride_two_test) {
-    int length = 3;
+    unsigned int length = 3;
     int stride = 2;
     double* values = new double[length * stride];
     values[0] = 420;

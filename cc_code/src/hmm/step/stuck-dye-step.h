@@ -6,22 +6,20 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_HMM_FIT_PARAMETER_FITTER_H
-#define WHATPROT_HMM_FIT_PARAMETER_FITTER_H
+#ifndef WHATPROT_HMM_STEP_STUCK_DYE_STEP_H
+#define WHATPROT_HMM_STEP_STUCK_DYE_STEP_H
+
+// Local project headers:
+#include "hmm/state-vector/stuck-dye-state-vector.h"
+#include "hmm/step/step.h"
 
 namespace whatprot {
 
-class ParameterFitter {
+class StuckDyeStep : public Step<StuckDyeStateVector> {
 public:
-    ParameterFitter();
-    double get() const;
-    ParameterFitter operator+(const ParameterFitter& other) const;
-    void operator+=(const ParameterFitter& other);
-    void operator*=(double weight_adjustment);
-    double numerator;
-    double denominator;
+    virtual ~StuckDyeStep() {}
 };
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_HMM_FIT_PARAMETER_FITTER_H
+#endif  // WHATPROT_HMM_STEP_STUCK_DYE_STEP_H

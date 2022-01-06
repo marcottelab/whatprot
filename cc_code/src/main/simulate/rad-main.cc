@@ -18,11 +18,11 @@
 
 // Local project headers:
 #include "common/dye-seq.h"
-#include "common/error-model.h"
 #include "common/sourced-data.h"
 #include "io/dye-seqs-io.h"
 #include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
+#include "parameterization/model/sequencing-model.h"
 #include "simulation/generate-radiometries.h"
 #include "util/time.h"
 
@@ -43,7 +43,7 @@ int rad_main(int argc, char** argv) {
         print_wrong_number_of_inputs();
         return EXIT_FAILURE;
     }
-    int num_timesteps = atoi(argv[3]);
+    unsigned int num_timesteps = atoi(argv[3]);
     int radiometries_per_peptide = atoi(argv[4]);
     char* dye_seqs_filename = argv[5];
     char* radiometries_filename = argv[6];
@@ -53,21 +53,8 @@ int rad_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    ErrorModel error_model(.06,  // p_edman_failure
-                           .05,  // p_detach
-                           .05,  // p_bleach
-                           .07,  // p_dud
-                           DistributionType::LOGNORMAL,
-                           0.0,  // mu
-                           .16,  // sigma
-                           0.5,  // stuck_dye_ratio
-                           .08);  // p_stuck_dye_loss
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
-
-    start_time = wall_time();
-    int num_channels;
-    int total_num_dye_seqs;
+    unsigned int num_channels;
+    unsigned int total_num_dye_seqs;
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
     read_dye_seqs(
             dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
@@ -75,9 +62,26 @@ int rad_main(int argc, char** argv) {
     print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
 
     start_time = wall_time();
+    SequencingModel seq_model;
+    seq_model.p_edman_failure = 0.06;
+    seq_model.p_detach = 0.05;
+    for (unsigned int c = 0; c < num_channels; c++) {
+        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models[c]->p_bleach = 0.05;
+        seq_model.channel_models[c]->p_dud = 0.07;
+        seq_model.channel_models[c]->bg_sig = 0.00667;
+        seq_model.channel_models[c]->mu = 1.0;
+        seq_model.channel_models[c]->sig = 0.16;
+        seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
+    }
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
+
+    start_time = wall_time();
     default_random_engine generator(time_based_seed());
     vector<SourcedData<Radiometry, SourceCount<int>>> radiometries;
-    generate_radiometries(error_model,
+    generate_radiometries(seq_model,
                           dye_seqs,
                           num_timesteps,
                           num_channels,

@@ -12,13 +12,13 @@
 // Standard C++ library headers:
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
 // Local project headers:
 #include "classifiers/hybrid-classifier.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
@@ -27,6 +27,8 @@
 #include "io/radiometries-io.h"
 #include "io/scored-classifications-io.h"
 #include "main/cmd-line-out.h"
+#include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 #include "util/delete.h"
 #include "util/time.h"
 
@@ -47,7 +49,7 @@ int hybrid_main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     int k = atoi(argv[3]);
-    double sigma = atof(argv[4]);
+    double sig = atof(argv[4]);
     int h = atoi(argv[5]);
     char* dye_seqs_filename = argv[6];
     char* dye_tracks_filename = argv[7];
@@ -58,21 +60,8 @@ int hybrid_main(int argc, char** argv) {
     double end_time;
 
     start_time = wall_time();
-    ErrorModel error_model(.06,  // p_edman_failure
-                           .05,  // p_detach
-                           .05,  // p_bleach
-                           .07,  // p_dud
-                           DistributionType::LOGNORMAL,
-                           0.0,  // mu
-                           .16,  // sigma
-                           0.5,  // stuck_dye_ratio
-                           .08);  // p_stuck_dye_loss
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
-
-    start_time = wall_time();
-    int num_channels;
-    int total_num_dye_seqs;  // redundant, not needed.
+    unsigned int num_channels;
+    unsigned int total_num_dye_seqs;  // redundant, not needed.
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
     read_dye_seqs(
             dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
@@ -80,8 +69,8 @@ int hybrid_main(int argc, char** argv) {
     print_read_dye_seqs(dye_seqs.size(), end_time - start_time);
 
     start_time = wall_time();
-    int num_timesteps;
-    int duplicate_num_channels;  // also get this from dye seqs file
+    unsigned int num_timesteps;
+    unsigned int duplicate_num_channels;  // also get this from dye seqs file
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> dye_tracks;
     read_dye_tracks(dye_tracks_filename,
                     &num_timesteps,
@@ -91,9 +80,9 @@ int hybrid_main(int argc, char** argv) {
     print_read_dye_tracks(dye_tracks.size(), end_time - start_time);
 
     start_time = wall_time();
-    int duplicate_num_timesteps;  // also get this from dye track file.
-    int triplicate_num_channels;  // also in dye tracks and dye seqs files.
-    int total_num_radiometries;  // number of radiometries across all procs.
+    unsigned int duplicate_num_timesteps;  // also get this from dye track file.
+    unsigned int triplicate_num_channels;  // see dye tracks and dye seqs files.
+    unsigned int total_num_radiometries;  // num radiometries across all procs.
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
                       &duplicate_num_timesteps,
@@ -104,11 +93,31 @@ int hybrid_main(int argc, char** argv) {
     print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
+    SequencingModel seq_model;
+    seq_model.p_edman_failure = 0.06;
+    seq_model.p_detach = 0.05;
+    for (unsigned int c = 0; c < num_channels; c++) {
+        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models[c]->p_bleach = 0.05;
+        seq_model.channel_models[c]->p_dud = 0.07;
+        seq_model.channel_models[c]->bg_sig = 0.00667;
+        seq_model.channel_models[c]->mu = 1.0;
+        seq_model.channel_models[c]->sig = 0.16;
+        seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
+    }
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
+
+    start_time = wall_time();
     HybridClassifier classifier(num_timesteps,
                                 num_channels,
-                                error_model,
+                                seq_model,
+                                seq_settings,
                                 k,
-                                sigma,
+                                sig,
                                 &dye_tracks,
                                 h,
                                 dye_seqs);

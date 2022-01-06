@@ -17,11 +17,11 @@
 
 // Local project headers:
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
 #include "kd-tree/kd-tree.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -53,11 +53,11 @@ public:
 
 class NNClassifier {
 public:
-    NNClassifier(int num_timesteps,
-                 int num_channels,
-                 const ErrorModel& error_model,
+    NNClassifier(unsigned int num_timesteps,
+                 unsigned int num_channels,
+                 const SequencingModel& seq_model,
                  int k,
-                 double sigma,
+                 double sig,
                  std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                          dye_tracks);
     ~NNClassifier();
@@ -65,16 +65,16 @@ public:
                            std::unordered_map<int, double>* id_score_map);
     ScoredClassification classify(const Radiometry& radiometry);
     std::vector<ScoredClassification> classify(const Radiometry& radiometry,
-                                               int h);
+                                               unsigned int h);
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
 
     KDTree<KDTEntry, KDTQuery>* kd_tree;
     int num_train;
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_timesteps;
+    unsigned int num_channels;
     int k;  // number of nearest neighbors to use
-    double two_sigma_sq;  // sigma to use for kernel weighting
+    double two_sig_sq;  // sig to use for kernel weighting
 };
 
 }  // namespace whatprot

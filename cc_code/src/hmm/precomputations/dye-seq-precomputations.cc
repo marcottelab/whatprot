@@ -12,21 +12,21 @@
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "hmm/step/edman-transition.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
-                                             const ErrorModel& error_model,
-                                             int num_timesteps,
-                                             int num_channels)
-        : edman_transition(error_model.p_edman_failure,
+                                             const SequencingModel& seq_model,
+                                             unsigned int num_timesteps,
+                                             unsigned int num_channels)
+        : edman_transition(seq_model.p_edman_failure,
                            dye_seq,
                            DyeTrack(num_timesteps, num_channels, dye_seq)) {
     tensor_shape.resize(1 + num_channels);
     tensor_shape[0] = num_timesteps;
-    for (int c = 0; c < num_channels; c++) {
+    for (unsigned int c = 0; c < num_channels; c++) {
         // This next line of code is a little confusing.
         //   * The first dimension of the tensor shape is always the timestep,
         //     so we need to add one to the channel to index to the correct

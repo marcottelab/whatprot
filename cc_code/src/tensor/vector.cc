@@ -11,8 +11,8 @@
 
 namespace whatprot {
 
-Vector::Vector(int length, int stride, double* values)
-        : length(length), stride(stride), values(values) {}
+Vector::Vector(unsigned int length, int stride, double* values)
+        : values(values), length(length), stride(stride) {}
 
 double& Vector::operator[](int i) {
     return values[i * stride];

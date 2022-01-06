@@ -14,16 +14,19 @@
 
 // Standard C++ library headers:
 #include <utility>
+#include <vector>
 
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
 namespace {
 using boost::unit_test::tolerance;
 using std::move;
+using std::vector;
 const double TOL = 0.000000001;
 }  // namespace
 
@@ -31,28 +34,28 @@ BOOST_AUTO_TEST_SUITE(tensor_suite)
 BOOST_AUTO_TEST_SUITE(tensor_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_order_one_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 1);
+    BOOST_TEST(t.shape[0] == 1u);
     BOOST_TEST(t.strides[0] == 1);
-    BOOST_ASSERT(t.size == 1);
+    BOOST_ASSERT(t.size == 1u);
     BOOST_TEST(t.values[0] == 0.0);
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 10;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 10);
+    BOOST_TEST(t.shape[0] == 10u);
     BOOST_TEST(t.strides[0] == 1);
-    BOOST_TEST(t.size == 10);
+    BOOST_TEST(t.size == 10u);
     BOOST_TEST(t.values[0] == 0.0);
     BOOST_TEST(t.values[1] == 0.0);
     BOOST_TEST(t.values[2] == 0.0);
@@ -66,18 +69,18 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_two_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     shape[1] = 5;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 3);
-    BOOST_TEST(t.shape[1] == 5);
+    BOOST_TEST(t.shape[0] == 3u);
+    BOOST_TEST(t.shape[1] == 5u);
     BOOST_TEST(t.strides[0] == 5);
     BOOST_TEST(t.strides[1] == 1);
-    BOOST_ASSERT(t.size == 3 * 5);
+    BOOST_ASSERT(t.size == 3u * 5u);
     BOOST_TEST(t.values[0] == 0.0);
     BOOST_TEST(t.values[1] == 0.0);
     BOOST_TEST(t.values[2] == 0.0);
@@ -96,21 +99,21 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(constructor_order_three_test, *tolerance(TOL)) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 4;
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 2);
-    BOOST_TEST(t.shape[1] == 3);
-    BOOST_TEST(t.shape[2] == 4);
+    BOOST_TEST(t.shape[0] == 2u);
+    BOOST_TEST(t.shape[1] == 3u);
+    BOOST_TEST(t.shape[2] == 4u);
     BOOST_TEST(t.strides[0] == 3 * 4);
     BOOST_TEST(t.strides[1] == 4);
     BOOST_TEST(t.strides[2] == 1);
-    BOOST_ASSERT(t.size == 2 * 3 * 4);  // size is 24
+    BOOST_ASSERT(t.size == 2u * 3u * 4u);  // size is 24
     BOOST_TEST(t.values[0] == 0.0);
     BOOST_TEST(t.values[1] == 0.0);
     BOOST_TEST(t.values[2] == 0.0);
@@ -138,8 +141,8 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     shape[2] = 4;
@@ -150,13 +153,13 @@ BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
     BOOST_TEST(t1.shape == (void*)NULL);
     BOOST_TEST(t1.strides == (void*)NULL);
     BOOST_TEST(t2.order == order);
-    BOOST_TEST(t2.shape[0] == 2);
-    BOOST_TEST(t2.shape[1] == 3);
-    BOOST_TEST(t2.shape[2] == 4);
+    BOOST_TEST(t2.shape[0] == 2u);
+    BOOST_TEST(t2.shape[1] == 3u);
+    BOOST_TEST(t2.shape[2] == 4u);
     BOOST_TEST(t2.strides[0] == 3 * 4);
     BOOST_TEST(t2.strides[1] == 4);
     BOOST_TEST(t2.strides[2] == 1);
-    BOOST_ASSERT(t2.size == 2 * 3 * 4);  // size is 24
+    BOOST_ASSERT(t2.size == 2u * 3u * 4u);  // size is 24
     BOOST_TEST(t2.values[0] == 0.0);
     BOOST_TEST(t2.values[1] == 0.0);
     BOOST_TEST(t2.values[2] == 0.0);
@@ -184,67 +187,46 @@ BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(bracket_op_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
     Tensor t(order, shape);
     delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    t[loc] = 600;
-    loc[1] = 1;
-    t[loc] = 601;
-    loc[1] = 2;
-    t[loc] = 602;
-    loc[0] = 1;
-    loc[1] = 0;
-    t[loc] = 610;
-    loc[1] = 1;
-    t[loc] = 611;
-    loc[1] = 2;
-    t[loc] = 612;
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 600);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 601);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 602);
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 610);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 611);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 612);
-    delete[] loc;
+    t[{0, 0}] = 600;
+    t[{0, 1}] = 601;
+    t[{0, 2}] = 602;
+    t[{1, 0}] = 610;
+    t[{1, 1}] = 611;
+    t[{1, 2}] = 612;
+    BOOST_TEST((t[{0, 0}]) == 600);
+    BOOST_TEST((t[{0, 1}]) == 601);
+    BOOST_TEST((t[{0, 2}]) == 602);
+    BOOST_TEST((t[{1, 0}]) == 610);
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
 }
 
 BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
+    KDRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
     Tensor t(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    t[loc] = 500;
-    loc[1] = 1;
-    t[loc] = 501;
-    loc[1] = 2;
-    t[loc] = 502;
-    loc[0] = 1;
-    loc[1] = 0;
-    t[loc] = 510;
-    loc[1] = 1;
-    t[loc] = 511;
-    loc[1] = 2;
-    t[loc] = 512;
-    TensorIterator* itr = t.iterator();
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
+    TensorIterator* itr = t.iterator(range);
     BOOST_TEST(itr->done() == false);
     BOOST_TEST(*itr->get() == 500);
     *itr->get() = 600;
@@ -270,151 +252,406 @@ BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {
     *itr->get() = 612;
     itr->advance();
     BOOST_TEST(itr->done() == true);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 600);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 601);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 602);
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 610);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 611);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 612);
-    delete[] loc;
+    BOOST_TEST((t[{0, 0}]) == 600);
+    BOOST_TEST((t[{0, 1}]) == 601);
+    BOOST_TEST((t[{0, 2}]) == 602);
+    BOOST_TEST((t[{1, 0}]) == 610);
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
     delete itr;
+    delete[] shape;
 }
 
 BOOST_AUTO_TEST_CASE(const_iterator_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 3;
+    KDRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
     Tensor t(order, shape);
-    delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    t[loc] = 500;
-    loc[1] = 1;
-    t[loc] = 501;
-    loc[1] = 2;
-    t[loc] = 502;
-    loc[0] = 1;
-    loc[1] = 0;
-    t[loc] = 510;
-    loc[1] = 1;
-    t[loc] = 511;
-    loc[1] = 2;
-    t[loc] = 512;
-    ConstTensorIterator* itr = t.const_iterator();
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
+    ConstTensorIterator* itr = t.const_iterator(range);
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 500);
+    BOOST_TEST(*itr->get() == 500);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 501);
+    BOOST_TEST(*itr->get() == 501);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 502);
+    BOOST_TEST(*itr->get() == 502);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 510);
+    BOOST_TEST(*itr->get() == 510);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 511);
+    BOOST_TEST(*itr->get() == 511);
     itr->advance();
     BOOST_TEST(itr->done() == false);
-    BOOST_TEST(itr->get() == 512);
+    BOOST_TEST(*itr->get() == 512);
     itr->advance();
     BOOST_TEST(itr->done() == true);
-    loc[0] = 0;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 500);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 501);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 502);
-    loc[0] = 1;
-    loc[1] = 0;
-    BOOST_TEST(t[loc] == 510);
-    loc[1] = 1;
-    BOOST_TEST(t[loc] == 511);
-    loc[1] = 2;
-    BOOST_TEST(t[loc] == 512);
-    delete[] loc;
+    BOOST_TEST((t[{0, 0}]) == 500);
+    BOOST_TEST((t[{0, 1}]) == 501);
+    BOOST_TEST((t[{0, 2}]) == 502);
+    BOOST_TEST((t[{1, 0}]) == 510);
+    BOOST_TEST((t[{1, 1}]) == 511);
+    BOOST_TEST((t[{1, 2}]) == 512);
     delete itr;
+    delete[] shape;
+}
+
+BOOST_AUTO_TEST_CASE(vector_iterator_dimension_0_test, *tolerance(TOL)) {
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 2;
+    shape[1] = 3;
+    KDRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
+    Tensor t(order, shape);
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
+    unsigned int vector_dimension = 0;
+    TensorVectorIterator* itr = t.vector_iterator(range, vector_dimension);
+    Vector* v;
+    BOOST_TEST(itr->done() == false);
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 500);
+    BOOST_TEST((*v)[1] == 510);
+    (*v)[0] = 600;
+    (*v)[1] = 610;
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    delete v;
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 501);
+    BOOST_TEST((*v)[1] == 511);
+    (*v)[0] = 601;
+    (*v)[1] = 611;
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    delete v;
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 502);
+    BOOST_TEST((*v)[1] == 512);
+    (*v)[0] = 602;
+    (*v)[1] = 612;
+    itr->advance();
+    BOOST_TEST(itr->done() == true);
+    delete v;
+    BOOST_TEST((t[{0, 0}]) == 600);
+    BOOST_TEST((t[{0, 1}]) == 601);
+    BOOST_TEST((t[{0, 2}]) == 602);
+    BOOST_TEST((t[{1, 0}]) == 610);
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
+    delete itr;
+    delete[] shape;
+}
+
+BOOST_AUTO_TEST_CASE(vector_iterator_dimension_1_test, *tolerance(TOL)) {
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 2;
+    shape[1] = 3;
+    KDRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
+    Tensor t(order, shape);
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
+    unsigned int vector_dimension = 1;
+    TensorVectorIterator* itr = t.vector_iterator(range, vector_dimension);
+    Vector* v;
+    BOOST_TEST(itr->done() == false);
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 500);
+    BOOST_TEST((*v)[1] == 501);
+    BOOST_TEST((*v)[2] == 502);
+    (*v)[0] = 600;
+    (*v)[1] = 601;
+    (*v)[2] = 602;
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    delete v;
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 510);
+    BOOST_TEST((*v)[1] == 511);
+    BOOST_TEST((*v)[2] == 512);
+    (*v)[0] = 610;
+    (*v)[1] = 611;
+    (*v)[2] = 612;
+    itr->advance();
+    BOOST_TEST(itr->done() == true);
+    delete v;
+    BOOST_TEST((t[{0, 0}]) == 600);
+    BOOST_TEST((t[{0, 1}]) == 601);
+    BOOST_TEST((t[{0, 2}]) == 602);
+    BOOST_TEST((t[{1, 0}]) == 610);
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
+    delete itr;
+    delete[] shape;
+}
+
+BOOST_AUTO_TEST_CASE(const_vector_iterator_dimension_0_test, *tolerance(TOL)) {
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 2;
+    shape[1] = 3;
+    KDRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
+    Tensor t(order, shape);
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
+    unsigned int vector_dimension = 0;
+    ConstTensorVectorIterator* itr =
+            t.const_vector_iterator(range, vector_dimension);
+    const Vector* v;
+    BOOST_TEST(itr->done() == false);
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 500);
+    BOOST_TEST((*v)[1] == 510);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    delete v;
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 501);
+    BOOST_TEST((*v)[1] == 511);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    delete v;
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 502);
+    BOOST_TEST((*v)[1] == 512);
+    itr->advance();
+    BOOST_TEST(itr->done() == true);
+    delete v;
+    BOOST_TEST((t[{0, 0}]) == 500);
+    BOOST_TEST((t[{0, 1}]) == 501);
+    BOOST_TEST((t[{0, 2}]) == 502);
+    BOOST_TEST((t[{1, 0}]) == 510);
+    BOOST_TEST((t[{1, 1}]) == 511);
+    BOOST_TEST((t[{1, 2}]) == 512);
+    delete itr;
+    delete[] shape;
+}
+
+BOOST_AUTO_TEST_CASE(const_vector_iterator_dimension_1_test, *tolerance(TOL)) {
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 2;
+    shape[1] = 3;
+    KDRange range;
+    range.min.resize(order);
+    range.min[0] = 0;
+    range.min[1] = 0;
+    range.max.resize(order);
+    range.max[0] = 2;
+    range.max[1] = 3;
+    Tensor t(order, shape);
+    t[{0, 0}] = 500;
+    t[{0, 1}] = 501;
+    t[{0, 2}] = 502;
+    t[{1, 0}] = 510;
+    t[{1, 1}] = 511;
+    t[{1, 2}] = 512;
+    unsigned int vector_dimension = 1;
+    ConstTensorVectorIterator* itr =
+            t.const_vector_iterator(range, vector_dimension);
+    const Vector* v;
+    BOOST_TEST(itr->done() == false);
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 500);
+    BOOST_TEST((*v)[1] == 501);
+    BOOST_TEST((*v)[2] == 502);
+    itr->advance();
+    BOOST_TEST(itr->done() == false);
+    delete v;
+    v = itr->get();
+    BOOST_TEST((*v)[0] == 510);
+    BOOST_TEST((*v)[1] == 511);
+    BOOST_TEST((*v)[2] == 512);
+    itr->advance();
+    BOOST_TEST(itr->done() == true);
+    delete v;
+    BOOST_TEST((t[{0, 0}]) == 500);
+    BOOST_TEST((t[{0, 1}]) == 501);
+    BOOST_TEST((t[{0, 2}]) == 502);
+    BOOST_TEST((t[{1, 0}]) == 510);
+    BOOST_TEST((t[{1, 1}]) == 511);
+    BOOST_TEST((t[{1, 2}]) == 512);
+    delete itr;
+    delete[] shape;
 }
 
 BOOST_AUTO_TEST_CASE(sum_trivial_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    tsr[loc] = 3.14;
+    tsr[{0}] = 3.14;
     BOOST_TEST(tsr.sum() == 3.14);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(sum_bigger_size_test, *tolerance(TOL)) {
-    int order = 1;
-    int* shape = new int[order];
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 3;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    tsr[loc] = 7.0;
-    loc[0] = 1;
-    tsr[loc] = 7.1;
-    loc[0] = 2;
-    tsr[loc] = 7.2;
+    tsr[{0}] = 7.0;
+    tsr[{1}] = 7.1;
+    tsr[{2}] = 7.2;
     BOOST_TEST(tsr.sum() == 7.0 + 7.1 + 7.2);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(sum_more_dimensions_test, *tolerance(TOL)) {
-    int order = 3;
-    int* shape = new int[order];
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
     shape[1] = 1;
     shape[2] = 1;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    loc[2] = 0;
-    tsr[loc] = 3.14;
+    tsr[{0, 0, 0}] = 3.14;
     BOOST_TEST(tsr.sum() == 3.14);
-    delete[] loc;
 }
 
 BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_test, *tolerance(TOL)) {
-    int order = 2;
-    int* shape = new int[order];
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
     shape[1] = 2;
     Tensor tsr(order, shape);
     delete[] shape;
-    int* loc = new int[order];
-    loc[0] = 0;
-    loc[1] = 0;
-    tsr[loc] = 7.00;
-    loc[1] = 1;
-    tsr[loc] = 7.01;
-    loc[0] = 1;
-    loc[1] = 0;
-    tsr[loc] = 7.10;
-    loc[1] = 1;
-    tsr[loc] = 7.11;
+    tsr[{0, 0}] = 7.00;
+    tsr[{0, 1}] = 7.01;
+    tsr[{1, 0}] = 7.10;
+    tsr[{1, 1}] = 7.11;
     BOOST_TEST(tsr.sum() == 7.00 + 7.01 + 7.10 + 7.11);
-    delete[] loc;
+}
+
+BOOST_AUTO_TEST_CASE(sum_trivial_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0}] = 3.14;
+    KDRange r;
+    r.min.push_back(0);
+    r.max.push_back(1);
+    BOOST_TEST(tsr.sum(r) == 3.14);
+}
+
+BOOST_AUTO_TEST_CASE(sum_empty_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0}] = 3.14;
+    KDRange r;
+    r.min.push_back(0);
+    r.max.push_back(0);
+    BOOST_TEST(tsr.sum(r) == 0.0);
+}
+
+BOOST_AUTO_TEST_CASE(sum_bigger_size_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 1;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 3;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0}] = 7.0;
+    tsr[{1}] = 7.1;
+    tsr[{2}] = 7.2;
+    KDRange r;
+    r.min.push_back(1);
+    r.max.push_back(2);
+    BOOST_TEST(tsr.sum(r) == 7.1);
+}
+
+BOOST_AUTO_TEST_CASE(sum_more_dimensions_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 3;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    shape[1] = 1;
+    shape[2] = 1;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0, 0, 0}] = 3.14;
+    KDRange r;
+    r.min = vector<unsigned int>(order, 0);
+    r.max = vector<unsigned int>(order, 1);
+    BOOST_TEST(tsr.sum(r) == 3.14);
+}
+
+BOOST_AUTO_TEST_CASE(sum_more_dimensions_big_kd_range_test, *tolerance(TOL)) {
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 4;
+    shape[1] = 4;
+    Tensor tsr(order, shape);
+    delete[] shape;
+    tsr[{0, 0}] = 7.00;
+    tsr[{0, 1}] = 7.01;
+    tsr[{0, 2}] = 7.02;
+    tsr[{0, 3}] = 7.03;
+    tsr[{1, 0}] = 7.10;
+    tsr[{1, 1}] = 7.11;
+    tsr[{1, 2}] = 7.12;
+    tsr[{1, 3}] = 7.13;
+    tsr[{2, 0}] = 7.20;
+    tsr[{2, 1}] = 7.21;
+    tsr[{2, 2}] = 7.22;
+    tsr[{2, 3}] = 7.23;
+    tsr[{3, 0}] = 7.30;
+    tsr[{3, 1}] = 7.31;
+    tsr[{3, 2}] = 7.32;
+    tsr[{3, 3}] = 7.33;
+    KDRange r;
+    r.min = vector<unsigned int>(order, 1);
+    r.max = vector<unsigned int>(order, 3);
+    BOOST_TEST(tsr.sum(r) == 7.11 + 7.12 + 7.21 + 7.22);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // tensor_suite

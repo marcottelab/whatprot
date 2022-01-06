@@ -20,41 +20,41 @@
 namespace whatprot {
 
 void read_radiometries(const std::string& filename,
-                       int* num_timesteps,
-                       int* num_channels,
-                       int* total_num_radiometries,
+                       unsigned int* num_timesteps,
+                       unsigned int* num_channels,
+                       unsigned int* total_num_radiometries,
                        std::vector<Radiometry>* radiometries);
 
 void read_radiometries_raw(const std::string& filename,
-                           int* num_timesteps,
-                           int* num_channels,
-                           int* total_num_radiometries,
-                           int* num_radiometries,
+                           unsigned int* num_timesteps,
+                           unsigned int* num_channels,
+                           unsigned int* total_num_radiometries,
+                           unsigned int* num_radiometries,
                            double** intensities);
 
-void convert_radiometries_from_raw(int num_timesteps,
-                                   int num_channels,
-                                   int num_radiometries,
+void convert_radiometries_from_raw(unsigned int num_timesteps,
+                                   unsigned int num_channels,
+                                   unsigned int num_radiometries,
                                    double* intensities,
                                    std::vector<Radiometry>* radiometries);
 
 void write_radiometries(
         const std::string& filename,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
                 radiometries);
 
 void convert_raw_from_radiometries(
         const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
                 radiometries,
-        int radiometry_size,
+        unsigned int radiometry_size,
         double** intensities);
 
 void write_radiometries_raw(const std::string& filename,
-                            int num_timesteps,
-                            int num_channels,
-                            int num_radiometries,
+                            unsigned int num_timesteps,
+                            unsigned int num_channels,
+                            unsigned int num_radiometries,
                             double* intensities);
 
 void write_ys(const std::string& filename,
@@ -65,7 +65,9 @@ void get_raw_ys(const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
                         radiometries,
                 int** ys);
 
-void write_ys_raw(const std::string& filename, int num_radiometries, int* ys);
+void write_ys_raw(const std::string& filename,
+                  unsigned int num_radiometries,
+                  int* ys);
 
 }  // namespace whatprot
 

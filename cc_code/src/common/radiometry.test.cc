@@ -18,8 +18,8 @@ BOOST_AUTO_TEST_SUITE(common_suite)
 BOOST_AUTO_TEST_SUITE(radiometry_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
-    int num_timesteps = 3;
-    int num_channels = 2;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 2;
     Radiometry r(num_timesteps, num_channels);
     BOOST_TEST(r.num_timesteps = num_timesteps);
     BOOST_TEST(r.num_channels = num_channels);
@@ -27,8 +27,8 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
 }
 
 BOOST_AUTO_TEST_CASE(copy_constructor_test) {
-    int num_timesteps = 3;
-    int num_channels = 2;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 2;
     Radiometry r1(num_timesteps, num_channels);
     r1.intensities[0] = 60;
     r1.intensities[1] = 61;
@@ -58,8 +58,8 @@ BOOST_AUTO_TEST_CASE(copy_constructor_test) {
 }
 
 BOOST_AUTO_TEST_CASE(paren_op_test) {
-    int num_timesteps = 3;
-    int num_channels = 2;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 2;
     Radiometry r(num_timesteps, num_channels);
     r(0, 0) = 600;
     r(0, 1) = 601;
@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE(paren_op_test) {
 }
 
 BOOST_AUTO_TEST_CASE(paren_op_const_test) {
-    int num_timesteps = 3;
-    int num_channels = 2;
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 2;
     Radiometry r(num_timesteps, num_channels);
     r(0, 0) = 600;
     r(0, 1) = 601;

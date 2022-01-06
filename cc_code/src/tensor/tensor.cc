@@ -11,19 +11,24 @@
 
 // Standard C++ library headers:
 #include <algorithm>  // needed for std::copy
+#include <initializer_list>
 
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
+#include "tensor/const-tensor-vector-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "tensor/tensor-vector-iterator.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
 namespace {
 using std::copy;
-}
+using std::initializer_list;
+}  // namespace
 
-Tensor::Tensor(int order, const int* shape) : order(order) {
-    this->shape = new int[order];
+Tensor::Tensor(unsigned int order, const unsigned int* shape) : order(order) {
+    this->shape = new unsigned int[order];
     copy(shape, shape + order, this->shape);
     size = 1;
     strides = new int[order];
@@ -57,27 +62,54 @@ Tensor::~Tensor() {
     }
 }
 
-double& Tensor::operator[](int* loc) {
-    int index = 0;
-    for (int i = 0; i < order; i++) {
+double& Tensor::operator[](const unsigned int* loc) {
+    unsigned int index = 0;
+    for (unsigned int i = 0; i < order; i++) {
         index += strides[i] * loc[i];
     }
     return values[index];
 }
 
-TensorIterator* Tensor::iterator() {
-    return new TensorIterator(order, shape, size, values);
+double& Tensor::operator[](initializer_list<unsigned int> loc) {
+    return (*this)[loc.begin()];
 }
 
-ConstTensorIterator* Tensor::const_iterator() const {
-    return new ConstTensorIterator(order, shape, size, values);
+TensorIterator* Tensor::iterator(const KDRange& range) {
+    return new TensorIterator(order, range, shape, size, values);
+}
+
+ConstTensorIterator* Tensor::const_iterator(const KDRange& range) const {
+    return new ConstTensorIterator(order, range, shape, size, values);
+}
+
+TensorVectorIterator* Tensor::vector_iterator(const KDRange& range,
+                                              unsigned int vector_dimension) {
+    return new TensorVectorIterator(
+            order, range, shape, strides, size, values, vector_dimension);
+}
+
+ConstTensorVectorIterator* Tensor::const_vector_iterator(
+        const KDRange& range, unsigned int vector_dimension) const {
+    return new ConstTensorVectorIterator(
+            order, range, shape, strides, size, values, vector_dimension);
 }
 
 double Tensor::sum() const {
     double total = 0.0;
-    for (int i = 0; i < size; i++) {
+    for (unsigned int i = 0; i < size; i++) {
         total += values[i];
     }
+    return total;
+}
+
+double Tensor::sum(const KDRange& range) const {
+    ConstTensorIterator* itr = const_iterator(range);
+    double total = 0.0;
+    while (!itr->done()) {
+        total += *itr->get();
+        itr->advance();
+    }
+    delete itr;
     return total;
 }
 

@@ -44,7 +44,7 @@ template <typename S>
 class SourceSet {
 public:
     SourceSet(int num_sources, S* sources)
-            : num_sources(num_sources), sources(sources) {}
+            : sources(sources), num_sources(num_sources) {}
 
     ~SourceSet() {
         delete_array(num_sources, sources);
@@ -106,7 +106,7 @@ template <typename S>
 class SourceCountHitsList {
 public:
     SourceCountHitsList(int num_sources, SourceCountHits<S>** sources)
-            : num_sources(num_sources), sources(sources) {}
+            : sources(sources), num_sources(num_sources) {}
 
     SourceCountHitsList(const SourceCountHitsList& other)
             : num_sources(other.num_sources) {
@@ -119,7 +119,7 @@ public:
     }
 
     SourceCountHitsList(SourceCountHitsList&& other)
-            : num_sources(other.num_sources), sources(other.sources) {
+            : sources(other.sources), num_sources(other.num_sources) {
         other.sources = NULL;
     }
 

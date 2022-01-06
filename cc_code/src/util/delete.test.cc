@@ -31,15 +31,15 @@ BOOST_AUTO_TEST_CASE(delete_if_pointer_is_pointer_test) {
 }
 
 BOOST_AUTO_TEST_CASE(delete_array_not_pointers_test) {
-    int size = 3;
+    unsigned int size = 3;
     int* arr = new int[size];
     delete_array(size, arr);
 }
 
 BOOST_AUTO_TEST_CASE(delete_array_is_pointers_test) {
-    int size = 3;
+    unsigned int size = 3;
     int** arr = new int*[size];
-    for (int i = 0; i < size; i++) {
+    for (unsigned int i = 0; i < size; i++) {
         arr[i] = new int;
         *arr[i] = i;
     }

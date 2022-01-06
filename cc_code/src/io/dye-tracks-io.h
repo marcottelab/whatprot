@@ -21,37 +21,37 @@ namespace whatprot {
 
 void read_dye_tracks(
         const std::string& filename,
-        int* num_timesteps,
-        int* num_channels,
+        unsigned int* num_timesteps,
+        unsigned int* num_channels,
         std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                 dye_tracks);
 
 void read_dye_tracks_raw(const std::string& filename,
-                         int* num_timesteps,
-                         int* num_channels,
-                         int* num_dye_tracks,
-                         int* f_ints_size,
-                         int** f_ints);
+                         unsigned int* num_timesteps,
+                         unsigned int* num_channels,
+                         unsigned int* num_dye_tracks,
+                         unsigned int* f_ints_size,
+                         unsigned int** f_ints);
 
 void convert_dye_tracks_from_raw(
-        int num_timesteps,
-        int num_channels,
-        int num_dye_tracks,
-        int* f_ints,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
+        unsigned int num_dye_tracks,
+        unsigned int* f_ints,
         std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                 dye_tracks);
 
 void write_dye_tracks(
         const string& filename,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
                 dye_tracks);
 
 void write_dye_tracks_helper(
         const string& filename,
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         const std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>&
                 dye_tracks);
 

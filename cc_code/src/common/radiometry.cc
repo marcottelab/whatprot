@@ -18,7 +18,7 @@ namespace {
 using std::copy;
 }
 
-Radiometry::Radiometry(int num_timesteps, int num_channels)
+Radiometry::Radiometry(unsigned int num_timesteps, unsigned int num_channels)
         : num_timesteps(num_timesteps), num_channels(num_channels) {
     intensities = new double[num_timesteps * num_channels];
 }

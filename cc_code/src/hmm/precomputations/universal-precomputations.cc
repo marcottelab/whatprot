@@ -13,27 +13,28 @@
 #include <vector>
 
 // Local project headers:
-#include "common/error-model.h"
 #include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
 #include "hmm/step/stuck-dye-transition.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 UniversalPrecomputations::UniversalPrecomputations(
-        const ErrorModel& error_model, int num_channels)
-        : detach_transition(error_model.p_detach),
-          stuck_dye_transition(error_model.p_stuck_dye_loss),
-          num_channels(num_channels) {
-    for (int i = 0; i < num_channels; i++) {
-        dud_transitions.emplace_back(error_model.p_dud, i);
-        bleach_transitions.emplace_back(error_model.p_bleach, i);
+        const SequencingModel& seq_model, unsigned int num_channels)
+        : detach_transition(seq_model.p_detach), num_channels(num_channels) {
+    for (unsigned int i = 0; i < num_channels; i++) {
+        dud_transitions.emplace_back(seq_model.channel_models[i]->p_dud, i);
+        bleach_transitions.emplace_back(seq_model.channel_models[i]->p_bleach,
+                                        i);
+        stuck_dye_transitions.emplace_back(
+                seq_model.channel_models[i]->p_stuck_dye_loss, i);
     }
 }
 
 void UniversalPrecomputations::set_max_num_dyes(int max_num_dyes) {
-    for (int i = 0; i < num_channels; i++) {
+    for (unsigned int i = 0; i < num_channels; i++) {
         dud_transitions[i].reserve(max_num_dyes);
         bleach_transitions[i].reserve(max_num_dyes);
     }

@@ -14,18 +14,18 @@
 
 // Local project headers:
 #include "common/dye-seq.h"
-#include "common/error-model.h"
 #include "hmm/step/edman-transition.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 class DyeSeqPrecomputations {
 public:
     DyeSeqPrecomputations(const DyeSeq& dye_seq,
-                          const ErrorModel& error_model,
-                          int num_timesteps,
-                          int num_channels);
-    std::vector<int> tensor_shape;
+                          const SequencingModel& seq_model,
+                          unsigned int num_timesteps,
+                          unsigned int num_channels);
+    std::vector<unsigned int> tensor_shape;
     EdmanTransition edman_transition;
 };
 

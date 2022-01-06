@@ -9,27 +9,46 @@
 #ifndef WHATPROT_TENSOR_TENSOR_H
 #define WHATPROT_TENSOR_TENSOR_H
 
+// Standard C++ library headers:
+#include <initializer_list>
+
 // Local project headers:
 #include "tensor/const-tensor-iterator.h"
+#include "tensor/const-tensor-vector-iterator.h"
 #include "tensor/tensor-iterator.h"
+#include "tensor/tensor-vector-iterator.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
 class Tensor {
 public:
-    Tensor(int order, const int* shape);
+    Tensor(unsigned int order, const unsigned int* shape);
     Tensor(Tensor&& other);
     ~Tensor();
-    double& operator[](int* loc);
-    TensorIterator* iterator();
-    ConstTensorIterator* const_iterator() const;
+    double& operator[](const unsigned int* loc);
+    // This next function is probably not useful in production, but is very
+    // helpful for readable tests. Note that, unfortunately, lines of code like
+    //   - BOOST_TEST(t[{1, 2}] == 314);
+    // will not work because they mess up the Boost testing templates. Instead
+    // do something like
+    //   - BOOST_TEST((t[{1, 2}]) == 314);
+    // Notice the additional set of parenthesis in the corrected example line.
+    double& operator[](std::initializer_list<unsigned int> loc);
+    TensorIterator* iterator(const KDRange& range);
+    ConstTensorIterator* const_iterator(const KDRange& range) const;
+    TensorVectorIterator* vector_iterator(const KDRange& range,
+                                          unsigned int vector_dimension);
+    ConstTensorVectorIterator* const_vector_iterator(
+            const KDRange& range, unsigned int vector_dimension) const;
     double sum() const;
+    double sum(const KDRange& range) const;
 
     double* values;
-    int* shape;
+    unsigned int* shape;
     int* strides;
-    int size;
-    int order;
+    unsigned int size;
+    unsigned int order;
 };
 
 }  // namespace whatprot

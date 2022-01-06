@@ -46,7 +46,6 @@ int main(int argc, char** argv) {
         return_code = fit_main(argc, argv);
     } else {
         main_usage();
-        print_invalid_command();
     }
     return return_code;
 }

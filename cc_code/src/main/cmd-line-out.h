@@ -18,6 +18,7 @@ void print_finished_classification(double time);
 void print_finished_deduping_dye_tracks(int num, double time);
 void print_finished_generating_dye_tracks(int num, double time);
 void print_finished_generating_radiometries(int num, double time);
+void print_finished_parameter_fitting(double time);
 void print_finished_saving_results(double time);
 void print_invalid_classifier();
 void print_invalid_command();

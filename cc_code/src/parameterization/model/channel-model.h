@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_COMMON_ERROR_MODEL_H
-#define WHATPROT_COMMON_ERROR_MODEL_H
+#ifndef WHATPROT_PARAMETERIZATION_MODEL_CHANNEL_MODEL_H
+#define WHATPROT_PARAMETERIZATION_MODEL_CHANNEL_MODEL_H
 
 // Standard C++ library headers:
 #include <functional>
@@ -15,38 +15,23 @@
 
 namespace whatprot {
 
-enum DistributionType {
-    NORMAL,
-    LOGNORMAL,
-    OVERRIDE,  // Intended for testing. Always returns 1.0 from distribution.
-};
-
-class ErrorModel {
+class ChannelModel {
 public:
-    ErrorModel(double p_edman_failure,
-               double p_detach,
-               double p_bleach,
-               double p_dud,
-               DistributionType distribution_type,
-               double mu,
-               double sigma,
-               double stuck_dye_ratio,
-               double p_stuck_dye_loss);
-    std::function<double(double, int)> pdf() const;
-    double relative_distance(const ErrorModel& error_model) const;
+    virtual ~ChannelModel();
+    virtual double pdf(double observed, int state) const;
+    virtual double sigma(int state) const;
+    double relative_distance(const ChannelModel& channel_model) const;
     std::string debug_string() const;
 
-    double p_edman_failure;
-    double p_detach;
     double p_bleach;
     double p_dud;
-    DistributionType distribution_type;
+    double bg_sig;
     double mu;
-    double sigma;
+    double sig;
     double stuck_dye_ratio;
     double p_stuck_dye_loss;
 };
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_COMMON_ERROR_MODEL_H
+#endif  // WHATPROT_PARAMETERIZATION_MODEL_CHANNEL_MODEL_H

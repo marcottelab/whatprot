@@ -6,31 +6,30 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_HMM_FIT_NORMAL_DISTRIBUTION_FITTER_H
-#define WHATPROT_HMM_FIT_NORMAL_DISTRIBUTION_FITTER_H
+#ifndef WHATPROT_PARAMETERIZATION_FIT_LOG_NORMAL_DISTRIBUTION_FITTER_H
+#define WHATPROT_PARAMETERIZATION_FIT_LOG_NORMAL_DISTRIBUTION_FITTER_H
 
 // Local project headers:
-#include "common/error-model.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
-class NormalDistributionFitter {
+class LogNormalDistributionFitter {
 public:
-    NormalDistributionFitter();
-    void add_sample(double x, int n, double weight);
-    DistributionType get_type() const;
+    LogNormalDistributionFitter();
+    virtual ~LogNormalDistributionFitter();
+    virtual void add_sample(double x, int n, double weight);
     double get_mu() const;
-    double get_sigma() const;
-    NormalDistributionFitter operator+(
-            const NormalDistributionFitter& other) const;
-    void operator+=(const NormalDistributionFitter& other);
+    double get_sig() const;
+    LogNormalDistributionFitter operator+(
+            const LogNormalDistributionFitter& other) const;
+    void operator+=(const LogNormalDistributionFitter& other);
     void operator*=(double weight_adjustment);
-    double w_sum_x;
-    double w_sum_x_sq_over_n;
-    double w_sum_n;
+    double w_sum_log_x_over_n;
+    double w_sum_log_x_over_n_sq;
     double total_weight;
 };
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_HMM_FIT_NORMAL_DISTRIBUTION_FITTER_H
+#endif  // WHATPROT_PARAMETERIZATION_FIT_LOG_NORMAL_DISTRIBUTION_FITTER_H

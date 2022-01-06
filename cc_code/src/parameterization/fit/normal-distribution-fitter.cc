@@ -13,7 +13,7 @@
 #include <cmath>
 
 // Local project headers:
-#include "common/error-model.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -26,6 +26,8 @@ NormalDistributionFitter::NormalDistributionFitter()
           w_sum_x_sq_over_n(0.0),
           w_sum_n(0.0),
           total_weight(0.0) {}
+
+NormalDistributionFitter::~NormalDistributionFitter() {}
 
 void NormalDistributionFitter::add_sample(double x, int n, double weight) {
     if (n == 0) {
@@ -40,18 +42,14 @@ void NormalDistributionFitter::add_sample(double x, int n, double weight) {
     total_weight += weight;
 }
 
-DistributionType NormalDistributionFitter::get_type() const {
-    return DistributionType::NORMAL;
-}
-
 double NormalDistributionFitter::get_mu() const {
     return w_sum_x / w_sum_n;
 }
 
-double NormalDistributionFitter::get_sigma() const {
+double NormalDistributionFitter::get_sig() const {
     double mu = get_mu();
-    double sigma_sq = (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight;
-    return sqrt(sigma_sq);
+    double sig_sq = (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight;
+    return sqrt(sig_sq);
 }
 
 NormalDistributionFitter NormalDistributionFitter::operator+(

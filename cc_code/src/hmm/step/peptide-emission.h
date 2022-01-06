@@ -10,39 +10,51 @@
 #define WHATPROT_HMM_STEP_PEPTIDE_EMISSION_H
 
 // Standard C++ library headers:
-#include <functional>
 #include <vector>
 
 // Local project headers:
 #include "common/radiometry.h"
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
-class PeptideEmission : public Step<PeptideStateVector> {
+class PeptideEmission : public PeptideStep {
 public:
     PeptideEmission(const Radiometry& radiometry,
+                    unsigned int timestep,
                     int max_num_dyes,
-                    std::function<double(double, int)> pdf);
-    double& prob(int timestep, int channel, int num_dyes);
-    double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(int* num_edmans,
-                         PeptideStateVector* psv) const override;
+                    const SequencingModel& seq_model,
+                    const SequencingSettings& seq_settings);
+    double& prob(int channel, int num_dyes);
+    double prob(int channel, int num_dyes) const;
+    virtual void prune_forward(KDRange* range, bool* allow_detached) override;
+    virtual void prune_backward(KDRange* range, bool* allow_detached) override;
+    void forward_or_backward(const PeptideStateVector& input,
+                             unsigned int* num_edmans,
+                             PeptideStateVector* output) const;
+    virtual void forward(const PeptideStateVector& input,
+                         unsigned int* num_edmans,
+                         PeptideStateVector* output) const override;
     virtual void backward(const PeptideStateVector& input,
-                          int* num_edmans,
+                          unsigned int* num_edmans,
                           PeptideStateVector* output) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
-                             int num_edmans,
+                             unsigned int num_edmans,
                              double probability,
-                             ErrorModelFitter* fitter) const override;
+                             SequencingModelFitter* fitter) const override;
     Radiometry radiometry;
+    unsigned int timestep;
+    KDRange pruned_range;
+    bool allow_detached;
     std::vector<double> values;
-    int num_timesteps;
-    int num_channels;
+    unsigned int num_channels;
     int max_num_dyes;
 };
 

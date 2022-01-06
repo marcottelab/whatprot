@@ -13,7 +13,7 @@
 #include <cmath>
 
 // Local project headers:
-#include "common/error-model.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
@@ -26,6 +26,8 @@ LogNormalDistributionFitter::LogNormalDistributionFitter()
         : w_sum_log_x_over_n(0.0),
           w_sum_log_x_over_n_sq(0.0),
           total_weight(0.0) {}
+
+LogNormalDistributionFitter::~LogNormalDistributionFitter() {}
 
 void LogNormalDistributionFitter::add_sample(double x, int n, double weight) {
     if (n == 0 || x == 0.0) {
@@ -41,15 +43,11 @@ void LogNormalDistributionFitter::add_sample(double x, int n, double weight) {
     total_weight += weight;
 }
 
-DistributionType LogNormalDistributionFitter::get_type() const {
-    return DistributionType::LOGNORMAL;
-}
-
 double LogNormalDistributionFitter::get_mu() const {
     return w_sum_log_x_over_n / total_weight;
 }
 
-double LogNormalDistributionFitter::get_sigma() const {
+double LogNormalDistributionFitter::get_sig() const {
     double mu = get_mu();
     return sqrt(w_sum_log_x_over_n_sq / total_weight - mu * mu);
 }

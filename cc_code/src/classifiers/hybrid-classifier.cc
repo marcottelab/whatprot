@@ -18,10 +18,11 @@
 #include "classifiers/nn-classifier.h"
 #include "common/dye-seq.h"
 #include "common/dye-track.h"
-#include "common/error-model.h"
 #include "common/radiometry.h"
 #include "common/scored-classification.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -31,23 +32,21 @@ using std::vector;
 }  // namespace
 
 HybridClassifier::HybridClassifier(
-        int num_timesteps,
-        int num_channels,
-        const ErrorModel& error_model,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
+        const SequencingModel& seq_model,
+        const SequencingSettings& seq_settings,
         int k,
-        double sigma,
+        double sig,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks,
         int h,
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
-        : h(h),
-          nn_classifier(num_timesteps,
-                        num_channels,
-                        error_model,
-                        k,
-                        sigma,
-                        dye_tracks),
-          hmm_classifier(num_timesteps, num_channels, error_model, dye_seqs) {
-    for (int i = 0; i < dye_seqs.size(); i++) {
+        : hmm_classifier(
+                num_timesteps, num_channels, seq_model, seq_settings, dye_seqs),
+          nn_classifier(
+                  num_timesteps, num_channels, seq_model, k, sig, dye_tracks),
+          h(h) {
+    for (unsigned int i = 0; i < dye_seqs.size(); i++) {
         id_index_map[dye_seqs[i].source.source] = i;
         id_count_map[dye_seqs[i].source.source] = dye_seqs[i].source.count;
     }
@@ -56,7 +55,6 @@ HybridClassifier::HybridClassifier(
 ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     vector<ScoredClassification> candidates;
     candidates = nn_classifier.classify(radiometry, h);
-    double total = candidates[0].total;
     double subfraction = 0.0;
     vector<int> candidate_indices;
     candidate_indices.reserve(candidates.size());
@@ -89,7 +87,7 @@ vector<ScoredClassification> HybridClassifier::classify(
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
 #pragma omp parallel for
-    for (int i = 0; i < radiometries.size(); i++) {
+    for (unsigned int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }
     return results;

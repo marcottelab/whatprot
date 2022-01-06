@@ -33,8 +33,8 @@ using std::vector;
 }  // namespace
 
 void dedup_dye_tracks(
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks_in,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                 dye_tracks_out) {
@@ -92,7 +92,7 @@ void reduce_dye_tracks(char* key,
     }
     int num_sources = source_map.size();
     SourceCountHits<int>* sources = new SourceCountHits<int>[num_sources];
-    int index = 0;
+    unsigned int index = 0;
     for (const auto& source_map_entry : source_map) {
         sources[index] = source_map_entry.second;
         index++;
@@ -120,8 +120,8 @@ void reduce_dye_tracks_helper(
 }
 
 OutputInfo::OutputInfo(
-        int num_timesteps,
-        int num_channels,
+        unsigned int num_timesteps,
+        unsigned int num_channels,
         std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*
                 dye_tracks_out)
         : num_timesteps(num_timesteps),
@@ -134,8 +134,8 @@ void output_dye_tracks(
     SourceCountHits<int>* val_sources = (SourceCountHits<int>*)value;
     int num_sources = valuebytes / sizeof(SourceCountHits<int>);
     OutputInfo* output_info = (OutputInfo*)ptr;
-    int num_timesteps = output_info->num_timesteps;
-    int num_channels = output_info->num_channels;
+    unsigned int num_timesteps = output_info->num_timesteps;
+    unsigned int num_channels = output_info->num_channels;
     vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks =
             output_info->dye_tracks_out;
     SourceCountHits<int>** sources = new SourceCountHits<int>*[num_sources];

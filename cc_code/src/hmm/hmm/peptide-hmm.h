@@ -13,25 +13,25 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/fit/error-model-fitter.h"
 #include "hmm/hmm/generic-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/step.h"
+#include "hmm/step/peptide-step.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-class PeptideHMM : public GenericHMM<PeptideStateVector> {
+class PeptideHMM : public GenericHMM<PeptideStateVector, PeptideStep> {
 public:
-    PeptideHMM(int num_timesteps,
-               int num_channels,
+    PeptideHMM(unsigned int num_timesteps,
+               unsigned int num_channels,
                const DyeSeqPrecomputations& dye_seq_precomputations,
                const RadiometryPrecomputations& radiometry_precomputations,
                const UniversalPrecomputations& universal_precomputations);
-    virtual PeptideStateVector create_states() const override;
-    std::vector<int> tensor_shape;
+    virtual PeptideStateVector* create_states() const override;
+    std::vector<unsigned int> tensor_shape;
 };
 
 }  // namespace whatprot
