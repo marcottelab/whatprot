@@ -104,9 +104,10 @@ void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
     *allow_detached = this->allow_detached;
 }
 
-void PeptideEmission::forward_or_backward(const PeptideStateVector& input,
-                                          unsigned int* num_edmans,
-                                          PeptideStateVector* output) const {
+PeptideStateVector* PeptideEmission::forward_or_backward(
+        const PeptideStateVector& input, unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(pruned_range.max.size(),
+                                                        &pruned_range.max[0]);
     ConstTensorIterator* inputit = input.tensor.const_iterator(pruned_range);
     TensorIterator* outputit = output->tensor.iterator(pruned_range);
     while (!inputit->done()) {
@@ -129,18 +130,17 @@ void PeptideEmission::forward_or_backward(const PeptideStateVector& input,
     }
     output->range = pruned_range;
     output->allow_detached = allow_detached;
+    return output;
 }
 
-void PeptideEmission::forward(const PeptideStateVector& input,
-                              unsigned int* num_edmans,
-                              PeptideStateVector* output) const {
-    forward_or_backward(input, num_edmans, output);
+PeptideStateVector* PeptideEmission::forward(const PeptideStateVector& input,
+                                             unsigned int* num_edmans) const {
+    return forward_or_backward(input, num_edmans);
 }
 
-void PeptideEmission::backward(const PeptideStateVector& input,
-                               unsigned int* num_edmans,
-                               PeptideStateVector* output) const {
-    forward_or_backward(input, num_edmans, output);
+PeptideStateVector* PeptideEmission::backward(const PeptideStateVector& input,
+                                              unsigned int* num_edmans) const {
+    return forward_or_backward(input, num_edmans);
 }
 
 void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,

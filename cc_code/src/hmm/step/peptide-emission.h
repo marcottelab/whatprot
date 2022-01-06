@@ -34,15 +34,14 @@ public:
     double prob(int channel, int num_dyes) const;
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
-    void forward_or_backward(const PeptideStateVector& input,
-                             unsigned int* num_edmans,
-                             PeptideStateVector* output) const;
-    virtual void forward(const PeptideStateVector& input,
-                         unsigned int* num_edmans,
-                         PeptideStateVector* output) const override;
-    virtual void backward(const PeptideStateVector& input,
-                          unsigned int* num_edmans,
-                          PeptideStateVector* output) const override;
+    PeptideStateVector* forward_or_backward(const PeptideStateVector& input,
+                                            unsigned int* num_edmans) const;
+    virtual PeptideStateVector* forward(
+            const PeptideStateVector& input,
+            unsigned int* num_edmans) const override;
+    virtual PeptideStateVector* backward(
+            const PeptideStateVector& input,
+            unsigned int* num_edmans) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,

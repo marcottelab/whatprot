@@ -236,14 +236,14 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv1;
-    StuckDyeStateVector sdsv2;
     sdsv1.dye = 0.7;
     sdsv1.no_dye = 0.3;
-    e.forward(sdsv1, &num_edmans, &sdsv2);
-    BOOST_TEST(sdsv2.no_dye == 0.3 * cm_mock.get().pdf(1.0, 0));
-    BOOST_TEST(sdsv2.dye == 0.7 * cm_mock.get().pdf(1.0, 1));
+    StuckDyeStateVector* sdsv2 = e.forward(sdsv1, &num_edmans);
+    BOOST_TEST(sdsv2->no_dye == 0.3 * cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST(sdsv2->dye == 0.7 * cm_mock.get().pdf(1.0, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
+    delete sdsv2;
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_timestamps_test, *tolerance(TOL)) {
@@ -263,14 +263,14 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timestamps_test, *tolerance(TOL)) {
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 1;
     StuckDyeStateVector sdsv1;
-    StuckDyeStateVector sdsv2;
     sdsv1.dye = 0.7;
     sdsv1.no_dye = 0.3;
-    e.forward(sdsv1, &num_edmans, &sdsv2);
-    BOOST_TEST(sdsv2.no_dye == 0.3 * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv2.dye == 0.7 * cm_mock.get().pdf(1.1, 1));
+    StuckDyeStateVector* sdsv2 = e.forward(sdsv1, &num_edmans);
+    BOOST_TEST(sdsv2->no_dye == 0.3 * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST(sdsv2->dye == 0.7 * cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
+    delete sdsv2;
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
@@ -291,16 +291,16 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv1;
-    StuckDyeStateVector sdsv2;
     sdsv1.dye = 0.7;
     sdsv1.no_dye = 0.3;
-    e.forward(sdsv1, &num_edmans, &sdsv2);
-    BOOST_TEST(sdsv2.no_dye
+    StuckDyeStateVector* sdsv2 = e.forward(sdsv1, &num_edmans);
+    BOOST_TEST(sdsv2->no_dye
                == 0.3 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv2.dye
+    BOOST_TEST(sdsv2->dye
                == 0.7 * cm_mock.get().pdf(1.0, 1) * cm_mock.get().pdf(1.1, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
+    delete sdsv2;
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_channels_other_channel_test,
@@ -322,16 +322,16 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_other_channel_test,
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv1;
-    StuckDyeStateVector sdsv2;
     sdsv1.dye = 0.7;
     sdsv1.no_dye = 0.3;
-    e.forward(sdsv1, &num_edmans, &sdsv2);
-    BOOST_TEST(sdsv2.no_dye
+    StuckDyeStateVector* sdsv2 = e.forward(sdsv1, &num_edmans);
+    BOOST_TEST(sdsv2->no_dye
                == 0.3 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv2.dye
+    BOOST_TEST(sdsv2->dye
                == 0.7 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 1));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
+    delete sdsv2;
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
@@ -358,18 +358,18 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     StuckDyeEmission e(rad, channel, seq_model);
     unsigned int num_edmans = 0;
     StuckDyeStateVector sdsv1;
-    StuckDyeStateVector sdsv2;
     sdsv1.dye = 0.7;
     sdsv1.no_dye = 0.3;
-    e.forward(sdsv1, &num_edmans, &sdsv2);
-    BOOST_TEST(sdsv2.no_dye
+    StuckDyeStateVector* sdsv2 = e.forward(sdsv1, &num_edmans);
+    BOOST_TEST(sdsv2->no_dye
                == 0.3 * cm_mock_0.get().pdf(1.0, 0)
                           * cm_mock_1.get().pdf(1.1, 0));
-    BOOST_TEST(sdsv2.dye
+    BOOST_TEST(sdsv2->dye
                == 0.7 * cm_mock_0.get().pdf(1.0, 1)
                           * cm_mock_1.get().pdf(1.1, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
+    delete sdsv2;
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {

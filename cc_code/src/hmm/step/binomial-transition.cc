@@ -73,9 +73,10 @@ void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {
     *range = forward_range;
 }
 
-void BinomialTransition::forward(const PeptideStateVector& input,
-                                 unsigned int* num_edmans,
-                                 PeptideStateVector* output) const {
+PeptideStateVector* BinomialTransition::forward(
+        const PeptideStateVector& input, unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(
+            backward_range.max.size(), &backward_range.max[0]);
     // Mismatched range is OK, range should only differ on the channel being
     // processed.
     ConstTensorVectorIterator* in_itr =
@@ -98,6 +99,7 @@ void BinomialTransition::forward(const PeptideStateVector& input,
     if (output->allow_detached) {
         output->p_detached = input.p_detached;
     }
+    return output;
 }
 
 void BinomialTransition::forward(const Vector& input, Vector* output) const {
@@ -114,9 +116,12 @@ void BinomialTransition::forward(const Vector& input, Vector* output) const {
     }
 }
 
-void BinomialTransition::backward(const PeptideStateVector& input,
-                                  unsigned int* num_edmans,
-                                  PeptideStateVector* output) const {
+PeptideStateVector* BinomialTransition::backward(
+        const PeptideStateVector& input, unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(
+            forward_range.max.size(), &forward_range.max[0]);
+    // Mismatched range is OK, range should only differ on the channel being
+    // processed.
     ConstTensorVectorIterator* in_itr =
             input.tensor.const_vector_iterator(backward_range, 1 + channel);
     TensorVectorIterator* out_itr =
@@ -137,6 +142,7 @@ void BinomialTransition::backward(const PeptideStateVector& input,
     if (output->allow_detached) {
         output->p_detached = input.p_detached;
     }
+    return output;
 }
 
 void BinomialTransition::backward(const Vector& input, Vector* output) const {

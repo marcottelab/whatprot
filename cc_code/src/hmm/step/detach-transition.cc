@@ -32,9 +32,10 @@ void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {
     detached_backward = allow_detached;
 }
 
-void DetachTransition::forward(const PeptideStateVector& input,
-                               unsigned int* num_edmans,
-                               PeptideStateVector* output) const {
+PeptideStateVector* DetachTransition::forward(const PeptideStateVector& input,
+                                              unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(pruned_range.max.size(),
+                                                        &pruned_range.max[0]);
     ConstTensorIterator* in_itr = input.tensor.const_iterator(pruned_range);
     TensorIterator* out_itr = output->tensor.iterator(pruned_range);
     double sum = 0.0;
@@ -54,11 +55,13 @@ void DetachTransition::forward(const PeptideStateVector& input,
             output->p_detached = p_detach * sum;
         }
     }
+    return output;
 }
 
-void DetachTransition::backward(const PeptideStateVector& input,
-                                unsigned int* num_edmans,
-                                PeptideStateVector* output) const {
+PeptideStateVector* DetachTransition::backward(const PeptideStateVector& input,
+                                               unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(pruned_range.max.size(),
+                                                        &pruned_range.max[0]);
     ConstTensorIterator* in_itr = input.tensor.const_iterator(pruned_range);
     TensorIterator* out_itr = output->tensor.iterator(pruned_range);
     while (!in_itr->done()) {
@@ -78,6 +81,7 @@ void DetachTransition::backward(const PeptideStateVector& input,
             output->p_detached = 0.0;
         }
     }
+    return output;
 }
 
 void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,

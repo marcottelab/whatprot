@@ -50,9 +50,8 @@ double StuckDyeEmission::prob(int t, int c, int d) const {
     return values[(t * num_channels + c) * 2 + d];
 }
 
-void StuckDyeEmission::forward(const StuckDyeStateVector& input,
-                               unsigned int* num_edmans,
-                               StuckDyeStateVector* output) const {
+StuckDyeStateVector* StuckDyeEmission::forward(const StuckDyeStateVector& input,
+                                               unsigned int* num_edmans) const {
     double product = 1.0;
     for (unsigned int c = 0; c < num_channels; c++) {
         if (c == channel) {
@@ -60,14 +59,15 @@ void StuckDyeEmission::forward(const StuckDyeStateVector& input,
         }
         product *= prob(*num_edmans, c, 0);
     }
+    StuckDyeStateVector* output = new StuckDyeStateVector();
     output->dye = input.dye * product * prob(*num_edmans, channel, 1);
     output->no_dye = input.no_dye * product * prob(*num_edmans, channel, 0);
+    return output;
 }
 
-void StuckDyeEmission::backward(const StuckDyeStateVector& input,
-                                unsigned int* num_edmans,
-                                StuckDyeStateVector* output) const {
-    return forward(input, num_edmans, output);
+StuckDyeStateVector* StuckDyeEmission::backward(
+        const StuckDyeStateVector& input, unsigned int* num_edmans) const {
+    return forward(input, num_edmans);
 }
 
 void StuckDyeEmission::improve_fit(

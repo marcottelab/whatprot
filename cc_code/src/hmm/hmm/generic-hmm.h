@@ -42,8 +42,7 @@ public:
         V* states_in = create_states();
         states_in->initialize_from_start();
         while (step != steps.end()) {
-            V* states_out = create_states();
-            (*step)->forward(*states_in, &num_edmans, states_out);
+            V* states_out = (*step)->forward(*states_in, &num_edmans);
             delete states_in;
             states_in = states_out;
             step++;
@@ -70,9 +69,8 @@ public:
         while (step != steps.begin()) {
             step--;
             V* right_states = backward_sv.back();
-            backward_sv.push_back(create_states());
-            V* left_states = backward_sv.back();
-            (*step)->backward(*right_states, &num_edmans, left_states);
+            backward_sv.push_back(
+                    (*step)->backward(*right_states, &num_edmans));
         }
         double probability = backward_sv.back()->source();
         // We will end up adding NaN results to the fitter if the probability is
@@ -97,8 +95,8 @@ public:
                                  probability,
                                  fitter);
             delete *backward_states;
-            V* next_forward_states = create_states();
-            (*step)->forward(*forward_states, &num_edmans, next_forward_states);
+            V* next_forward_states =
+                    (*step)->forward(*forward_states, &num_edmans);
             delete forward_states;
             forward_states = next_forward_states;
             step++;
