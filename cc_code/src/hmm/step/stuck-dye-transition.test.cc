@@ -46,6 +46,7 @@ BOOST_AUTO_TEST_CASE(forward_test, *tolerance(TOL)) {
     BOOST_TEST(sdsv2->dye == 0.3 * (1 - loss_rate));
     BOOST_TEST(sdsv2->no_dye == 0.7 + 0.3 * loss_rate);
     BOOST_TEST(num_edmans == 1u);
+    delete sdsv2;
 }
 
 BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
@@ -60,6 +61,7 @@ BOOST_AUTO_TEST_CASE(backward_test, *tolerance(TOL)) {
     BOOST_TEST(output->dye == loss_rate * 0.7 + (1 - loss_rate) * 0.3);
     BOOST_TEST(output->no_dye == 0.7);
     BOOST_TEST(num_edmans == 0u);
+    delete output;
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
