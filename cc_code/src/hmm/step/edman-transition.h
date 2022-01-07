@@ -23,6 +23,8 @@ public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
+    void set_true_forward_range(const KDRange& range);
+    void set_true_backward_range(const KDRange& range);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     virtual PeptideStateVector* forward(
@@ -41,8 +43,10 @@ public:
     DyeSeq dye_seq;
     DyeTrack dye_track;
     double p_edman_failure;
-    KDRange forward_range;
-    KDRange backward_range;
+    KDRange true_forward_range;  // shared with neighbors.
+    KDRange safe_forward_range;  // used to make backward() easier.
+    KDRange true_backward_range;  // shared with neighbors.
+    KDRange safe_backward_range;  // used to make forward() easier.
 };
 
 }  // namespace whatprot

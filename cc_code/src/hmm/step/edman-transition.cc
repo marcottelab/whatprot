@@ -25,40 +25,50 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
           dye_track(dye_track),
           p_edman_failure(p_edman_failure) {}
 
-void EdmanTransition::prune_forward(KDRange* range, bool* allow_detached) {
-    forward_range = *range;
-    range->max[0]++;
-    for (unsigned int c = 0; c < range->min.size() - 1; c++) {
-        if (range->min[1 + c] != 0) {
-            range->min[1 + c]--;
+void EdmanTransition::set_true_forward_range(const KDRange& range) {
+    true_forward_range = range;
+    safe_backward_range = range;
+    safe_backward_range.max[0]++;
+    for (unsigned int c = 0; c < safe_backward_range.min.size() - 1; c++) {
+        if (safe_backward_range.min[1 + c] != 0) {
+            safe_backward_range.min[1 + c]--;
         }
     }
-    backward_range = *range;
+}
+
+void EdmanTransition::set_true_backward_range(const KDRange& range) {
+    true_backward_range = range;
+    safe_forward_range = range;
+    if (safe_forward_range.min[0] != 0) {
+        safe_forward_range.min[0]--;
+    }
+    for (unsigned int c = 0; c < safe_forward_range.min.size() - 1; c++) {
+        safe_forward_range.max[1 + c]++;
+    }
+}
+
+void EdmanTransition::prune_forward(KDRange* range, bool* allow_detached) {
+    set_true_forward_range(*range);
+    *range = safe_backward_range;
 }
 
 void EdmanTransition::prune_backward(KDRange* range, bool* allow_detached) {
-    backward_range = backward_range.intersect(*range);
-    *range = backward_range;
-    if (range->min[0] != 0) {
-        range->min[0]--;
-    }
-    for (unsigned int c = 0; c < range->min.size() - 1; c++) {
-        range->max[1 + c]++;
-    }
-    *range = forward_range.intersect(*range);
-    forward_range = *range;
+    *range = safe_backward_range.intersect(*range);
+    set_true_backward_range(*range);
+    *range = safe_forward_range.intersect(true_forward_range);
+    set_true_forward_range(*range);
 }
 
 PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
                                              unsigned int* num_edmans) const {
     (*num_edmans)++;
     PeptideStateVector* output = new PeptideStateVector(
-            backward_range.max.size(), &backward_range.max[0]);
+            safe_backward_range.max.size(), &safe_backward_range.max[0]);
     // First we set all of the output in the backward range to zero. This allows
     // us to use += when gathering the various probabilities coming in from the
     // input PeptideStateVector. This is way easier than the alternative, since
     // the forward and backward ranges may not match up the way you expect.
-    TensorIterator* out_itr = output->tensor.iterator(backward_range);
+    TensorIterator* out_itr = output->tensor.iterator(safe_backward_range);
     while (!out_itr->done()) {
         *out_itr->get() = 0.0;
         out_itr->advance();
@@ -69,12 +79,16 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
     // whether we are writing to locations which are actually in the
     // backward range, as this would be more trouble than it's worth, and likely
     // would not improve the runtime (checking conditionals is expensive).
-    ConstTensorIterator* in_itr = input.tensor.const_iterator(forward_range);
+    ConstTensorIterator* in_itr =
+            input.tensor.const_iterator(true_forward_range);
+    // true_forward_range is a strict subset of safe_backward_range, so we can
+    // use it to index into output.
+    out_itr = output->tensor.iterator(true_forward_range);
     unsigned int t_stride = output->tensor.strides[0];
     while (!in_itr->done()) {
         double f_val = *in_itr->get();
-        unsigned int i = in_itr->index;
-        unsigned int t = in_itr->loc[0];
+        unsigned int i = out_itr->index;
+        unsigned int t = out_itr->loc[0];
         int c = dye_seq[t];
         // Probability of failure is straightforward.
         output->tensor.values[i] += p_edman_failure * f_val;
@@ -107,9 +121,11 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
             }
         }
         in_itr->advance();
+        out_itr->advance();
     }
     delete in_itr;
-    output->range = backward_range;
+    delete out_itr;
+    output->range = true_backward_range;
     output->allow_detached = input.allow_detached;
     if (output->allow_detached) {
         output->p_detached = input.p_detached;
@@ -120,12 +136,12 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
 PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
                                               unsigned int* num_edmans) const {
     PeptideStateVector* output = new PeptideStateVector(
-            backward_range.max.size(), &backward_range.max[0]);
+            safe_forward_range.max.size(), &safe_forward_range.max[0]);
     // First we set all of the output in the forward range to zero. This allows
     // us to use += when gathering the various probabilities coming in from the
     // input PeptideStateVector. This is way easier than the alternative, since
     // the forward and backward ranges may not match up the way you expect.
-    TensorIterator* out_itr = output->tensor.iterator(forward_range);
+    TensorIterator* out_itr = output->tensor.iterator(safe_forward_range);
     while (!out_itr->done()) {
         *out_itr->get() = 0.0;
         out_itr->advance();
@@ -136,12 +152,16 @@ PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
     // about whether we are writing to locations which are actually in the
     // backward range, as this would be more trouble than it's worth, and likely
     // would not improve the runtime (checking conditionals is expensive).
-    ConstTensorIterator* in_itr = input.tensor.const_iterator(backward_range);
+    ConstTensorIterator* in_itr =
+            input.tensor.const_iterator(true_backward_range);
+    // true_backward_range is a strict subset of safe_forward_range, so we can
+    // use it to index into output.
+    out_itr = output->tensor.iterator(true_backward_range);
     unsigned int t_stride = output->tensor.strides[0];
     while (!in_itr->done()) {
         double f_val = *in_itr->get();
-        unsigned int i = in_itr->index;
-        unsigned int t = in_itr->loc[0];
+        unsigned int i = out_itr->index;
+        unsigned int t = out_itr->loc[0];
         // Probability of failure is straightforward.
         output->tensor.values[i] += p_edman_failure * f_val;
         // Probability of success is broken into smaller pieces. Note that this
@@ -187,9 +207,11 @@ PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
             }
         }
         in_itr->advance();
+        out_itr->advance();
     }
     delete in_itr;
-    output->range = forward_range;
+    delete out_itr;
+    output->range = true_forward_range;
     output->allow_detached = input.allow_detached;
     if (output->allow_detached) {
         output->p_detached = input.p_detached;
