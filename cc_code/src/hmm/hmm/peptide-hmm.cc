@@ -61,14 +61,30 @@ PeptideHMM::PeptideHMM(
     bool allow_detached;
     for (unsigned int i = 0; i < steps.size(); i++) {
         steps[i]->prune_forward(&range, &allow_detached);
+        if (range.is_empty()) {
+            empty_range = true;
+            return;
+        }
     }
     for (int i = steps.size() - 1; i >= 0; i--) {
         steps[i]->prune_backward(&range, &allow_detached);
+        if (range.is_empty()) {
+            empty_range = true;
+            return;
+        }
     }
 }
 
 PeptideStateVector* PeptideHMM::create_states() const {
     return new PeptideStateVector(tensor_shape.size(), &tensor_shape[0]);
+}
+
+double PeptideHMM::probability() const {
+    if (empty_range) {
+        return 0.0;
+    } else {
+        return GenericHMM::probability();
+    }
 }
 
 }  // namespace whatprot

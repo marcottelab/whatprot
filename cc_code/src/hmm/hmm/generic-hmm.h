@@ -36,7 +36,7 @@ public:
     // This computes the probability of the provided dye seq producing the
     // provided radiometry. To do this efficiently, it uses a modified version
     // of the forward algorithm.
-    double probability() const {
+    virtual double probability() const {
         unsigned int num_edmans = 0;
         auto step = steps.begin();  // const_iterator type
         V* states_in = create_states();

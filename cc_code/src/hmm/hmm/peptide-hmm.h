@@ -31,7 +31,9 @@ public:
                const RadiometryPrecomputations& radiometry_precomputations,
                const UniversalPrecomputations& universal_precomputations);
     virtual PeptideStateVector* create_states() const override;
+    virtual double probability() const override;
     std::vector<unsigned int> tensor_shape;
+    bool empty_range;
 };
 
 }  // namespace whatprot

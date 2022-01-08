@@ -75,8 +75,7 @@ void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {
 
 PeptideStateVector* BinomialTransition::forward(
         const PeptideStateVector& input, unsigned int* num_edmans) const {
-    PeptideStateVector* output = new PeptideStateVector(
-            backward_range.max.size(), &backward_range.max[0]);
+    PeptideStateVector* output = new PeptideStateVector(backward_range);
     // Mismatched range is OK, range should only differ on the channel being
     // processed.
     ConstTensorVectorIterator* in_itr =
@@ -118,8 +117,7 @@ void BinomialTransition::forward(const Vector& input, Vector* output) const {
 
 PeptideStateVector* BinomialTransition::backward(
         const PeptideStateVector& input, unsigned int* num_edmans) const {
-    PeptideStateVector* output = new PeptideStateVector(
-            forward_range.max.size(), &forward_range.max[0]);
+    PeptideStateVector* output = new PeptideStateVector(forward_range);
     // Mismatched range is OK, range should only differ on the channel being
     // processed.
     ConstTensorVectorIterator* in_itr =
