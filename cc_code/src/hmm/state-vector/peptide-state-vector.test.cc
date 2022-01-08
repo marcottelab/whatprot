@@ -27,9 +27,6 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
     PeptideStateVector psv(order, shape);
     delete[] shape;
     BOOST_TEST(psv.tensor.order == 3u);
-    BOOST_TEST(psv.tensor.shape[0] == 3u);
-    BOOST_TEST(psv.tensor.shape[1] == 5u);
-    BOOST_TEST(psv.tensor.shape[2] == 7u);
     BOOST_TEST(psv.range.min[0] == 0u);
     BOOST_TEST(psv.range.min[1] == 0u);
     BOOST_TEST(psv.range.min[2] == 0u);

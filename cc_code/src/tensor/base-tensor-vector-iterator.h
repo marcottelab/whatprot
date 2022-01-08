@@ -24,16 +24,17 @@ template <bool is_const>
 class BaseTensorVectorIterator {
 public:
     BaseTensorVectorIterator(unsigned int order,
-                             const KDRange& range,
-                             const unsigned int* shape,
+                             const KDRange& itr_range,
+                             const KDRange& tsr_range,
                              const int* stride,
                              unsigned int size,
                              double* values,
                              unsigned int vector_dimension)
-            : vector_length(shape[vector_dimension]),
+            : vector_length(tsr_range.max[vector_dimension]
+                            - tsr_range.min[vector_dimension]),
               vector_stride(stride[vector_dimension]),
-              modified_range(range),
-              iter(order, modified_range, shape, size, values) {
+              modified_range(itr_range),
+              iter(order, modified_range, tsr_range, size, values) {
         modified_range.min[vector_dimension] = 0;
         modified_range.max[vector_dimension] = 1;
         iter.reset();

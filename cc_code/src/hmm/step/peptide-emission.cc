@@ -149,13 +149,7 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    KDRange range;
-    range.min.resize(1 + num_channels);
-    range.max.resize(1 + num_channels);
-    for (unsigned int o = 0; o < 1 + num_channels; o++) {
-        range.min[o] = 0;
-        range.max[o] = forward_psv.tensor.shape[o];
-    }
+    KDRange range = forward_psv.tensor.range;
     ConstTensorIterator* fit = forward_psv.tensor.const_iterator(range);
     ConstTensorIterator* bit = backward_psv.tensor.const_iterator(range);
     while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
