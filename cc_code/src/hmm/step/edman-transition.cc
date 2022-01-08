@@ -62,8 +62,7 @@ void EdmanTransition::prune_backward(KDRange* range, bool* allow_detached) {
 PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
                                              unsigned int* num_edmans) const {
     (*num_edmans)++;
-    PeptideStateVector* output = new PeptideStateVector(
-            safe_backward_range.max.size(), &safe_backward_range.max[0]);
+    PeptideStateVector* output = new PeptideStateVector(safe_backward_range);
     // First we set all of the output in the backward range to zero. This allows
     // us to use += when gathering the various probabilities coming in from the
     // input PeptideStateVector. This is way easier than the alternative, since
@@ -135,8 +134,7 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
 
 PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
                                               unsigned int* num_edmans) const {
-    PeptideStateVector* output = new PeptideStateVector(
-            safe_forward_range.max.size(), &safe_forward_range.max[0]);
+    PeptideStateVector* output = new PeptideStateVector(safe_forward_range);
     // First we set all of the output in the forward range to zero. This allows
     // us to use += when gathering the various probabilities coming in from the
     // input PeptideStateVector. This is way easier than the alternative, since
