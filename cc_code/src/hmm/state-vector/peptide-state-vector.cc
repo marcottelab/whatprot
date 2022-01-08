@@ -26,6 +26,9 @@ PeptideStateVector::PeptideStateVector(unsigned int order,
     }
 }
 
+PeptideStateVector::PeptideStateVector(const KDRange& range)
+        : tensor(range), p_detached(0.0), allow_detached(true) {}
+
 void PeptideStateVector::initialize_from_start() {
     tensor.values[tensor.strides[0] - 1] = 1.0;
 }
