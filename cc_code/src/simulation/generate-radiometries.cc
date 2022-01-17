@@ -49,22 +49,14 @@ void generate_radiometries(
         radiometries->push_back(SourcedData<Radiometry, SourceCount<int>>(
                 Radiometry(num_timesteps, num_channels),
                 dye_seqs[dye_seq_idx].source));
-        generate_radiometry(seq_model,
-                            dye_seqs[dye_seq_idx].value,
-                            num_timesteps,
-                            num_channels,
-                            generator,
-                            &radiometries->back().value);
-        // Ignore any Radiometry with all 0s because it wouldn't be detectable.
-        // Any Radiometry with all 0s at the 0th timestep will have all 0s
-        // throughout.
-        bool trivial = true;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            if (radiometries->back().value(0, c) != 0.0) {
-                trivial = false;
-            }
-        }
-        if (trivial) {
+        // We ignore radiometries from invisible dye-tracks (all 0s). These are
+        // indicated by the return value.
+        if (!generate_radiometry(seq_model,
+                                 dye_seqs[dye_seq_idx].value,
+                                 num_timesteps,
+                                 num_channels,
+                                 generator,
+                                 &radiometries->back().value)) {
             radiometries->pop_back();
         }
     }

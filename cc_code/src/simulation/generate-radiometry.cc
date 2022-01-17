@@ -25,7 +25,7 @@ using std::normal_distribution;
 using std::sqrt;
 }  // namespace
 
-void generate_radiometry(const SequencingModel& seq_model,
+bool generate_radiometry(const SequencingModel& seq_model,
                          const DyeSeq& dye_seq,
                          unsigned int num_timesteps,
                          unsigned int num_channels,
@@ -38,6 +38,17 @@ void generate_radiometry(const SequencingModel& seq_model,
                        num_channels,
                        generator,
                        &dye_track);
+    // Ignore any DyeTrack with all 0s because it wouldn't be detectable. Any
+    // DyeTrack with all 0s at the 0th timestep will have all 0s throughout.
+    bool trivial = true;
+    for (unsigned int c = 0; c < num_channels; c++) {
+        if (dye_track(0, c) != 0) {
+            trivial = false;
+        }
+    }
+    if (trivial) {
+        return false;
+    }
     for (unsigned int t = 0; t < num_timesteps; t++) {
         for (unsigned int c = 0; c < num_channels; c++) {
             if (dye_track(t, c) > 0) {
@@ -50,6 +61,7 @@ void generate_radiometry(const SequencingModel& seq_model,
             }
         }
     }
+    return true;
 }
 
 }  // namespace whatprot

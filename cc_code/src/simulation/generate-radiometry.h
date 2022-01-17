@@ -19,7 +19,9 @@
 
 namespace whatprot {
 
-void generate_radiometry(const SequencingModel& seq_model,
+// Returns false if the radiometry was not generated due to an invisible dye-
+// track (all values of 0, which is not visible for a real sequence).
+bool generate_radiometry(const SequencingModel& seq_model,
                          const DyeSeq& dye_seq,
                          unsigned int num_timesteps,
                          unsigned int num_channels,
