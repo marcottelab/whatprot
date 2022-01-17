@@ -53,11 +53,11 @@ PeptideHMM::PeptideHMM(
         steps.push_back(new PeptideEmission(
                 radiometry_precomputations.peptide_emissions[t]));
     }
-    tensor_shape = dye_seq_precomputations.tensor_shape;
     // Now we prune to improve efficiency when run.
     KDRange range;
-    range.min = vector<unsigned int>(tensor_shape.size(), 0u);
-    range.max = tensor_shape;
+    range.min = vector<unsigned int>(
+            dye_seq_precomputations.tensor_shape.size(), 0u);
+    range.max = dye_seq_precomputations.tensor_shape;
     bool allow_detached;
     for (unsigned int i = 0; i < steps.size(); i++) {
         steps[i]->prune_forward(&range, &allow_detached);
@@ -66,6 +66,7 @@ PeptideHMM::PeptideHMM(
             return;
         }
     }
+    backward_range = range;
     for (int i = steps.size() - 1; i >= 0; i--) {
         steps[i]->prune_backward(&range, &allow_detached);
         if (range.is_empty()) {
@@ -73,10 +74,11 @@ PeptideHMM::PeptideHMM(
             return;
         }
     }
+    forward_range = range;
 }
 
 PeptideStateVector* PeptideHMM::create_states() const {
-    return new PeptideStateVector(tensor_shape.size(), &tensor_shape[0]);
+    return new PeptideStateVector(forward_range);
 }
 
 double PeptideHMM::probability() const {
