@@ -42,7 +42,7 @@ int rad_main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     unsigned int num_timesteps = atoi(argv[3]);
-    int radiometries_per_peptide = atoi(argv[4]);
+    unsigned int num_to_generate = atoi(argv[4]);
     char* dye_seqs_filename = argv[5];
     char* radiometries_filename = argv[6];
     char* ys_filename = argv[7];
@@ -83,7 +83,7 @@ int rad_main(int argc, char** argv) {
                           dye_seqs,
                           num_timesteps,
                           num_channels,
-                          radiometries_per_peptide,
+                          num_to_generate,
                           &generator,
                           &radiometries);
     end_time = wall_time();

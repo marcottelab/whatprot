@@ -26,7 +26,7 @@ void generate_radiometries(
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         unsigned int num_timesteps,
         unsigned int num_channels,
-        int radiometries_per_peptide,
+        unsigned int num_to_generate,
         std::default_random_engine* generator,
         std::vector<SourcedData<Radiometry, SourceCount<int>>>* radiometries);
 
