@@ -40,6 +40,7 @@ using std::vector;
 void run_classify_hybrid(int k,
                          double sig,
                          int h,
+                         double hmm_pruning_cutoff,
                          string dye_seqs_filename,
                          string dye_tracks_filename,
                          string radiometries_filename,
@@ -97,7 +98,7 @@ void run_classify_hybrid(int k,
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    seq_settings.dist_cutoff = hmm_pruning_cutoff;
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 

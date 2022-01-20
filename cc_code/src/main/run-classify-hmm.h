@@ -13,7 +13,8 @@
 
 namespace whatprot {
 
-void run_classify_hmm(std::string dye_seqs_filename,
+void run_classify_hmm(double hmm_pruning_cutoff,
+                      std::string dye_seqs_filename,
                       std::string radiometries_filename,
                       std::string predictions_filename);
 

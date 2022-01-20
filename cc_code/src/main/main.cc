@@ -9,6 +9,7 @@
 // Standard C++ library headers:
 #include <cstring>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -65,6 +66,11 @@ int main(int argc, char** argv) {
             "Only for nn or hybrid classification, and required. Number of "
             "neighbors to use for kNN classification\n",
             value<int>())
+        ("p,hmmprune",
+            "Only for hmm or hybrid classification, and NOT required. Defines "
+            "a multiplier on sigma to use when pruning an HMM for greater "
+            "efficiency. Higher values imply less pruning.\n",
+            value<double>())
         ("s,sigma",
             "Only for nn or hybrid classification, and required. Sigma to use "
             "for the Gaussian kernel used to weight votes in kNN "
@@ -122,11 +128,11 @@ int main(int argc, char** argv) {
             "  specific parameters.\n"
             "  \n"
             "    For VARIANT hmm, you must define --dyeseqs, --radiometries,\n"
-            "    and --results.\n"
+            "    and --results. Option --hmmprune is also permitted.\n"
             "    \n"
             "    For VARIANT hybrid, you must define --neighbors, --sigma,\n"
             "    --passthrough, --dyeseqs, --dyetracks, --radiometries,\n"
-            "    and --results.\n"
+            "    and --results. Option --hmmprune is also permitted.\n"
             "    \n"
             "    For VARIANT nn, you must define --neighbors, --sigma,\n"
             "    --dyetracks, --radiometries, and --results.\n"
@@ -171,6 +177,12 @@ int main(int argc, char** argv) {
         has_k = true;
         num_optional_args++;
         k = parsed_opts["neighbors"].as<int>();
+    }
+    // p is never required, so we don't need to track it quite as carefully.
+    double p = std::numeric_limits<double>::max();
+    if (parsed_opts.count("hmmprune")) {
+        num_optional_args++;
+        p = parsed_opts["hmmprune"].as<double>();
     }
     bool has_s = false;
     double s = 0.0;
@@ -248,7 +260,7 @@ int main(int argc, char** argv) {
                 cout << options.help() << endl;
                 return 1;
             }
-            run_classify_hmm(S, R, Y);
+            run_classify_hmm(p, S, R, Y);
             return 0;
         }
         if (0 == positional_args[1].compare("hybrid")) {
@@ -258,7 +270,7 @@ int main(int argc, char** argv) {
                 cout << options.help() << endl;
                 return 1;
             }
-            run_classify_hybrid(k, s, H, S, T, R, Y);
+            run_classify_hybrid(k, s, H, p, S, T, R, Y);
             return 0;
         }
         if (0 == positional_args[1].compare("nn")) {

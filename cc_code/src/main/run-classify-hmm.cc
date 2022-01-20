@@ -36,7 +36,8 @@ using std::string;
 using std::vector;
 }  // namespace
 
-void run_classify_hmm(string dye_seqs_filename,
+void run_classify_hmm(double hmm_pruning_cutoff,
+                      string dye_seqs_filename,
                       string radiometries_filename,
                       string predictions_filename) {
     double total_start_time = wall_time();
@@ -81,7 +82,7 @@ void run_classify_hmm(string dye_seqs_filename,
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    seq_settings.dist_cutoff = hmm_pruning_cutoff;
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 

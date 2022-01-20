@@ -16,6 +16,7 @@ namespace whatprot {
 void run_classify_hybrid(int k,
                          double sig,
                          int h,
+                         double hmm_pruning_cutoff,
                          std::string dye_seqs_filename,
                          std::string dye_tracks_filename,
                          std::string radiometries_filename,
