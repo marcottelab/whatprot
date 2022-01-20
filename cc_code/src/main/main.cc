@@ -260,6 +260,7 @@ int main(int argc, char** argv) {
                 cout << options.help() << endl;
                 return 1;
             }
+            print_omp_info();
             run_classify_hmm(p, S, R, Y);
             return 0;
         }
@@ -270,6 +271,7 @@ int main(int argc, char** argv) {
                 cout << options.help() << endl;
                 return 1;
             }
+            print_omp_info();
             run_classify_hybrid(k, s, H, p, S, T, R, Y);
             return 0;
         }
@@ -280,6 +282,7 @@ int main(int argc, char** argv) {
                 cout << options.help() << endl;
                 return 1;
             }
+            print_omp_info();
             run_classify_nn(k, s, T, R, Y);
             return 0;
         }
