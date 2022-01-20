@@ -6,10 +6,13 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
+// Defining symbols from header:
+#include "run-fit.h"
+
 // Standard C++ library headers:
-#include <cstdlib>
-#include <cstring>
 #include <limits>
+#include <string>
+#include <vector>
 
 // Local project headers:
 #include "common/dye-seq.h"
@@ -24,21 +27,14 @@
 namespace whatprot {
 
 namespace {
-using std::atof;
-using std::atoi;
+using std::string;
 using std::vector;
 }  // namespace
 
-int fit_main(int argc, char** argv) {
+void run_fit(double stopping_threshold,
+             string dye_seq_string,
+             string radiometries_filename) {
     double total_start_time = wall_time();
-
-    if (argc < 5) {
-        print_bad_inputs();
-        return 1;
-    }
-    double stopping_threshold = atof(argv[2]);
-    char* dye_seq_string = argv[3];
-    char* radiometries_filename = argv[4];
 
     double start_time;
     double end_time;
@@ -92,8 +88,6 @@ int fit_main(int argc, char** argv) {
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);
-
-    return 0;
 }
 
 }  // namespace whatprot

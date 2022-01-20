@@ -6,13 +6,19 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_MAIN_SIMULATE_SIMULATE_MAIN_H
-#define WHATPROT_MAIN_SIMULATE_SIMULATE_MAIN_H
+#ifndef WHATPROT_MAIN_RUN_SIMULATE_DT_H
+#define WHATPROT_MAIN_RUN_SIMULATE_DT_H
+
+// Standard C++ library headers:
+#include <string>
 
 namespace whatprot {
 
-int simulate_main(int argc, char** argv);
+void run_simulate_dt(unsigned int num_timesteps,
+                     unsigned int num_to_generate,
+                     std::string dye_seqs_filename,
+                     std::string dye_tracks_filename);
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_MAIN_SIMULATE_SIMULATE_MAIN_H
+#endif  // WHATPROT_MAIN_RUN_SIMULATE_DT_H
