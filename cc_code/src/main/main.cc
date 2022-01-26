@@ -147,10 +147,10 @@ int main(int argc, char** argv) {
             "  possibilities require specific parameters.\n"
             "  \n"
             "    For VARIANT dt, you must define --timesteps, --numgenerate,\n"
-            "    and --dyetracks.\n"
+            "    --dyeseqs, and --dyetracks.\n"
             "    \n"
             "    For VARIANT rad, you must define --timesteps, --numgenerate,\n"
-            "    --radiometries, and --results\n"
+            "    --dyeseqs, --radiometries, and --results\n"
             "    \n");
 
     // Parse options.
