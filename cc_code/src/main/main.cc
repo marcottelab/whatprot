@@ -56,11 +56,12 @@ int main(int argc, char** argv) {
         ("h,help", "Print usage\n")
         ("g,numgenerate",
             "Only for simulation, and required. Number of dye-tracks or "
-            "radiometries to generate. Note that the real number written to "
-            "the output file may be less than this. When results would not be "
-            "visible in a real run due to failure to attach functioning "
-            "fluorophores prior to sequencing, the result is omitted in the "
-            "output file.\n",
+            "radiometries to generate. For simulate rad, this is the actual "
+            "number. For simulate dt, this is the number to generate PER "
+            "PEPTIDE. Note also that the real number written to the output "
+            "file may be less than this. When results would not be visible in "
+            "a real run due to failure to attach functioning fluorophores "
+            "prior to sequencing, the result is omitted in the output file.\n",
             value<int>())
         ("k,neighbors",
             "Only for nn or hybrid classification, and required. Number of "

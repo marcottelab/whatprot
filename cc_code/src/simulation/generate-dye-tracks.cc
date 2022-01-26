@@ -25,7 +25,6 @@ namespace whatprot {
 
 namespace {
 using std::default_random_engine;
-using std::discrete_distribution;
 using std::move;
 using std::vector;
 }  // namespace
@@ -35,39 +34,38 @@ void generate_dye_tracks(
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         unsigned int num_timesteps,
         unsigned int num_channels,
-        unsigned int num_to_generate,
+        unsigned int dye_tracks_per_peptide,
         default_random_engine* generator,
         vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks) {
-    // We want the dye tracks generated based on a uniform distribution of
-    // peptides, not dye-seqs. We therefore need a discrete_distribution,
-    // because it is weighted.
-    vector<double> index_to_weight(dye_seqs.size(), 0);
-    for (unsigned int i = 0; i < dye_seqs.size(); i++) {
-        index_to_weight[i] = (double)dye_seqs[i].source.count;
-    }
-    discrete_distribution<unsigned int> random_dye_seq_idx(
-            index_to_weight.begin(), index_to_weight.end());
-    for (unsigned int i = 0; i < num_to_generate; i++) {
-        unsigned int dye_seq_idx = random_dye_seq_idx(*generator);
-        DyeTrack dye_track(num_timesteps, num_channels);
-        generate_dye_track(seq_model,
-                           dye_seqs[dye_seq_idx].value,
-                           num_timesteps,
-                           num_channels,
-                           generator,
-                           &dye_track);
-        // Ignore any DyeTrack with all 0s because it wouldn't be detectable.
-        // Any DyeTrack with all 0s at the 0th timestep will have all 0s
-        // throughout.
-        bool trivial = true;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            if (dye_track(0, c) != 0) {
-                trivial = false;
+    dye_tracks->reserve(dye_seqs.size());
+    for (const SourcedData<DyeSeq, SourceCount<int>>& dye_seq : dye_seqs) {
+        // We want to generate a certain number of radiometries per peptide,
+        // not per dye_seq. Therefore we do this on repeat for each peptide
+        // that produced this dye_seq.
+        for (int i = 0; i < dye_seq.source.count; i++) {
+            for (unsigned int j = 0; j < dye_tracks_per_peptide; j++) {
+                DyeTrack dye_track(num_timesteps, num_channels);
+                generate_dye_track(seq_model,
+                                   dye_seq.value,
+                                   num_timesteps,
+                                   num_channels,
+                                   generator,
+                                   &dye_track);
+                // Ignore any DyeTrack with all 0s because it wouldn't be
+                // detectable. Any DyeTrack with all 0s at the 0th timestep will
+                // have all 0s throughout.
+                bool nontrivial = false;
+                for (unsigned int c = 0; c < num_channels; c++) {
+                    if (dye_track(0, c) != 0) {
+                        nontrivial = true;
+                    }
+                }
+                if (nontrivial) {
+                    dye_tracks->push_back(
+                            move(SourcedData<DyeTrack, SourceCount<int>>(
+                                    move(dye_track), dye_seq.source)));
+                }
             }
-        }
-        if (!trivial) {
-            dye_tracks->push_back(move(SourcedData<DyeTrack, SourceCount<int>>(
-                    move(dye_track), dye_seqs[dye_seq_idx].source)));
         }
     }
 }

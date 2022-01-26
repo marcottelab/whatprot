@@ -34,7 +34,7 @@ using std::vector;
 }  // namespace
 
 void run_simulate_dt(unsigned int num_timesteps,
-                     unsigned int num_to_generate,
+                     unsigned int dye_tracks_per_peptide,
                      string dye_seqs_filename,
                      string dye_tracks_filename) {
     double total_start_time = wall_time();
@@ -75,7 +75,7 @@ void run_simulate_dt(unsigned int num_timesteps,
                         dye_seqs,
                         num_timesteps,
                         num_channels,
-                        num_to_generate,
+                        dye_tracks_per_peptide,
                         &generator,
                         &dye_tracks);
     end_time = wall_time();
