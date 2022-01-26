@@ -12,11 +12,11 @@ def dye_seqs_from_peptides(peptide_file, label_set, dye_seqs_file):
     # f.readline()  # Zack's null line
     line = "placeholder"
     peptides = []
-    pepid = 0
+    pep_id = 0
     while line != '\n' and line != '':
         line = f.readline()[0 : -1]
         peptides += [Peptide(line, pep_id=pep_id)]
-        pepid += 1
+        pep_id += 1
     f.close()
     dye_seqs = label_peptides(peptides, label_set)
     
