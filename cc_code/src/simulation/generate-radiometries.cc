@@ -39,6 +39,7 @@ void generate_radiometries(
     // peptides, not radiometries. We therefore need a discrete_distribution,
     // because it is weighted.
     vector<double> index_to_weight;
+    index_to_weight.resize(dye_seqs.size());
     for (unsigned int i = 0; i < dye_seqs.size(); i++) {
         index_to_weight[i] = (double)dye_seqs[i].source.count;
     }
