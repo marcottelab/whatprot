@@ -179,9 +179,10 @@ int main(int argc, char** argv) {
         num_optional_args++;
         k = parsed_opts["neighbors"].as<int>();
     }
-    // p is never required, so we don't need to track it quite as carefully.
+    bool has_p;
     double p = std::numeric_limits<double>::max();
     if (parsed_opts.count("hmmprune")) {
+        has_p = true;
         num_optional_args++;
         p = parsed_opts["hmmprune"].as<double>();
     }
@@ -256,6 +257,10 @@ int main(int argc, char** argv) {
             return 1;
         }
         if (0 == positional_args[1].compare("hmm")) {
+            // Special handling for p since it is optional for classify hmm.
+            if (has_p) {
+                num_optional_args--;
+            }
             if (num_optional_args != 3 || !has_S || !has_R || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
@@ -266,6 +271,10 @@ int main(int argc, char** argv) {
             return 0;
         }
         if (0 == positional_args[1].compare("hybrid")) {
+            // Special handling for p since it is optional for classify hybrid.
+            if (has_p) {
+                num_optional_args--;
+            }
             if (num_optional_args != 7 || !has_k || !has_s || !has_H || !has_S
                 || !has_T || !has_R || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
