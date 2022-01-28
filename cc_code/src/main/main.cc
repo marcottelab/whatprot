@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
         num_optional_args++;
         k = parsed_opts["neighbors"].as<int>();
     }
-    bool has_p;
+    bool has_p = false;
     double p = std::numeric_limits<double>::max();
     if (parsed_opts.count("hmmprune")) {
         has_p = true;
