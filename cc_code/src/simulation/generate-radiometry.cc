@@ -51,13 +51,11 @@ bool generate_radiometry(const SequencingModel& seq_model,
     }
     for (unsigned int t = 0; t < num_timesteps; t++) {
         for (unsigned int c = 0; c < num_channels; c++) {
-            if (dye_track(t, c) > 0) {
-                int num_dyes = dye_track(t, c);
-                double mu = seq_model.channel_models[c]->mu * num_dyes;
-                double sig = seq_model.channel_models[c]->sigma(num_dyes);
-                normal_distribution<double> normal(mu, sig);
-                (*radiometry)(t, c) = normal(*generator);
-            }
+            int num_dyes = dye_track(t, c);
+            double mu = seq_model.channel_models[c]->mu * num_dyes;
+            double sig = seq_model.channel_models[c]->sigma(num_dyes);
+            normal_distribution<double> normal(mu, sig);
+            (*radiometry)(t, c) = normal(*generator);
         }
     }
     return true;
