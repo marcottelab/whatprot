@@ -23,14 +23,29 @@ namespace whatprot {
 
 namespace {
 using std::numeric_limits;
+using std::vector;
 }  // namespace
 
 BinomialTransition::BinomialTransition(double q, int channel)
         : q(q), channel(channel) {
     length = 1;
     size = 1;
-    values.resize(size);
-    values[0] = 1.0;
+    values = new vector<double>(size, 1.0);
+    i_am_a_copy = false;
+}
+
+BinomialTransition::BinomialTransition(const BinomialTransition& other)
+        : values(other.values),
+          i_am_a_copy(true),
+          q(other.q),
+          channel(other.channel),
+          length(other.length),
+          size(other.size) {}
+
+BinomialTransition::~BinomialTransition() {
+    if (!i_am_a_copy) {
+        delete values;
+    }
 }
 
 void BinomialTransition::reserve(unsigned int max_n) {
@@ -40,7 +55,7 @@ void BinomialTransition::reserve(unsigned int max_n) {
     unsigned int prev_length = length;
     length = max_n + 1;
     size = length * (length + 1) / 2;
-    values.resize(size);
+    values->resize(size);
     double p = (double)1 - q;
     for (unsigned int i = prev_length; i < length; i++) {
         prob(i, 0) = prob(i - 1, 0) * q;
@@ -52,11 +67,11 @@ void BinomialTransition::reserve(unsigned int max_n) {
 }
 
 double& BinomialTransition::prob(unsigned int from, unsigned int to) {
-    return values[from * (from + 1) / 2 + to];
+    return (*values)[from * (from + 1) / 2 + to];
 }
 
 double BinomialTransition::prob(unsigned int from, unsigned int to) const {
-    return values[from * (from + 1) / 2 + to];
+    return (*values)[from * (from + 1) / 2 + to];
 }
 
 void BinomialTransition::prune_forward(KDRange* range, bool* allow_detached) {

@@ -22,6 +22,7 @@ namespace whatprot {
 class BleachTransition : public BinomialTransition {
 public:
     BleachTransition(double q, int channel);
+    BleachTransition(const BleachTransition& other);
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,

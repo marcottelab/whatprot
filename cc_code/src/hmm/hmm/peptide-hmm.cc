@@ -37,21 +37,21 @@ PeptideHMM::PeptideHMM(
         : GenericHMM(num_timesteps), empty_range(false) {
     for (unsigned int c = 0; c < num_channels; c++) {
         steps.push_back(new DudTransition(
-                universal_precomputations.dud_transitions[c]));
+                *universal_precomputations.dud_transitions[c]));
     }
     steps.push_back(new PeptideEmission(
-            radiometry_precomputations.peptide_emissions[0]));
+            *radiometry_precomputations.peptide_emissions[0]));
     for (unsigned int t = 1; t < num_timesteps; t++) {
         steps.push_back(new DetachTransition(
                 universal_precomputations.detach_transition));
         for (unsigned int c = 0; c < num_channels; c++) {
             steps.push_back(new BleachTransition(
-                    universal_precomputations.bleach_transitions[c]));
+                    *universal_precomputations.bleach_transitions[c]));
         }
         steps.push_back(
                 new EdmanTransition(dye_seq_precomputations.edman_transition));
         steps.push_back(new PeptideEmission(
-                radiometry_precomputations.peptide_emissions[t]));
+                *radiometry_precomputations.peptide_emissions[t]));
     }
     // Now we prune to improve efficiency when run.
     KDRange range;

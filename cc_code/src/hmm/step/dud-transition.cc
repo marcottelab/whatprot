@@ -19,6 +19,9 @@ namespace whatprot {
 DudTransition::DudTransition(double q, int channel)
         : BinomialTransition(q, channel) {}
 
+DudTransition::DudTransition(const DudTransition& other)
+        : BinomialTransition(other) {}
+
 void DudTransition::improve_fit(const PeptideStateVector& forward_psv,
                                 const PeptideStateVector& backward_psv,
                                 const PeptideStateVector& next_backward_psv,

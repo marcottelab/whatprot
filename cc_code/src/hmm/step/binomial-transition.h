@@ -25,6 +25,8 @@ namespace whatprot {
 class BinomialTransition : public PeptideStep {
 public:
     BinomialTransition(double q, int channel);
+    BinomialTransition(const BinomialTransition& other);
+    virtual ~BinomialTransition();
     void reserve(unsigned int max_n);
     double& prob(unsigned int from, unsigned int to);
     double prob(unsigned int from, unsigned int to) const;
@@ -51,7 +53,8 @@ public:
                      ParameterFitter* fitter) const;
     KDRange forward_range;
     KDRange backward_range;
-    std::vector<double> values;
+    std::vector<double>* values;
+    bool i_am_a_copy;
     const double q;
     int channel;
     unsigned int length;  // length of array in one dimension.
