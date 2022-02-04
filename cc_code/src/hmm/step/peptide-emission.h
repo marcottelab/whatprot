@@ -30,6 +30,8 @@ public:
                     int max_num_dyes,
                     const SequencingModel& seq_model,
                     const SequencingSettings& seq_settings);
+    PeptideEmission(const PeptideEmission& other);
+    ~PeptideEmission();
     double& prob(int channel, int num_dyes);
     double prob(int channel, int num_dyes) const;
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
@@ -48,11 +50,12 @@ public:
                              unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
-    Radiometry radiometry;
+    const Radiometry& radiometry;
     unsigned int timestep;
     KDRange pruned_range;
     bool allow_detached;
-    std::vector<double> values;
+    std::vector<double>* values;
+    bool i_am_a_copy;
     unsigned int num_channels;
     int max_num_dyes;
 };

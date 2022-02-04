@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = 2.0;
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.num_channels == num_channels);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
-    BOOST_TEST(e.values[0] == 0.5);
+    BOOST_TEST((*e.values)[0] == 0.5);
     BOOST_TEST(e.pruned_range.min.size() == 2u);
     BOOST_TEST(e.pruned_range.min[0] == 0u);
     BOOST_TEST(e.pruned_range.min[1] == 1u);
@@ -92,10 +92,10 @@ BOOST_AUTO_TEST_CASE(constructor_no_cutoff_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.num_channels == num_channels);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
-    BOOST_TEST(e.values[0] == 0.5);
+    BOOST_TEST((*e.values)[0] == 0.5);
     BOOST_TEST(e.pruned_range.min.size() == 2u);
     BOOST_TEST(e.pruned_range.min[0] == 0u);
     BOOST_TEST(e.pruned_range.min[1] == 0u);
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_timesteps_const_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
     BOOST_TEST(e.prob(1, 0) == cm_mock.get().pdf(0.1, 0));
     BOOST_TEST(e.prob(2, 0) == cm_mock.get().pdf(0.2, 0));
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_const_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
     BOOST_TEST(ce.prob(1, 0) == cm_mock.get().pdf(0.1, 0));
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_channels_different_pdfs_test,
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.prob(0, 0) == cm_mock_0.get().pdf(0.0, 0));
     BOOST_TEST(e.prob(1, 0) == cm_mock_1.get().pdf(0.1, 0));
     BOOST_TEST(e.prob(2, 0) == cm_mock_2.get().pdf(0.2, 0));
@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
     BOOST_TEST(e.prob(0, 1) == cm_mock.get().pdf(0.0, 1));
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_dye_counts_const_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.max_num_dyes == max_num_dyes);
     const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(0.0, 0));
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     BOOST_TEST(e.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
     BOOST_TEST(e.prob(0, 1) == cm_mock.get().pdf(1.0, 1));
     BOOST_TEST(e.prob(1, 0) == cm_mock.get().pdf(1.1, 0));
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(prob_multiple_everything_const_test, *tolerance(TOL)) {
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     PeptideEmission e(rad, timestep, max_num_dyes, seq_model, seq_settings);
     unsigned int expected_size = num_channels * (max_num_dyes + 1);
-    BOOST_TEST(e.values.size() == expected_size);
+    BOOST_TEST(e.values->size() == expected_size);
     const PeptideEmission& ce = e;
     BOOST_TEST(ce.prob(0, 0) == cm_mock.get().pdf(1.0, 0));
     BOOST_TEST(ce.prob(0, 1) == cm_mock.get().pdf(1.0, 1));

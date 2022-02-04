@@ -35,7 +35,7 @@ DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
         //     dyes possible, but the tensor shape for that channel needs to be
         //     one bigger than that to handle all values inclusively from 0 to
         //     the number of dyes.
-        tensor_shape[1 + c] = 1 + edman_transition.dye_track(0, c);
+        tensor_shape[1 + c] = 1 + (*edman_transition.dye_track)(0, c);
     }
 }
 

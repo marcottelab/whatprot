@@ -23,6 +23,8 @@ public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
+    EdmanTransition(const EdmanTransition& other);
+    ~EdmanTransition();
     void set_true_forward_range(const KDRange& range);
     void set_true_backward_range(const KDRange& range);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
@@ -40,8 +42,9 @@ public:
                              double probability,
                              SequencingModelFitter* fitter) const override;
 
-    DyeSeq dye_seq;
-    DyeTrack dye_track;
+    const DyeSeq& dye_seq;
+    DyeTrack* dye_track;
+    bool i_am_a_copy;
     double p_edman_failure;
     KDRange true_forward_range;  // shared with neighbors.
     KDRange safe_forward_range;  // used to make backward() easier.
