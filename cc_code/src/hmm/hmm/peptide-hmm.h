@@ -31,7 +31,8 @@ public:
                const DyeSeqPrecomputations& dye_seq_precomputations,
                const RadiometryPrecomputations& radiometry_precomputations,
                const UniversalPrecomputations& universal_precomputations);
-    virtual PeptideStateVector* create_states() const override;
+    virtual PeptideStateVector* create_states_forward() const override;
+    virtual PeptideStateVector* create_states_backward() const override;
     virtual double probability() const override;
     KDRange forward_range;
     KDRange backward_range;

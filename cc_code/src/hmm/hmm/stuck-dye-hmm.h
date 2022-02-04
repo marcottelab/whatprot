@@ -29,7 +29,8 @@ public:
                 unsigned int channel,
                 const RadiometryPrecomputations& radiometry_precomputations,
                 const UniversalPrecomputations& universal_precomputations);
-    virtual StuckDyeStateVector* create_states() const override;
+    virtual StuckDyeStateVector* create_states_forward() const override;
+    virtual StuckDyeStateVector* create_states_backward() const override;
 };
 
 }  // namespace whatprot

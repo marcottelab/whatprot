@@ -39,7 +39,11 @@ StuckDyeHMM::StuckDyeHMM(
     }
 }
 
-StuckDyeStateVector* StuckDyeHMM::create_states() const {
+StuckDyeStateVector* StuckDyeHMM::create_states_forward() const {
+    return new StuckDyeStateVector();
+}
+
+StuckDyeStateVector* StuckDyeHMM::create_states_backward() const {
     return new StuckDyeStateVector();
 }
 

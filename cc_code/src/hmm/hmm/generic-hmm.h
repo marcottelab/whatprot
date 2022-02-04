@@ -31,7 +31,9 @@ public:
         }
     }
 
-    virtual V* create_states() const = 0;
+    virtual V* create_states_forward() const = 0;
+
+    virtual V* create_states_backward() const = 0;
 
     // This computes the probability of the provided dye seq producing the
     // provided radiometry. To do this efficiently, it uses a modified version
@@ -39,7 +41,7 @@ public:
     virtual double probability() const {
         unsigned int num_edmans = 0;
         auto step = steps.begin();  // const_iterator type
-        V* states_in = create_states();
+        V* states_in = create_states_forward();
         states_in->initialize_from_start();
         while (step != steps.end()) {
             V* states_out = (*step)->forward(*states_in, &num_edmans);
@@ -64,7 +66,7 @@ public:
         backward_sv.reserve(steps.size());
         // For efficiency, backwards_states is in the reverse order of what we
         // would like. Yes this is confusing...
-        backward_sv.push_back(create_states());
+        backward_sv.push_back(create_states_backward());
         backward_sv.back()->initialize_from_finish();
         while (step != steps.begin()) {
             step--;
@@ -84,7 +86,7 @@ public:
             return probability;
         }
         auto backward_states = backward_sv.end();  // iterator type
-        V* forward_states = create_states();
+        V* forward_states = create_states_forward();
         forward_states->initialize_from_start();
         while (step != steps.end()) {
             backward_states--;

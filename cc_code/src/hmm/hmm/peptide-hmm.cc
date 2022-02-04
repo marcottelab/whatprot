@@ -77,8 +77,12 @@ PeptideHMM::PeptideHMM(
     forward_range = range;
 }
 
-PeptideStateVector* PeptideHMM::create_states() const {
+PeptideStateVector* PeptideHMM::create_states_forward() const {
     return new PeptideStateVector(forward_range);
+}
+
+PeptideStateVector* PeptideHMM::create_states_backward() const {
+    return new PeptideStateVector(backward_range);
 }
 
 double PeptideHMM::probability() const {
