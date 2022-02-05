@@ -22,21 +22,8 @@ EdmanTransition::EdmanTransition(double p_edman_failure,
                                  const DyeSeq& dye_seq,
                                  const DyeTrack& dye_track)
         : dye_seq(dye_seq),
-          dye_track(new DyeTrack(dye_track)),
-          i_am_a_copy(false),
+          dye_track(dye_track),
           p_edman_failure(p_edman_failure) {}
-
-EdmanTransition::EdmanTransition(const EdmanTransition& other)
-        : dye_seq(other.dye_seq),
-          dye_track(other.dye_track),
-          i_am_a_copy(true),
-          p_edman_failure(other.p_edman_failure) {}
-
-EdmanTransition::~EdmanTransition() {
-    if (!i_am_a_copy) {
-        delete dye_track;
-    }
-}
 
 void EdmanTransition::set_true_forward_range(const KDRange& range) {
     true_forward_range = range;
@@ -116,7 +103,7 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
             // further. As before we reindex to the next successful Edman count
             // (with '+ t_stride').
             unsigned int c_idx = in_itr->loc[1 + c];
-            unsigned int c_total = (*dye_track)(t, c);
+            unsigned int c_total = dye_track(t, c);
             double ratio = (double)c_idx / (double)c_total;
             unsigned int c_stride = output->tensor.strides[1 + c];
             if (c_idx < c_total) {
@@ -196,7 +183,7 @@ PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
                 // may either have the same number of fluorophores as the target
                 // location in 'backward' (thus not losing a dye) or one more
                 // fluorophore, which it loses.
-                unsigned int c_total = (*dye_track)(t - 1, c);
+                unsigned int c_total = dye_track(t - 1, c);
                 unsigned int c_stride = output->tensor.strides[1 + c];
                 unsigned int c_idx;
                 c_idx = in_itr->loc[1 + c];

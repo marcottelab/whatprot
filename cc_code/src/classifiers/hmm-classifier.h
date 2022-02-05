@@ -34,6 +34,7 @@ public:
             const SequencingModel& seq_model,
             const SequencingSettings& seq_settings,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
+    ~HMMClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
                                   const std::vector<int>& candidate_indices);
@@ -51,7 +52,7 @@ public:
         for (int i : indices) {
             PeptideHMM hmm(num_timesteps,
                            num_channels,
-                           dye_seq_precomputations_vec[i],
+                           *dye_seq_precomputations_vec[i],
                            radiometry_precomputations,
                            universal_precomputations);
             double score = hmm.probability();
@@ -68,7 +69,7 @@ public:
     const SequencingModel& seq_model;
     const SequencingSettings& seq_settings;
     UniversalPrecomputations universal_precomputations;
-    std::vector<DyeSeqPrecomputations> dye_seq_precomputations_vec;
+    std::vector<DyeSeqPrecomputations*> dye_seq_precomputations_vec;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
     unsigned int num_timesteps;
     unsigned int num_channels;

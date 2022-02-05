@@ -21,9 +21,10 @@ DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
                                              const SequencingModel& seq_model,
                                              unsigned int num_timesteps,
                                              unsigned int num_channels)
-        : edman_transition(seq_model.p_edman_failure,
+        : dye_track(num_timesteps, num_channels, dye_seq),
+        edman_transition(seq_model.p_edman_failure,
                            dye_seq,
-                           DyeTrack(num_timesteps, num_channels, dye_seq)) {
+                           dye_track) {
     tensor_shape.resize(1 + num_channels);
     tensor_shape[0] = num_timesteps;
     for (unsigned int c = 0; c < num_channels; c++) {
@@ -35,7 +36,7 @@ DyeSeqPrecomputations::DyeSeqPrecomputations(const DyeSeq& dye_seq,
         //     dyes possible, but the tensor shape for that channel needs to be
         //     one bigger than that to handle all values inclusively from 0 to
         //     the number of dyes.
-        tensor_shape[1 + c] = 1 + (*edman_transition.dye_track)(0, c);
+        tensor_shape[1 + c] = 1 + edman_transition.dye_track(0, c);
     }
 }
 
