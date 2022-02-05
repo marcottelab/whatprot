@@ -28,6 +28,7 @@ public:
     // We forbid copy construction to guarantee consistent location of dye_track
     // for the edman_transition we are creating.
     DyeSeqPrecomputations(const DyeSeqPrecomputations& other) = delete;
+
     std::vector<unsigned int> tensor_shape;
     DyeTrack dye_track;  // MUST be before edman_transition
     EdmanTransition edman_transition;
