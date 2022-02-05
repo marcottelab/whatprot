@@ -24,7 +24,7 @@ public:
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
     EdmanTransition(const EdmanTransition& other);
-    ~EdmanTransition();
+    virtual ~EdmanTransition();
     void set_true_forward_range(const KDRange& range);
     void set_true_backward_range(const KDRange& range);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;

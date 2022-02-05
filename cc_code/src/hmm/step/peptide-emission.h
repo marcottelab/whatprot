@@ -31,7 +31,7 @@ public:
                     const SequencingModel& seq_model,
                     const SequencingSettings& seq_settings);
     PeptideEmission(const PeptideEmission& other);
-    ~PeptideEmission();
+    virtual ~PeptideEmission();
     double& prob(int channel, int num_dyes);
     double prob(int channel, int num_dyes) const;
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
