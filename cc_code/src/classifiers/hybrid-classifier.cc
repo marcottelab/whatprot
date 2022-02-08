@@ -86,7 +86,7 @@ vector<ScoredClassification> HybridClassifier::classify(
         const vector<Radiometry>& radiometries) {
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
-#pragma omp parallel for schedule(dynamic,1)
+#pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }
