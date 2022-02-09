@@ -19,6 +19,9 @@ namespace whatprot {
 BleachTransition::BleachTransition(double q, int channel)
         : BinomialTransition(q, channel) {}
 
+BleachTransition::BleachTransition(const BleachTransition& other)
+        : BinomialTransition(other) {}
+
 void BleachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& backward_psv,
                                    const PeptideStateVector& next_backward_psv,

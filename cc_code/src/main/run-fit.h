@@ -6,13 +6,18 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_MAIN_FIT_FIT_MAIN_H
-#define WHATPROT_MAIN_FIT_FIT_MAIN_H
+#ifndef WHATPROT_MAIN_RUN_FIT_H
+#define WHATPROT_MAIN_RUN_FIT_H
+
+// Standard C++ library headers:
+#include <string>
 
 namespace whatprot {
 
-int fit_main(int argc, char** argv);
+void run_fit(double stopping_threshold,
+             std::string dye_seq_string,
+             std::string radiometries_filename);
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_MAIN_FIT_FIT_MAIN_H
+#endif  // WHATPROT_MAIN_RUN_FIT_H

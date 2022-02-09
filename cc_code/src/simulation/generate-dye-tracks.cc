@@ -11,7 +11,6 @@
 
 // Standard C++ library headers:
 #include <random>
-#include <unordered_map>
 #include <utility>  // for std::move
 #include <vector>
 
@@ -27,7 +26,6 @@ namespace whatprot {
 namespace {
 using std::default_random_engine;
 using std::move;
-using std::unordered_map;
 using std::vector;
 }  // namespace
 
@@ -36,7 +34,7 @@ void generate_dye_tracks(
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         unsigned int num_timesteps,
         unsigned int num_channels,
-        int dye_tracks_per_peptide,
+        unsigned int dye_tracks_per_peptide,
         default_random_engine* generator,
         vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks) {
     dye_tracks->reserve(dye_seqs.size());
@@ -45,7 +43,7 @@ void generate_dye_tracks(
         // not per dye_seq. Therefore we do this on repeat for each peptide
         // that produced this dye_seq.
         for (int i = 0; i < dye_seq.source.count; i++) {
-            for (int j = 0; j < dye_tracks_per_peptide; j++) {
+            for (unsigned int j = 0; j < dye_tracks_per_peptide; j++) {
                 DyeTrack dye_track(num_timesteps, num_channels);
                 generate_dye_track(seq_model,
                                    dye_seq.value,

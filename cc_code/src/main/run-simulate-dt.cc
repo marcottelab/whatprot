@@ -7,72 +7,50 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "nn-main.h"
+#include "run-simulate-dt.h"
 
 // Standard C++ library headers:
-#include <cstdlib>
-#include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 
 // Local project headers:
-#include "classifiers/nn-classifier.h"
-#include "common/dye-track.h"
-#include "common/radiometry.h"
-#include "common/scored-classification.h"
+#include "common/dye-seq.h"
 #include "common/sourced-data.h"
+#include "io/dye-seqs-io.h"
 #include "io/dye-tracks-io.h"
-#include "io/radiometries-io.h"
-#include "io/scored-classifications-io.h"
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
+#include "simulation/dedup-dye-tracks.h"
+#include "simulation/generate-dye-tracks.h"
 #include "util/time.h"
 
 namespace whatprot {
 
 namespace {
-using std::atof;
-using std::atoi;
+using std::default_random_engine;
+using std::string;
 using std::vector;
+using std::cout;
 }  // namespace
 
-int nn_main(int argc, char** argv) {
+void run_simulate_dt(unsigned int num_timesteps,
+                     unsigned int dye_tracks_per_peptide,
+                     string dye_seqs_filename,
+                     string dye_tracks_filename) {
     double total_start_time = wall_time();
-
-    if (argc != 8) {
-        print_wrong_number_of_inputs();
-        return EXIT_FAILURE;
-    }
-    int k = atoi(argv[3]);
-    double sig = atof(argv[4]);
-    char* dye_tracks_filename = argv[5];
-    char* radiometries_filename = argv[6];
-    char* predictions_filename = argv[7];
 
     double start_time;
     double end_time;
 
     start_time = wall_time();
-    unsigned int num_timesteps;
     unsigned int num_channels;
-    vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> dye_tracks;
-    read_dye_tracks(
-            dye_tracks_filename, &num_timesteps, &num_channels, &dye_tracks);
+    unsigned int total_num_dye_seqs;
+    vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
+    read_dye_seqs(
+            dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
     end_time = wall_time();
-    print_read_dye_tracks(dye_tracks.size(), end_time - start_time);
-
-    start_time = wall_time();
-    unsigned int duplicate_num_timesteps;  // also get this from dye track file.
-    unsigned int duplicate_num_channels;  // also get this from dye track file.
-    unsigned int total_num_radiometries;  // num radiometries across all procs.
-    vector<Radiometry> radiometries;
-    read_radiometries(radiometries_filename,
-                      &duplicate_num_timesteps,
-                      &duplicate_num_channels,
-                      &total_num_radiometries,
-                      &radiometries);
-    end_time = wall_time();
-    print_read_radiometries(total_num_radiometries, end_time - start_time);
+    print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
 
     start_time = wall_time();
     SequencingModel seq_model;
@@ -92,26 +70,37 @@ int nn_main(int argc, char** argv) {
     print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
-    NNClassifier classifier(
-            num_timesteps, num_channels, seq_model, k, sig, &dye_tracks);
+    default_random_engine generator(time_based_seed());
+    vector<SourcedData<DyeTrack, SourceCount<int>>> dye_tracks;
+    generate_dye_tracks(seq_model,
+                        dye_seqs,
+                        num_timesteps,
+                        num_channels,
+                        dye_tracks_per_peptide,
+                        &generator,
+                        &dye_tracks);
     end_time = wall_time();
-    print_built_classifier(end_time - start_time);
+    print_finished_generating_dye_tracks(dye_tracks.size(),
+                                         end_time - start_time);
 
     start_time = wall_time();
-    vector<ScoredClassification> results = classifier.classify(radiometries);
+    vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> deduped_dye_tracks;
+    dedup_dye_tracks(
+            num_timesteps, num_channels, &dye_tracks, &deduped_dye_tracks);
     end_time = wall_time();
-    print_finished_classification(end_time - start_time);
+    print_finished_deduping_dye_tracks(deduped_dye_tracks.size(),
+                                       end_time - start_time);
 
     start_time = wall_time();
-    write_scored_classifications(
-            predictions_filename, total_num_radiometries, results);
+    write_dye_tracks(dye_tracks_filename,
+                     num_timesteps,
+                     num_channels,
+                     deduped_dye_tracks);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);
-
-    return 0;
 }
 
 }  // namespace whatprot

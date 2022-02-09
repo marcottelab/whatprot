@@ -23,14 +23,16 @@ public:
     EdmanTransition(double p_edman_failure,
                     const DyeSeq& dye_seq,
                     const DyeTrack& dye_track);
+    void set_true_forward_range(const KDRange& range);
+    void set_true_backward_range(const KDRange& range);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
-    virtual void forward(const PeptideStateVector& input,
-                         unsigned int* num_edmans,
-                         PeptideStateVector* output) const override;
-    virtual void backward(const PeptideStateVector& input,
-                          unsigned int* num_edmans,
-                          PeptideStateVector* output) const override;
+    virtual PeptideStateVector* forward(
+            const PeptideStateVector& input,
+            unsigned int* num_edmans) const override;
+    virtual PeptideStateVector* backward(
+            const PeptideStateVector& input,
+            unsigned int* num_edmans) const override;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
@@ -38,11 +40,13 @@ public:
                              double probability,
                              SequencingModelFitter* fitter) const override;
 
-    DyeSeq dye_seq;
-    DyeTrack dye_track;
+    const DyeSeq& dye_seq;
+    const DyeTrack& dye_track;
     double p_edman_failure;
-    KDRange forward_range;
-    KDRange backward_range;
+    KDRange true_forward_range;  // shared with neighbors.
+    KDRange safe_forward_range;  // used to make backward() easier.
+    KDRange true_backward_range;  // shared with neighbors.
+    KDRange safe_backward_range;  // used to make forward() easier.
 };
 
 }  // namespace whatprot

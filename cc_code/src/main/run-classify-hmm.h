@@ -6,13 +6,18 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_MAIN_CLASSIFY_HYBRID_MAIN_H
-#define WHATPROT_MAIN_CLASSIFY_HYBRID_MAIN_H
+#ifndef WHATPROT_MAIN_RUN_CLASSIFY_HMM_H
+#define WHATPROT_MAIN_RUN_CLASSIFY_HMM_H
+
+#include <string>
 
 namespace whatprot {
 
-int hybrid_main(int argc, char** argv);
+void run_classify_hmm(double hmm_pruning_cutoff,
+                      std::string dye_seqs_filename,
+                      std::string radiometries_filename,
+                      std::string predictions_filename);
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_MAIN_CLASSIFY_HYBRID_MAIN_H
+#endif  // WHATPROT_MAIN_RUN_CLASSIFY_HMM_H

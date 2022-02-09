@@ -11,6 +11,7 @@
 
 // Standard C++ library headers:
 #include <limits>
+#include <vector>
 
 // Local project headers:
 #include "common/radiometry.h"
@@ -26,6 +27,7 @@ namespace whatprot {
 
 namespace {
 using std::function;
+using std::vector;
 }  // namespace
 
 PeptideEmission::PeptideEmission(const Radiometry& radiometry,
@@ -35,9 +37,10 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                                  const SequencingSettings& seq_settings)
         : radiometry(radiometry),
           timestep(timestep),
+          i_am_a_copy(false),
           num_channels(radiometry.num_channels),
           max_num_dyes(max_num_dyes) {
-    values.resize(num_channels * (max_num_dyes + 1));
+    values = new vector<double>(num_channels * (max_num_dyes + 1), 0);
     for (unsigned int c = 0; c < num_channels; c++) {
         for (int d = 0; d < (max_num_dyes + 1); d++) {
             prob(c, d) = seq_model.channel_models[c]->pdf(
@@ -82,12 +85,27 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
     }
 }
 
+PeptideEmission::PeptideEmission(const PeptideEmission& other)
+        : radiometry(other.radiometry),
+          timestep(other.timestep),
+          pruned_range(other.pruned_range),
+          values(other.values),
+          i_am_a_copy(true),
+          num_channels(other.num_channels),
+          max_num_dyes(other.max_num_dyes) {}
+
+PeptideEmission::~PeptideEmission() {
+    if (!i_am_a_copy) {
+        delete values;
+    }
+}
+
 double& PeptideEmission::prob(int channel, int num_dyes) {
-    return values[channel * (max_num_dyes + 1) + num_dyes];
+    return (*values)[channel * (max_num_dyes + 1) + num_dyes];
 }
 
 double PeptideEmission::prob(int channel, int num_dyes) const {
-    return values[channel * (max_num_dyes + 1) + num_dyes];
+    return (*values)[channel * (max_num_dyes + 1) + num_dyes];
 }
 
 void PeptideEmission::prune_forward(KDRange* range, bool* allow_detached) {
@@ -104,9 +122,9 @@ void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
     *allow_detached = this->allow_detached;
 }
 
-void PeptideEmission::forward_or_backward(const PeptideStateVector& input,
-                                          unsigned int* num_edmans,
-                                          PeptideStateVector* output) const {
+PeptideStateVector* PeptideEmission::forward_or_backward(
+        const PeptideStateVector& input, unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(pruned_range);
     ConstTensorIterator* inputit = input.tensor.const_iterator(pruned_range);
     TensorIterator* outputit = output->tensor.iterator(pruned_range);
     while (!inputit->done()) {
@@ -129,18 +147,17 @@ void PeptideEmission::forward_or_backward(const PeptideStateVector& input,
     }
     output->range = pruned_range;
     output->allow_detached = allow_detached;
+    return output;
 }
 
-void PeptideEmission::forward(const PeptideStateVector& input,
-                              unsigned int* num_edmans,
-                              PeptideStateVector* output) const {
-    forward_or_backward(input, num_edmans, output);
+PeptideStateVector* PeptideEmission::forward(const PeptideStateVector& input,
+                                             unsigned int* num_edmans) const {
+    return forward_or_backward(input, num_edmans);
 }
 
-void PeptideEmission::backward(const PeptideStateVector& input,
-                               unsigned int* num_edmans,
-                               PeptideStateVector* output) const {
-    forward_or_backward(input, num_edmans, output);
+PeptideStateVector* PeptideEmission::backward(const PeptideStateVector& input,
+                                              unsigned int* num_edmans) const {
+    return forward_or_backward(input, num_edmans);
 }
 
 void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
@@ -149,13 +166,7 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    KDRange range;
-    range.min.resize(1 + num_channels);
-    range.max.resize(1 + num_channels);
-    for (unsigned int o = 0; o < 1 + num_channels; o++) {
-        range.min[o] = 0;
-        range.max[o] = forward_psv.tensor.shape[o];
-    }
+    KDRange range = forward_psv.tensor.range;
     ConstTensorIterator* fit = forward_psv.tensor.const_iterator(range);
     ConstTensorIterator* bit = backward_psv.tensor.const_iterator(range);
     while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {

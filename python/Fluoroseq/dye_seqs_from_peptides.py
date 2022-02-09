@@ -8,16 +8,15 @@ from simulate.label_peptides import label_peptides
 
 def dye_seqs_from_peptides(peptide_file, label_set, dye_seqs_file):
     f = open(peptide_file, 'r')
-    f.readline()  # header
-    f.readline()  # Zack's null line
-    line = f.readline()
+    # f.readline()  # header
+    # f.readline()  # Zack's null line
+    line = "placeholder"
     peptides = []
+    pep_id = 0
     while line != '\n' and line != '':
-        items = line.split(",")
-        pep_id = items[0]
-        pep_str = items[-1]
-        peptides += [Peptide(pep_str, pep_id=pep_id)]
-        line = f.readline()
+        line = f.readline()[0 : -1]
+        peptides += [Peptide(line, pep_id=pep_id)]
+        pep_id += 1
     f.close()
     dye_seqs = label_peptides(peptides, label_set)
     

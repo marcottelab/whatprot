@@ -92,10 +92,6 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
                    dye_seq_precomputations,
                    radiometry_precomputations,
                    universal_precomputations);
-    BOOST_ASSERT(hmm.tensor_shape.size() == 1 + num_channels);
-    BOOST_TEST(hmm.tensor_shape[0] == num_timesteps);
-    BOOST_TEST(hmm.tensor_shape[1] == 2u + 1u);  // extra for 0 & num dyes.
-    BOOST_TEST(hmm.tensor_shape[2] == 3u + 1u);  // extra for 0 & num dyes.
     BOOST_ASSERT(hmm.steps.size()
                  == (3 + num_channels) * (num_timesteps - 1) + 1
                             + num_channels);

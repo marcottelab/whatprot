@@ -11,15 +11,15 @@
 
 namespace whatprot {
 
-Vector::Vector(unsigned int length, int stride, double* values)
-        : values(values), length(length), stride(stride) {}
+Vector::Vector(unsigned int min, unsigned int max, int stride, double* values)
+        : values(values), min(min), max(max), stride(stride) {}
 
 double& Vector::operator[](int i) {
-    return values[i * stride];
+    return values[(i - min) * stride];
 }
 
 double Vector::operator[](int i) const {
-    return values[i * stride];
+    return values[(i - min) * stride];
 }
 
 }  // namespace whatprot

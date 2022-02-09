@@ -25,11 +25,12 @@ class UniversalPrecomputations {
 public:
     UniversalPrecomputations(const SequencingModel& seq_model,
                              unsigned int num_channels);
+    ~UniversalPrecomputations();
     void set_max_num_dyes(int max_num_dyes);
     DetachTransition detach_transition;
-    std::vector<DudTransition> dud_transitions;
-    std::vector<BleachTransition> bleach_transitions;
-    std::vector<StuckDyeTransition> stuck_dye_transitions;
+    std::vector<DudTransition*> dud_transitions;
+    std::vector<BleachTransition*> bleach_transitions;
+    std::vector<StuckDyeTransition*> stuck_dye_transitions;
     unsigned int num_channels;
 };
 

@@ -76,6 +76,7 @@ INCLUDE += -I./extern/mrmpi-7Apr14/src/
 INCLUDE += -I./extern/mrmpi-7Apr14/mpistubs/
 INCLUDE += -I./extern/boost_1_73_0_subset/
 INCLUDE += -I./extern/FakeIt/single_header/boost/
+INCLUDE += -I./extern/cxxopts-3.0.0/include/
 
 # These flags tell g++ to generate dependencies in the form of makefile rules
 # as a side effect of compilation. This macro assumes that the target is the

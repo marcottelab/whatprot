@@ -25,18 +25,20 @@ namespace whatprot {
 class BinomialTransition : public PeptideStep {
 public:
     BinomialTransition(double q, int channel);
+    BinomialTransition(const BinomialTransition& other);
+    virtual ~BinomialTransition();
     void reserve(unsigned int max_n);
     double& prob(unsigned int from, unsigned int to);
     double prob(unsigned int from, unsigned int to) const;
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
-    virtual void forward(const PeptideStateVector& input,
-                         unsigned int* num_edmans,
-                         PeptideStateVector* output) const override;
+    virtual PeptideStateVector* forward(
+            const PeptideStateVector& input,
+            unsigned int* num_edmans) const override;
     void forward(const Vector& input, Vector* output) const;
-    virtual void backward(const PeptideStateVector& input,
-                          unsigned int* num_edmans,
-                          PeptideStateVector* output) const override;
+    virtual PeptideStateVector* backward(
+            const PeptideStateVector& input,
+            unsigned int* num_edmans) const override;
     void backward(const Vector& input, Vector* output) const;
     void improve_fit(const PeptideStateVector& forward_psv,
                      const PeptideStateVector& backward_psv,
@@ -51,7 +53,8 @@ public:
                      ParameterFitter* fitter) const;
     KDRange forward_range;
     KDRange backward_range;
-    std::vector<double> values;
+    std::vector<double>* values;
+    bool i_am_a_copy;
     const double q;
     int channel;
     unsigned int length;  // length of array in one dimension.

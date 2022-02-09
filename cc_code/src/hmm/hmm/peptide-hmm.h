@@ -20,6 +20,7 @@
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
+#include "util/kd-range.h"
 
 namespace whatprot {
 
@@ -30,8 +31,12 @@ public:
                const DyeSeqPrecomputations& dye_seq_precomputations,
                const RadiometryPrecomputations& radiometry_precomputations,
                const UniversalPrecomputations& universal_precomputations);
-    virtual PeptideStateVector* create_states() const override;
-    std::vector<unsigned int> tensor_shape;
+    virtual PeptideStateVector* create_states_forward() const override;
+    virtual PeptideStateVector* create_states_backward() const override;
+    virtual double probability() const override;
+    KDRange forward_range;
+    KDRange backward_range;
+    bool empty_range;
 };
 
 }  // namespace whatprot

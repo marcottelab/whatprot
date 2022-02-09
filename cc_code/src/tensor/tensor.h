@@ -24,6 +24,7 @@ namespace whatprot {
 class Tensor {
 public:
     Tensor(unsigned int order, const unsigned int* shape);
+    Tensor(const KDRange& range);
     Tensor(Tensor&& other);
     ~Tensor();
     double& operator[](const unsigned int* loc);
@@ -45,7 +46,7 @@ public:
     double sum(const KDRange& range) const;
 
     double* values;
-    unsigned int* shape;
+    KDRange range;
     int* strides;
     unsigned int size;
     unsigned int order;

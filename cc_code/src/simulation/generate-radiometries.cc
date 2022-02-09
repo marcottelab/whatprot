@@ -21,44 +21,44 @@
 
 namespace whatprot {
 
+namespace {
+using std::default_random_engine;
+using std::discrete_distribution;
+using std::vector;
+}  // namespace
+
 void generate_radiometries(
         const SequencingModel& seq_model,
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         unsigned int num_timesteps,
         unsigned int num_channels,
-        int radiometries_per_peptide,
+        unsigned int num_to_generate,
         std::default_random_engine* generator,
         std::vector<SourcedData<Radiometry, SourceCount<int>>>* radiometries) {
-    radiometries->reserve(dye_seqs.size() * radiometries_per_peptide);
-    for (const SourcedData<DyeSeq, SourceCount<int>>& dye_seq : dye_seqs) {
-        // We want to generate a certain number of radiometries per peptide,
-        // not per dye_seq. Therefore we do this on repeat for each peptide
-        // that produced this dye_seq.
-        for (int i = 0; i < dye_seq.source.count; i++) {
-            for (int j = 0; j < radiometries_per_peptide; j++) {
-                radiometries->push_back(
-                        SourcedData<Radiometry, SourceCount<int>>(
-                                Radiometry(num_timesteps, num_channels),
-                                dye_seq.source));
-                generate_radiometry(seq_model,
-                                    dye_seq.value,
-                                    num_timesteps,
-                                    num_channels,
-                                    generator,
-                                    &radiometries->back().value);
-                // Ignore any Radiometry with all 0s because it wouldn't be
-                // detectable. Any Radiometry with all 0s at the 0th timestep
-                // will have all 0s throughout.
-                bool nontrivial = false;
-                for (unsigned int c = 0; c < num_channels; c++) {
-                    if (radiometries->back().value(0, c) != 0.0) {
-                        nontrivial = true;
-                    }
-                }
-                if (!nontrivial) {
-                    radiometries->pop_back();
-                }
-            }
+    // We want the dye tracks generated based on a uniform distribution of
+    // peptides, not radiometries. We therefore need a discrete_distribution,
+    // because it is weighted.
+    vector<double> index_to_weight;
+    index_to_weight.resize(dye_seqs.size());
+    for (unsigned int i = 0; i < dye_seqs.size(); i++) {
+        index_to_weight[i] = (double)dye_seqs[i].source.count;
+    }
+    discrete_distribution<unsigned int> random_dye_seq_idx(
+            index_to_weight.begin(), index_to_weight.end());
+    for (unsigned int i = 0; i < num_to_generate; i++) {
+        unsigned int dye_seq_idx = random_dye_seq_idx(*generator);
+        radiometries->push_back(SourcedData<Radiometry, SourceCount<int>>(
+                Radiometry(num_timesteps, num_channels),
+                dye_seqs[dye_seq_idx].source));
+        // We ignore radiometries from invisible dye-tracks (all 0s). These are
+        // indicated by the return value.
+        if (!generate_radiometry(seq_model,
+                                 dye_seqs[dye_seq_idx].value,
+                                 num_timesteps,
+                                 num_channels,
+                                 generator,
+                                 &radiometries->back().value)) {
+            radiometries->pop_back();
         }
     }
 }

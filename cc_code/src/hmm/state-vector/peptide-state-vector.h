@@ -23,6 +23,7 @@ public:
     // To construct a PeptideStateVector, you need to give the order and shape
     // of the underlying tensor.
     PeptideStateVector(unsigned int order, const unsigned int* shape);
+    PeptideStateVector(const KDRange& range);
     // Put 1.0 in starting state.
     void initialize_from_start();
     // Put 1.0 in every state.

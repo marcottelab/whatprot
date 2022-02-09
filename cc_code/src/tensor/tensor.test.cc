@@ -40,7 +40,6 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_test, *tolerance(TOL)) {
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 1u);
     BOOST_TEST(t.strides[0] == 1);
     BOOST_ASSERT(t.size == 1u);
     BOOST_TEST(t.values[0] == 0.0);
@@ -53,7 +52,6 @@ BOOST_AUTO_TEST_CASE(constructor_order_one_bigger_test, *tolerance(TOL)) {
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 10u);
     BOOST_TEST(t.strides[0] == 1);
     BOOST_TEST(t.size == 10u);
     BOOST_TEST(t.values[0] == 0.0);
@@ -76,8 +74,6 @@ BOOST_AUTO_TEST_CASE(constructor_order_two_test, *tolerance(TOL)) {
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 3u);
-    BOOST_TEST(t.shape[1] == 5u);
     BOOST_TEST(t.strides[0] == 5);
     BOOST_TEST(t.strides[1] == 1);
     BOOST_ASSERT(t.size == 3u * 5u);
@@ -107,9 +103,6 @@ BOOST_AUTO_TEST_CASE(constructor_order_three_test, *tolerance(TOL)) {
     Tensor t(order, shape);
     delete[] shape;
     BOOST_TEST(t.order == order);
-    BOOST_TEST(t.shape[0] == 2u);
-    BOOST_TEST(t.shape[1] == 3u);
-    BOOST_TEST(t.shape[2] == 4u);
     BOOST_TEST(t.strides[0] == 3 * 4);
     BOOST_TEST(t.strides[1] == 4);
     BOOST_TEST(t.strides[2] == 1);
@@ -150,12 +143,8 @@ BOOST_AUTO_TEST_CASE(move_constructor_test, *tolerance(TOL)) {
     delete[] shape;
     Tensor t2(move(t1));
     BOOST_TEST(t1.values == (void*)NULL);
-    BOOST_TEST(t1.shape == (void*)NULL);
     BOOST_TEST(t1.strides == (void*)NULL);
     BOOST_TEST(t2.order == order);
-    BOOST_TEST(t2.shape[0] == 2u);
-    BOOST_TEST(t2.shape[1] == 3u);
-    BOOST_TEST(t2.shape[2] == 4u);
     BOOST_TEST(t2.strides[0] == 3 * 4);
     BOOST_TEST(t2.strides[1] == 4);
     BOOST_TEST(t2.strides[2] == 1);
@@ -205,6 +194,25 @@ BOOST_AUTO_TEST_CASE(bracket_op_test, *tolerance(TOL)) {
     BOOST_TEST((t[{1, 0}]) == 610);
     BOOST_TEST((t[{1, 1}]) == 611);
     BOOST_TEST((t[{1, 2}]) == 612);
+}
+
+BOOST_AUTO_TEST_CASE(bracket_op_offset_tensor_test, *tolerance(TOL)) {
+    KDRange range;
+    range.min = {1, 1};
+    range.max = {3, 4};
+    Tensor t(range);
+    t[{1, 1}] = 611;
+    t[{1, 2}] = 612;
+    t[{1, 3}] = 613;
+    t[{2, 1}] = 621;
+    t[{2, 2}] = 622;
+    t[{2, 3}] = 623;
+    BOOST_TEST((t[{1, 1}]) == 611);
+    BOOST_TEST((t[{1, 2}]) == 612);
+    BOOST_TEST((t[{1, 3}]) == 613);
+    BOOST_TEST((t[{2, 1}]) == 621);
+    BOOST_TEST((t[{2, 2}]) == 622);
+    BOOST_TEST((t[{2, 3}]) == 623);
 }
 
 BOOST_AUTO_TEST_CASE(iterator_test, *tolerance(TOL)) {

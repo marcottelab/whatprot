@@ -22,6 +22,7 @@ namespace whatprot {
 class DudTransition : public BinomialTransition {
 public:
     DudTransition(double q, int channel);
+    DudTransition(const DudTransition& other);
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,

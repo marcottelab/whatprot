@@ -23,18 +23,18 @@ class BaseTensorIterator {
 public:
     BaseTensorIterator(
             unsigned int order,
-            const KDRange& range,
-            const unsigned int* shape,
+            const KDRange& itr_range,
+            const KDRange& tsr_range,
             unsigned int size,
             typename std::conditional<is_const, const double*, double*>::type
                     values)
             : values(values),
-              range(range),
-              shape(shape),
+              itr_range(itr_range),
+              tsr_range(tsr_range),
               order(order),
               index(0),
               size(size),
-              is_done(range.is_empty()) {
+              is_done(itr_range.is_empty()) {
         loc = new unsigned int[order]();
         reset();
     }
@@ -48,9 +48,9 @@ public:
         unsigned int stride = 1;  // step size for current value of o.
         // Need to use signed int o to detect when out of entries to decrease.
         for (int o = order - 1; o >= 0; o--) {
-            loc[o] = range.min[o];
-            index += stride * range.min[o];
-            stride *= shape[o];
+            loc[o] = itr_range.min[o];
+            index += stride * (itr_range.min[o] - tsr_range.min[o]);
+            stride *= tsr_range.max[o] - tsr_range.min[o];
         }
     }
 
@@ -59,9 +59,9 @@ public:
         unsigned int stride = 1;  // step size for current value of o.
         // Need to use signed int o to detect when out of entries to decrease.
         for (int o = order - 1; o >= 0; o--) {
-            loc[o] = range.max[o] - 1;
-            index += stride * (range.max[o] - 1);
-            stride *= shape[o];
+            loc[o] = itr_range.max[o] - 1;
+            index += stride * (itr_range.max[o] - tsr_range.min[o] - 1);
+            stride *= tsr_range.max[o] - tsr_range.min[o];
         }
     }
 
@@ -71,16 +71,19 @@ public:
         // Need to use signed int o to detect when out of entries to decrease.
         for (int o = order - 1; o >= 0; o--) {
             loc[o]++;
-            if (loc[o] < range.max[o]) {
+            if (loc[o] < itr_range.max[o]) {
                 return;
             } else {
-                // (range.min[o] + shape[o] - range.max[o]) is the number of
-                // entries for this order between the max of one set of numbers
-                // in range to the min of the next.
-                index += stride * (range.min[o] + shape[o] - range.max[o]);
+                // (itr_range.min[o] - tsr_range.min[o] + tsr_range.max[o]
+                // - itr_range.max[o]) is the number of entries for this order
+                // between the max of one set of numbers in range to the min of
+                // the next.
+                index += stride
+                         * (itr_range.min[o] - tsr_range.min[o]
+                            + tsr_range.max[o] - itr_range.max[o]);
                 // Stride needs to be raised to account for one more dimension.
-                stride *= shape[o];
-                loc[o] = range.min[o];
+                stride *= tsr_range.max[o] - tsr_range.min[o];
+                loc[o] = itr_range.min[o];
             }
         }
         // Can only get here if we reset every order of the tensor, which means
@@ -93,16 +96,20 @@ public:
         unsigned int stride = 1;  // step size for current value of o.
         // Need to use signed int o to detect when out of entries to decrease.
         for (int o = order - 1; o >= 0; o--) {
-            if (loc[o] > range.min[o]) {
+            if (loc[o] > itr_range.min[o]) {
                 loc[o]--;
                 return;
             } else {
-                // (range.min[o] + shape[o] - range.max[o]) is the number of
-                // entries for this order between the max of one set of numbers
-                // in range to the min of the next.
-                index -= stride * (range.min[o] + shape[o] - range.max[o]);
-                stride *= shape[o];
-                loc[o] = range.max[o] - 1;
+                // (itr_range.min[o] - tsr_range.min[o] + tsr_range.max[o]
+                // - itr_range.max[o]) is the number of entries for this order
+                // between the max of one set of numbers in range to the min of
+                // the next.
+                index -= stride
+                         * (itr_range.min[o] - tsr_range.min[o]
+                            + tsr_range.max[o] - itr_range.max[o]);
+                // Stride needs to be raised to account for one more dimension.
+                stride *= tsr_range.max[o] - tsr_range.min[o];
+                loc[o] = itr_range.max[o] - 1;
             }
         }
         // Can only get here if we reset every order of the tensor, which means
@@ -120,8 +127,8 @@ public:
 
     typename std::conditional<is_const, const double*, double*>::type
             values;  // not owned
-    const KDRange& range;  // not owned
-    const unsigned int* shape;  // not owned
+    const KDRange& itr_range;  // not owned
+    const KDRange& tsr_range;  // not owned
     unsigned int* loc;
     const unsigned int order;
     unsigned int index;  // current index directly into values

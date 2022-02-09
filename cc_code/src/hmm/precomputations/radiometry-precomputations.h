@@ -27,8 +27,9 @@ public:
                               const SequencingModel& seq_model,
                               const SequencingSettings& seq_settings,
                               int max_num_dyes);
-    std::vector<PeptideEmission> peptide_emissions;
-    std::vector<StuckDyeEmission> stuck_dye_emissions;
+    ~RadiometryPrecomputations();
+    std::vector<PeptideEmission*> peptide_emissions;
+    std::vector<StuckDyeEmission*> stuck_dye_emissions;
 };
 
 }  // namespace whatprot

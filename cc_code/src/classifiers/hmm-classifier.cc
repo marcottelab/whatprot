@@ -46,9 +46,9 @@ HMMClassifier::HMMClassifier(
           num_channels(num_channels) {
     max_num_dyes = 0;
     for (const SourcedData<DyeSeq, SourceCount<int>>& dye_seq : dye_seqs) {
-        dye_seq_precomputations_vec.emplace_back(
-                dye_seq.value, seq_model, num_timesteps, num_channels);
-        const DyeSeqPrecomputations& back = dye_seq_precomputations_vec.back();
+        dye_seq_precomputations_vec.push_back(new DyeSeqPrecomputations(
+                dye_seq.value, seq_model, num_timesteps, num_channels));
+        const DyeSeqPrecomputations& back = *dye_seq_precomputations_vec.back();
         for (unsigned int c = 0; c < num_channels; c++) {
             // Two things to be aware of for the next line of code.
             //   * The first dimension of the tensor shape is always the
@@ -66,6 +66,12 @@ HMMClassifier::HMMClassifier(
     universal_precomputations.set_max_num_dyes(max_num_dyes);
 }
 
+HMMClassifier::~HMMClassifier() {
+    for (DyeSeqPrecomputations* ds_pre : dye_seq_precomputations_vec) {
+        delete ds_pre;
+    }
+}
+
 ScoredClassification HMMClassifier::classify(const Radiometry& radiometry) {
     return classify_helper<Range>(radiometry, Range(dye_seqs.size()));
 }
@@ -79,7 +85,7 @@ vector<ScoredClassification> HMMClassifier::classify(
         const vector<Radiometry>& radiometries) {
     vector<ScoredClassification> results;
     results.resize(radiometries.size());
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int i = 0; i < radiometries.size(); i++) {
         results[i] = classify(radiometries[i]);
     }

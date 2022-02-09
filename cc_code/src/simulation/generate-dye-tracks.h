@@ -27,7 +27,7 @@ void generate_dye_tracks(
         const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs,
         unsigned int num_timesteps,
         unsigned int num_channels,
-        int dye_tracks_per_peptide,
+        unsigned int dye_tracks_per_peptide,
         std::default_random_engine* generator,
         std::vector<SourcedData<DyeTrack, SourceCount<int>>>* dye_tracks);
 

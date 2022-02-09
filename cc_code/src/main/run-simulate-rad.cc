@@ -7,11 +7,9 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "dt-main.h"
+#include "run-simulate-rad.h"
 
 // Standard C++ library headers:
-#include <cstdlib>
-#include <iostream>
 #include <random>
 #include <string>
 #include <vector>
@@ -20,34 +18,27 @@
 #include "common/dye-seq.h"
 #include "common/sourced-data.h"
 #include "io/dye-seqs-io.h"
-#include "io/dye-tracks-io.h"
+#include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
-#include "simulation/dedup-dye-tracks.h"
-#include "simulation/generate-dye-tracks.h"
+#include "simulation/generate-radiometries.h"
 #include "util/time.h"
 
 namespace whatprot {
 
 namespace {
-using std::atoi;
 using std::default_random_engine;
+using std::string;
 using std::vector;
 using std::cout;
 }  // namespace
 
-int dt_main(int argc, char** argv) {
+void run_simulate_rad(unsigned int num_timesteps,
+                      unsigned int num_to_generate,
+                      string dye_seqs_filename,
+                      string radiometries_filename,
+                      string ys_filename) {
     double total_start_time = wall_time();
-
-    if (argc != 7) {
-        cout << "Usage : whatprot simulate dt num_timesteps dye_tracks_per_peptide dye_seqs_filename dye_tracks_filename\n";
-        print_wrong_number_of_inputs();
-        return EXIT_FAILURE;
-    }
-    unsigned int num_timesteps = atoi(argv[3]);
-    int dye_tracks_per_peptide = atoi(argv[4]);
-    char* dye_seqs_filename = argv[5];
-    char* dye_tracks_filename = argv[6];
 
     double start_time;
     double end_time;
@@ -80,38 +71,27 @@ int dt_main(int argc, char** argv) {
 
     start_time = wall_time();
     default_random_engine generator(time_based_seed());
-    vector<SourcedData<DyeTrack, SourceCount<int>>> dye_tracks;
-    generate_dye_tracks(seq_model,
-                        dye_seqs,
-                        num_timesteps,
-                        num_channels,
-                        dye_tracks_per_peptide,
-                        &generator,
-                        &dye_tracks);
+    vector<SourcedData<Radiometry, SourceCount<int>>> radiometries;
+    generate_radiometries(seq_model,
+                          dye_seqs,
+                          num_timesteps,
+                          num_channels,
+                          num_to_generate,
+                          &generator,
+                          &radiometries);
     end_time = wall_time();
-    print_finished_generating_dye_tracks(dye_tracks.size(),
-                                         end_time - start_time);
+    print_finished_generating_radiometries(radiometries.size(),
+                                           end_time - start_time);
 
     start_time = wall_time();
-    vector<SourcedData<DyeTrack, SourceCountHitsList<int>>> deduped_dye_tracks;
-    dedup_dye_tracks(
-            num_timesteps, num_channels, &dye_tracks, &deduped_dye_tracks);
-    end_time = wall_time();
-    print_finished_deduping_dye_tracks(deduped_dye_tracks.size(),
-                                       end_time - start_time);
-
-    start_time = wall_time();
-    write_dye_tracks(dye_tracks_filename,
-                     num_timesteps,
-                     num_channels,
-                     deduped_dye_tracks);
+    write_radiometries(
+            radiometries_filename, num_timesteps, num_channels, radiometries);
+    write_ys(ys_filename, radiometries);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);
-
-    return 0;
 }
 
 }  // namespace whatprot

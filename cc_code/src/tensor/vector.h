@@ -13,12 +13,13 @@ namespace whatprot {
 
 class Vector {
 public:
-    Vector(unsigned int length, int stride, double* values);
+    Vector(unsigned int min, unsigned int max, int stride, double* values);
     double& operator[](int i);
     double operator[](int i) const;
 
     double* values;
-    unsigned int length;
+    unsigned int min;
+    unsigned int max;
     int stride;
 };
 

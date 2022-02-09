@@ -28,12 +28,12 @@ public:
                      const SequencingModel& seq_model);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
-    virtual void forward(const StuckDyeStateVector& input,
-                         unsigned int* num_edmans,
-                         StuckDyeStateVector* output) const override;
-    virtual void backward(const StuckDyeStateVector& input,
-                          unsigned int* num_edmans,
-                          StuckDyeStateVector* output) const override;
+    virtual StuckDyeStateVector* forward(
+            const StuckDyeStateVector& input,
+            unsigned int* num_edmans) const override;
+    virtual StuckDyeStateVector* backward(
+            const StuckDyeStateVector& input,
+            unsigned int* num_edmans) const override;
     virtual void improve_fit(const StuckDyeStateVector& forward_sdsv,
                              const StuckDyeStateVector& backward_sdsv,
                              const StuckDyeStateVector& next_backward_sdsv,

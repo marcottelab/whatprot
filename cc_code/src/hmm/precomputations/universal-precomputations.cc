@@ -25,18 +25,31 @@ UniversalPrecomputations::UniversalPrecomputations(
         const SequencingModel& seq_model, unsigned int num_channels)
         : detach_transition(seq_model.p_detach), num_channels(num_channels) {
     for (unsigned int i = 0; i < num_channels; i++) {
-        dud_transitions.emplace_back(seq_model.channel_models[i]->p_dud, i);
-        bleach_transitions.emplace_back(seq_model.channel_models[i]->p_bleach,
-                                        i);
-        stuck_dye_transitions.emplace_back(
-                seq_model.channel_models[i]->p_stuck_dye_loss, i);
+        dud_transitions.push_back(
+                new DudTransition(seq_model.channel_models[i]->p_dud, i));
+        bleach_transitions.push_back(
+                new BleachTransition(seq_model.channel_models[i]->p_bleach, i));
+        stuck_dye_transitions.push_back(new StuckDyeTransition(
+                seq_model.channel_models[i]->p_stuck_dye_loss, i));
+    }
+}
+
+UniversalPrecomputations::~UniversalPrecomputations() {
+    for (DudTransition* step : dud_transitions) {
+        delete step;
+    }
+    for (BleachTransition* step : bleach_transitions) {
+        delete step;
+    }
+    for (StuckDyeTransition* step : stuck_dye_transitions) {
+        delete step;
     }
 }
 
 void UniversalPrecomputations::set_max_num_dyes(int max_num_dyes) {
     for (unsigned int i = 0; i < num_channels; i++) {
-        dud_transitions[i].reserve(max_num_dyes);
-        bleach_transitions[i].reserve(max_num_dyes);
+        dud_transitions[i]->reserve(max_num_dyes);
+        bleach_transitions[i]->reserve(max_num_dyes);
     }
 }
 

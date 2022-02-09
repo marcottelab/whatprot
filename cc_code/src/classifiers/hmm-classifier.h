@@ -10,6 +10,7 @@
 #define WHATPROT_CLASSIFIERS_HMM_CLASSIFIER_H
 
 // Standard C++ library headers:
+#include <cmath>
 #include <functional>
 #include <vector>
 
@@ -34,6 +35,7 @@ public:
             const SequencingModel& seq_model,
             const SequencingSettings& seq_settings,
             const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs);
+    ~HMMClassifier();
     ScoredClassification classify(const Radiometry& radiometry);
     ScoredClassification classify(const Radiometry& radiometry,
                                   const std::vector<int>& candidate_indices);
@@ -51,7 +53,7 @@ public:
         for (int i : indices) {
             PeptideHMM hmm(num_timesteps,
                            num_channels,
-                           dye_seq_precomputations_vec[i],
+                           *dye_seq_precomputations_vec[i],
                            radiometry_precomputations,
                            universal_precomputations);
             double score = hmm.probability();
@@ -61,14 +63,24 @@ public:
                 best_i = i;
             }
         }
-        return ScoredClassification(
+        ScoredClassification result(
                 dye_seqs[best_i].source.source, best_score, total_score);
+        // This next thing is a bit of a hack. Sometimes the candidates have a
+        // total score of 0.0, which causes the adjusted score to be nan. This
+        // can mess things up for us later. The best way to deal with it is to
+        // just set the score to 0.0 when this happens. It might be better
+        // though to find a way to avoid this situation.
+        if (std::isnan(result.adjusted_score())) {
+            result.score = 0.0;
+            result.total = 1.0;
+        }
+        return result;
     }
 
     const SequencingModel& seq_model;
     const SequencingSettings& seq_settings;
     UniversalPrecomputations universal_precomputations;
-    std::vector<DyeSeqPrecomputations> dye_seq_precomputations_vec;
+    std::vector<DyeSeqPrecomputations*> dye_seq_precomputations_vec;
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
     unsigned int num_timesteps;
     unsigned int num_channels;

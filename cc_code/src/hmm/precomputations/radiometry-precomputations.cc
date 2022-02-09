@@ -24,12 +24,21 @@ RadiometryPrecomputations::RadiometryPrecomputations(
         const SequencingSettings& seq_settings,
         int max_num_dyes) {
     for (unsigned int t = 0; t < radiometry.num_timesteps; t++) {
-        peptide_emissions.push_back(PeptideEmission(
+        peptide_emissions.push_back(new PeptideEmission(
                 radiometry, t, max_num_dyes, seq_model, seq_settings));
     }
     for (unsigned int c = 0; c < radiometry.num_channels; c++) {
         stuck_dye_emissions.push_back(
-                StuckDyeEmission(radiometry, c, seq_model));
+                new StuckDyeEmission(radiometry, c, seq_model));
+    }
+}
+
+RadiometryPrecomputations::~RadiometryPrecomputations() {
+    for (PeptideEmission* step : peptide_emissions) {
+        delete step;
+    }
+    for (StuckDyeEmission* step : stuck_dye_emissions) {
+        delete step;
     }
 }
 

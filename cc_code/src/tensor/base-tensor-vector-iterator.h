@@ -24,18 +24,20 @@ template <bool is_const>
 class BaseTensorVectorIterator {
 public:
     BaseTensorVectorIterator(unsigned int order,
-                             const KDRange& range,
-                             const unsigned int* shape,
+                             const KDRange& itr_range,
+                             const KDRange& tsr_range,
                              const int* stride,
                              unsigned int size,
                              double* values,
                              unsigned int vector_dimension)
-            : vector_length(shape[vector_dimension]),
+            : vector_min(tsr_range.min[vector_dimension]),
+              vector_max(tsr_range.max[vector_dimension]),
               vector_stride(stride[vector_dimension]),
-              modified_range(range),
-              iter(order, modified_range, shape, size, values) {
-        modified_range.min[vector_dimension] = 0;
-        modified_range.max[vector_dimension] = 1;
+              modified_range(itr_range),
+              iter(order, modified_range, tsr_range, size, values) {
+        modified_range.min[vector_dimension] = tsr_range.min[vector_dimension];
+        modified_range.max[vector_dimension] =
+                1 + tsr_range.min[vector_dimension];
         iter.reset();
     }
 
@@ -48,14 +50,15 @@ public:
     }
 
     typename std::conditional<is_const, const Vector*, Vector*>::type get() {
-        return new Vector(vector_length, vector_stride, iter.get());
+        return new Vector(vector_min, vector_max, vector_stride, iter.get());
     }
 
     bool done() {
         return iter.done();
     }
 
-    unsigned int vector_length;
+    unsigned int vector_min;
+    unsigned int vector_max;
     int vector_stride;
     KDRange modified_range;
 

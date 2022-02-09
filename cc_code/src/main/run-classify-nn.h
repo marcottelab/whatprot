@@ -6,13 +6,19 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_MAIN_SIMULATE_SIMULATE_MAIN_H
-#define WHATPROT_MAIN_SIMULATE_SIMULATE_MAIN_H
+#ifndef WHATPROT_MAIN_RUN_CLASSIFY_NN_H
+#define WHATPROT_MAIN_RUN_CLASSIFY_NN_H
+
+#include <string>
 
 namespace whatprot {
 
-int simulate_main(int argc, char** argv);
+void run_classify_nn(int k,
+                     double sig,
+                     std::string dye_tracks_filename,
+                     std::string radiometries_filename,
+                     std::string predictions_filename);
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_MAIN_SIMULATE_SIMULATE_MAIN_H
+#endif  // WHATPROT_MAIN_RUN_CLASSIFY_NN_H
