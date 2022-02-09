@@ -46,10 +46,6 @@ using whatprot::run_simulate_dt;
 using whatprot::run_simulate_rad;
 }  // namespace
 
-void main_usage() {
-    cout << "Usage: whatprot [classify|simulate|fit]\n";
-}
-
 int main(int argc, char** argv) {
     Options options("whatprot",
                     "whatprot is a program for analyzing protein "

@@ -34,7 +34,6 @@ namespace whatprot {
 namespace {
 using std::string;
 using std::vector;
-using std::cout;
 }  // namespace
 
 void run_classify_hmm(double hmm_pruning_cutoff,

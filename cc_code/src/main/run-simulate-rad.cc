@@ -30,7 +30,6 @@ namespace {
 using std::default_random_engine;
 using std::string;
 using std::vector;
-using std::cout;
 }  // namespace
 
 void run_simulate_rad(unsigned int num_timesteps,
