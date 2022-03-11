@@ -56,4 +56,16 @@ def cleave_proteins(fasta, fpeptides, protease, n = -1):
                     fpep.write(peptide + "\n")
             peptide = protein[lastcut:]
             fpep.write(peptide + "\n")
+    elif (protease == "EndoPro"):
+        # Here we use EndoPro, cutting the C-terminal side of proline (P) and
+        # alanine (A).
+        for protein in npros:
+            lastcut = 0
+            for i in range(len(protein) - 1):
+                if ((protein[i] == 'P' or protein[i] == 'A')):
+                    peptide = protein[lastcut : i + 1]
+                    lastcut = i + 1
+                    fpep.write(peptide + "\n")
+            peptide = protein[lastcut:]
+            fpep.write(peptide + "\n")
     fpep.close()
