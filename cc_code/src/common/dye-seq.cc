@@ -45,8 +45,12 @@ DyeSeq::DyeSeq(const DyeSeq& other)
     copy(other.seq, &other.seq[length], seq);
 }
 
+DyeSeq::DyeSeq() : seq(NULL), length(0), num_channels(0) {}
+
 DyeSeq::~DyeSeq() {
-    delete[] seq;
+    if (seq != NULL) {
+        delete[] seq;
+    }
 }
 
 short DyeSeq::operator[](unsigned int i) const {

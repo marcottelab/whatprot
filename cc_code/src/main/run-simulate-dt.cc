@@ -45,11 +45,17 @@ void run_simulate_dt(unsigned int num_timesteps,
     start_time = wall_time();
     unsigned int num_channels;
     unsigned int total_num_dye_seqs;
-    vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
+    vector<SourcedData<DyeSeq, SourceCount<int>>> root_dye_seqs;
     read_dye_seqs(
-            dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
+            dye_seqs_filename, &num_channels, &total_num_dye_seqs, &root_dye_seqs);
     end_time = wall_time();
     print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
+
+    start_time = wall_time();
+    vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
+    scatterv(root_dye_seqs, &dye_seqs, 0);
+    end_time = wall_time();
+    print_scattered_dye_seqs(end_time - start_time);
 
     start_time = wall_time();
     SequencingModel seq_model;

@@ -27,9 +27,30 @@ public:
     //        are strictly less than num_channels.
     DyeSeq(unsigned int num_channels, const string& s);
     DyeSeq(const DyeSeq& other);
+    DyeSeq();  // creates invalid placeholder DyeSeq;
     ~DyeSeq();
     short operator[](unsigned int i) const;
     short& operator[](unsigned int i);
+    template<class Archive>
+
+    void save(Archive& archive) const {
+        archive(num_channels, length);
+        for (int i = 0; i < length) {
+            archive(seq[i]);
+        }
+    }
+    template<class Archive>
+
+    void load(Archive& archive) {
+        archive(num_channels, length);
+        if (seq != NULL) {
+            delete[] seq;
+        }
+        seq = new short[length];
+        for (int i = 0; i < length) {
+            archive(seq[i]);
+        }
+    }
 
     short* seq;
     unsigned int length;

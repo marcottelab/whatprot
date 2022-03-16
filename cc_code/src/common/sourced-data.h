@@ -36,6 +36,11 @@ public:
         delete_if_pointer(source);
     }
 
+    template <class Archive>
+    void save(Archive& archive) const {
+        archive()
+    }
+
     V value;  // if D is a pointer type then value is owned.
     S source;  // if S is a pointer type then source is owned.
 };
