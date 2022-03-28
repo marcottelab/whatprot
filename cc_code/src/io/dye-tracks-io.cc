@@ -35,72 +35,32 @@ void read_dye_tracks(
         unsigned int* num_channels,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks) {
     unsigned int num_dye_tracks;
-    unsigned int f_ints_size;
-    unsigned int* f_ints;
-    read_dye_tracks_raw(filename,
-                        num_timesteps,
-                        num_channels,
-                        &num_dye_tracks,
-                        &f_ints_size,
-                        &f_ints);
-    convert_dye_tracks_from_raw(
-            *num_timesteps, *num_channels, num_dye_tracks, f_ints, dye_tracks);
-    delete[] f_ints;
-}
-
-void read_dye_tracks_raw(const string& filename,
-                         unsigned int* num_timesteps,
-                         unsigned int* num_channels,
-                         unsigned int* num_dye_tracks,
-                         unsigned int* f_ints_size,
-                         unsigned int** f_ints) {
     ifstream f(filename);
     f >> *num_timesteps;
     f >> *num_channels;
-    f >> *num_dye_tracks;
-    vector<int> f_ints_vec;
-    f_ints_vec.reserve((*num_dye_tracks)
-                       * (3 + (*num_timesteps) * (*num_channels)));
-    while (f.peek() != EOF) {
-        int f_int;
-        f >> f_int;
-        f_ints_vec.push_back(f_int);
-    }
-    f.close();
-    *f_ints_size = f_ints_vec.size();
-    *f_ints = new unsigned int[*f_ints_size];
-    copy(f_ints_vec.begin(), f_ints_vec.end(), *f_ints);
-}
-
-void convert_dye_tracks_from_raw(
-        unsigned int num_timesteps,
-        unsigned int num_channels,
-        unsigned int num_dye_tracks,
-        unsigned int* f_ints,
-        vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks) {
-    unsigned int index = 0;
+    f >> num_dye_tracks;
     dye_tracks->reserve(num_dye_tracks);
     for (unsigned int i = 0; i < num_dye_tracks; i++) {
-        DyeTrack dye_track(num_timesteps, num_channels);
-        for (unsigned int j = 0; j < num_timesteps * num_channels; j++) {
-            dye_track.counts[j] = f_ints[index];
-            index++;
+        DyeTrack dye_track(*num_timesteps, *num_channels);
+        for (unsigned int j = 0; j < (*num_timesteps) * (*num_channels); j++) {
+            f >> dye_track.counts[j];
         }
-        int num_sources = f_ints[index];
-        index++;
+        int num_sources;
+        f >> num_sources;
         SourceCountHits<int>** sources = new SourceCountHits<int>*[num_sources];
         for (int j = 0; j < num_sources; j++) {
-            int id = f_ints[index];
-            index++;
-            int count = f_ints[index];
-            index++;
-            int hits = f_ints[index];
-            index++;
+            int id;
+            f >> id;
+            int count;
+            f >> count;
+            int hits;
+            f >> hits;
             sources[j] = new SourceCountHits<int>(id, count, hits);
         }
         dye_tracks->push_back(SourcedData<DyeTrack, SourceCountHitsList<int>>(
                 dye_track, SourceCountHitsList<int>(num_sources, sources)));
     }
+    f.close();
 }
 
 void write_dye_tracks(
