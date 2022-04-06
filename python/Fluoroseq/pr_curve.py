@@ -33,20 +33,22 @@ def plot_pr_curves(predictions_files,
         label = None
         if labels != []:
             label = labels[i]
+        cur_true_y_file = ''
         if isinstance(true_y_file, str):
-            plot_pr_curve_noshow(ax,
-                                 predictions_file,
-                                 true_y_file,
-                                 dye_seqs_file,
-                                 directory = directory,
-                                 label = label)
+            cur_true_y_file = true_y_file
         else:
-            plot_pr_curve_noshow(ax,
-                                 predictions_file,
-                                 true_y_file[i],
-                                 dye_seqs_file,
-                                 directory = directory,
-                                 label = label)
+            cur_true_y_file = true_y_file[i]
+        cur_dye_seqs_file = ''
+        if isinstance(dye_seqs_file, str):
+            cur_dye_seqs_file = dye_seqs_file
+        else:
+            cur_dye_seqs_file = dye_seqs_file[i]
+        plot_pr_curve_noshow(ax,
+                                predictions_file,
+                                cur_true_y_file,
+                                cur_dye_seqs_file,
+                                directory = directory,
+                                label = label)
     ax.set_xlim(left = 0)
     ax.set_ylim(bottom = 0)
     ax.spines["top"].set_visible(False)
