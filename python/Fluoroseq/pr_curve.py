@@ -6,6 +6,8 @@
 import matplotlib.pyplot as plt
 from numpy import load
 
+plt.rcParams["font.family"] = "Calibri"
+
 def plot_pr_curve(predictions_file,
                   true_y_file,
                   dye_seqs_file,
