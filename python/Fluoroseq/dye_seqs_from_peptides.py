@@ -15,6 +15,7 @@ def dye_seqs_from_peptides(peptide_file, label_set, dye_seqs_file):
     pep_id = 0
     while line != '\n' and line != '':
         line = f.readline()[0 : -1]
+        line = line.split(",")[0]
         peptides += [Peptide(line, pep_id=pep_id)]
         pep_id += 1
     f.close()

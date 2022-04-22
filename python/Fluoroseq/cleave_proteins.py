@@ -9,6 +9,7 @@ def cleave_proteins(fasta, fpeptides, protease, n = -1):
     fpro = open(fasta, "r")
     fpro.readline()  # skip first '>' line for convenience.
     proteins = []
+    pid = 0
     while True:
         protein = ""
         line = ""
@@ -21,7 +22,8 @@ def cleave_proteins(fasta, fpeptides, protease, n = -1):
             protein += line
         if (not line):
             break
-        proteins += [protein]
+        proteins += [(pid, protein)]
+        pid += 1
     fpro.close()
     npros = 0
     if (n == -1):
@@ -31,7 +33,7 @@ def cleave_proteins(fasta, fpeptides, protease, n = -1):
     print(len(npros))
     fpep = open(fpeptides, "w")
     # Conventionally fasta files have proteins from N-terminus to C-terminus
-    for protein in npros:
+    for (pid, protein) in npros:
         lastcut = 0
         for i in range(len(protein) - 1):
             cut = False
@@ -56,7 +58,7 @@ def cleave_proteins(fasta, fpeptides, protease, n = -1):
             if (cut == True):
                 peptide = protein[lastcut : i + 1]
                 lastcut = i + 1
-                fpep.write(peptide + "\n")
+                fpep.write(peptide + "," + str(pid) + "\n")
         peptide = protein[lastcut:]
-        fpep.write(peptide + "\n")
+        fpep.write(peptide + "," + str(pid) + "\n")
     fpep.close()
