@@ -6,7 +6,7 @@
 from common.peptide import Peptide
 from simulate.label_peptides import label_peptides
 
-def dye_seqs_from_peptides(peptide_file, label_set, dye_seqs_file):
+def dye_seqs_from_peptides(peptide_file, label_set, dye_seqs_file, mode='first'):
     f = open(peptide_file, 'r')
     # f.readline()  # header
     # f.readline()  # Zack's null line
@@ -28,6 +28,11 @@ def dye_seqs_from_peptides(peptide_file, label_set, dye_seqs_file):
         dye_seq.dye_seq.reverse()
         f.write("".join(dye_seq.dye_seq) + "\t")
         f.write(str(len(dye_seq.src_peptides)) + "\t")
-        f.write(str(dye_seq.src_peptides[0].pep_id) + "\n")
+        if mode == 'first':
+            f.write(str(dye_seq.src_peptides[0].pep_id) + "\n")
+        elif mode == 'all':
+            f.write(str([x.pep_id for x in dye_seq.src_peptides]) + "\n")
+        else:
+            print("bad-input, invalid mode: " + mode)
     f.close()
 
