@@ -41,6 +41,15 @@ SequencingModel::SequencingModel(const SequencingModel& other) {
 SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
+    // This function is not necessarily used as a constructor. It is very
+    // important to clear contents of channel_models before filling it.
+    for (ChannelModel* channel_model: channel_models) {
+        if (channel_model != NULL) {
+            delete channel_model;
+        }
+    }
+    channel_models.resize(0);
+    // Now we can actually fill channel_models from other.channel_models.
     for (unsigned int c = 0; c < other.channel_models.size(); c++) {
         channel_models.push_back(new ChannelModel(*other.channel_models[c]));
     }

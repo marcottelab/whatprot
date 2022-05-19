@@ -200,6 +200,13 @@ int main(int argc, char** argv) {
         num_optional_args++;
         t = parsed_opts["timesteps"].as<int>();
     }
+    bool has_x = false;
+    string x("");
+    if (parsed_opts.count("dyeseqstring")) {
+        has_x = true;
+        num_optional_args++;
+        x = parsed_opts["dyeseqstring"].as<string>();
+    }
     bool has_H = false;
     int H = -1;
     if (parsed_opts.count("passthrough")) {
@@ -302,12 +309,12 @@ int main(int argc, char** argv) {
     }
     if (0 == positional_args[0].compare("fit")) {
         if (positional_args.size() != 1 || num_optional_args != 3 || !has_L
-            || !has_S || !has_R) {
+            || !has_x || !has_R) {
             cout << endl << "INCORRECT USAGE" << endl << endl;
             cout << options.help() << endl;
             return 1;
         }
-        run_fit(L, S, R);
+        run_fit(L, x, R);
         return 0;
     }
     if (0 == positional_args[0].compare("simulate")) {
