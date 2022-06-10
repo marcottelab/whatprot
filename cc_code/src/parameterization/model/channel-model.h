@@ -28,8 +28,6 @@ public:
     double bg_sig;
     double mu;
     double sig;
-    double stuck_dye_ratio;
-    double p_stuck_dye_loss;
 };
 
 }  // namespace whatprot

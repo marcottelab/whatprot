@@ -16,7 +16,6 @@
 #include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
-#include "hmm/step/stuck-dye-transition.h"
 #include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
@@ -29,8 +28,6 @@ UniversalPrecomputations::UniversalPrecomputations(
                 new DudTransition(seq_model.channel_models[i]->p_dud, i));
         bleach_transitions.push_back(
                 new BleachTransition(seq_model.channel_models[i]->p_bleach, i));
-        stuck_dye_transitions.push_back(new StuckDyeTransition(
-                seq_model.channel_models[i]->p_stuck_dye_loss, i));
     }
 }
 
@@ -39,9 +36,6 @@ UniversalPrecomputations::~UniversalPrecomputations() {
         delete step;
     }
     for (BleachTransition* step : bleach_transitions) {
-        delete step;
-    }
-    for (StuckDyeTransition* step : stuck_dye_transitions) {
         delete step;
     }
 }

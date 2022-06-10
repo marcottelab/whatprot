@@ -16,7 +16,6 @@
 #include "hmm/step/bleach-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
-#include "hmm/step/stuck-dye-transition.h"
 #include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
@@ -30,7 +29,6 @@ public:
     DetachTransition detach_transition;
     std::vector<DudTransition*> dud_transitions;
     std::vector<BleachTransition*> bleach_transitions;
-    std::vector<StuckDyeTransition*> stuck_dye_transitions;
     unsigned int num_channels;
 };
 

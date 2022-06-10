@@ -12,7 +12,6 @@
 // Local project headers:
 #include "common/radiometry.h"
 #include "hmm/step/peptide-emission.h"
-#include "hmm/step/stuck-dye-emission.h"
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
 
@@ -27,17 +26,10 @@ RadiometryPrecomputations::RadiometryPrecomputations(
         peptide_emissions.push_back(new PeptideEmission(
                 radiometry, t, max_num_dyes, seq_model, seq_settings));
     }
-    for (unsigned int c = 0; c < radiometry.num_channels; c++) {
-        stuck_dye_emissions.push_back(
-                new StuckDyeEmission(radiometry, c, seq_model));
-    }
 }
 
 RadiometryPrecomputations::~RadiometryPrecomputations() {
     for (PeptideEmission* step : peptide_emissions) {
-        delete step;
-    }
-    for (StuckDyeEmission* step : stuck_dye_emissions) {
         delete step;
     }
 }

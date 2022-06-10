@@ -62,8 +62,6 @@ void run_simulate_dt(unsigned int num_timesteps,
         seq_model.channel_models[c]->bg_sig = 0.00667;
         seq_model.channel_models[c]->mu = 1.0;
         seq_model.channel_models[c]->sig = 0.16;
-        seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
-        seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);

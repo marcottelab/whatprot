@@ -67,8 +67,6 @@ BOOST_AUTO_TEST_CASE(relative_distance_with_channel_model_test,
     sm1.channel_models[0]->p_dud = 0.5;
     sm1.channel_models[0]->mu = 0.5;
     sm1.channel_models[0]->sig = 0.5;
-    sm1.channel_models[0]->stuck_dye_ratio = 0.5;
-    sm1.channel_models[0]->p_stuck_dye_loss = 0.5;
 
     SequencingModel sm2;
     sm2.p_edman_failure = 0.5;
@@ -78,8 +76,6 @@ BOOST_AUTO_TEST_CASE(relative_distance_with_channel_model_test,
     sm2.channel_models[0]->p_dud = 0.66;
     sm2.channel_models[0]->mu = 0.5;
     sm2.channel_models[0]->sig = 0.5;
-    sm2.channel_models[0]->stuck_dye_ratio = 0.5;
-    sm2.channel_models[0]->p_stuck_dye_loss = 0.5;
 
     BOOST_TEST(sm1.relative_distance(sm2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(sm2.relative_distance(sm1) == (0.66 - 0.5) / 0.66);
@@ -95,15 +91,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_with_two_channel_models_test,
     sm1.channel_models[0]->p_dud = 0.5;
     sm1.channel_models[0]->mu = 0.5;
     sm1.channel_models[0]->sig = 0.5;
-    sm1.channel_models[0]->stuck_dye_ratio = 0.5;
-    sm1.channel_models[0]->p_stuck_dye_loss = 0.5;
     sm1.channel_models.push_back(new ChannelModel());
     sm1.channel_models[1]->p_bleach = 0.5;
     sm1.channel_models[1]->p_dud = 0.5;
     sm1.channel_models[1]->mu = 0.5;
     sm1.channel_models[1]->sig = 0.5;
-    sm1.channel_models[1]->stuck_dye_ratio = 0.5;
-    sm1.channel_models[1]->p_stuck_dye_loss = 0.5;
 
     SequencingModel sm2;
     sm2.p_edman_failure = 0.5;
@@ -113,15 +105,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_with_two_channel_models_test,
     sm2.channel_models[0]->p_dud = 0.5;
     sm2.channel_models[0]->mu = 0.5;
     sm2.channel_models[0]->sig = 0.5;
-    sm2.channel_models[0]->stuck_dye_ratio = 0.5;
-    sm2.channel_models[0]->p_stuck_dye_loss = 0.5;
     sm2.channel_models.push_back(new ChannelModel());
     sm2.channel_models[1]->p_bleach = 0.5;
     sm2.channel_models[1]->p_dud = 0.66;
     sm2.channel_models[1]->mu = 0.5;
     sm2.channel_models[1]->sig = 0.5;
-    sm2.channel_models[1]->stuck_dye_ratio = 0.5;
-    sm2.channel_models[1]->p_stuck_dye_loss = 0.5;
 
     BOOST_TEST(sm1.relative_distance(sm2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(sm2.relative_distance(sm1) == (0.66 - 0.5) / 0.66);
@@ -136,15 +124,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_max_no_sum_test, *tolerance(TOL)) {
     sm1.channel_models[0]->p_dud = 0.5;
     sm1.channel_models[0]->mu = 0.5;
     sm1.channel_models[0]->sig = 0.5;
-    sm1.channel_models[0]->stuck_dye_ratio = 0.5;
-    sm1.channel_models[0]->p_stuck_dye_loss = 0.5;
     sm1.channel_models.push_back(new ChannelModel());
     sm1.channel_models[1]->p_bleach = 0.5;
     sm1.channel_models[1]->p_dud = 0.5;
     sm1.channel_models[1]->mu = 0.5;
     sm1.channel_models[1]->sig = 0.5;
-    sm1.channel_models[1]->stuck_dye_ratio = 0.5;
-    sm1.channel_models[1]->p_stuck_dye_loss = 0.5;
 
     SequencingModel sm2;
     sm2.p_edman_failure = 0.66;
@@ -154,15 +138,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_max_no_sum_test, *tolerance(TOL)) {
     sm2.channel_models[0]->p_dud = 0.5;
     sm2.channel_models[0]->mu = 0.5;
     sm2.channel_models[0]->sig = 0.5;
-    sm2.channel_models[0]->stuck_dye_ratio = 0.66;
-    sm2.channel_models[0]->p_stuck_dye_loss = 0.5;
     sm2.channel_models.push_back(new ChannelModel());
     sm2.channel_models[1]->p_bleach = 0.5;
     sm2.channel_models[1]->p_dud = 0.66;
     sm2.channel_models[1]->mu = 0.5;
     sm2.channel_models[1]->sig = 0.5;
-    sm2.channel_models[1]->stuck_dye_ratio = 0.5;
-    sm2.channel_models[1]->p_stuck_dye_loss = 0.5;
 
     BOOST_TEST(sm1.relative_distance(sm2) == (0.66 - 0.5) / 0.5);
     BOOST_TEST(sm2.relative_distance(sm1) == (0.66 - 0.5) / 0.66);

@@ -49,20 +49,13 @@ double ChannelModel::relative_distance(
     dist = max(dist, abs(bg_sig - channel_model.bg_sig) / bg_sig);
     dist = max(dist, abs(mu - channel_model.mu) / mu);
     dist = max(dist, abs(sig - channel_model.sig) / sig);
-    dist = max(dist,
-               abs(stuck_dye_ratio - channel_model.stuck_dye_ratio)
-                       / stuck_dye_ratio);
-    dist = max(dist,
-               abs(p_stuck_dye_loss - channel_model.p_stuck_dye_loss)
-                       / p_stuck_dye_loss);
     return dist;
 }
 
 string ChannelModel::debug_string() const {
     return "Bleach rate: " + to_string(p_bleach) + ", Dud rate: "
            + to_string(p_dud) + ", mu: " + to_string(mu) + ", sig: "
-           + to_string(sig) + ", Stuck dye ratio: " + to_string(stuck_dye_ratio)
-           + ", Stuck dye loss rate: " + to_string(p_stuck_dye_loss);
+           + to_string(sig);
 }
 
 }  // namespace whatprot
