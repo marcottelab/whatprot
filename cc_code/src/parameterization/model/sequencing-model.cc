@@ -43,7 +43,7 @@ SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
     p_detach = other.p_detach;
     // This function is not necessarily used as a constructor. It is very
     // important to clear contents of channel_models before filling it.
-    for (ChannelModel* channel_model: channel_models) {
+    for (ChannelModel* channel_model : channel_models) {
         if (channel_model != NULL) {
             delete channel_model;
         }
