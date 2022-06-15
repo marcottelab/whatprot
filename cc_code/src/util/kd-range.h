@@ -18,7 +18,7 @@ class KDRange {
 public:
     KDRange intersect(const KDRange& other) const;
     bool is_empty() const;
-    bool includes_zero();
+    bool includes_zero() const;
 
     std::vector<unsigned int> min;
     std::vector<unsigned int> max;

@@ -35,7 +35,7 @@ bool KDRange::is_empty() const {
     return false;
 }
 
-bool KDRange::includes_zero() {
+bool KDRange::includes_zero() const {
     for (unsigned int i = 0; i < min.size(); i++) {
         if (min[i] > 0) {
             return false;

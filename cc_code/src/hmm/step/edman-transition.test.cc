@@ -980,6 +980,14 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
+    et.true_forward_range.min = {0, 0};
+    et.safe_forward_range.min = {0, 0};
+    et.true_forward_range.max = {1, 2};
+    et.safe_forward_range.max = {2, 2};
+    et.true_backward_range.min = {0, 0};
+    et.safe_backward_range.min = {0, 0};
+    et.true_backward_range.max = {2, 2};
+    et.safe_backward_range.max = {2, 2};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
@@ -1008,57 +1016,138 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                == (0.91 * p_fail * 0.71) / (0.91 * 0.81));
 }
 
-BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
     double p_fail = 0.05;
     unsigned int num_timesteps = 1;
     unsigned int num_channels = 1;
     DyeSeq ds(num_channels, "");
     DyeTrack dt(num_timesteps, num_channels, ds);
     EdmanTransition et(p_fail, ds, dt);
+    et.true_forward_range.min = {0, 0};
+    et.safe_forward_range.min = {0, 0};
+    et.true_forward_range.max = {1, 3};
+    et.safe_forward_range.max = {2, 3};
+    et.true_backward_range.min = {0, 0};
+    et.safe_backward_range.min = {0, 0};
+    et.true_backward_range.max = {2, 3};
+    et.safe_backward_range.max = {2, 3};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 2;
-    shape[1] = 2;
-    PeptideStateVector fpsv1(order, shape);
-    fpsv1.tensor[{0, 0}] = 0.31;
-    fpsv1.tensor[{0, 1}] = 0.91;
-    fpsv1.tensor[{1, 0}] = 0.32;
-    fpsv1.tensor[{1, 1}] = 0.92;
-    PeptideStateVector bpsv1(order, shape);
-    bpsv1.tensor[{0, 0}] = 0.331;
-    bpsv1.tensor[{0, 1}] = 0.81;
-    bpsv1.tensor[{1, 0}] = 0.332;
-    bpsv1.tensor[{1, 1}] = 0.82;
-    PeptideStateVector nbpsv1(order, shape);
-    nbpsv1.tensor[{0, 0}] = 0.21;
-    nbpsv1.tensor[{0, 1}] = 0.71;
-    nbpsv1.tensor[{1, 0}] = 0.22;
-    nbpsv1.tensor[{1, 1}] = 0.72;
-    PeptideStateVector fpsv2(order, shape);
-    fpsv2.tensor[{0, 0}] = 0.221;
-    fpsv2.tensor[{0, 1}] = 0.61;
-    fpsv2.tensor[{1, 0}] = 0.222;
-    fpsv2.tensor[{1, 1}] = 0.92;
-    PeptideStateVector bpsv2(order, shape);
-    bpsv2.tensor[{0, 0}] = 0.11;
-    bpsv2.tensor[{0, 1}] = 0.51;
-    bpsv2.tensor[{1, 0}] = 0.12;
-    bpsv2.tensor[{1, 1}] = 0.82;
-    PeptideStateVector nbpsv2(order, shape);
-    nbpsv2.tensor[{0, 0}] = 0.111;
-    nbpsv2.tensor[{0, 1}] = 0.41;
-    nbpsv2.tensor[{1, 0}] = 0.112;
-    nbpsv2.tensor[{1, 1}] = 0.72;
+    shape[1] = 3;
+    PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0}] = 0.61;
+    fpsv.tensor[{0, 1}] = 0.91;
+    fpsv.tensor[{0, 2}] = 0.31;
+    fpsv.tensor[{1, 0}] = 0.62;
+    fpsv.tensor[{1, 1}] = 0.92;
+    fpsv.tensor[{1, 2}] = 0.32;
+    PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0}] = 0.51;
+    bpsv.tensor[{0, 1}] = 0.81;
+    bpsv.tensor[{0, 2}] = 0.21;
+    bpsv.tensor[{1, 0}] = 0.52;
+    bpsv.tensor[{1, 1}] = 0.82;
+    bpsv.tensor[{1, 2}] = 0.22;
+    PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0}] = 0.41;
+    nbpsv.tensor[{0, 1}] = 0.71;
+    nbpsv.tensor[{0, 2}] = 0.11;
+    nbpsv.tensor[{1, 0}] = 0.42;
+    nbpsv.tensor[{1, 1}] = 0.72;
+    nbpsv.tensor[{1, 2}] = 0.12;
     delete[] shape;
     unsigned int edmans = 0;
-    double prob1 = 0.12345;
-    double prob2 = 0.98765;
+    double probability = 1.0;
     SequencingModelFitter smf;
-    et.improve_fit(fpsv1, bpsv1, nbpsv1, edmans, prob1, &smf);
-    et.improve_fit(fpsv2, bpsv2, nbpsv2, edmans, prob2, &smf);
+    et.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
     BOOST_TEST(smf.p_edman_failure_fit.get()
-               == (0.91 * p_fail * 0.71 / prob1 + 0.61 * p_fail * 0.41 / prob2)
-                          / (0.91 * 0.81 / prob1 + 0.61 * 0.51 / prob2));
+               == (0.91 * p_fail * 0.71 + 0.31 * p_fail * 0.11)
+                          / (0.91 * 0.81 + 0.31 * 0.21));
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_more_timesteps_test, *tolerance(TOL)) {
+    double p_fail = 0.05;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
+    DyeSeq ds(num_channels, "");
+    DyeTrack dt(num_timesteps, num_channels, ds);
+    EdmanTransition et(p_fail, ds, dt);
+    et.true_forward_range.min = {0, 0};
+    et.safe_forward_range.min = {0, 0};
+    et.true_forward_range.max = {2, 2};
+    et.safe_forward_range.max = {3, 2};
+    et.true_backward_range.min = {0, 0};
+    et.safe_backward_range.min = {0, 0};
+    et.true_backward_range.max = {3, 2};
+    et.safe_backward_range.max = {3, 2};
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 3;
+    shape[1] = 2;
+    PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0}] = 0.61;
+    fpsv.tensor[{0, 1}] = 0.91;
+    fpsv.tensor[{1, 0}] = 0.62;
+    fpsv.tensor[{1, 1}] = 0.92;
+    fpsv.tensor[{2, 0}] = 0.63;
+    fpsv.tensor[{2, 1}] = 0.93;
+    PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0}] = 0.51;
+    bpsv.tensor[{0, 1}] = 0.81;
+    bpsv.tensor[{1, 0}] = 0.52;
+    bpsv.tensor[{1, 1}] = 0.82;
+    bpsv.tensor[{2, 0}] = 0.53;
+    bpsv.tensor[{2, 1}] = 0.83;
+    PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0}] = 0.41;
+    nbpsv.tensor[{0, 1}] = 0.71;
+    nbpsv.tensor[{1, 0}] = 0.42;
+    nbpsv.tensor[{1, 1}] = 0.72;
+    nbpsv.tensor[{2, 0}] = 0.43;
+    nbpsv.tensor[{2, 1}] = 0.73;
+    delete[] shape;
+    unsigned int edmans = 0;
+    double probability = 1.0;
+    SequencingModelFitter smf;
+    et.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    BOOST_TEST(smf.p_edman_failure_fit.get()
+               == (0.91 * p_fail * 0.71 + 0.92 * p_fail * 0.72)
+                          / (0.91 * 0.81 + 0.92 * 0.82));
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_mismatched_ranges_test, *tolerance(TOL)) {
+    double p_fail = 0.05;
+    unsigned int num_timesteps = 1;
+    unsigned int num_channels = 1;
+    DyeSeq ds(num_channels, "");
+    DyeTrack dt(num_timesteps, num_channels, ds);
+    EdmanTransition et(p_fail, ds, dt);
+    et.true_forward_range.min = {0, 1};
+    et.safe_forward_range.min = {0, 1};
+    et.true_forward_range.max = {1, 2};
+    et.safe_forward_range.max = {2, 2};
+    et.true_backward_range.min = {0, 0};
+    et.safe_backward_range.min = {0, 0};
+    et.true_backward_range.max = {2, 3};
+    et.safe_backward_range.max = {2, 3};
+    PeptideStateVector fpsv(et.true_forward_range);
+    fpsv.tensor[{0, 1}] = 0.91;
+    PeptideStateVector bpsv(et.true_forward_range);
+    bpsv.tensor[{0, 1}] = 0.81;
+    PeptideStateVector nbpsv(et.safe_backward_range);
+    nbpsv.tensor[{0, 0}] = 0.41;
+    nbpsv.tensor[{0, 1}] = 0.71;
+    nbpsv.tensor[{0, 2}] = 0.11;
+    nbpsv.tensor[{1, 0}] = 0.42;
+    nbpsv.tensor[{1, 1}] = 0.72;
+    nbpsv.tensor[{1, 2}] = 0.11;
+    unsigned int edmans = 0;
+    double probability = 1.0;
+    SequencingModelFitter smf;
+    et.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    BOOST_TEST(smf.p_edman_failure_fit.get()
+               == (0.91 * p_fail * 0.71) / (0.91 * 0.81));
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // edman_transition_suite

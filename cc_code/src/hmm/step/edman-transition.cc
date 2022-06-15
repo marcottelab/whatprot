@@ -224,21 +224,46 @@ void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    unsigned int t_stride = forward_psv.tensor.strides[0];
-    for (unsigned int t = 0; t < num_edmans + 1; t++) {
+    ConstTensorIterator* f_itr =
+            forward_psv.tensor.const_iterator(true_forward_range);
+    ConstTensorIterator* b_itr =
+            backward_psv.tensor.const_iterator(true_forward_range);
+    ConstTensorIterator* nb_itr =
+            next_backward_psv.tensor.const_iterator(true_forward_range);
+    unsigned int old_t = -1;
+    while (!f_itr->done()) {
         // Here we omit the zeroth entry of every timestep because this is the
         // entry for zero of every dye color. These entries are unable to
         // provide tangible evidence of the edman efficiency one way or the
         // other.
-        for (unsigned int i = t * t_stride + 1; i < (t + 1) * t_stride; i++) {
-            fitter->p_edman_failure_fit.numerator +=
-                    forward_psv.tensor.values[i] * p_edman_failure
-                    * next_backward_psv.tensor.values[i] / probability;
-            fitter->p_edman_failure_fit.denominator +=
-                    forward_psv.tensor.values[i] * backward_psv.tensor.values[i]
-                    / probability;
+        if (true_forward_range.includes_zero()) {
+            unsigned int new_t = f_itr->loc[0];
+            if (new_t != old_t) {
+                old_t = new_t;
+                f_itr->advance();
+                b_itr->advance();
+                nb_itr->advance();
+                // Need extra check for loop completion.
+                if (f_itr->done()) {
+                    break;
+                }
+            }
         }
+        // And now we can accumulate information about Edman failure rate.
+        double f_prob = *f_itr->get();
+        double b_prob = *b_itr->get();
+        double nb_prob = *nb_itr->get();
+        fitter->p_edman_failure_fit.numerator +=
+                f_prob * p_edman_failure * nb_prob / probability;
+        fitter->p_edman_failure_fit.denominator +=
+                f_prob * b_prob / probability;
+        f_itr->advance();
+        b_itr->advance();
+        nb_itr->advance();
     }
+    delete f_itr;
+    delete b_itr;
+    delete nb_itr;
 }
 
 }  // namespace whatprot
