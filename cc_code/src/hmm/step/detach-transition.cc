@@ -105,10 +105,10 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                 old_t = new_t;
                 f_itr->advance();
                 b_itr->advance();
-                // Need extra check for loop completion.
-                if (f_itr->done()) {
-                    break;
-                }
+                // Now we need to start the loop from the beginning; maybe all
+                // entries are zero dyes on all channels, or maybe we have met
+                // the loop end condition. Either way we need to check.
+                continue;
             }
         }
         // And now we can accumulate forward and forward-backward sums

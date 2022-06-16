@@ -243,10 +243,10 @@ void EdmanTransition::improve_fit(const PeptideStateVector& forward_psv,
                 f_itr->advance();
                 b_itr->advance();
                 nb_itr->advance();
-                // Need extra check for loop completion.
-                if (f_itr->done()) {
-                    break;
-                }
+                // Now we need to start the loop from the beginning; maybe all
+                // entries are zero dyes on all channels, or maybe we have met
+                // the loop end condition. Either way we need to check.
+                continue;
             }
         }
         // And now we can accumulate information about Edman failure rate.
