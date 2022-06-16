@@ -88,27 +88,44 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    unsigned int num_edmans,
                                    double probability,
                                    SequencingModelFitter* fitter) const {
-    int t_stride = forward_psv.tensor.strides[0];
+    ConstTensorIterator* f_itr =
+            forward_psv.tensor.const_iterator(pruned_range);
+    ConstTensorIterator* b_itr =
+            backward_psv.tensor.const_iterator(pruned_range);
     double forward_sum = 0.0;
     double forward_backward_sum = 0.0;
-    for (unsigned int t = 0; t < num_edmans + 1; t++) {
+    unsigned int old_t = -1;
+    while (!f_itr->done()) {
         // Here we omit the zeroth entry of every timestep because this is the
         // entry for zero of every dye color. These entries are unable to
         // provide tangible evidence of detachment one way or the other.
-        for (unsigned int i = t * t_stride + 1; i < (t + 1) * t_stride; i++) {
-            forward_sum += forward_psv.tensor.values[i];
-            forward_backward_sum += forward_psv.tensor.values[i]
-                                    * backward_psv.tensor.values[i];
+        if (pruned_range.includes_zero()) {
+            unsigned int new_t = f_itr->loc[0];
+            if (new_t != old_t) {
+                old_t = new_t;
+                f_itr->advance();
+                b_itr->advance();
+                // Need extra check for loop completion.
+                if (f_itr->done()) {
+                    break;
+                }
+            }
         }
+        // And now we can accumulate forward and forward-backward sums
+        double f_prob = *f_itr->get();
+        double b_prob = *b_itr->get();
+        forward_sum += f_prob;
+        forward_backward_sum += f_prob * b_prob;
+        f_itr->advance();
+        b_itr->advance();
     }
+    delete f_itr;
+    delete b_itr;
     fitter->p_detach_fit.numerator +=
-            forward_sum * p_detach
-            * next_backward_psv.tensor
-                      .values[num_edmans * forward_psv.tensor.strides[0]]
-            / probability;
+            forward_sum * p_detach * next_backward_psv.p_detached / probability;
     // Probability of being in a state that can detach is 1.0, because all
     // states can detach (although we are ignoring the case where there are no
-    // amino acids left but this probably shouldn't cause any serious issues).
+    // amino acids left but that's fine and in fact better).
     fitter->p_detach_fit.denominator += forward_backward_sum / probability;
 }
 
