@@ -64,6 +64,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->p_dud = 0.04;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.05;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
@@ -143,6 +145,8 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->bg_sig = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.16;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
@@ -178,6 +182,8 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->bg_sig = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.16;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
@@ -213,6 +219,8 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->bg_sig = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.16;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
@@ -248,6 +256,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->bg_sig = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.16;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = 5.0;
@@ -283,6 +293,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->bg_sig = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.16;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = 5.0;
@@ -318,6 +330,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
         seq_model.channel_models[i]->bg_sig = 0.00667;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.05;
+        seq_model.channel_models[i]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[i]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();

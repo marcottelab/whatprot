@@ -67,6 +67,8 @@ void run_fit(double stopping_threshold,
         seq_model.channel_models[c]->bg_sig = 0.00667;
         seq_model.channel_models[c]->mu = 1.0;
         seq_model.channel_models[c]->sig = 0.16;
+        seq_model.channel_models[c]->stuck_dye_ratio = 0.5;
+        seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();

@@ -18,6 +18,7 @@
 #include "common/dye-track.h"
 #include "common/radiometry.h"
 #include "hmm/hmm/peptide-hmm.h"
+#include "hmm/hmm/stuck-dye-hmm.h"
 #include "hmm/precomputations/dye-seq-precomputations.h"
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
@@ -81,8 +82,40 @@ SequencingModel HMMFitter::fit(
                            radiometry_precomputations,
                            universal_precomputations);
             SequencingModelFitter peptide_fitter(num_channels);
-            hmm.improve_fit(&peptide_fitter);
-            fitter += peptide_fitter;
+            double peptide_ratio = 1.0;
+            for (unsigned int c = 0; c < num_channels; c++) {
+                peptide_ratio -= sm.channel_models[c]->stuck_dye_ratio;
+            }
+            double peptide_prob =
+                    hmm.improve_fit(&peptide_fitter) * peptide_ratio;
+            vector<SequencingModelFitter> stuck_dye_fitters;
+            vector<double> stuck_dye_probs;
+            double total_prob = peptide_prob;
+            for (unsigned int c = 0; c < num_channels; c++) {
+                stuck_dye_fitters.push_back(
+                        SequencingModelFitter(num_channels));
+                StuckDyeHMM stuck_dye_hmm(num_timesteps,
+                                          num_channels,
+                                          c,
+                                          radiometry_precomputations,
+                                          universal_precomputations);
+                stuck_dye_probs.push_back(
+                        stuck_dye_hmm.improve_fit(&stuck_dye_fitters.back())
+                        * sm.channel_models[c]->stuck_dye_ratio);
+                total_prob += stuck_dye_probs.back();
+            }
+            if (total_prob != 0.0) {
+                peptide_fitter *= (peptide_prob / total_prob);
+                fitter += peptide_fitter;
+                for (unsigned int c = 0; c < num_channels; c++) {
+                    stuck_dye_fitters[c] *= (stuck_dye_probs[c] / total_prob);
+                    fitter += stuck_dye_fitters[c];
+                    fitter.channel_fits[c]->stuck_dye_ratio_fit.numerator +=
+                            stuck_dye_probs[c] / total_prob;
+                    fitter.channel_fits[c]->stuck_dye_ratio_fit.denominator +=
+                            1.0;
+                }
+            }
         }
         SequencingModel next = fitter.get();
         cout << next.debug_string() << "\n";

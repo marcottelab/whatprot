@@ -28,6 +28,8 @@ public:
     ParameterFitter p_bleach_fit;
     ParameterFitter p_dud_fit;
     NormalDistributionFitter* distribution_fit;
+    ParameterFitter stuck_dye_ratio_fit;
+    ParameterFitter p_stuck_dye_loss_fit;
 };
 
 }  // namespace whatprot
