@@ -22,6 +22,7 @@
 #include "main/run-classify-hybrid.h"
 #include "main/run-classify-nn.h"
 #include "main/run-fit.h"
+#include "main/run-score-hmm.h"
 #include "main/run-simulate-dt.h"
 #include "main/run-simulate-rad.h"
 
@@ -42,6 +43,7 @@ using whatprot::run_classify_hmm;
 using whatprot::run_classify_hybrid;
 using whatprot::run_classify_nn;
 using whatprot::run_fit;
+using whatprot::run_score_hmm;
 using whatprot::run_simulate_dt;
 using whatprot::run_simulate_rad;
 }  // namespace
@@ -408,6 +410,25 @@ int main(int argc, char** argv) {
         // machine readable seconds as double.
         run_fit(L, 60.0 * (double)M, x, P, R, b, c, Y);
         return 0;
+    }
+    if (0 == positional_args[0].compare("score")) {
+        if (0 == positional_args[1].compare("hmm")) {
+            // Special handling for p since it is optional for classify hmm.
+            if (has_p) {
+                num_optional_args--;
+            }
+            if (num_optional_args != 3 || !has_S || !has_R || !has_Y) {
+                cout << endl << "INCORRECT USAGE" << endl << endl;
+                cout << options.help() << endl;
+                return 1;
+            }
+            print_omp_info();
+            run_score_hmm(p, S, R, Y);
+            return 0;
+        }
+        cout << endl << "INCORRECT USAGE" << endl << endl;
+        cout << options.help() << endl;
+        return 1;
     }
     if (0 == positional_args[0].compare("simulate")) {
         if (positional_args.size() != 2) {
