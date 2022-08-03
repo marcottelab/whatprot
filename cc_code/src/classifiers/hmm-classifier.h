@@ -41,6 +41,9 @@ public:
                                   const std::vector<int>& candidate_indices);
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
+    std::vector<double> score(const Radiometry& radiometry);
+    std::vector<std::vector<double>> score(
+            const std::vector<Radiometry>& radiometries);
 
     template <typename I>
     ScoredClassification classify_helper(const Radiometry& radiometry,
