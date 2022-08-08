@@ -31,6 +31,8 @@ NormalDistributionFitter::~NormalDistributionFitter() {}
 
 void NormalDistributionFitter::add_sample(double x, int n, double weight) {
     if (n == 0) {
+        zero_w_sum_x_sq += x * (x * weight);
+        zero_total_weight += weight;
         return;
     }
     w_sum_x += x * weight;
@@ -46,10 +48,17 @@ double NormalDistributionFitter::get_mu() const {
     return w_sum_x / w_sum_n;
 }
 
+double NormalDistributionFitter::get_bg_sig() const {
+    // double bg_sig_sq = zero_w_sum_x_sq / zero_total_weight;
+    // return sqrt(bg_sig_sq);
+    return .07;
+}
+
 double NormalDistributionFitter::get_sig() const {
     double mu = get_mu();
+    double bg_sig = get_bg_sig();
     double sig_sq = (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight;
-    return sqrt(sig_sq);
+    return sqrt(sig_sq - bg_sig * bg_sig);
 }
 
 NormalDistributionFitter NormalDistributionFitter::operator+(
@@ -60,6 +69,9 @@ NormalDistributionFitter NormalDistributionFitter::operator+(
             w_sum_x_sq_over_n + other.w_sum_x_sq_over_n;
     result_fitter.w_sum_n = w_sum_n + other.w_sum_n;
     result_fitter.total_weight = total_weight + other.total_weight;
+    result_fitter.zero_w_sum_x_sq = zero_w_sum_x_sq + other.zero_w_sum_x_sq;
+    result_fitter.zero_total_weight =
+            zero_total_weight + other.zero_total_weight;
     return result_fitter;
 }
 
@@ -69,6 +81,8 @@ void NormalDistributionFitter::operator+=(
     w_sum_x_sq_over_n += other.w_sum_x_sq_over_n;
     w_sum_n += other.w_sum_n;
     total_weight += other.total_weight;
+    zero_w_sum_x_sq += other.zero_w_sum_x_sq;
+    zero_total_weight += other.zero_total_weight;
 }
 
 void NormalDistributionFitter::operator*=(double weight_adjustment) {
@@ -76,6 +90,8 @@ void NormalDistributionFitter::operator*=(double weight_adjustment) {
     w_sum_x_sq_over_n *= weight_adjustment;
     w_sum_n *= weight_adjustment;
     total_weight *= weight_adjustment;
+    zero_w_sum_x_sq *= weight_adjustment;
+    zero_w_sum_x_sq *= weight_adjustment;
 }
 
 }  // namespace whatprot

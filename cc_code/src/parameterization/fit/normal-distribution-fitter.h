@@ -20,6 +20,7 @@ public:
     virtual ~NormalDistributionFitter();
     virtual void add_sample(double x, int n, double weight);
     double get_mu() const;
+    double get_bg_sig() const;
     double get_sig() const;
     NormalDistributionFitter operator+(
             const NormalDistributionFitter& other) const;
@@ -29,6 +30,8 @@ public:
     double w_sum_x_sq_over_n;
     double w_sum_n;
     double total_weight;
+    double zero_w_sum_x_sq;
+    double zero_total_weight;
 };
 
 }  // namespace whatprot

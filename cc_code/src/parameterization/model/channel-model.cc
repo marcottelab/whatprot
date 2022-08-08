@@ -60,8 +60,9 @@ double ChannelModel::relative_distance(
 
 string ChannelModel::debug_string() const {
     return "Bleach rate: " + to_string(p_bleach) + ", Dud rate: "
-           + to_string(p_dud) + ", mu: " + to_string(mu) + ", sig: "
-           + to_string(sig) + ", Stuck dye ratio: " + to_string(stuck_dye_ratio)
+           + to_string(p_dud) + ", bg_sig: " + to_string(bg_sig)
+           + ", mu: " + to_string(mu) + ", sig: " + to_string(sig)
+           + ", Stuck dye ratio: " + to_string(stuck_dye_ratio)
            + ", Stuck dye loss rate: " + to_string(p_stuck_dye_loss);
 }
 
