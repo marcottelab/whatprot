@@ -18,6 +18,7 @@
 #include "hmm/step/stuck-dye-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
 
@@ -25,7 +26,8 @@ class StuckDyeEmission : public StuckDyeStep {
 public:
     StuckDyeEmission(const Radiometry& radiometry,
                      int channel,
-                     const SequencingModel& seq_model);
+                     const SequencingModel& seq_model,
+                    const SequencingSettings& seq_settings);
     double& prob(int timestep, int channel, int num_dyes);
     double prob(int timestep, int channel, int num_dyes) const;
     virtual StuckDyeStateVector* forward(

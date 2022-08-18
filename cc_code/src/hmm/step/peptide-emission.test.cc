@@ -757,18 +757,24 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
+    e.pruned_range.min = {0, 0};
+    e.pruned_range.max = {num_timesteps, shape[1]};
+    e.allow_detached = true;
     PeptideStateVector fpsv(order, shape);
     fpsv.tensor[{0, 0}] = 1.72;
     fpsv.tensor[{0, 1}] = 1.36;
     fpsv.tensor[{0, 2}] = 1.18;
+    fpsv.p_detached = 7.77;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 2.72;
     bpsv.tensor[{0, 1}] = 2.36;
     bpsv.tensor[{0, 2}] = 2.18;
+    bpsv.p_detached = 8.88;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 3.72;
     nbpsv.tensor[{0, 1}] = 3.36;
     nbpsv.tensor[{0, 2}] = 3.18;
+    nbpsv.p_detached = 9.99;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 3.14159;
@@ -795,6 +801,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
                           2,
                           Close(1.18 * 2.18 / 3.14159, TOL)))
             .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(7.77 * 8.88 / 3.14159, TOL)));
     VerifyNoOtherInvocations(df_mock);
     smf.channel_fits[0]->distribution_fit =
             original_dist_fit;  // This avoids breaking cleanup.
@@ -824,21 +834,27 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
     shape[2] = max_num_dyes + 1;
+    e.pruned_range.min = {0, 0, 0};
+    e.pruned_range.max = {num_timesteps, shape[1], shape[2]};
+    e.allow_detached = true;
     PeptideStateVector fpsv(order, shape);
     fpsv.tensor[{0, 0, 0}] = 1.72;
     fpsv.tensor[{0, 0, 1}] = 1.64;
     fpsv.tensor[{0, 1, 0}] = 1.36;
     fpsv.tensor[{0, 1, 1}] = 1.25;
+    fpsv.p_detached = 7.77;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0, 0}] = 2.72;
     bpsv.tensor[{0, 0, 1}] = 2.64;
     bpsv.tensor[{0, 1, 0}] = 2.36;
     bpsv.tensor[{0, 1, 1}] = 2.25;
+    bpsv.p_detached = 8.88;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0, 0}] = 3.72;
     nbpsv.tensor[{0, 0, 1}] = 3.64;
     nbpsv.tensor[{0, 1, 0}] = 3.36;
     nbpsv.tensor[{0, 1, 1}] = 3.25;
+    nbpsv.p_detached = 9.99;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 3.14159;
@@ -896,6 +912,14 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
                           1,
                           Close(1.25 * 2.25 / 3.14159, TOL)))
             .Exactly(1);
+    Verify(Method(df_mock_0, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(7.77 * 8.88 / 3.14159, TOL)));
+    Verify(Method(df_mock_1, add_sample)
+                   .Using(Close(1.019, TOL),
+                          0,
+                          Close(7.77 * 8.88 / 3.14159, TOL)));
     VerifyNoOtherInvocations(df_mock_0);
     VerifyNoOtherInvocations(df_mock_1);
     // This avoids breaking cleanup:
@@ -925,21 +949,27 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     unsigned int* shape = new unsigned int[order];
     shape[0] = num_timesteps;
     shape[1] = max_num_dyes + 1;
+    e.pruned_range.min = {0, 0};
+    e.pruned_range.max = {num_timesteps, shape[1]};
+    e.allow_detached = true;
     PeptideStateVector fpsv(order, shape);
     fpsv.tensor[{0, 0}] = 1.72;
     fpsv.tensor[{0, 1}] = 1.36;
     fpsv.tensor[{1, 0}] = 1.64;
     fpsv.tensor[{1, 1}] = 1.25;
+    fpsv.p_detached = 7.77;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 2.72;
     bpsv.tensor[{0, 1}] = 2.36;
     bpsv.tensor[{1, 0}] = 2.64;
     bpsv.tensor[{1, 1}] = 2.25;
+    bpsv.p_detached = 8.88;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 3.72;
     nbpsv.tensor[{0, 1}] = 3.36;
     nbpsv.tensor[{1, 0}] = 3.64;
     nbpsv.tensor[{1, 1}] = 3.25;
+    nbpsv.p_detached = 9.99;
     delete[] shape;
     unsigned int edmans = 1;
     double probability = 3.14159;
@@ -971,6 +1001,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
                           1,
                           Close(1.25 * 2.25 / 3.14159, TOL)))
             .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          0,
+                          Close(7.77 * 8.88 / 3.14159, TOL)));
     VerifyNoOtherInvocations(df_mock);
     smf.channel_fits[0]->distribution_fit =
             original_dist_fit;  // This avoids breaking cleanup.

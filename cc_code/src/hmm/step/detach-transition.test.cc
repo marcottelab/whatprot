@@ -559,6 +559,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     DetachTransition dt(p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
+    dt.detached_backward = true;
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -584,6 +585,38 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     BOOST_TEST(smf.p_detach_fit.get()
                == (0.71 * p_detach * 0.33 + 0.91 * p_detach * 0.33)
                           / (0.71 * 0.72 + 0.91 * 0.92));
+}
+
+BOOST_AUTO_TEST_CASE(improve_fit_detached_backward_false_test,
+                     *tolerance(TOL)) {
+    double p_detach = 0.05;
+    DetachTransition dt(p_detach);
+    dt.pruned_range.min = {0, 0};
+    dt.pruned_range.max = {1, 3};
+    dt.detached_backward = false;
+    unsigned int order = 2;
+    unsigned int* shape = new unsigned int[order];
+    shape[0] = 1;
+    shape[1] = 3;
+    PeptideStateVector fpsv(order, shape);
+    fpsv.tensor[{0, 0}] = 0.31;
+    fpsv.tensor[{0, 1}] = 0.71;
+    fpsv.tensor[{0, 2}] = 0.91;
+    PeptideStateVector bpsv(order, shape);
+    bpsv.tensor[{0, 0}] = 0.32;
+    bpsv.tensor[{0, 1}] = 0.72;
+    bpsv.tensor[{0, 2}] = 0.92;
+    PeptideStateVector nbpsv(order, shape);
+    nbpsv.tensor[{0, 0}] = 0.33;
+    nbpsv.tensor[{0, 1}] = 0.73;
+    nbpsv.tensor[{0, 2}] = 0.93;
+    nbpsv.p_detached = 0.33;  // same as for {0, 0} which will always be true.
+    delete[] shape;
+    unsigned int edmans = 0;
+    double probability = 0.31 * 0.32 + 0.71 * 0.72 + 0.91 * 0.92;
+    SequencingModelFitter smf;
+    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    BOOST_TEST(smf.p_detach_fit.get() == 0.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // detach_transition_suite

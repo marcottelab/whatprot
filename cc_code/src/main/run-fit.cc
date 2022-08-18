@@ -32,6 +32,7 @@ using std::vector;
 }  // namespace
 
 void run_fit(double stopping_threshold,
+             double hmm_pruning_cutoff,
              string dye_seq_string,
              string radiometries_filename) {
     double total_start_time = wall_time();
@@ -64,15 +65,15 @@ void run_fit(double stopping_threshold,
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[c]->p_bleach = 0.05;
         seq_model.channel_models[c]->p_dud = 0.07;
-        seq_model.channel_models[c]->bg_sig = 0.00667;
-        seq_model.channel_models[c]->mu = 1.0;
-        seq_model.channel_models[c]->sig = 0.16;
+        seq_model.channel_models[c]->bg_sig = 0.07;
+        seq_model.channel_models[c]->mu = 0.35;
+        seq_model.channel_models[c]->sig = 0.05;
         seq_model.channel_models[c]->stuck_dye_ratio =
                 1.0 / (double)(num_channels + 1);
         seq_model.channel_models[c]->p_stuck_dye_loss = 0.08;
     }
     SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    seq_settings.dist_cutoff = hmm_pruning_cutoff;
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 

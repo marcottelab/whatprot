@@ -15,6 +15,7 @@
 namespace whatprot {
 
 void run_fit(double stopping_threshold,
+             double hmm_pruning_cutoff,
              std::string dye_seq_string,
              std::string radiometries_filename);
 

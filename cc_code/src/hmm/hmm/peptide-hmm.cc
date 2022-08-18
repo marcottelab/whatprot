@@ -93,4 +93,12 @@ double PeptideHMM::probability() const {
     }
 }
 
+double PeptideHMM::improve_fit(SequencingModelFitter* fitter) const {
+    if (empty_range) {
+        return 0.0;
+    } else {
+        return GenericHMM::improve_fit(fitter);
+    }
+}
+
 }  // namespace whatprot

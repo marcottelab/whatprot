@@ -49,9 +49,8 @@ double NormalDistributionFitter::get_mu() const {
 }
 
 double NormalDistributionFitter::get_bg_sig() const {
-    // double bg_sig_sq = zero_w_sum_x_sq / zero_total_weight;
-    // return sqrt(bg_sig_sq);
-    return .07;
+    double bg_sig_sq = zero_w_sum_x_sq / zero_total_weight;
+    return sqrt(bg_sig_sq);
 }
 
 double NormalDistributionFitter::get_sig() const {

@@ -179,6 +179,8 @@ void BinomialTransition::improve_fit(
         unsigned int num_edmans,
         double probability,
         ParameterFitter* fitter) const {
+    // Mismatched range is OK, range should only differ on the channel being
+    // processed.
     ConstTensorVectorIterator* f_itr = forward_psv.tensor.const_vector_iterator(
             forward_range, 1 + channel);
     ConstTensorVectorIterator* b_itr =

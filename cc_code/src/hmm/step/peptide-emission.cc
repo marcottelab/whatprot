@@ -64,7 +64,8 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
             for (int d = 0; d < max_num_dyes; d++) {
                 double s = seq_settings.dist_cutoff
                            * seq_model.channel_models[c]->sigma(d);
-                if ((double)d + s > radiometry(timestep, c)) {
+                double m = d * seq_model.channel_models[c]->mu;
+                if (m + s > radiometry(timestep, c)) {
                     cmin = d;
                     break;
                 }
@@ -75,7 +76,8 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
             for (int d = pruned_range.min[1 + c]; d < max_num_dyes; d++) {
                 double s = seq_settings.dist_cutoff
                            * seq_model.channel_models[c]->sigma(d);
-                if ((double)d - s > radiometry(timestep, c)) {
+                double m = d * seq_model.channel_models[c]->mu;
+                if (m - s > radiometry(timestep, c)) {
                     cmax = d;
                     break;
                 }
@@ -166,10 +168,9 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    KDRange range = forward_psv.tensor.range;
-    ConstTensorIterator* fit = forward_psv.tensor.const_iterator(range);
-    ConstTensorIterator* bit = backward_psv.tensor.const_iterator(range);
-    while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
+    ConstTensorIterator* fit = forward_psv.tensor.const_iterator(pruned_range);
+    ConstTensorIterator* bit = backward_psv.tensor.const_iterator(pruned_range);
+    while (!fit->done()) {
         double p_state = (*fit->get()) * (*bit->get()) / probability;
         for (unsigned int c = 0; c < num_channels; c++) {
             double intensity = radiometry(num_edmans, c);
@@ -182,6 +183,16 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
     }
     delete fit;
     delete bit;
+    if (allow_detached) {
+        double p_state =
+                forward_psv.p_detached * backward_psv.p_detached / probability;
+        for (unsigned int c = 0; c < num_channels; c++) {
+            double intensity = radiometry(num_edmans, c);
+            int dye_count = 0;
+            fitter->channel_fits[c]->distribution_fit->add_sample(
+                    intensity, dye_count, p_state);
+        }
+    }
 }
 
 }  // namespace whatprot

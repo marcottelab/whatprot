@@ -57,7 +57,7 @@ public:
     // This will fit the data the HMM was provided with. It also computes the
     // probability as a side effect, so it returns this in case that is useful
     // to the caller.
-    double improve_fit(SequencingModelFitter* fitter) const {
+    virtual double improve_fit(SequencingModelFitter* fitter) const {
         // There is one less Edman than the number of timesteps, because no
         // Edman is done before the zeroth timestep.
         unsigned int num_edmans = num_timesteps - 1;

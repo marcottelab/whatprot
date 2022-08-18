@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
             "neighbors to use for kNN classification\n",
             value<int>())
         ("p,hmmprune",
-            "Only for hmm or hybrid classification, and NOT required. Defines "
+            "Only for use with hmm or hybrid models, and NOT required. Defines "
             "a multiplier on sigma to use when pruning an HMM for greater "
             "efficiency. Higher values imply less pruning.\n",
             value<double>())
@@ -310,13 +310,17 @@ int main(int argc, char** argv) {
         return 1;
     }
     if (0 == positional_args[0].compare("fit")) {
+        // Special handling for p since it is optional for fit.
+        if (has_p) {
+            num_optional_args--;
+        }
         if (positional_args.size() != 1 || num_optional_args != 3 || !has_L
             || !has_x || !has_R) {
             cout << endl << "INCORRECT USAGE" << endl << endl;
             cout << options.help() << endl;
             return 1;
         }
-        run_fit(L, x, R);
+        run_fit(L, p, x, R);
         return 0;
     }
     if (0 == positional_args[0].compare("score")) {

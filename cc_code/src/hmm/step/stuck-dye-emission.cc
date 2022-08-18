@@ -26,18 +26,35 @@ using std::function;
 
 StuckDyeEmission::StuckDyeEmission(const Radiometry& radiometry,
                                    int channel,
-                                   const SequencingModel& seq_model)
+                                   const SequencingModel& seq_model,
+                    const SequencingSettings& seq_settings)
         : radiometry(radiometry),
           num_timesteps(radiometry.num_timesteps),
           num_channels(radiometry.num_channels),
           channel(channel) {
+    double s0 = seq_settings.dist_cutoff
+                           * seq_model.channel_models[channel]->sigma(0);
+    double s1 = seq_settings.dist_cutoff
+                           * seq_model.channel_models[channel]->sigma(1);
+    double m1 = seq_model.channel_models[channel]->mu;
     values.resize(num_timesteps * num_channels * 2);
     for (unsigned int t = 0; t < num_timesteps; t++) {
         for (unsigned int c = 0; c < num_channels; c++) {
-            for (int d = 0; d < 2; d++) {
-                prob(t, c, d) =
-                        seq_model.channel_models[c]->pdf(radiometry(t, c), d);
+            double x = radiometry(t, c);
+            if (-s0 < x && x < s0) {
+            prob(t, c, 0) = seq_model.channel_models[c]->pdf(x, 0);
+            } else {
+                prob(t, c, 0) = 0.0;
             }
+            if (m1 - s1 < x && x < m1 + s1) {
+                prob(t, c, 1) = seq_model.channel_models[c]->pdf(x, 0);
+            }else {
+                prob(t, c, 1) = 0.0;
+            }
+            // for (int d = 0; d < 2; d++) {
+            //     prob(t, c, d) =
+            //             seq_model.channel_models[c]->pdf(radiometry(t, c), d);
+            // }
         }
     }
 }

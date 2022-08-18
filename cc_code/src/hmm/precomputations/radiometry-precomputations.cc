@@ -29,7 +29,7 @@ RadiometryPrecomputations::RadiometryPrecomputations(
     }
     for (unsigned int c = 0; c < radiometry.num_channels; c++) {
         stuck_dye_emissions.push_back(
-                new StuckDyeEmission(radiometry, c, seq_model));
+                new StuckDyeEmission(radiometry, c, seq_model, seq_settings));
     }
 }
 

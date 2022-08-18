@@ -29,7 +29,8 @@ void DetachTransition::prune_forward(KDRange* range, bool* allow_detached) {
 void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {
     pruned_range = pruned_range.intersect(*range);
     *range = pruned_range;
-    detached_backward = allow_detached;
+    detached_backward = *allow_detached;
+    *allow_detached = detached_forward;
 }
 
 PeptideStateVector* DetachTransition::forward(const PeptideStateVector& input,
@@ -72,6 +73,8 @@ PeptideStateVector* DetachTransition::backward(const PeptideStateVector& input,
     }
     delete in_itr;
     delete out_itr;
+    output->range = pruned_range;
+    output->allow_detached = detached_forward;
     if (detached_forward) {
         if (detached_backward) {
             output->p_detached = input.p_detached;
@@ -121,8 +124,11 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
     }
     delete f_itr;
     delete b_itr;
-    fitter->p_detach_fit.numerator +=
-            forward_sum * p_detach * next_backward_psv.p_detached / probability;
+    if (detached_backward) {
+        fitter->p_detach_fit.numerator += forward_sum * p_detach
+                                          * next_backward_psv.p_detached
+                                          / probability;
+    }
     // Probability of being in a state that can detach is 1.0, because all
     // states can detach (although we are ignoring the case where there are no
     // amino acids left but that's fine and in fact better).
