@@ -55,7 +55,6 @@ class NNClassifier {
 public:
     NNClassifier(unsigned int num_timesteps,
                  unsigned int num_channels,
-                 const SequencingModel& seq_model,
                  int k,
                  double sig,
                  std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*

@@ -13,7 +13,8 @@
 
 namespace whatprot {
 
-void run_classify_hybrid(int k,
+void run_classify_hybrid(std::string seq_params_filename,
+                         int k,
                          double sig,
                          int h,
                          double hmm_pruning_cutoff,

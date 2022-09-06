@@ -15,6 +15,7 @@ namespace whatprot {
 
 void run_simulate_rad(unsigned int num_timesteps,
                       unsigned int num_to_generate,
+                      std::string seq_params_filename,
                       std::string dye_seqs_filename,
                       std::string radiometries_filename,
                       std::string ys_filename);

@@ -33,6 +33,7 @@ using std::vector;
 
 void run_fit(double stopping_threshold,
              string dye_seq_string,
+             std::string seq_params_filename,
              string radiometries_filename) {
     double total_start_time = wall_time();
 
@@ -57,17 +58,7 @@ void run_fit(double stopping_threshold,
     end_time = wall_time();
 
     start_time = wall_time();
-    SequencingModel seq_model;
-    seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
-    for (unsigned int c = 0; c < num_channels; c++) {
-        seq_model.channel_models.push_back(new ChannelModel());
-        seq_model.channel_models[c]->p_bleach = 0.05;
-        seq_model.channel_models[c]->p_dud = 0.07;
-        seq_model.channel_models[c]->bg_sig = 0.00667;
-        seq_model.channel_models[c]->mu = 1.0;
-        seq_model.channel_models[c]->sig = 0.16;
-    }
+    SequencingModel seq_model(seq_params_filename);
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     end_time = wall_time();

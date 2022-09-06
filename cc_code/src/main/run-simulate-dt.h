@@ -16,6 +16,7 @@ namespace whatprot {
 
 void run_simulate_dt(unsigned int num_timesteps,
                      unsigned int dye_tracks_per_peptide,
+                     std::string seq_params_filename,
                      std::string dye_seqs_filename,
                      std::string dye_tracks_filename);
 

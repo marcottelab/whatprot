@@ -66,23 +66,8 @@ void run_classify_nn(int k,
     print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
-    SequencingModel seq_model;
-    seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
-    for (unsigned int c = 0; c < num_channels; c++) {
-        seq_model.channel_models.push_back(new ChannelModel());
-        seq_model.channel_models[c]->p_bleach = 0.05;
-        seq_model.channel_models[c]->p_dud = 0.07;
-        seq_model.channel_models[c]->bg_sig = 0.00667;
-        seq_model.channel_models[c]->mu = 1.0;
-        seq_model.channel_models[c]->sig = 0.16;
-    }
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
-
-    start_time = wall_time();
     NNClassifier classifier(
-            num_timesteps, num_channels, seq_model, k, sig, &dye_tracks);
+            num_timesteps, num_channels, k, sig, &dye_tracks);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);
 

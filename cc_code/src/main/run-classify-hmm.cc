@@ -36,7 +36,8 @@ using std::string;
 using std::vector;
 }  // namespace
 
-void run_classify_hmm(double hmm_pruning_cutoff,
+void run_classify_hmm(std::string seq_params_filename,
+                      double hmm_pruning_cutoff,
                       string dye_seqs_filename,
                       string radiometries_filename,
                       string predictions_filename) {
@@ -68,17 +69,7 @@ void run_classify_hmm(double hmm_pruning_cutoff,
     print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
-    SequencingModel seq_model;
-    seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
-    for (unsigned int c = 0; c < num_channels; c++) {
-        seq_model.channel_models.push_back(new ChannelModel());
-        seq_model.channel_models[c]->p_bleach = 0.05;
-        seq_model.channel_models[c]->p_dud = 0.07;
-        seq_model.channel_models[c]->bg_sig = 0.00667;
-        seq_model.channel_models[c]->mu = 1.0;
-        seq_model.channel_models[c]->sig = 0.16;
-    }
+    SequencingModel seq_model(seq_params_filename);
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = hmm_pruning_cutoff;
     end_time = wall_time();

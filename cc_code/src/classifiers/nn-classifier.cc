@@ -79,7 +79,6 @@ double KDTQuery::operator[](int i) const {
 NNClassifier::NNClassifier(
         unsigned int num_timesteps,
         unsigned int num_channels,
-        const SequencingModel& seq_model,
         int k,
         double sig,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks)

@@ -99,6 +99,12 @@ int main(int argc, char** argv) {
             "Only for fit, and required. Threshold of change in the norm to "
             "stop the fitting iteration.\n",
             value<double>())
+        ("P,seqparams",
+            "Needed by all code paths except for kNN classification. Provides"
+            "necessary modeling params for HMM classification (and by extension"
+            "hybrid classification), simulation parameters, and starting"
+            "estimates for fitting procedures.\n",
+            value<string>())
         ("R,radiometries",
             "Only for classification, fit, or rad simulation, and required. "
             "Name of file to read radiometries from (classification or fit) or "
@@ -128,29 +134,32 @@ int main(int argc, char** argv) {
             "  model defined by VARIANT. These VARIANT possibilities require\n"
             "  specific parameters.\n"
             "  \n"
-            "    For VARIANT hmm, you must define --dyeseqs, --radiometries,\n"
-            "    and --results. Option --hmmprune is also permitted.\n"
+            "    For VARIANT hmm, you must define --seqparams, --dyeseqs,\n"
+            "    --radiometries, and --results. Option --hmmprune is also\n"
+            "    permitted.\n"
             "    \n"
-            "    For VARIANT hybrid, you must define --neighbors, --sigma,\n"
-            "    --passthrough, --dyeseqs, --dyetracks, --radiometries,\n"
-            "    and --results. Option --hmmprune is also permitted.\n"
+            "    For VARIANT hybrid, you must define --seqparams,\n"
+            "    --neighbors, --sigma, --passthrough, --dyeseqs, --dyetracks,\n"
+            "    --radiometries, and --results. Option --hmmprune is also\n"
+            "    permitted.\n"
             "    \n"
             "    For VARIANT nn, you must define --neighbors, --sigma,\n"
             "    --dyetracks, --radiometries, and --results.\n"
             "    \n"
             "  For MODE fit, you must NOT define a VARIANT, and you MUST\n"
-            "  define --stoppingthreshold, --dyeseqs, and --radiometries.\n"
+            "  define --seqparams, --stoppingthreshold, --dyeseqs, and\n"
+            "  --radiometries.\n"
             "  \n"
             "  For MODE simulate, you must define a VARIANT as either dt or\n"
             "  rad. Your data will then be simulated as dye-tracks or\n"
             "  radiometries depending on your choice. These VARIANT\n"
             "  possibilities require specific parameters.\n"
             "  \n"
-            "    For VARIANT dt, you must define --timesteps, --numgenerate,\n"
-            "    --dyeseqs, and --dyetracks.\n"
+            "    For VARIANT dt, you must define --seqparams, --timesteps,\n"
+            "    --numgenerate, --dyeseqs, and --dyetracks.\n"
             "    \n"
-            "    For VARIANT rad, you must define --timesteps, --numgenerate,\n"
-            "    --dyeseqs, --radiometries, and --results\n"
+            "    For VARIANT rad, you must define --seqparams, --timesteps,\n"
+            "    --numgenerate, --dyeseqs, --radiometries, and --results\n"
             "    \n");
 
     // Parse options.
@@ -221,6 +230,13 @@ int main(int argc, char** argv) {
         num_optional_args++;
         L = parsed_opts["stoppingthreshold"].as<double>();
     }
+    bool has_P = false;
+    string P("");
+    if (parsed_opts.count("seqparams")) {
+        has_P = true;
+        num_optional_args++;
+        P = parsed_opts["seqparams"].as<string>();
+    }
     bool has_R = false;
     string R("");
     if (parsed_opts.count("radiometries")) {
@@ -268,13 +284,14 @@ int main(int argc, char** argv) {
             if (has_p) {
                 num_optional_args--;
             }
-            if (num_optional_args != 3 || !has_S || !has_R || !has_Y) {
+            if (num_optional_args != 4 || !has_P || !has_S || !has_R
+                || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
                 return 1;
             }
             print_omp_info();
-            run_classify_hmm(p, S, R, Y);
+            run_classify_hmm(P, p, S, R, Y);
             return 0;
         }
         if (0 == positional_args[1].compare("hybrid")) {
@@ -282,14 +299,14 @@ int main(int argc, char** argv) {
             if (has_p) {
                 num_optional_args--;
             }
-            if (num_optional_args != 7 || !has_k || !has_s || !has_H || !has_S
-                || !has_T || !has_R || !has_Y) {
+            if (num_optional_args != 8 || !has_P || !has_k || !has_s || !has_H
+                || !has_S || !has_T || !has_R || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
                 return 1;
             }
             print_omp_info();
-            run_classify_hybrid(k, s, H, p, S, T, R, Y);
+            run_classify_hybrid(P, k, s, H, p, S, T, R, Y);
             return 0;
         }
         if (0 == positional_args[1].compare("nn")) {
@@ -308,13 +325,13 @@ int main(int argc, char** argv) {
         return 1;
     }
     if (0 == positional_args[0].compare("fit")) {
-        if (positional_args.size() != 1 || num_optional_args != 3 || !has_L
-            || !has_x || !has_R) {
+        if (positional_args.size() != 1 || num_optional_args != 4 || !has_P
+            || !has_L || !has_x || !has_R) {
             cout << endl << "INCORRECT USAGE" << endl << endl;
             cout << options.help() << endl;
             return 1;
         }
-        run_fit(L, x, R);
+        run_fit(L, x, P, R);
         return 0;
     }
     if (0 == positional_args[0].compare("simulate")) {
@@ -324,23 +341,23 @@ int main(int argc, char** argv) {
             return 1;
         }
         if (0 == positional_args[1].compare("dt")) {
-            if (num_optional_args != 4 || !has_t || !has_g || !has_S
+            if (num_optional_args != 5 || !has_P || !has_t || !has_g || !has_S
                 || !has_T) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
                 return 1;
             }
-            run_simulate_dt(t, g, S, T);
+            run_simulate_dt(t, g, P, S, T);
             return 0;
         }
         if (0 == positional_args[1].compare("rad")) {
-            if (num_optional_args != 5 || !has_t || !has_g || !has_S || !has_R
-                || !has_Y) {
+            if (num_optional_args != 6 || !has_P || !has_t || !has_g || !has_S
+                || !has_R || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
                 return 1;
             }
-            run_simulate_rad(t, g, S, R, Y);
+            run_simulate_rad(t, g, P, S, R, Y);
             return 0;
         }
         cout << endl << "INCORRECT USAGE" << endl << endl;
