@@ -56,7 +56,7 @@ from cleave_proteins import cleave_proteins
 # - There is also an optional parameter n which, if set, specifies the number of proteins
 #   to select, randomly without replacement, from the specified .fasta file.
 cleave_proteins("path/to/fasta/file.fasta",
-                "path/to/cleaved/peptides/output/file.tsv",
+                "path/to/cleaved/peptides/output/file.csv",
                 "name-of-protease")
 
 from dye_seqs_from_peptides import dye_seqs_from_peptides
@@ -67,7 +67,7 @@ from dye_seqs_from_peptides import dye_seqs_from_peptides
 #   For example, if we use the label_set ['DE','C','Y'], then we will label aspartic
 #   acid (D) and glutamic acid (E) on channel 0, cysteine (C) on channel 1, and tyrosine
 #   (Y) on channel 2.
-dye_seqs_from_peptides("path/to/peptides/file/from/previous/step.tsv",
+dye_seqs_from_peptides("path/to/peptides/file/from/previous/step.csv",
                        label_set,
                        "path/to/dye-seqs/output/file.tsv")
 ```
@@ -125,6 +125,63 @@ The kNN classifier is also available for your use. Although we believe the hybri
 $ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
 ```
 
+### Plot precision recall curves
+
+To plot one PR curve for read-level precision and recall run the following in Python
+```python
+from pr_curve import pr_curve
+import matplotlib.pyplot as plt
+
+# - The predictions file is your classification results.
+# - The true values is a file with one line for each entry in your predictions file
+#   set to the value you expect as a result. For verifying the algorithm on simulated
+#   data (see below), this is generated when you generate your test data.
+# - The dye-seqs file is the set of dye-seqs you are computing on. This is necessary
+#   because the number of peptides for each dye-seq is needed to properly weight the
+#   results.
+# - their is an optional "directory" parameter for convenience. If given it will be
+#   prepended to all of your filepaths.
+plot_pr_curve("path/to/predictions.tsv",
+              "path/to/true/values.tsv",
+              "path/to/dye-seqs/file.tsv")
+```
+
+To plot one PR curve for each of read-level, peptide-level, and protein-level precision
+and recall run the following in Python.
+```python
+from pr_curve import pr_curve
+import matplotlib.pyplot as plt
+
+# - First three variables are as before.
+# - full_peps_file and lim_peps_file should always either both be specified or neither.
+# - full_peps_file is the file with cleaved peptides you used to generate dye-seqs. You 
+#   MUST use the same file or this may not work correctly.
+# - lim_peps_file is the file with only the peptides you expect to see. This needs to be
+#   based on the same set of proteins as your full_peps file (i.e., protein ID for the
+#   same peptides should match in the two files. This is the second column in the .csv).
+plot_pr_curve("path/to/predictions.tsv",
+              "path/to/true/values.tsv",
+              "path/to/dye-seqs/file.tsv",
+              full_peps_file="path/to/full/peptides/file/including/decoys.csv"
+              lim_peps_file="path/to/target/or/true-set/peptides.csv")
+```
+
+To plot multiple PR curves together, use instead the 'plot_pr_curves()' function in pr_curves.py (note the extra 's' at the end of the function name). The parameter ordering is the same. You must then provide a list of prediction files instead of just one. You may optionally provide a list of true-values files, a list of dye-seqs files, or even lists of full peptides files or limited (true-set) peptide files. For each of these variables, if one value is given it is used for every predictions file specified, and if you instead provide a list then the values are collated.
+
+## Performance prediction with simulated data
+
+If you wish to predict the performance by running on simulated test data, you will do the same as described above, but for your radiometries input you will instead generate the data, as follows:
+```bash
+# Generate dyetrack samples:
+#   -t (or --timesteps) number of timesteps to generate during simulation. Should equal number of Edmans + 1.
+#   -g (or --numbenerate) number of reads to simulate total. We recommend setting this to 10000.
+#   -P (or --seqparams) path to .json file with the sequencing parameters.
+#   -S (or --dyeseqs) path to dye-seq file from previous step to generate dye-tracks based on.
+#   -R (or --radiometries) path to radiometries file to save results to.
+#   -Y (or --results) path to file to save true-ids of the peptides of the generated radiometries.
+$ ./bin/release/whatprot simulate dt -t 10 -g 10000 -P ./path/to/parameters.json -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/true-ids.tsv
+```
+
 ## File formats
 
 ### dye_seqs.tsv
@@ -143,7 +200,7 @@ from one of the peptides. The c++ code doesn't know how to read peptide data
 though so may not be super relevant, just helps with analysis to be able
 to guess at a particular peptide.
 
-### dye_string
+#### dye_string
 A "dye_string" is a summary of a labeling.
 
 Example dye_string:
