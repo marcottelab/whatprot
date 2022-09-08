@@ -1,0 +1,13 @@
+{
+  "p_edman_failure": 0.06,
+  "p_detach": 0.05,
+  "channel_models": [
+    {
+      "p_bleach": 0.05,
+      "p_dud": 0.07,
+      "bg_sig": 0.00667,
+      "mu": 1.0,
+      "sig": 0.16
+    }
+  ]
+}
