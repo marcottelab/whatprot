@@ -53,11 +53,12 @@ from cleave_proteins import cleave_proteins
 # - Replace filepaths as appropriate.
 # - Replace "name-of-protease" with one of the following: "trypsin", "cyanogen bromide", or
 #   "EndoPRO".
-# - There is also an optional parameter n which, if set, specifies the number of proteins
-#   to select, randomly without replacement, from the specified .fasta file.
+# - n is optional. If absent every protein in the .fasta file is cleaved, but if present, n
+#   proteins are selected randomly without replacement from the provided file.
 cleave_proteins("path/to/fasta/file.fasta",
                 "path/to/cleaved/peptides/output/file.csv",
-                "name-of-protease")
+                "name-of-protease"
+                n=10)
 
 from dye_seqs_from_peptides import dye_seqs_from_peptides
 # - Replace filepaths as appropriate.
