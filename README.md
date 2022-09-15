@@ -39,7 +39,7 @@ For datasets with smaller numbers of peptides we recommend the HMM classifier. N
 #   -S (or --dyeseqs) dye-seqs to use as reference for HMM classification.
 #   -R (or --radiometries) radiometries to classify.
 #   -Y (or --results) output file with a classification id and score for every radiometry.
-$ ./bin/release/whatprot classify hmm -p 5 -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
+$ ./bin/release/whatprot classify hmm -p 5 -P ./path/to/seq-params.json -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.csv
 ```
 
 ### hybrid classification
@@ -56,7 +56,7 @@ The hybrid classifier will greatly improve runtime performance for larger datase
 #   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
 #   -R (or --radiometries) radiometries to classify.
 #   -Y (or --results) output file with a classification id and score for every radiometry.
-$ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
+$ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -P ./path/to/seq-params.json -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.csv
 ```
 
 ### kNN classification
@@ -68,7 +68,7 @@ The kNN classifier is also available for your use. It will be slightly faster th
 #   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
 #   -R (or --radiometries) radiometries to classify.
 #   -Y (or --results) output file with a classification id and score for every radiometry.
-$ ./bin/release/whatprot classify nn -k 10000 -s 0.5 -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
+$ ./bin/release/whatprot classify nn -k 10000 -s 0.5 -P ./path/to/seq-params.json -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.csv
 ```
 
 ### Multithreaded performance
