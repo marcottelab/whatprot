@@ -42,7 +42,7 @@ For datasets with smaller numbers of peptides we recommend the HMM classifier. N
 $ ./bin/release/whatprot classify hmm -p 5 -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
 ```
 
-### hybrid classifier
+### hybrid classification
 The hybrid classifier will greatly improve runtime performance for larger datasets, with little to no impact on the accuracy of your results. To classify data using our recommended parameters with the hybrid classifier, run something like the following:
 ```bash
 # Classify data using the hybrid classifier
@@ -70,6 +70,10 @@ The kNN classifier is also available for your use. It will be slightly faster th
 #   -Y (or --results) output file with a classification id and score for every radiometry.
 $ ./bin/release/whatprot classify nn -k 10000 -s 0.5 -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
 ```
+
+### Multithreaded performance
+
+Classification is automatically multithreaded with OpenMP. You can change the number of threads by setting the OMP_NUM_THREADS environment variable. You may experience sub-optimal performance as the number of threads increases on many linux systems. This is because the default memory allocators included with many linux systems have very poor performance with multithreaded workloads. This issue can be alleviated by using the LD_PRELOAD environment variable to inject a better performing implementation of malloc into the application. We use jemalloc, but we expect that any malloc implementation designed to deal with memory allocations from large numbers of threads will be roughly equivalent in performance (i.e., tcmalloc, hoard, or ptmalloc2).
 
 ## Filetypes - what they are and how to get them.
 
