@@ -13,7 +13,7 @@ Oden Institute and Institute for Cellular and Molecular Biology
 You will need a linux (or WSL) system with the following:
 * g++
 * GNU Make (other make programs will likely work, but we use GNU Make)
-* python3
+* python3 (for converting files from Erisyon formats to whatprot formats and examining results; not necessary for classification).
 
 ## Building from source
 
@@ -26,11 +26,98 @@ $ make release
 
 This will result in a binary `whatprot/cc_code/bin/release/whatprot`.
 
-## Example: classification from a radiometry file
+## Running classification
+Classify has three different modes: k-Nearest Neighbors (kNN or just NN), Hidden Markov Models (HMM), or hybrid which combines the two approaches. Each needs a different combination of input files. Below we describe the primary use-cases of these differing classification methods and show examples of how to run them. In the "filetypes" section further down, we describe the various filetypes that you may need as input, as well as how to get them. These often come in two forms; (1) simulated data, useful for validating the efficacy of a labeling strategy for a particular organism, and (2) real data, which generally is taken as output from Erisyon's sigproc pipeline.
 
-Here we assume you have a data file with radiometries produced by Erisyon's sigproc code, a .fasta file containing proteins you wish to sequence against, and a .json file containing the parameterization of your data.
+### HMM classification
+For datasets with smaller numbers of peptides we recommend the HMM classifier. Note that this classifier will have a runtime proportional to the product of your number of peptides and the number of reads you want to analyze; this tends to be unreasonable when your reference database has more than perhaps 1000 peptides, though this may depend on your labeling scheme and other factors. If running the HMM classifier we recommend to run it in the following manner:
+```bash
+# Classify data using the HMM classifier
+#   -p (or --hmmprune) pruning cutoff for HMM (measured in sigma of fluorophore/count
+#      combination). This parameter is optional; if omitted, no pruning cutoff will be
+#      used.
+#   -S (or --dyeseqs) dye-seqs to use as reference for HMM classification.
+#   -R (or --radiometries) radiometries to classify.
+#   -Y (or --results) output file with a classification id and score for every radiometry.
+$ ./bin/release/whatprot classify hmm -p 5 -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
+```
 
-### Convert the radiometry file.
+### hybrid classifier
+The hybrid classifier will greatly improve runtime performance for larger datasets, with little to no impact on the accuracy of your results. To classify data using our recommended parameters with the hybrid classifier, run something like the following:
+```bash
+# Classify data using the hybrid classifier
+#   -k (or --neighbors) number of neighbors to use for kNN part of hybrid classifier.
+#   -s (or --sigma) sigma value for gaussian weighting function for neighbor voting.
+#   -H (or --passthrough) max-cutoff for number of peptides to forward from kNN to HMM
+#   -p (or --hmmprune) pruning cutoff for HMM (measured in sigma of fluorophore/count
+#      combination). This parameter is optional; if omitted, no pruning cutoff will be
+#      used.
+#   -S (or --dyeseqs) dye-seqs to use as reference for HMM classification.
+#   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
+#   -R (or --radiometries) radiometries to classify.
+#   -Y (or --results) output file with a classification id and score for every radiometry.
+$ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
+```
+
+### kNN classification
+The kNN classifier is also available for your use. It will be slightly faster than the hybrid classifier but will give much worse results. Although we believe the hybrid and HMM classifiers should be better for all use cases, if you choose to run the kNN classifier you can run it as follows:
+```bash
+# Classify data using the hybrid classifier
+#   -k (or --neighbors) number of neighbors to use for kNN part of hybrid classifier.
+#   -s (or --sigma) sigma value for gaussian weighting function for neighbor voting.
+#   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
+#   -R (or --radiometries) radiometries to classify.
+#   -Y (or --results) output file with a classification id and score for every radiometry.
+$ ./bin/release/whatprot classify nn -k 10000 -s 0.5 -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
+```
+
+## Filetypes - what they are and how to get them.
+
+### Sequencing parameters file - contains your parameterization of the sequencing process.
+
+```json
+{
+  "p_edman_failure": 0.06,
+  "p_detach": 0.05,
+  "channel_models": [
+    {
+      "p_bleach": 0.05,
+      "p_dud": 0.07,
+      "bg_sig": 0.00667,
+      "mu": 1.0,
+      "sig": 0.16
+    }
+  ]
+}
+```
+
+### Radiometry file - contains 'reads' you wish to classify.
+
+Will have .tsv (tab-separated values) filetype.
+
+#### Radiometry file format
+
+The first three lines are special.
+* Fist line is an integer representing the number of timesteps (i.e., number of Edman cycles plus one).
+* Second line is an integer representing the number of channels (number of colors or types of fluorophore).
+* Third line is an integer representing the number of reads in the file.
+
+The rest of the lines in the file contain read data. Each line is one read. Tab-separated values represent intensity values at each channel and timestep. Two important notes about this file.
+* Each line iterates first through channels and then through timesteps, i.e., timestep 0 channel 0 TAB timestep 0 channel 1 TAB timestep 1 channel 0..... This is the opposite arrangement to the organization of data from Erisyon. This is one of the things handled by the convert_radiometries python function described below.
+* If the range of your intensity values is too high, you could get underflow during classification. Intensity values are arbitrary anyways, so we divide by 15000 in the convert_radiometries function (described below) to avoid this issue for you.
+
+Example radiometries.tsv
+```
+5
+2
+3
+1.05  0.12  0.97  -0.03 1.02  0.01  -0.04 0.02  0.07  0.06
+0.01  1.01  0.03  0.97  0.02  1.02  -0.04 1.04  0.05  0.92
+-0.03 1.07  0.13  0.86  0.09  1.03  -0.06 0.06  0.02  -0.11
+```
+
+#### Converting from Erisyon's format
+
 You will need to convert your radiometries from the format used by Erisyon to the format used by whatprot. Run the following int he Python REPL of your choice, from the whatprot/python directory.
 ```python
 from convert_radiometries import convert_radiometries
@@ -46,7 +133,47 @@ convert_radiometries(num_channels,
                      "path/to/whatprot/format/radmat/file.tsv")
 ```
 
-### Produce a dye-seq file starting with a .fasta file.
+#### Simulating radiometries
+
+If you wish to predict the performance by running on simulated test data, you will do the same as described above, but for your radiometries input you will instead generate the data, as follows:
+```bash
+# Generate radiometry samples:
+#   -t (or --timesteps) number of timesteps to generate during simulation. Should equal number of Edmans + 1.
+#   -g (or --numgenerate) number of reads to simulate total. We recommend setting this to 10000. The actual
+#      number of reads will be less, because reads of unlabelable peptides or all dud-dyes will be removed
+#      from the results -- these would not be seen in real data.
+#   -P (or --seqparams) path to .json file with the sequencing parameters.
+#   -S (or --dyeseqs) path to dye-seq file from previous step to generate dye-tracks based on.
+#   -R (or --radiometries) path to radiometries file to save results to.
+#   -Y (or --results) path to file to save true-ids of the peptides of the generated radiometries.
+$ ./bin/release/whatprot simulate rad -t 10 -g 10000 -P ./path/to/parameters.json -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/true-ids.tsv
+```
+
+### dye-seq files - contains abstract representation of sequenceable information given a labeling scheme.
+
+Will have .tsv (tab-separated values) filetype.
+
+#### Dye-seq file format
+
+First two lines are special 
+* First line is an integer representing the number of channels (number of colors or types of fluorophore).
+* Second line is an integer representing the number of dye-seqs in the file.
+
+Followed by `n_dye_seqs` lines each of which is tab delimited with three terms:
+* a "dye_string" which is a sequence of digits and dots (i.e., period characters). Dots represent amino acids that can't be labeled, while each digit represents an amino acid which can be labeled by a particular type of fluorophore given your labeling scheme. For example '..0.1' is a peptide that can be labelled in position 2 on channel 0 and position 4 on channel 1.
+* the number of peptides that generated this dye_seq.
+* the id of this dye_seq, which will be the lowest valued id of the peptides which generate it.
+
+Example dye_seqs.tsv with 3 channels, 2 sequences:
+
+```
+3
+2
+..0..1.0	2	1
+.220........0	3	2
+```
+
+#### Produce a dye-seq file starting with a .fasta file.
 To produce a 'dye-seq' file that you will use for classification and/or simulation of training data, run the following int he Python REPL of your choice, from the whatprot/python directory.
 ```python
 from cleave_proteins import cleave_proteins
@@ -73,9 +200,33 @@ dye_seqs_from_peptides("path/to/peptides/file/from/previous/step.csv",
                        "path/to/dye-seqs/output/file.tsv")
 ```
 
-### Generate training data (i.e., dye-tracks) if using kNN or hybrid
-If you plan to use the kNN or hybrid classifiers, you will need dye-tracks. These can be
-simulated by whatprot.
+### Dye-track files - contains training data for kNN or hybrid classifiers
+
+You will always simulate these, and you will need a dye-seq to do so.
+
+#### Dye-track file format
+
+First three lines are special
+* First line is number of timesteps
+* Second line is number of channels
+* Third line is number of dye-tracks.
+
+After that each line represents one dye-track. Values are tab delimited.
+* First num timesteps times num channels values are integer values representing the number of remaining fluorophores of that channel at that timestep. This is organized in the same manner as the radiometries file; first by channel, then by timestep.
+* After that there is a number representing the number of distinct dye-seqs which produced this dye-track during simulation.
+* What follows is a list of that length times three; each following triple of values (still tab separated), is first the ID of the dye-seq, then the number of peptides mapping to that dye seq, and thirdly the number of 'hits' or simulated reads from that dye-seq produced the dye-track in this row.
+
+Example dye-track file:
+```
+5
+2
+3
+1 0 1 0 1 0 1 0 0 0 1 171 1 3
+1 2 0 2 0 2 0 1 0 0 3 171 1 5 235 3 8 113 1 1
+0 2 0 2 0 1 0 1 0 1 2 116 1 1 115 1 1
+```
+
+#### Generate dye-tracks
 ```bash
 # Generate dyetrack samples:
 #   -t (or --timesteps) number of timesteps to generate during simulation. Should equal number of Edmans + 1.
@@ -86,47 +237,7 @@ simulated by whatprot.
 $ ./bin/release/whatprot simulate dt -t 10 -g 1000 -P ./path/to/parameters.json -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv
 ```
 
-### Run classification
-To classify data using our recommended parameters with the hybrid classifier, run the following:
-```bash
-# Classify data using the hybrid classifier
-#   -k (or --neighbors) number of neighbors to use for kNN part of hybrid classifier.
-#   -s (or --sigma) sigma value for gaussian weighting function for neighbor voting.
-#   -H (or --passthrough) max-cutoff for number of peptides to forward from kNN to HMM
-#   -p (or --hmmprune) pruning cutoff for HMM (measured in sigma of fluorophore/count
-#      combination). This parameter is optional; if omitted, no pruning cutoff will be
-#      used.
-#   -S (or --dyeseqs) dye-seqs to use as reference for HMM classification.
-#   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
-#   -R (or --radiometries) radiometries to classify.
-#   -Y (or --results) output file with a classification id and score for every radiometry.
-$ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
-```
-
-For smaller datasets we recommend the HMM classifier. In this case run the following:
-```bash
-# Classify data using the HMM classifier
-#   -p (or --hmmprune) pruning cutoff for HMM (measured in sigma of fluorophore/count
-#      combination). This parameter is optional; if omitted, no pruning cutoff will be
-#      used.
-#   -S (or --dyeseqs) dye-seqs to use as reference for HMM classification.
-#   -R (or --radiometries) radiometries to classify.
-#   -Y (or --results) output file with a classification id and score for every radiometry.
-$ ./bin/release/whatprot classify hmm -p 5 -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
-```
-
-The kNN classifier is also available for your use. Although we believe the hybrid and HMM classifiers should be better for all use cases, if you choose to run the kNN classifier you can run it as follows:
-```bash
-# Classify data using the hybrid classifier
-#   -k (or --neighbors) number of neighbors to use for kNN part of hybrid classifier.
-#   -s (or --sigma) sigma value for gaussian weighting function for neighbor voting.
-#   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
-#   -R (or --radiometries) radiometries to classify.
-#   -Y (or --results) output file with a classification id and score for every radiometry.
-$ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.tsv
-```
-
-### Plot precision recall curves
+### Plotting results
 
 To plot one PR curve for read-level precision and recall run the following in Python
 ```python
@@ -168,53 +279,3 @@ plot_pr_curve("path/to/predictions.tsv",
 ```
 
 To plot multiple PR curves together, use instead the 'plot_pr_curves()' function in pr_curves.py (note the extra 's' at the end of the function name). The parameter ordering is the same. You must then provide a list of prediction files instead of just one. You may optionally provide a list of true-values files, a list of dye-seqs files, or even lists of full peptides files or limited (true-set) peptide files. For each of these variables, if one value is given it is used for every predictions file specified, and if you instead provide a list then the values are collated.
-
-## Performance prediction with simulated data
-
-If you wish to predict the performance by running on simulated test data, you will do the same as described above, but for your radiometries input you will instead generate the data, as follows:
-```bash
-# Generate dyetrack samples:
-#   -t (or --timesteps) number of timesteps to generate during simulation. Should equal number of Edmans + 1.
-#   -g (or --numbenerate) number of reads to simulate total. We recommend setting this to 10000.
-#   -P (or --seqparams) path to .json file with the sequencing parameters.
-#   -S (or --dyeseqs) path to dye-seq file from previous step to generate dye-tracks based on.
-#   -R (or --radiometries) path to radiometries file to save results to.
-#   -Y (or --results) path to file to save true-ids of the peptides of the generated radiometries.
-$ ./bin/release/whatprot simulate dt -t 10 -g 10000 -P ./path/to/parameters.json -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/true-ids.tsv
-```
-
-## File formats
-
-### dye_seqs.tsv
-
-Tab delimited file.
-
-First two lines are special standalone ints that represent: n_channels and n_dye_seqs
-
-Followed by `n_dye_seqs` lines each of which is tab delimited with three terms:
-* a "dye_string"
-* the number of peptides that generated this dye_seq.
-* the id of this dye_seq.
-
-Note that when the id of a dye_seq is produced from peptides, the dye seq is assigned an id
-from one of the peptides. The c++ code doesn't know how to read peptide data
-though so may not be super relevant, just helps with analysis to be able
-to guess at a particular peptide.
-
-#### dye_string
-A "dye_string" is a summary of a labeling.
-
-Example dye_string:
-```
-..0.1  = A peptide that is labelled in the [2] position with channel 0 and [4] with channel 1
-```
-
-
-Example dye_seqs.tsv with 3 channels, 2 sequences:
-
-```
-3
-2
-..0..1.0	2	1
-.220........0	3	2
-```
