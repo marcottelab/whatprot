@@ -8,14 +8,38 @@ The University of Texas at Austin
 
 Oden Institute and Institute for Cellular and Molecular Biology
 
-## Prerequisites
+## Table of Contents
+
+* [Prerequisites](#prerequisites)
+* [Building from source](#buildingfromsource)
+* [Running classification](#runningclassification)
+  * [HMM classification](#hmmclassification)
+  * [Hybrid classification](#hybridclassification)
+  * [kNN classification](#knnclassification)
+  * [Multithreaded performance](#multithreadedperformance)
+* [Filetypes](#filetypes)
+  * [Sequencing parameters file](#sequencingparametersfile)
+  * [Radiometry files](#radiometryfile)
+    * [Radiometry file format](#radiometryfileformat)
+    * [Converting from Erisyon's format](#radiometryfromerisyon)
+    * [Simulating radiometries](#simulatingradiometries)
+  * [Dye-seq files](#dyeseqfiles)
+    * [Dye-seq file format](#dyeseqfileformat)
+    * [Produce a dye-seq file starting with a .fasta file.](#dyeseqfromfasta)
+  * [Dye-track files](#dyetrackfiles)
+    * [Dye-track file format](#dyetrackfileformat)
+    * [Generate dye-tracks](#generatedyetracks)
+* [Plotting results](#plottingresults)
+* [Sample runthrough with simulated data](#samplerunthroughsimulated)
+
+## Prerequisites <a name='prerequisites' />
 
 You will need a linux (or WSL) system with the following:
 * g++
 * GNU Make (other make programs will likely work, but we use GNU Make)
 * python3 (for converting files from Erisyon formats to whatprot formats and examining results; not necessary for classification).
 
-## Building from source
+## Building from source <a name='buildingfromsource' />
 
 Built using g++.
 
@@ -26,10 +50,10 @@ $ make release
 
 This will result in a binary `whatprot/cc_code/bin/release/whatprot`.
 
-## Running classification
+## Running classification <a name='runningclassification' />
 Classify has three different modes: k-Nearest Neighbors (kNN or just NN), Hidden Markov Models (HMM), or hybrid which combines the two approaches. Each needs a different combination of input files. Below we describe the primary use-cases of these differing classification methods and show examples of how to run them. In the "filetypes" section further down, we describe the various filetypes that you may need as input, as well as how to get them. These often come in two forms; (1) simulated data, useful for validating the efficacy of a labeling strategy for a particular organism, and (2) real data, which generally is taken as output from Erisyon's sigproc pipeline.
 
-### HMM classification
+### HMM classification <a name='hmmclassification' />
 For datasets with smaller numbers of peptides we recommend the HMM classifier. Note that this classifier will have a runtime proportional to the product of your number of peptides and the number of reads you want to analyze; this tends to be unreasonable when your reference database has more than perhaps 1000 peptides, though this may depend on your labeling scheme and other factors. If running the HMM classifier we recommend to run it in the following manner:
 ```bash
 # Classify data using the HMM classifier
@@ -42,7 +66,7 @@ For datasets with smaller numbers of peptides we recommend the HMM classifier. N
 $ ./bin/release/whatprot classify hmm -p 5 -P ./path/to/seq-params.json -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.csv
 ```
 
-### hybrid classification
+### hybrid classification <a name='hybridclassification' />
 The hybrid classifier will greatly improve runtime performance for larger datasets, with little to no impact on the accuracy of your results. To classify data using our recommended parameters with the hybrid classifier, run something like the following:
 ```bash
 # Classify data using the hybrid classifier
@@ -59,7 +83,7 @@ The hybrid classifier will greatly improve runtime performance for larger datase
 $ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -P ./path/to/seq-params.json -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.csv
 ```
 
-### kNN classification
+### kNN classification <a name='knnclassification' />
 The kNN classifier is also available for your use. It will be slightly faster than the hybrid classifier but will give much worse results. Although we believe the hybrid and HMM classifiers should be better for all use cases, if you choose to run the kNN classifier you can run it as follows:
 ```bash
 # Classify data using the hybrid classifier
@@ -71,13 +95,13 @@ The kNN classifier is also available for your use. It will be slightly faster th
 $ ./bin/release/whatprot classify nn -k 10000 -s 0.5 -P ./path/to/seq-params.json -T ./path/to/dye-tracks.tsv -R ./path/to/radiometries.tsv -Y ./path/to/predictions.csv
 ```
 
-### Multithreaded performance
+### Multithreaded performance <a name='multithreadedperformance' />
 
 Classification is automatically multithreaded with OpenMP. You can change the number of threads by setting the OMP_NUM_THREADS environment variable. You may experience sub-optimal performance as the number of threads increases on many linux systems. This is because the default memory allocators included with many linux systems have very poor performance with multithreaded workloads. This issue can be alleviated by using the LD_PRELOAD environment variable to inject a better performing implementation of malloc into the application. We use jemalloc, but we expect that any malloc implementation designed to deal with memory allocations from large numbers of threads will be roughly equivalent in performance (i.e., tcmalloc, hoard, or ptmalloc2).
 
-## Filetypes - what they are and how to get them.
+## Filetypes - what they are and how to get them. <a name='filetypes' />
 
-### Sequencing parameters file - contains your parameterization of the sequencing process.
+### Sequencing parameters file - contains your parameterization of the sequencing process. <a name='sequencingparametersfile' />
 
 ```json
 {
@@ -95,11 +119,11 @@ Classification is automatically multithreaded with OpenMP. You can change the nu
 }
 ```
 
-### Radiometry file - contains 'reads' you wish to classify.
+### Radiometry file - contains 'reads' you wish to classify. <a name='radiometryfile' />
 
 Will have .tsv (tab-separated values) filetype.
 
-#### Radiometry file format
+#### Radiometry file format <a name='radiometryfileformat' />
 
 The first three lines are special.
 * Fist line is an integer representing the number of timesteps (i.e., number of Edman cycles plus one).
@@ -120,7 +144,7 @@ Example radiometries.tsv
 -0.03 1.07  0.13  0.86  0.09  1.03  -0.06 0.06  0.02  -0.11
 ```
 
-#### Converting from Erisyon's format
+#### Converting from Erisyon's format <a name='radiometryfromerisyon' />
 
 You will need to convert your radiometries from the format used by Erisyon to the format used by whatprot. Run the following int he Python REPL of your choice, from the whatprot/python directory.
 ```python
@@ -137,7 +161,7 @@ convert_radiometries(num_channels,
                      "path/to/whatprot/format/radmat/file.tsv")
 ```
 
-#### Simulating radiometries
+#### Simulating radiometries <a name='simulatingradiometries' />
 
 If you wish to predict the performance by running on simulated test data, you will do the same as described above, but for your radiometries input you will instead generate the data, as follows:
 ```bash
@@ -153,11 +177,11 @@ If you wish to predict the performance by running on simulated test data, you wi
 $ ./bin/release/whatprot simulate rad -t 10 -g 10000 -P ./path/to/parameters.json -S ./path/to/dye-seqs.tsv -R ./path/to/radiometries.tsv -Y ./path/to/true-ids.tsv
 ```
 
-### dye-seq files - contains abstract representation of sequenceable information given a labeling scheme.
+### dye-seq files - contains abstract representation of sequenceable information given a labeling scheme. <a name='dyeseqfiles'/>
 
 Will have .tsv (tab-separated values) filetype.
 
-#### Dye-seq file format
+#### Dye-seq file format <a name='dyeseqfileformat' />
 
 First two lines are special 
 * First line is an integer representing the number of channels (number of colors or types of fluorophore).
@@ -177,7 +201,7 @@ Example dye_seqs.tsv with 3 channels, 2 sequences:
 .220........0	3	2
 ```
 
-#### Produce a dye-seq file starting with a .fasta file.
+#### Produce a dye-seq file starting with a .fasta file. <a name='dyeseqfromfasta' />
 To produce a 'dye-seq' file that you will use for classification and/or simulation of training data, run the following int he Python REPL of your choice, from the whatprot/python directory.
 ```python
 from cleave_proteins import cleave_proteins
@@ -205,11 +229,11 @@ dye_seqs_from_peptides("path/to/peptides/file/from/previous/step.csv",
                        "path/to/dye-seqs/output/file.tsv")
 ```
 
-### Dye-track files - contains training data for kNN or hybrid classifiers
+### Dye-track files - contains training data for kNN or hybrid classifiers <a name='dyetrackfiles' />
 
 You will always simulate these, and you will need a dye-seq to do so.
 
-#### Dye-track file format
+#### Dye-track file format <a name='dyetrackfileformat' />
 
 First three lines are special
 * First line is number of timesteps
@@ -231,7 +255,7 @@ Example dye-track file:
 0 2 0 2 0 1 0 1 0 1 2 116 1 1 115 1 1
 ```
 
-#### Generate dye-tracks
+#### Generate dye-tracks <a name='generatedyetracks' />
 ```bash
 # Generate dyetrack samples:
 #   -t (or --timesteps) number of timesteps to generate during simulation. Should equal number of Edmans + 1.
@@ -242,7 +266,7 @@ Example dye-track file:
 $ ./bin/release/whatprot simulate dt -t 10 -g 1000 -P ./path/to/parameters.json -S ./path/to/dye-seqs.tsv -T ./path/to/dye-tracks.tsv
 ```
 
-### Plotting results
+## Plotting results <a name='plottingresults' />
 
 To plot one PR curve for read-level precision and recall run the following in Python
 ```python
@@ -285,7 +309,7 @@ plot_pr_curve("path/to/predictions.tsv",
 
 To plot multiple PR curves together, use instead the 'plot_pr_curves()' function in pr_curves.py (note the extra 's' at the end of the function name). The parameter ordering is the same. You must then provide a list of prediction files instead of just one. You may optionally provide a list of true-values files, a list of dye-seqs files, or even lists of full peptides files or limited (true-set) peptide files. For each of these variables, if one value is given it is used for every predictions file specified, and if you instead provide a list then the values are collated.
 
-## Sample runthrough with simulated data
+## Sample runthrough with simulated data <a name='samplerunthroughsimulated' />
 
 ```bash
 $ mkdir temp
