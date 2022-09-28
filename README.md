@@ -284,3 +284,38 @@ plot_pr_curve("path/to/predictions.tsv",
 ```
 
 To plot multiple PR curves together, use instead the 'plot_pr_curves()' function in pr_curves.py (note the extra 's' at the end of the function name). The parameter ordering is the same. You must then provide a list of prediction files instead of just one. You may optionally provide a list of true-values files, a list of dye-seqs files, or even lists of full peptides files or limited (true-set) peptide files. For each of these variables, if one value is given it is used for every predictions file specified, and if you instead provide a list then the values are collated.
+
+## Sample runthrough with simulated data
+
+```bash
+$ mkdir temp
+$ cd python
+$ python
+```
+```python
+from cleave_proteins import cleave_proteins
+from dye_seqs_from_peptides import dye_seqs_from_peptides
+cleave_proteins("../examples/UP000005640_9606.fasta",
+                "../temp/peptides.tsv",
+                "trypsin"
+                n=100)
+dye_seqs_from_peptides("../temp/peptides.tsv",
+                       ['DE','C','Y'],
+                       "../temp/dye-seqs.tsv")
+```
+```bash
+$ cd ../cc_code
+$ ./bin/release/whatprot simulate rad -t 10 -g 10000 -P ../examples/seqparams_atto647n_x3.json -S ../temp/dye-seqs.tsv -R ../temp/radiometries.tsv -Y ../temp/true-ids.tsv
+$ ./bin/release/whatprot simulate dt -t 10 -g 1000 -P ../examples/seqparams_atto647n_x3.json -S ../temp/dye-seqs.tsv -T ../temp/dye-tracks.tsv
+$ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -P ../examples/seqparams_atto647n_x3.json -S ../temp/dye-seqs.tsv -T ../temp/dye-tracks.tsv -R ../temp/radiometries.tsv -Y ../temp/predictions.csv
+$ cd ../python
+$ python
+```
+```python
+from pr_curve import pr_curve
+import matplotlib.pyplot as plt
+plot_pr_curve("../temp/predictions.csv",
+              "../temp/true-ids.tsv",
+              "../temp/dye-seqs.tsv")
+plt.show()
+```
