@@ -181,6 +181,8 @@ Example dye_seqs.tsv with 3 channels, 2 sequences:
 To produce a 'dye-seq' file that you will use for classification and/or simulation of training data, run the following int he Python REPL of your choice, from the whatprot/python directory.
 ```python
 from cleave_proteins import cleave_proteins
+from dye_seqs_from_peptides import dye_seqs_from_peptides
+
 # - Replace filepaths as appropriate.
 # - Replace "name-of-protease" with one of the following: "trypsin", "cyanogen bromide", or
 #   "EndoPRO".
@@ -191,7 +193,6 @@ cleave_proteins("path/to/fasta/file.fasta",
                 "name-of-protease"
                 n=10)
 
-from dye_seqs_from_peptides import dye_seqs_from_peptides
 # - Replace filepaths as appropriate.
 # - label_set should be a list of strings, each string containing a set of characters
 #   (typically but not always just one character). Each index of the list represents a
