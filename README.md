@@ -353,3 +353,5 @@ plt.show()
 
 What you get should look something like this:
 ![example](https://user-images.githubusercontent.com/3892206/193147900-16c8ec47-5837-4bdc-bb7a-69b59cac09c4.png)
+
+Note that you may not get exactly the same result, as there is randomness involved. Nevertheless your result should be similar.
