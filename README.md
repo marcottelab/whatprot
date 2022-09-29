@@ -311,11 +311,14 @@ To plot multiple PR curves together, use instead the 'plot_pr_curves()' function
 
 ## Sample runthrough with simulated data <a name='samplerunthroughsimulated' />
 
+First we make a directory to put our intermediate files and results into, then go into the python subdirectory and start python.
 ```bash
 $ mkdir temp
 $ cd python
 $ python
 ```
+
+In python, we will cleave a random set of 100 proteins, and then apply a labeling scheme, in order to get a dye-seqs file.
 ```python
 from cleave_proteins import cleave_proteins
 from dye_seqs_from_peptides import dye_seqs_from_peptides
@@ -327,6 +330,8 @@ dye_seqs_from_peptides("../temp/peptides.tsv",
                        ['DE','C','Y'],
                        "../temp/dye-seqs.tsv")
 ```
+
+After exiting python, we go into the cc_code directory and simulate radiometries (simulate rad), simulate dye-tracks (simulate dt), classify using the hybrid model (classify hybrid) and then go back to the python directory and start python (this section assumes you have already built the application - if not see [Building from source](#buildingfromsource)).
 ```bash
 $ cd ../cc_code
 $ ./bin/release/whatprot simulate rad -t 10 -g 10000 -P ../examples/seqparams_atto647n_x3.json -S ../temp/dye-seqs.tsv -R ../temp/radiometries.tsv -Y ../temp/true-ids.tsv
@@ -335,6 +340,8 @@ $ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -P ../exam
 $ cd ../python
 $ python
 ```
+
+Back in python, we plot our results.
 ```python
 from pr_curve import plot_pr_curve
 import matplotlib.pyplot as plt
@@ -343,3 +350,6 @@ plot_pr_curve("../temp/predictions.csv",
               "../temp/dye-seqs.tsv")
 plt.show()
 ```
+
+What you get should look something like this:
+![example](https://user-images.githubusercontent.com/3892206/193147900-16c8ec47-5837-4bdc-bb7a-69b59cac09c4.png)
