@@ -270,7 +270,7 @@ $ ./bin/release/whatprot simulate dt -t 10 -g 1000 -P ./path/to/parameters.json 
 
 To plot one PR curve for read-level precision and recall run the following in Python
 ```python
-from pr_curve import pr_curve
+from pr_curve import plot_pr_curve
 import matplotlib.pyplot as plt
 
 # - The predictions file is your classification results.
@@ -290,7 +290,7 @@ plot_pr_curve("path/to/predictions.tsv",
 To plot one PR curve for each of read-level, peptide-level, and protein-level precision
 and recall run the following in Python.
 ```python
-from pr_curve import pr_curve
+from pr_curve import plot_pr_curve
 import matplotlib.pyplot as plt
 
 # - First three variables are as before.
@@ -321,7 +321,7 @@ from cleave_proteins import cleave_proteins
 from dye_seqs_from_peptides import dye_seqs_from_peptides
 cleave_proteins("../examples/UP000005640_9606.fasta",
                 "../temp/peptides.tsv",
-                "trypsin"
+                "trypsin",
                 n=100)
 dye_seqs_from_peptides("../temp/peptides.tsv",
                        ['DE','C','Y'],
@@ -336,7 +336,7 @@ $ cd ../python
 $ python
 ```
 ```python
-from pr_curve import pr_curve
+from pr_curve import plot_pr_curve
 import matplotlib.pyplot as plt
 plot_pr_curve("../temp/predictions.csv",
               "../temp/true-ids.tsv",
