@@ -3,10 +3,7 @@
 @author: Matthew Beauregard Smith (UT Austin)
 """
 
-from numpy import load
-from numpy import transpose
-from numpy import genfromtxt
-from numpy import reshape
+import numpy as np
 
 # num_channels: number of channels (or colors) of fluorophore in use.
 # num_mocks: number of Edman mocks before sequencing truly begins. These cycles
@@ -18,21 +15,49 @@ from numpy import reshape
 # radmat_file: input file from Erisyon, in either .tsv or .npy format.
 # output_file: where you want your data to go. The filename should end in .tsv,
 #              since it is produced in .tsv (tab separated values) format.
-def convert_radiometries(num_channels, num_mocks, num_cycles, radmat_file, output_file):
+def convert_radiometries(num_channels, num_mocks, num_cycles, radmat_file, output_file, ranges_by_channel=None):
     # radmats may come in two different formats, a .npy (numpy) file or a .tsv
     # (tab separated values) file. We can handle either but we need to know the
     # extension.
     radmat = None
     radmat_filetype = radmat_file.split('.')[-1]
     if radmat_filetype == 'npy':
-        radmat = load(radmat_file)
+        radmat = np.load(radmat_file)
     elif radmat_filetype == 'tsv':
-        radmat = genfromtxt(radmat_file, delimiter='\t', dtype=float)[:,1:]
-        radmat = reshape(radmat, (radmat.shape[0], num_channels, num_mocks + num_cycles))
+        radmat = np.genfromtxt(radmat_file, delimiter='\t', dtype=float)[:,1:]
+        radmat = np.reshape(radmat, (radmat.shape[0], num_channels, num_mocks + num_cycles))
     else:
         # This is a problem.
         return
-    radmat = transpose(radmat, (0, 2, 1))
+    
+    print('Read ' + str(radmat.shape[0]) + ' radiometries.\n')
+
+    # Filter out user defined ranges
+    if ranges_by_channel != None:
+        row_list = []
+        for i in range(radmat.shape[0]):
+            row_ok = True
+            for c in range(num_channels):
+                channel_ok = True
+                for j in range(num_mocks + num_cycles):
+                    x = radmat[i, c, j]
+                    value_ok = False
+                    for k in range(len(ranges_by_channel[c])):
+                        if ranges_by_channel[c][k][0] < x and x < ranges_by_channel[c][k][1]:
+                            value_ok = True
+                            break
+                    if not value_ok:
+                        channel_ok = False
+                        break
+                if not channel_ok:
+                    row_ok = False
+                    break
+            if row_ok:
+                row_list += [i]
+        radmat = radmat[row_list,:,:]
+        print('After filtering, ' + str(radmat.shape[0]) + ' radiometries remain.\n')
+
+    radmat = np.transpose(radmat, (0, 2, 1))
 
     # Fix intensities. If the intensities are systematically too large, the
     # probabilities will be too low and we will get underflow when the values
