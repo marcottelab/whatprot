@@ -20,9 +20,9 @@ def cleave_proteins(fasta, fpeptides, protease, n = -1):
             if (line[0] == '>'):
                 break
             protein += line
+        proteins += [(pid, protein)]
         if (not line):
             break
-        proteins += [(pid, protein)]
         pid += 1
     fpro.close()
     npros = 0
