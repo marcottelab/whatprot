@@ -34,6 +34,7 @@ public:
     double source() const;
 
     Tensor tensor;
+    Tensor broken_n_tensor;
     KDRange range;
     double p_detached;  // probability of detached state.
     bool allow_detached;  // detached state "in range"

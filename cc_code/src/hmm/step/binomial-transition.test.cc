@@ -259,9 +259,11 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     PeptideStateVector psv1(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0}] = 1.0;
+    psv1.broken_n_tensor[{0, 0}] = 2.0;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 1.0);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}] == 2.0));
     delete psv2;
 }
 
@@ -283,10 +285,14 @@ BOOST_AUTO_TEST_CASE(forward_basic_transition_test, *tolerance(TOL)) {
     delete[] shape;
     psv1.tensor[{0, 0}] = 0.3;
     psv1.tensor[{0, 1}] = 0.7;
+    psv1.broken_n_tensor[{0, 0}] = 0.03;
+    psv1.broken_n_tensor[{0, 1}] = 0.07;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 0.3 + 0.7 * q);
     BOOST_TEST((psv2->tensor[{0, 1}]) == 0.7 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03 + 0.07 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.07 * p);
     delete psv2;
 }
 
@@ -309,11 +315,18 @@ BOOST_AUTO_TEST_CASE(forward_bigger_transition_test, *tolerance(TOL)) {
     psv1.tensor[{0, 0}] = 0.2;
     psv1.tensor[{0, 1}] = 0.3;
     psv1.tensor[{0, 2}] = 0.7;
+    psv1.broken_n_tensor[{0, 0}] = 0.02;
+    psv1.broken_n_tensor[{0, 1}] = 0.03;
+    psv1.broken_n_tensor[{0, 2}] = 0.07;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 0.2 + 0.3 * q + 0.7 * q * q);
     BOOST_TEST((psv2->tensor[{0, 1}]) == 0.3 * p + 0.7 * 2 * q * p);
     BOOST_TEST((psv2->tensor[{0, 2}]) == 0.7 * p * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}])
+               == 0.02 + 0.03 * q + 0.07 * q * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.03 * p + 0.07 * 2 * q * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == 0.07 * p * p);
     delete psv2;
 }
 
@@ -337,9 +350,14 @@ BOOST_AUTO_TEST_CASE(forward_pruned_transition_test, *tolerance(TOL)) {
     psv1.tensor[{0, 1}] = 0.3;
     psv1.tensor[{0, 2}] = 0.7;
     psv1.tensor[{0, 3}] = 0.9;
+    psv1.broken_n_tensor[{0, 0}] = 0.02;
+    psv1.broken_n_tensor[{0, 1}] = 0.03;
+    psv1.broken_n_tensor[{0, 2}] = 0.07;
+    psv1.broken_n_tensor[{0, 3}] = 0.09;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 1}]) == 0.7 * 2 * q * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.07 * 2 * q * p);
     BOOST_TEST(psv2->range.min[0] == 0u);
     BOOST_TEST(psv2->range.min[1] == 1u);
     BOOST_TEST(psv2->range.max[0] == 1u);
@@ -369,6 +387,12 @@ BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
     psv1.tensor[{1, 1}] = 0.7;
     psv1.tensor[{2, 0}] = 0.4;
     psv1.tensor[{2, 1}] = 0.6;
+    psv1.broken_n_tensor[{0, 0}] = 0.02;
+    psv1.broken_n_tensor[{0, 1}] = 0.08;
+    psv1.broken_n_tensor[{1, 0}] = 0.03;
+    psv1.broken_n_tensor[{1, 1}] = 0.07;
+    psv1.broken_n_tensor[{2, 0}] = 0.04;
+    psv1.broken_n_tensor[{2, 1}] = 0.06;
     unsigned int edmans = 2;
     PeptideStateVector* psv2 = bt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 0.2 + 0.8 * q);
@@ -377,6 +401,12 @@ BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->tensor[{1, 1}]) == 0.7 * p);
     BOOST_TEST((psv2->tensor[{2, 0}]) == 0.4 + 0.6 * q);
     BOOST_TEST((psv2->tensor[{2, 1}]) == 0.6 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.02 + 0.08 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.08 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{1, 0}]) == 0.03 + 0.07 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{1, 1}]) == 0.07 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{2, 0}]) == 0.04 + 0.06 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{2, 1}]) == 0.06 * p);
     delete psv2;
 }
 
@@ -406,6 +436,14 @@ BOOST_AUTO_TEST_CASE(forward_other_dye_colors_test, *tolerance(TOL)) {
     psv1.tensor[{0, 1, 0, 1}] = 0.6;
     psv1.tensor[{0, 1, 1, 0}] = 0.7;
     psv1.tensor[{0, 1, 1, 1}] = 0.8;
+    psv1.broken_n_tensor[{0, 0, 0, 0}] = 0.01;
+    psv1.broken_n_tensor[{0, 0, 0, 1}] = 0.02;
+    psv1.broken_n_tensor[{0, 0, 1, 0}] = 0.03;
+    psv1.broken_n_tensor[{0, 0, 1, 1}] = 0.04;
+    psv1.broken_n_tensor[{0, 1, 0, 0}] = 0.05;
+    psv1.broken_n_tensor[{0, 1, 0, 1}] = 0.06;
+    psv1.broken_n_tensor[{0, 1, 1, 0}] = 0.07;
+    psv1.broken_n_tensor[{0, 1, 1, 1}] = 0.08;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0, 0, 0}]) == 0.1 + 0.3 * q);
@@ -416,6 +454,14 @@ BOOST_AUTO_TEST_CASE(forward_other_dye_colors_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->tensor[{0, 1, 0, 1}]) == 0.6 + 0.8 * q);
     BOOST_TEST((psv2->tensor[{0, 1, 1, 0}]) == 0.7 * p);
     BOOST_TEST((psv2->tensor[{0, 1, 1, 1}]) == 0.8 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0, 0}]) == 0.01 + 0.03 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0, 1}]) == 0.02 + 0.04 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 1, 0}]) == 0.03 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 1, 1}]) == 0.04 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 0, 0}]) == 0.05 + 0.07 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 0, 1}]) == 0.06 + 0.08 * q);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 1, 0}]) == 0.07 * p);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 1, 1}]) == 0.08 * p);
     delete psv2;
 }
 
@@ -435,9 +481,11 @@ BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
     PeptideStateVector psv1(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0}] = 1.0;
+    psv1.broken_n_tensor[{0, 0}] = 2.0;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 1.0);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 2.0);
     delete psv2;
 }
 
@@ -459,10 +507,14 @@ BOOST_AUTO_TEST_CASE(backward_basic_transition_test, *tolerance(TOL)) {
     delete[] shape;
     psv1.tensor[{0, 0}] = 0.3;
     psv1.tensor[{0, 1}] = 0.7;
+    psv1.broken_n_tensor[{0, 0}] = 0.03;
+    psv1.broken_n_tensor[{0, 1}] = 0.07;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 0.3);
     BOOST_TEST((psv2->tensor[{0, 1}]) == q * 0.3 + p * 0.7);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == q * 0.03 + p * 0.07);
     delete psv2;
 }
 
@@ -485,12 +537,19 @@ BOOST_AUTO_TEST_CASE(backward_bigger_transition_test, *tolerance(TOL)) {
     psv1.tensor[{0, 0}] = 0.2;
     psv1.tensor[{0, 1}] = 0.3;
     psv1.tensor[{0, 2}] = 0.7;
+    psv1.broken_n_tensor[{0, 0}] = 0.02;
+    psv1.broken_n_tensor[{0, 1}] = 0.03;
+    psv1.broken_n_tensor[{0, 2}] = 0.07;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 0.2);
     BOOST_TEST((psv2->tensor[{0, 1}]) == q * 0.2 + p * 0.3);
     BOOST_TEST((psv2->tensor[{0, 2}])
                == q * q * 0.2 + 2 * q * p * 0.3 + p * p * 0.7);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.02);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == q * 0.02 + p * 0.03);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
+               == q * q * 0.02 + 2 * q * p * 0.03 + p * p * 0.07);
     delete psv2;
 }
 
@@ -514,9 +573,14 @@ BOOST_AUTO_TEST_CASE(backward_pruned_transition_test, *tolerance(TOL)) {
     psv1.tensor[{0, 1}] = 0.3;
     psv1.tensor[{0, 2}] = 0.7;
     psv1.tensor[{0, 3}] = 0.9;
+    psv1.broken_n_tensor[{0, 0}] = 0.02;
+    psv1.broken_n_tensor[{0, 1}] = 0.03;
+    psv1.broken_n_tensor[{0, 2}] = 0.07;
+    psv1.broken_n_tensor[{0, 3}] = 0.09;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 2}]) == 2 * q * p * 0.3);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == 2 * q * p * 0.03);
     BOOST_TEST(psv2->range.min[0] == 0u);
     BOOST_TEST(psv2->range.min[1] == 2u);
     BOOST_TEST(psv2->range.max[0] == 1u);
@@ -546,6 +610,12 @@ BOOST_AUTO_TEST_CASE(backward_multiple_edmans_test, *tolerance(TOL)) {
     psv1.tensor[{1, 1}] = 0.7;
     psv1.tensor[{2, 0}] = 0.4;
     psv1.tensor[{2, 1}] = 0.6;
+    psv1.broken_n_tensor[{0, 0}] = 0.02;
+    psv1.broken_n_tensor[{0, 1}] = 0.08;
+    psv1.broken_n_tensor[{1, 0}] = 0.03;
+    psv1.broken_n_tensor[{1, 1}] = 0.07;
+    psv1.broken_n_tensor[{2, 0}] = 0.04;
+    psv1.broken_n_tensor[{2, 1}] = 0.06;
     unsigned int edmans = 2;
     PeptideStateVector* psv2 = bt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 0.2);
@@ -554,6 +624,12 @@ BOOST_AUTO_TEST_CASE(backward_multiple_edmans_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->tensor[{1, 1}]) == q * 0.3 + p * 0.7);
     BOOST_TEST((psv2->tensor[{2, 0}]) == 0.4);
     BOOST_TEST((psv2->tensor[{2, 1}]) == q * 0.4 + p * 0.6);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.02);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == q * 0.02 + p * 0.08);
+    BOOST_TEST((psv2->broken_n_tensor[{1, 0}]) == 0.03);
+    BOOST_TEST((psv2->broken_n_tensor[{1, 1}]) == q * 0.03 + p * 0.07);
+    BOOST_TEST((psv2->broken_n_tensor[{2, 0}]) == 0.04);
+    BOOST_TEST((psv2->broken_n_tensor[{2, 1}]) == q * 0.04 + p * 0.06);
     delete psv2;
 }
 
@@ -583,6 +659,14 @@ BOOST_AUTO_TEST_CASE(backward_other_dye_colors_test, *tolerance(TOL)) {
     psv1.tensor[{0, 1, 0, 1}] = 0.6;
     psv1.tensor[{0, 1, 1, 0}] = 0.7;
     psv1.tensor[{0, 1, 1, 1}] = 0.8;
+    psv1.broken_n_tensor[{0, 0, 0, 0}] = 0.01;
+    psv1.broken_n_tensor[{0, 0, 0, 1}] = 0.02;
+    psv1.broken_n_tensor[{0, 0, 1, 0}] = 0.03;
+    psv1.broken_n_tensor[{0, 0, 1, 1}] = 0.04;
+    psv1.broken_n_tensor[{0, 1, 0, 0}] = 0.05;
+    psv1.broken_n_tensor[{0, 1, 0, 1}] = 0.06;
+    psv1.broken_n_tensor[{0, 1, 1, 0}] = 0.07;
+    psv1.broken_n_tensor[{0, 1, 1, 1}] = 0.08;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0, 0, 0}]) == 0.1);
@@ -593,6 +677,14 @@ BOOST_AUTO_TEST_CASE(backward_other_dye_colors_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->tensor[{0, 1, 0, 1}]) == 0.6);
     BOOST_TEST((psv2->tensor[{0, 1, 1, 0}]) == q * 0.5 + p * 0.7);
     BOOST_TEST((psv2->tensor[{0, 1, 1, 1}]) == q * 0.6 + p * 0.8);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0, 0}]) == 0.01);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0, 1}]) == 0.02);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 1, 0}]) == q * 0.01 + p * 0.03);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 1, 1}]) == q * 0.02 + p * 0.04);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 0, 0}]) == 0.05);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 0, 1}]) == 0.06);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 1, 0}]) == q * 0.05 + p * 0.07);
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 1, 1}]) == q * 0.06 + p * 0.08);
     delete psv2;
 }
 
@@ -611,10 +703,13 @@ BOOST_AUTO_TEST_CASE(improve_fit_trivial_test, *tolerance(TOL)) {
     shape[1] = 1;
     PeptideStateVector fpsv(order, shape);
     fpsv.tensor[{0, 0}] = 1.0;
+    fpsv.broken_n_tensor[{0, 0}] = 2.0;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 1.0;
+    bpsv.broken_n_tensor[{0, 0}] = 2.0;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 1.0;
+    nbpsv.broken_n_tensor[{0, 0}] = 2.0;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 1.0;
@@ -640,18 +735,26 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     PeptideStateVector fpsv(order, shape);
     fpsv.tensor[{0, 0}] = 0.31;
     fpsv.tensor[{0, 1}] = 0.71;
+    fpsv.broken_n_tensor[{0, 0}] = 0.031;
+    fpsv.broken_n_tensor[{0, 1}] = 0.071;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 0.32;
     bpsv.tensor[{0, 1}] = 0.72;
+    bpsv.broken_n_tensor[{0, 0}] = 0.032;
+    bpsv.broken_n_tensor[{0, 1}] = 0.072;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 0.33;
     nbpsv.tensor[{0, 1}] = 0.73;
+    nbpsv.broken_n_tensor[{0, 0}] = 0.033;
+    nbpsv.broken_n_tensor[{0, 1}] = 0.073;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
-    BOOST_TEST(pf.get() == (0.71 * q * 0.33) / (0.71 * 0.72));
+    BOOST_TEST(pf.get()
+               == (0.71 * q * 0.33 + 0.071 * q * 0.033)
+                          / (0.71 * 0.72 + 0.071 * 0.072));
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
@@ -672,14 +775,23 @@ BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
     fpsv.tensor[{0, 0}] = 0.31;
     fpsv.tensor[{0, 1}] = 0.71;
     fpsv.tensor[{0, 2}] = 0.91;
+    fpsv.broken_n_tensor[{0, 0}] = 0.031;
+    fpsv.broken_n_tensor[{0, 1}] = 0.071;
+    fpsv.broken_n_tensor[{0, 2}] = 0.091;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 0.32;
     bpsv.tensor[{0, 1}] = 0.72;
     bpsv.tensor[{0, 2}] = 0.92;
+    bpsv.broken_n_tensor[{0, 0}] = 0.032;
+    bpsv.broken_n_tensor[{0, 1}] = 0.072;
+    bpsv.broken_n_tensor[{0, 2}] = 0.092;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 0.33;
     nbpsv.tensor[{0, 1}] = 0.73;
     nbpsv.tensor[{0, 2}] = 0.93;
+    nbpsv.broken_n_tensor[{0, 0}] = 0.033;
+    nbpsv.broken_n_tensor[{0, 1}] = 0.073;
+    nbpsv.broken_n_tensor[{0, 2}] = 0.093;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 1.0;
@@ -687,8 +799,11 @@ BOOST_AUTO_TEST_CASE(improve_fit_bigger_test, *tolerance(TOL)) {
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
     BOOST_TEST(pf.get()
                == (0.71 * q * 0.33 + 0.91 * (q * p * 2.0) * 0.73
-                   + 0.91 * (q * q) * 0.33 * 2.0)
-                          / (0.71 * 0.72 + 0.91 * 0.92 * 2.0));
+                   + 0.91 * (q * q) * 0.33 * 2.0 + 0.071 * q * 0.033
+                   + 0.091 * (q * p * 2.0) * 0.073
+                   + 0.091 * (q * q) * 0.033 * 2.0)
+                          / (0.71 * 0.72 + 0.91 * 0.92 * 2.0 + 0.071 * 0.072
+                             + 0.091 * 0.092 * 2.0));
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
@@ -709,24 +824,38 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     fpsv.tensor[{0, 1}] = 0.71;
     fpsv.tensor[{1, 0}] = 0.41;
     fpsv.tensor[{1, 1}] = 0.81;
+    fpsv.broken_n_tensor[{0, 0}] = 0.031;
+    fpsv.broken_n_tensor[{0, 1}] = 0.071;
+    fpsv.broken_n_tensor[{1, 0}] = 0.041;
+    fpsv.broken_n_tensor[{1, 1}] = 0.081;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 0.32;
     bpsv.tensor[{0, 1}] = 0.72;
     bpsv.tensor[{1, 0}] = 0.42;
     bpsv.tensor[{1, 1}] = 0.82;
+    bpsv.broken_n_tensor[{0, 0}] = 0.032;
+    bpsv.broken_n_tensor[{0, 1}] = 0.072;
+    bpsv.broken_n_tensor[{1, 0}] = 0.042;
+    bpsv.broken_n_tensor[{1, 1}] = 0.082;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 0.33;
     nbpsv.tensor[{0, 1}] = 0.73;
     nbpsv.tensor[{1, 0}] = 0.43;
     nbpsv.tensor[{1, 1}] = 0.83;
+    nbpsv.broken_n_tensor[{0, 0}] = 0.033;
+    nbpsv.broken_n_tensor[{0, 1}] = 0.073;
+    nbpsv.broken_n_tensor[{1, 0}] = 0.043;
+    nbpsv.broken_n_tensor[{1, 1}] = 0.083;
     delete[] shape;
     unsigned int edmans = 1;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
     BOOST_TEST(pf.get()
-               == (0.71 * q * 0.33 + 0.81 * q * 0.43)
-                          / (0.71 * 0.72 + 0.81 * 0.82));
+               == (0.71 * q * 0.33 + 0.81 * q * 0.43 + 0.071 * q * 0.033
+                   + 0.081 * q * 0.043)
+                          / (0.71 * 0.72 + 0.81 * 0.82 + 0.071 * 0.072
+                             + 0.081 * 0.082));
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
@@ -748,24 +877,38 @@ BOOST_AUTO_TEST_CASE(improve_fit_other_dye_color_test, *tolerance(TOL)) {
     fpsv.tensor[{0, 0, 1}] = 0.231;
     fpsv.tensor[{0, 1, 0}] = 0.71;
     fpsv.tensor[{0, 1, 1}] = 0.271;
+    fpsv.broken_n_tensor[{0, 0, 0}] = 0.031;
+    fpsv.broken_n_tensor[{0, 0, 1}] = 0.0231;
+    fpsv.broken_n_tensor[{0, 1, 0}] = 0.071;
+    fpsv.broken_n_tensor[{0, 1, 1}] = 0.0271;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0, 0}] = 0.32;
     bpsv.tensor[{0, 0, 1}] = 0.232;
     bpsv.tensor[{0, 1, 0}] = 0.72;
     bpsv.tensor[{0, 1, 1}] = 0.272;
+    bpsv.broken_n_tensor[{0, 0, 0}] = 0.032;
+    bpsv.broken_n_tensor[{0, 0, 1}] = 0.0232;
+    bpsv.broken_n_tensor[{0, 1, 0}] = 0.072;
+    bpsv.broken_n_tensor[{0, 1, 1}] = 0.0272;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0, 0}] = 0.33;
     nbpsv.tensor[{0, 0, 1}] = 0.233;
     nbpsv.tensor[{0, 1, 0}] = 0.73;
     nbpsv.tensor[{0, 1, 1}] = 0.273;
+    nbpsv.broken_n_tensor[{0, 0, 0}] = 0.033;
+    nbpsv.broken_n_tensor[{0, 0, 1}] = 0.0233;
+    nbpsv.broken_n_tensor[{0, 1, 0}] = 0.073;
+    nbpsv.broken_n_tensor[{0, 1, 1}] = 0.0273;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 1.0;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
     BOOST_TEST(pf.get()
-               == (0.71 * q * 0.33 + 0.271 * q * 0.233)
-                          / (0.71 * 0.72 + 0.271 * 0.272));
+               == (0.71 * q * 0.33 + 0.271 * q * 0.233 + 0.071 * q * 0.033
+                   + 0.0271 * q * 0.0233)
+                          / (0.71 * 0.72 + 0.271 * 0.272 + 0.071 * 0.072
+                             + 0.0271 * 0.0272));
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_different_probability_test, *tolerance(TOL)) {
@@ -784,18 +927,26 @@ BOOST_AUTO_TEST_CASE(improve_fit_different_probability_test, *tolerance(TOL)) {
     PeptideStateVector fpsv(order, shape);
     fpsv.tensor[{0, 0}] = 0.31;
     fpsv.tensor[{0, 1}] = 0.71;
+    fpsv.broken_n_tensor[{0, 0}] = 0.031;
+    fpsv.broken_n_tensor[{0, 1}] = 0.071;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 0.32;
     bpsv.tensor[{0, 1}] = 0.72;
+    bpsv.broken_n_tensor[{0, 0}] = 0.032;
+    bpsv.broken_n_tensor[{0, 1}] = 0.072;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 0.33;
     nbpsv.tensor[{0, 1}] = 0.73;
+    nbpsv.broken_n_tensor[{0, 0}] = 0.033;
+    nbpsv.broken_n_tensor[{0, 1}] = 0.073;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 0.123456789;
     ParameterFitter pf;
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &pf);
-    BOOST_TEST(pf.get() == (0.71 * q * 0.33) / (0.71 * 0.72));
+    BOOST_TEST(pf.get()
+               == (0.71 * q * 0.33 + 0.071 * q * 0.033)
+                          / (0.71 * 0.72 + 0.071 * 0.072));
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
@@ -814,21 +965,33 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     PeptideStateVector fpsv1(order, shape);
     fpsv1.tensor[{0, 0}] = 0.31;
     fpsv1.tensor[{0, 1}] = 0.71;
+    fpsv1.broken_n_tensor[{0, 0}] = 0.031;
+    fpsv1.broken_n_tensor[{0, 1}] = 0.071;
     PeptideStateVector bpsv1(order, shape);
     bpsv1.tensor[{0, 0}] = 0.32;
     bpsv1.tensor[{0, 1}] = 0.72;
+    bpsv1.broken_n_tensor[{0, 0}] = 0.032;
+    bpsv1.broken_n_tensor[{0, 1}] = 0.072;
     PeptideStateVector nbpsv1(order, shape);
     nbpsv1.tensor[{0, 0}] = 0.33;
     nbpsv1.tensor[{0, 1}] = 0.73;
+    nbpsv1.broken_n_tensor[{0, 0}] = 0.033;
+    nbpsv1.broken_n_tensor[{0, 1}] = 0.073;
     PeptideStateVector fpsv2(order, shape);
     fpsv2.tensor[{0, 0}] = 0.231;
     fpsv2.tensor[{0, 1}] = 0.271;
+    fpsv2.broken_n_tensor[{0, 0}] = 0.0231;
+    fpsv2.broken_n_tensor[{0, 1}] = 0.0271;
     PeptideStateVector bpsv2(order, shape);
     bpsv2.tensor[{0, 0}] = 0.232;
     bpsv2.tensor[{0, 1}] = 0.272;
+    bpsv2.broken_n_tensor[{0, 0}] = 0.0232;
+    bpsv2.broken_n_tensor[{0, 1}] = 0.0272;
     PeptideStateVector nbpsv2(order, shape);
     nbpsv2.tensor[{0, 0}] = 0.233;
     nbpsv2.tensor[{0, 1}] = 0.273;
+    nbpsv2.broken_n_tensor[{0, 0}] = 0.0233;
+    nbpsv2.broken_n_tensor[{0, 1}] = 0.0273;
     delete[] shape;
     unsigned int edmans = 0;
     double prob1 = 0.123456789;
@@ -837,8 +1000,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_twice_test, *tolerance(TOL)) {
     bt.improve_fit(fpsv1, bpsv1, nbpsv1, edmans, prob1, &pf);
     bt.improve_fit(fpsv2, bpsv2, nbpsv2, edmans, prob2, &pf);
     BOOST_TEST(pf.get()
-               == (0.71 * q * 0.33 / prob1 + 0.271 * q * 0.233 / prob2)
-                          / (0.71 * 0.72 / prob1 + 0.271 * 0.272 / prob2));
+               == ((0.71 * q * 0.33 + 0.071 * q * 0.033) / prob1
+                   + (0.271 * q * 0.233 + 0.0271 * q * 0.0233) / prob2)
+                          / ((0.71 * 0.72 + 0.071 * 0.072) / prob1
+                             + (0.271 * 0.272 + 0.0271 * 0.0272) / prob2));
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // binomial_transition_suite

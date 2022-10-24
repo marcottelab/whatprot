@@ -35,18 +35,8 @@ void DetachTransition::prune_backward(KDRange* range, bool* allow_detached) {
 PeptideStateVector* DetachTransition::forward(const PeptideStateVector& input,
                                               unsigned int* num_edmans) const {
     PeptideStateVector* output = new PeptideStateVector(pruned_range);
-    ConstTensorIterator* in_itr = input.tensor.const_iterator(pruned_range);
-    TensorIterator* out_itr = output->tensor.iterator(pruned_range);
-    double sum = 0.0;
-    while (!in_itr->done()) {
-        double value = *in_itr->get();
-        *out_itr->get() = value * (1 - p_detach);
-        sum += value;
-        in_itr->advance();
-        out_itr->advance();
-    }
-    delete in_itr;
-    delete out_itr;
+    double sum = forward(input.tensor, &output->tensor);
+    sum += forward(input.broken_n_tensor, &output->broken_n_tensor);
     if (detached_backward) {
         if (detached_forward) {
             output->p_detached = input.p_detached + p_detach * sum;
@@ -57,21 +47,27 @@ PeptideStateVector* DetachTransition::forward(const PeptideStateVector& input,
     return output;
 }
 
-PeptideStateVector* DetachTransition::backward(const PeptideStateVector& input,
-                                               unsigned int* num_edmans) const {
-    PeptideStateVector* output = new PeptideStateVector(pruned_range);
-    ConstTensorIterator* in_itr = input.tensor.const_iterator(pruned_range);
-    TensorIterator* out_itr = output->tensor.iterator(pruned_range);
+double DetachTransition::forward(const Tensor& input, Tensor* output) const {
+    ConstTensorIterator* in_itr = input.const_iterator(pruned_range);
+    TensorIterator* out_itr = output->iterator(pruned_range);
+    double sum = 0.0;
     while (!in_itr->done()) {
-        *out_itr->get() = (1 - p_detach) * (*in_itr->get());
-        if (detached_backward) {
-            *out_itr->get() += p_detach * input.p_detached;
-        }
+        double value = *in_itr->get();
+        *out_itr->get() = value * (1 - p_detach);
+        sum += value;
         in_itr->advance();
         out_itr->advance();
     }
     delete in_itr;
     delete out_itr;
+    return sum;
+}
+
+PeptideStateVector* DetachTransition::backward(const PeptideStateVector& input,
+                                               unsigned int* num_edmans) const {
+    PeptideStateVector* output = new PeptideStateVector(pruned_range);
+    backward(input.tensor, input.p_detached, &output->tensor);
+    backward(input.broken_n_tensor, input.p_detached, &output->broken_n_tensor);
     if (detached_forward) {
         if (detached_backward) {
             output->p_detached = input.p_detached;
@@ -82,16 +78,48 @@ PeptideStateVector* DetachTransition::backward(const PeptideStateVector& input,
     return output;
 }
 
+void DetachTransition::backward(const Tensor& input,
+                                double p_detached,
+                                Tensor* output) const {
+    ConstTensorIterator* in_itr = input.const_iterator(pruned_range);
+    TensorIterator* out_itr = output->iterator(pruned_range);
+    while (!in_itr->done()) {
+        *out_itr->get() = (1 - p_detach) * (*in_itr->get());
+        if (detached_backward) {
+            *out_itr->get() += p_detach * p_detached;
+        }
+        in_itr->advance();
+        out_itr->advance();
+    }
+    delete in_itr;
+    delete out_itr;
+}
+
 void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
                                    const PeptideStateVector& backward_psv,
                                    const PeptideStateVector& next_backward_psv,
                                    unsigned int num_edmans,
                                    double probability,
                                    SequencingModelFitter* fitter) const {
-    ConstTensorIterator* f_itr =
-            forward_psv.tensor.const_iterator(pruned_range);
-    ConstTensorIterator* b_itr =
-            backward_psv.tensor.const_iterator(pruned_range);
+    improve_fit(forward_psv.tensor,
+                backward_psv.tensor,
+                next_backward_psv.p_detached,
+                probability,
+                fitter);
+    improve_fit(forward_psv.broken_n_tensor,
+                backward_psv.broken_n_tensor,
+                next_backward_psv.p_detached,
+                probability,
+                fitter);
+}
+
+void DetachTransition::improve_fit(const Tensor& forward_tsr,
+                                   const Tensor& backward_tsr,
+                                   double next_backward_p_detached,
+                                   double probability,
+                                   SequencingModelFitter* fitter) const {
+    ConstTensorIterator* f_itr = forward_tsr.const_iterator(pruned_range);
+    ConstTensorIterator* b_itr = backward_tsr.const_iterator(pruned_range);
     double forward_sum = 0.0;
     double forward_backward_sum = 0.0;
     unsigned int old_t = -1;
@@ -122,7 +150,7 @@ void DetachTransition::improve_fit(const PeptideStateVector& forward_psv,
     delete f_itr;
     delete b_itr;
     fitter->p_detach_fit.numerator +=
-            forward_sum * p_detach * next_backward_psv.p_detached / probability;
+            forward_sum * p_detach * next_backward_p_detached / probability;
     // Probability of being in a state that can detach is 1.0, because all
     // states can detach (although we are ignoring the case where there are no
     // amino acids left but that's fine and in fact better).

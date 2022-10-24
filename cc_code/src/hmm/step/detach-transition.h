@@ -25,15 +25,22 @@ public:
     virtual PeptideStateVector* forward(
             const PeptideStateVector& input,
             unsigned int* num_edmans) const override;
+    double forward(const Tensor& input, Tensor* output) const;
     virtual PeptideStateVector* backward(
             const PeptideStateVector& input,
             unsigned int* num_edmans) const override;
+    void backward(const Tensor& input, double p_detached, Tensor* output) const;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
                              unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
+    void improve_fit(const Tensor& forward_tsr,
+                     const Tensor& backward_tsr,
+                     double next_backward_p_detached,
+                     double probability,
+                     SequencingModelFitter* fitter) const;
 
     double p_detach;
     KDRange pruned_range;

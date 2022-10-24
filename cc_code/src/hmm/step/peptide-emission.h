@@ -38,6 +38,7 @@ public:
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     PeptideStateVector* forward_or_backward(const PeptideStateVector& input,
                                             unsigned int* num_edmans) const;
+    void forward_or_backward(const Tensor& input, Tensor* output) const;
     virtual PeptideStateVector* forward(
             const PeptideStateVector& input,
             unsigned int* num_edmans) const override;
@@ -50,6 +51,11 @@ public:
                              unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
+    void improve_fit(const Tensor& forward_tsr,
+                     const Tensor& backward_tsr,
+                     unsigned int num_edmans,
+                     double probability,
+                     SequencingModelFitter* fitter) const;
     const Radiometry& radiometry;
     unsigned int timestep;
     KDRange pruned_range;

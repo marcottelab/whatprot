@@ -419,10 +419,13 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     PeptideStateVector psv1(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0}] = 3.14;
+    psv1.broken_n_tensor[{0, 0}] = 3.014;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 3.14 * cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}])
+               == 3.014 * cm_mock.get().pdf(1.0, 0));
     BOOST_TEST(psv2->p_detached == 1.23 * cm_mock.get().pdf(1.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -461,12 +464,21 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     psv1.tensor[{0, 0}] = 13.0;
     psv1.tensor[{1, 0}] = 13.1;
     psv1.tensor[{2, 0}] = 13.2;
+    psv1.broken_n_tensor[{0, 0}] = 3.0;
+    psv1.broken_n_tensor[{1, 0}] = 3.1;
+    psv1.broken_n_tensor[{2, 0}] = 3.2;
     psv1.p_detached = 1.23;
     unsigned int edmans = 2;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(2.0, 0));
     BOOST_TEST((psv2->tensor[{1, 0}]) == 13.1 * cm_mock.get().pdf(2.0, 0));
     BOOST_TEST((psv2->tensor[{2, 0}]) == 13.2 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}])
+               == 3.0 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{1, 0}])
+               == 3.1 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{2, 0}])
+               == 3.2 * cm_mock.get().pdf(2.0, 0));
     BOOST_TEST(psv2->p_detached == 1.23 * cm_mock.get().pdf(2.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -507,11 +519,15 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     PeptideStateVector psv1(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0, 0, 0}] = 13.0;
+    psv1.broken_n_tensor[{0, 0, 0, 0}] = 3.0;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
+                          * cm_mock.get().pdf(0.2, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0, 0}])
+               == 3.0 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
                           * cm_mock.get().pdf(0.2, 0));
     BOOST_TEST(psv2->p_detached
                == 1.23 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
@@ -568,11 +584,16 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     PeptideStateVector psv1(order, shape);
     delete[] shape;
     psv1.tensor[{0, 0, 0, 0}] = 13.0;
+    psv1.broken_n_tensor[{0, 0, 0, 0}] = 3.0;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0, 0, 0}])
                == 13.0 * cm_mock_0.get().pdf(0.0, 0)
+                          * cm_mock_1.get().pdf(0.1, 0)
+                          * cm_mock_2.get().pdf(0.2, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0, 0}])
+               == 3.0 * cm_mock_0.get().pdf(0.0, 0)
                           * cm_mock_1.get().pdf(0.1, 0)
                           * cm_mock_2.get().pdf(0.2, 0));
     BOOST_TEST(psv2->p_detached
@@ -614,12 +635,21 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     psv1.tensor[{0, 0}] = 13.0;
     psv1.tensor[{0, 1}] = 13.1;
     psv1.tensor[{0, 2}] = 13.2;
+    psv1.broken_n_tensor[{0, 0}] = 3.0;
+    psv1.broken_n_tensor[{0, 1}] = 3.1;
+    psv1.broken_n_tensor[{0, 2}] = 3.2;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == 13.0 * cm_mock.get().pdf(0.0, 0));
     BOOST_TEST((psv2->tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
     BOOST_TEST((psv2->tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0}])
+               == 3.0 * cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}])
+               == 3.1 * cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
+               == 3.2 * cm_mock.get().pdf(0.0, 2));
     BOOST_TEST(psv2->p_detached == 1.23 * cm_mock.get().pdf(0.0, 0));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
@@ -655,10 +685,16 @@ BOOST_AUTO_TEST_CASE(forward_reduced_range_test, *tolerance(TOL)) {
     delete[] shape;
     psv1.tensor[{0, 1}] = 13.1;
     psv1.tensor[{0, 2}] = 13.2;
+    psv1.broken_n_tensor[{0, 1}] = 3.1;
+    psv1.broken_n_tensor[{0, 2}] = 3.2;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
     BOOST_TEST((psv2->tensor[{0, 2}]) == 13.2 * cm_mock.get().pdf(0.0, 2));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1}])
+               == 3.1 * cm_mock.get().pdf(0.0, 1));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
+               == 3.2 * cm_mock.get().pdf(0.0, 2));
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -704,6 +740,14 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     psv1.tensor[{1, 0, 1}] = 7.101;
     psv1.tensor[{1, 1, 0}] = 7.110;
     psv1.tensor[{1, 1, 1}] = 7.111;
+    psv1.broken_n_tensor[{0, 0, 0}] = 17.000;
+    psv1.broken_n_tensor[{0, 0, 1}] = 17.001;
+    psv1.broken_n_tensor[{0, 1, 0}] = 17.010;
+    psv1.broken_n_tensor[{0, 1, 1}] = 17.011;
+    psv1.broken_n_tensor[{1, 0, 0}] = 17.100;
+    psv1.broken_n_tensor[{1, 0, 1}] = 17.101;
+    psv1.broken_n_tensor[{1, 1, 0}] = 17.110;
+    psv1.broken_n_tensor[{1, 1, 1}] = 17.111;
     psv1.p_detached = 1.23;
     unsigned int edmans = 1;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -730,6 +774,30 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
                           * cm_mock.get().pdf(1.1, 0));
     BOOST_TEST((psv2->tensor[{1, 1, 1}])
                == 7.111 * cm_mock.get().pdf(1.0, 1)
+                          * cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 0}])
+               == 17.000 * cm_mock.get().pdf(1.0, 0)
+                          * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 0, 1}])
+               == 17.001 * cm_mock.get().pdf(1.0, 0)
+                          * cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 0}])
+               == 17.010 * cm_mock.get().pdf(1.0, 1)
+                          * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{0, 1, 1}])
+               == 17.011 * cm_mock.get().pdf(1.0, 1)
+                          * cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST((psv2->broken_n_tensor[{1, 0, 0}])
+               == 17.100 * cm_mock.get().pdf(1.0, 0)
+                          * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{1, 0, 1}])
+               == 17.101 * cm_mock.get().pdf(1.0, 0)
+                          * cm_mock.get().pdf(1.1, 1));
+    BOOST_TEST((psv2->broken_n_tensor[{1, 1, 0}])
+               == 17.110 * cm_mock.get().pdf(1.0, 1)
+                          * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST((psv2->broken_n_tensor[{1, 1, 1}])
+               == 17.111 * cm_mock.get().pdf(1.0, 1)
                           * cm_mock.get().pdf(1.1, 1));
     BOOST_TEST(psv2->p_detached
                == 1.23 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
@@ -761,14 +829,23 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
     fpsv.tensor[{0, 0}] = 1.72;
     fpsv.tensor[{0, 1}] = 1.36;
     fpsv.tensor[{0, 2}] = 1.18;
+    fpsv.broken_n_tensor[{0, 0}] = 1.072;
+    fpsv.broken_n_tensor[{0, 1}] = 1.036;
+    fpsv.broken_n_tensor[{0, 2}] = 1.018;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 2.72;
     bpsv.tensor[{0, 1}] = 2.36;
     bpsv.tensor[{0, 2}] = 2.18;
+    bpsv.broken_n_tensor[{0, 0}] = 2.072;
+    bpsv.broken_n_tensor[{0, 1}] = 2.036;
+    bpsv.broken_n_tensor[{0, 2}] = 2.018;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 3.72;
     nbpsv.tensor[{0, 1}] = 3.36;
     nbpsv.tensor[{0, 2}] = 3.18;
+    nbpsv.broken_n_tensor[{0, 0}] = 3.072;
+    nbpsv.broken_n_tensor[{0, 1}] = 3.036;
+    nbpsv.broken_n_tensor[{0, 2}] = 3.018;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 3.14159;
@@ -794,6 +871,21 @@ BOOST_AUTO_TEST_CASE(improve_fit_simple_test, *tolerance(TOL)) {
                    .Using(Close(1.009, TOL),
                           2,
                           Close(1.18 * 2.18 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.072 * 2.072 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.036 * 2.036 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.009, TOL),
+                          2,
+                          Close(1.018 * 2.018 / 3.14159, TOL)))
             .Exactly(1);
     VerifyNoOtherInvocations(df_mock);
     smf.channel_fits[0]->distribution_fit =
@@ -829,16 +921,28 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
     fpsv.tensor[{0, 0, 1}] = 1.64;
     fpsv.tensor[{0, 1, 0}] = 1.36;
     fpsv.tensor[{0, 1, 1}] = 1.25;
+    fpsv.broken_n_tensor[{0, 0, 0}] = 1.072;
+    fpsv.broken_n_tensor[{0, 0, 1}] = 1.064;
+    fpsv.broken_n_tensor[{0, 1, 0}] = 1.036;
+    fpsv.broken_n_tensor[{0, 1, 1}] = 1.025;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0, 0}] = 2.72;
     bpsv.tensor[{0, 0, 1}] = 2.64;
     bpsv.tensor[{0, 1, 0}] = 2.36;
     bpsv.tensor[{0, 1, 1}] = 2.25;
+    bpsv.broken_n_tensor[{0, 0, 0}] = 2.072;
+    bpsv.broken_n_tensor[{0, 0, 1}] = 2.064;
+    bpsv.broken_n_tensor[{0, 1, 0}] = 2.036;
+    bpsv.broken_n_tensor[{0, 1, 1}] = 2.025;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0, 0}] = 3.72;
     nbpsv.tensor[{0, 0, 1}] = 3.64;
     nbpsv.tensor[{0, 1, 0}] = 3.36;
     nbpsv.tensor[{0, 1, 1}] = 3.25;
+    nbpsv.broken_n_tensor[{0, 0, 0}] = 3.072;
+    nbpsv.broken_n_tensor[{0, 0, 1}] = 3.064;
+    nbpsv.broken_n_tensor[{0, 1, 0}] = 3.036;
+    nbpsv.broken_n_tensor[{0, 1, 1}] = 3.025;
     delete[] shape;
     unsigned int edmans = 0;
     double probability = 3.14159;
@@ -896,6 +1000,46 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_dye_colors_test, *tolerance(TOL)) {
                           1,
                           Close(1.25 * 2.25 / 3.14159, TOL)))
             .Exactly(1);
+    Verify(Method(df_mock_0, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.072 * 2.072 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_1, add_sample)
+                   .Using(Close(1.019, TOL),
+                          0,
+                          Close(1.072 * 2.072 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_0, add_sample)
+                   .Using(Close(1.009, TOL),
+                          0,
+                          Close(1.064 * 2.064 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_1, add_sample)
+                   .Using(Close(1.019, TOL),
+                          1,
+                          Close(1.064 * 2.064 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_0, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.036 * 2.036 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_1, add_sample)
+                   .Using(Close(1.019, TOL),
+                          0,
+                          Close(1.036 * 2.036 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_0, add_sample)
+                   .Using(Close(1.009, TOL),
+                          1,
+                          Close(1.025 * 2.025 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock_1, add_sample)
+                   .Using(Close(1.019, TOL),
+                          1,
+                          Close(1.025 * 2.025 / 3.14159, TOL)))
+            .Exactly(1);
     VerifyNoOtherInvocations(df_mock_0);
     VerifyNoOtherInvocations(df_mock_1);
     // This avoids breaking cleanup:
@@ -930,16 +1074,28 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
     fpsv.tensor[{0, 1}] = 1.36;
     fpsv.tensor[{1, 0}] = 1.64;
     fpsv.tensor[{1, 1}] = 1.25;
+    fpsv.broken_n_tensor[{0, 0}] = 1.072;
+    fpsv.broken_n_tensor[{0, 1}] = 1.036;
+    fpsv.broken_n_tensor[{1, 0}] = 1.064;
+    fpsv.broken_n_tensor[{1, 1}] = 1.025;
     PeptideStateVector bpsv(order, shape);
     bpsv.tensor[{0, 0}] = 2.72;
     bpsv.tensor[{0, 1}] = 2.36;
     bpsv.tensor[{1, 0}] = 2.64;
     bpsv.tensor[{1, 1}] = 2.25;
+    bpsv.broken_n_tensor[{0, 0}] = 2.072;
+    bpsv.broken_n_tensor[{0, 1}] = 2.036;
+    bpsv.broken_n_tensor[{1, 0}] = 2.064;
+    bpsv.broken_n_tensor[{1, 1}] = 2.025;
     PeptideStateVector nbpsv(order, shape);
     nbpsv.tensor[{0, 0}] = 3.72;
     nbpsv.tensor[{0, 1}] = 3.36;
     nbpsv.tensor[{1, 0}] = 3.64;
     nbpsv.tensor[{1, 1}] = 3.25;
+    nbpsv.broken_n_tensor[{0, 0}] = 3.072;
+    nbpsv.broken_n_tensor[{0, 1}] = 3.036;
+    nbpsv.broken_n_tensor[{1, 0}] = 3.064;
+    nbpsv.broken_n_tensor[{1, 1}] = 3.025;
     delete[] shape;
     unsigned int edmans = 1;
     double probability = 3.14159;
@@ -970,6 +1126,26 @@ BOOST_AUTO_TEST_CASE(improve_fit_multiple_edmans_test, *tolerance(TOL)) {
                    .Using(Close(1.109, TOL),
                           1,
                           Close(1.25 * 2.25 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          0,
+                          Close(1.072 * 2.072 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          1,
+                          Close(1.036 * 2.036 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          0,
+                          Close(1.064 * 2.064 / 3.14159, TOL)))
+            .Exactly(1);
+    Verify(Method(df_mock, add_sample)
+                   .Using(Close(1.109, TOL),
+                          1,
+                          Close(1.025 * 2.025 / 3.14159, TOL)))
             .Exactly(1);
     VerifyNoOtherInvocations(df_mock);
     smf.channel_fits[0]->distribution_fit =

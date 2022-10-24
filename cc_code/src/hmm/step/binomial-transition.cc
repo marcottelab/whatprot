@@ -91,12 +91,23 @@ void BinomialTransition::prune_backward(KDRange* range, bool* allow_detached) {
 PeptideStateVector* BinomialTransition::forward(
         const PeptideStateVector& input, unsigned int* num_edmans) const {
     PeptideStateVector* output = new PeptideStateVector(backward_range);
+    forward(input.tensor, &output->tensor);
+    forward(input.broken_n_tensor, &output->broken_n_tensor);
+    output->range = backward_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
+    return output;
+}
+
+void BinomialTransition::forward(const Tensor& input, Tensor* output) const {
     // Mismatched range is OK, range should only differ on the channel being
     // processed.
     ConstTensorVectorIterator* in_itr =
-            input.tensor.const_vector_iterator(forward_range, 1 + channel);
+            input.const_vector_iterator(forward_range, 1 + channel);
     TensorVectorIterator* out_itr =
-            output->tensor.vector_iterator(backward_range, 1 + channel);
+            output->vector_iterator(backward_range, 1 + channel);
     while (!in_itr->done()) {
         const Vector* in_v = in_itr->get();
         Vector* out_v = out_itr->get();
@@ -108,12 +119,6 @@ PeptideStateVector* BinomialTransition::forward(
     }
     delete in_itr;
     delete out_itr;
-    output->range = backward_range;
-    output->allow_detached = input.allow_detached;
-    if (output->allow_detached) {
-        output->p_detached = input.p_detached;
-    }
-    return output;
 }
 
 void BinomialTransition::forward(const Vector& input, Vector* output) const {
@@ -133,12 +138,23 @@ void BinomialTransition::forward(const Vector& input, Vector* output) const {
 PeptideStateVector* BinomialTransition::backward(
         const PeptideStateVector& input, unsigned int* num_edmans) const {
     PeptideStateVector* output = new PeptideStateVector(forward_range);
+    backward(input.tensor, &output->tensor);
+    backward(input.broken_n_tensor, &output->broken_n_tensor);
+    output->range = forward_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
+    return output;
+}
+
+void BinomialTransition::backward(const Tensor& input, Tensor* output) const {
     // Mismatched range is OK, range should only differ on the channel being
     // processed.
     ConstTensorVectorIterator* in_itr =
-            input.tensor.const_vector_iterator(backward_range, 1 + channel);
+            input.const_vector_iterator(backward_range, 1 + channel);
     TensorVectorIterator* out_itr =
-            output->tensor.vector_iterator(forward_range, 1 + channel);
+            output->vector_iterator(forward_range, 1 + channel);
     while (!out_itr->done()) {
         const Vector* in_v = in_itr->get();
         Vector* out_v = out_itr->get();
@@ -150,12 +166,6 @@ PeptideStateVector* BinomialTransition::backward(
     }
     delete in_itr;
     delete out_itr;
-    output->range = forward_range;
-    output->allow_detached = input.allow_detached;
-    if (output->allow_detached) {
-        output->p_detached = input.p_detached;
-    }
-    return output;
 }
 
 void BinomialTransition::backward(const Vector& input, Vector* output) const {
@@ -179,14 +189,29 @@ void BinomialTransition::improve_fit(
         unsigned int num_edmans,
         double probability,
         ParameterFitter* fitter) const {
-    ConstTensorVectorIterator* f_itr = forward_psv.tensor.const_vector_iterator(
-            forward_range, 1 + channel);
+    improve_fit(forward_psv.tensor,
+                backward_psv.tensor,
+                next_backward_psv.tensor,
+                probability,
+                fitter);
+    improve_fit(forward_psv.broken_n_tensor,
+                backward_psv.broken_n_tensor,
+                next_backward_psv.broken_n_tensor,
+                probability,
+                fitter);
+}
+
+void BinomialTransition::improve_fit(const Tensor& forward_tsr,
+                                     const Tensor& backward_tsr,
+                                     const Tensor& next_backward_tsr,
+                                     double probability,
+                                     ParameterFitter* fitter) const {
+    ConstTensorVectorIterator* f_itr =
+            forward_tsr.const_vector_iterator(forward_range, 1 + channel);
     ConstTensorVectorIterator* b_itr =
-            backward_psv.tensor.const_vector_iterator(forward_range,
-                                                      1 + channel);
-    ConstTensorVectorIterator* nb_itr =
-            next_backward_psv.tensor.const_vector_iterator(backward_range,
-                                                           1 + channel);
+            backward_tsr.const_vector_iterator(forward_range, 1 + channel);
+    ConstTensorVectorIterator* nb_itr = next_backward_tsr.const_vector_iterator(
+            backward_range, 1 + channel);
     while (!f_itr->done()) {
         const Vector* f_v = f_itr->get();
         const Vector* b_v = b_itr->get();

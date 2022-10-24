@@ -66,8 +66,7 @@ void run_classify_nn(int k,
     print_read_radiometries(total_num_radiometries, end_time - start_time);
 
     start_time = wall_time();
-    NNClassifier classifier(
-            num_timesteps, num_channels, k, sig, &dye_tracks);
+    NNClassifier classifier(num_timesteps, num_channels, k, sig, &dye_tracks);
     end_time = wall_time();
     print_built_classifier(end_time - start_time);
 

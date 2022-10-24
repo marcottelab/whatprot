@@ -35,15 +35,22 @@ public:
     virtual PeptideStateVector* forward(
             const PeptideStateVector& input,
             unsigned int* num_edmans) const override;
+    void forward(const Tensor& input, Tensor* output) const;
     void forward(const Vector& input, Vector* output) const;
     virtual PeptideStateVector* backward(
             const PeptideStateVector& input,
             unsigned int* num_edmans) const override;
+    void backward(const Tensor& input, Tensor* output) const;
     void backward(const Vector& input, Vector* output) const;
     void improve_fit(const PeptideStateVector& forward_psv,
                      const PeptideStateVector& backward_psv,
                      const PeptideStateVector& next_backward_psv,
                      unsigned int num_edmans,
+                     double probability,
+                     ParameterFitter* fitter) const;
+    void improve_fit(const Tensor& forward_tsr,
+                     const Tensor& backward_tsr,
+                     const Tensor& next_backward_tsr,
                      double probability,
                      ParameterFitter* fitter) const;
     void improve_fit(const Vector& forward_vector,

@@ -125,8 +125,24 @@ void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
 PeptideStateVector* PeptideEmission::forward_or_backward(
         const PeptideStateVector& input, unsigned int* num_edmans) const {
     PeptideStateVector* output = new PeptideStateVector(pruned_range);
-    ConstTensorIterator* inputit = input.tensor.const_iterator(pruned_range);
-    TensorIterator* outputit = output->tensor.iterator(pruned_range);
+    forward_or_backward(input.tensor, &output->tensor);
+    forward_or_backward(input.broken_n_tensor, &output->broken_n_tensor);
+    if (allow_detached) {
+        double p_detached = input.p_detached;
+        for (unsigned int c = 0; c < num_channels; c++) {
+            p_detached *= prob(c, 0);
+        }
+        output->p_detached = p_detached;
+    }
+    output->range = pruned_range;
+    output->allow_detached = allow_detached;
+    return output;
+}
+
+void PeptideEmission::forward_or_backward(const Tensor& input,
+                                          Tensor* output) const {
+    ConstTensorIterator* inputit = input.const_iterator(pruned_range);
+    TensorIterator* outputit = output->iterator(pruned_range);
     while (!inputit->done()) {
         double product = 1.0;
         for (unsigned int c = 0; c < num_channels; c++) {
@@ -138,16 +154,6 @@ PeptideStateVector* PeptideEmission::forward_or_backward(
     }
     delete inputit;
     delete outputit;
-    if (allow_detached) {
-        double p_detached = input.p_detached;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            p_detached *= prob(c, 0);
-        }
-        output->p_detached = p_detached;
-    }
-    output->range = pruned_range;
-    output->allow_detached = allow_detached;
-    return output;
 }
 
 PeptideStateVector* PeptideEmission::forward(const PeptideStateVector& input,
@@ -166,10 +172,27 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   unsigned int num_edmans,
                                   double probability,
                                   SequencingModelFitter* fitter) const {
-    KDRange range = forward_psv.tensor.range;
-    ConstTensorIterator* fit = forward_psv.tensor.const_iterator(range);
-    ConstTensorIterator* bit = backward_psv.tensor.const_iterator(range);
-    while (fit->index < (num_edmans + 1) * forward_psv.tensor.strides[0]) {
+    improve_fit(forward_psv.tensor,
+                backward_psv.tensor,
+                num_edmans,
+                probability,
+                fitter);
+    improve_fit(forward_psv.broken_n_tensor,
+                backward_psv.broken_n_tensor,
+                num_edmans,
+                probability,
+                fitter);
+}
+
+void PeptideEmission::improve_fit(const Tensor& forward_tsr,
+                                  const Tensor& backward_tsr,
+                                  unsigned int num_edmans,
+                                  double probability,
+                                  SequencingModelFitter* fitter) const {
+    KDRange range = forward_tsr.range;
+    ConstTensorIterator* fit = forward_tsr.const_iterator(range);
+    ConstTensorIterator* bit = backward_tsr.const_iterator(range);
+    while (fit->index < (num_edmans + 1) * forward_tsr.strides[0]) {
         double p_state = (*fit->get()) * (*bit->get()) / probability;
         for (unsigned int c = 0; c < num_channels; c++) {
             double intensity = radiometry(num_edmans, c);
