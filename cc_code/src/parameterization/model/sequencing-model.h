@@ -31,6 +31,8 @@ public:
 
     double p_edman_failure;
     double p_detach;
+    double p_initial_break_n;
+    double p_cyclic_break_n;
     std::vector<ChannelModel*> channel_models;
 };
 

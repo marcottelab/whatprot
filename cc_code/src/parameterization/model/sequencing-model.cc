@@ -41,6 +41,8 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     json data = json::parse(f);
     p_edman_failure = data["p_edman_failure"].get<double>();
     p_detach = data["p_detach"].get<double>();
+    p_initial_break_n = data["p_initial_break_n"].get<double>();
+    p_cyclic_break_n = data["p_cyclic_break_n"].get<double>();
     for (auto& channel_data : data["channel_models"]) {
         channel_models.push_back(new ChannelModel());
         channel_models.back()->p_bleach =
@@ -55,6 +57,8 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
 SequencingModel::SequencingModel(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
+    p_initial_break_n = other.p_initial_break_n;
+    p_cyclic_break_n = other.p_cyclic_break_n;
     for (unsigned int c = 0; c < other.channel_models.size(); c++) {
         channel_models.push_back(new ChannelModel(*other.channel_models[c]));
     }
@@ -63,6 +67,8 @@ SequencingModel::SequencingModel(const SequencingModel& other) {
 SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
+    p_initial_break_n = other.p_initial_break_n;
+    p_cyclic_break_n = other.p_cyclic_break_n;
     // This function is not necessarily used as a constructor. It is very
     // important to clear contents of channel_models before filling it.
     for (ChannelModel* channel_model : channel_models) {
@@ -81,6 +87,8 @@ SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
 SequencingModel::SequencingModel(SequencingModel&& other) {
     p_edman_failure = move(other.p_edman_failure);
     p_detach = move(other.p_detach);
+    p_initial_break_n = move(other.p_initial_break_n);
+    p_cyclic_break_n = move(other.p_cyclic_break_n);
     channel_models = move(other.channel_models);
 }
 
@@ -99,6 +107,12 @@ double SequencingModel::relative_distance(
                abs(p_edman_failure - sequencing_model.p_edman_failure)
                        / p_edman_failure);
     dist = max(dist, abs(p_detach - sequencing_model.p_detach) / p_detach);
+    dist = max(dist,
+               abs(p_initial_break_n - sequencing_model.p_initial_break_n)
+                       / p_initial_break_n);
+    dist = max(dist,
+               abs(p_cyclic_break_n - sequencing_model.p_cyclic_break_n)
+                       / p_cyclic_break_n);
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         dist = max(dist,
                    channel_models[i]->relative_distance(
@@ -110,7 +124,10 @@ double SequencingModel::relative_distance(
 string SequencingModel::debug_string() const {
     string s = "";
     s += "Edman failure rate: " + to_string(p_edman_failure) + ", ";
-    s += "Detach rate: " + to_string(p_detach);
+    s += "Detach rate: " + to_string(p_detach) + ", ";
+    s += "Initial blocked N-terminus rate: " + to_string(p_initial_break_n)
+         + ", ";
+    s += "Cyclic blocked N-terminus rate: " + to_string(p_cyclic_break_n);
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         s += ", ";
         s += "Channel " + to_string(i) + " info: (";
