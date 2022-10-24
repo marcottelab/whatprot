@@ -26,9 +26,12 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/binomial-transition.h"
+#include "hmm/step/bleach-transition.h"
+#include "hmm/step/cyclic-broken-n-transition.h"
 #include "hmm/step/detach-transition.h"
+#include "hmm/step/dud-transition.h"
 #include "hmm/step/edman-transition.h"
+#include "hmm/step/initial-broken-n-transition.h"
 #include "hmm/step/peptide-emission.h"
 #include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
@@ -58,6 +61,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
     seq_model.p_detach = 0.02;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
@@ -91,14 +96,19 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
                    radiometry_precomputations,
                    universal_precomputations);
     BOOST_ASSERT(hmm.steps.size()
-                 == (3 + num_channels) * (num_timesteps - 1) + 1
+                 == (4 + num_channels) * (num_timesteps - 1) + 2
                             + num_channels);
     vector<PeptideStep*>::iterator step = hmm.steps.begin();
+    BOOST_TEST(typeid(**step).name()
+               == typeid(InitialBrokenNTransition).name());
+    step++;
     BOOST_TEST(typeid(**step).name() == typeid(DudTransition).name());
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(DudTransition).name());
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
+    step++;
+    BOOST_TEST(typeid(**step).name() == typeid(CyclicBrokenNTransition).name());
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(DetachTransition).name());
     step++;
@@ -110,6 +120,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
     step++;
+    BOOST_TEST(typeid(**step).name() == typeid(CyclicBrokenNTransition).name());
+    step++;
     BOOST_TEST(typeid(**step).name() == typeid(DetachTransition).name());
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(BleachTransition).name());
@@ -119,6 +131,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     BOOST_TEST(typeid(**step).name() == typeid(EdmanTransition).name());
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(PeptideEmission).name());
+    step++;
+    BOOST_TEST(typeid(**step).name() == typeid(CyclicBrokenNTransition).name());
     step++;
     BOOST_TEST(typeid(**step).name() == typeid(DetachTransition).name());
     step++;
@@ -136,6 +150,8 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -162,8 +178,8 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on January 5, 2022.
-    BOOST_TEST(hmm.probability() == 0.032385732780744352);
+    // giving the correct result on October 25, 2022.
+    BOOST_TEST(hmm.probability() == 0.028631619118966424);
 }
 
 BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
@@ -171,6 +187,8 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -197,8 +215,8 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on September 8, 2021.
-    BOOST_TEST(hmm.probability() == 1.876822091893613e-96);
+    // giving the correct result on October 25, 2022.
+    BOOST_TEST(hmm.probability() == 1.6592632210289203e-96);
 }
 
 BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
@@ -206,6 +224,8 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -232,8 +252,8 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on January 5, 2022.
-    BOOST_TEST(hmm.probability() == 758907.45709131216);
+    // giving the correct result on October 25, 2022.
+    BOOST_TEST(hmm.probability() == 0.19718075226364015);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
@@ -241,6 +261,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -267,8 +289,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on January 5, 2022.
-    BOOST_TEST(hmm.probability() == 0.032385732545948433);
+    // giving the correct result on October 25, 2022.
+    BOOST_TEST(hmm.probability() == 0.028631618911387755);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
@@ -276,6 +298,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -302,7 +326,7 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on January 5, 2022.
+    // giving the correct result on October 25, 2022.
     BOOST_TEST(hmm.probability() == 0.0);
 }
 
@@ -311,6 +335,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
     seq_model.p_detach = 0.02;
+    seq_model.p_initial_break_n = 0.07;
+    seq_model.p_cyclic_break_n = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;

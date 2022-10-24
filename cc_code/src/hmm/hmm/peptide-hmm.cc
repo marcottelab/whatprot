@@ -17,9 +17,11 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/binomial-transition.h"
+#include "hmm/step/bleach-transition.h"
+#include "hmm/step/cyclic-broken-n-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
+#include "hmm/step/initial-broken-n-transition.h"
 #include "hmm/step/peptide-emission.h"
 
 namespace whatprot {
@@ -35,6 +37,8 @@ PeptideHMM::PeptideHMM(
         const RadiometryPrecomputations& radiometry_precomputations,
         const UniversalPrecomputations& universal_precomputations)
         : GenericHMM(num_timesteps), empty_range(false) {
+    steps.push_back(new InitialBrokenNTransition(
+            universal_precomputations.initial_broken_n_transition));
     for (unsigned int c = 0; c < num_channels; c++) {
         steps.push_back(new DudTransition(
                 *universal_precomputations.dud_transitions[c]));
@@ -42,6 +46,8 @@ PeptideHMM::PeptideHMM(
     steps.push_back(new PeptideEmission(
             *radiometry_precomputations.peptide_emissions[0]));
     for (unsigned int t = 1; t < num_timesteps; t++) {
+        steps.push_back(new CyclicBrokenNTransition(
+                universal_precomputations.cyclic_broken_n_transition));
         steps.push_back(new DetachTransition(
                 universal_precomputations.detach_transition));
         for (unsigned int c = 0; c < num_channels; c++) {
