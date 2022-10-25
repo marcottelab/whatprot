@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 0.028631619118966424);
+    BOOST_TEST(hmm.probability() == 0.042073244987065869);
 }
 
 BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 1.6592632210289203e-96);
+    BOOST_TEST(hmm.probability() == 2.832048536598378e-96);
 }
 
 BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 0.19718075226364015);
+    BOOST_TEST(hmm.probability() == 0.20309173685169121);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
     // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 0.028631618911387755);
+    BOOST_TEST(hmm.probability() == 0.042073244682031316);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {

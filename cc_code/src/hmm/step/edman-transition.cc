@@ -124,6 +124,35 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
     }
     delete in_itr;
     delete out_itr;
+    // We also need to deal with the 'broken-n' states. Even though Edman
+    // degradation has no effect on these states, which is the whole reason for
+    // their existence, we still need to copy them to the new tensor so that the
+    // old values are not lost.
+    //
+    // Note that just as with the normal tensor states, we first just set every
+    // value in the 'safe-backward-range' to zero, as that is much easier than
+    // tracking everything properly.
+    TensorIterator* out_n_itr =
+            output->broken_n_tensor.iterator(safe_backward_range);
+    while (!out_n_itr->done()) {
+        *out_n_itr->get() = 0.0;
+        out_n_itr->advance();
+    }
+    delete out_n_itr;
+    // Now we actually transfer the values.
+    ConstTensorIterator* in_n_itr =
+            input.broken_n_tensor.const_iterator(true_forward_range);
+    // true_forward_range is a strict subset of safe_backward_range, so we can
+    // use it to index into output.
+    out_n_itr = output->broken_n_tensor.iterator(true_forward_range);
+    while (!in_n_itr->done()) {
+        *out_n_itr->get() = *in_n_itr->get();
+        in_n_itr->advance();
+        out_n_itr->advance();
+    }
+    delete in_n_itr;
+    delete out_n_itr;
+    // Now we fix up the ranges, allow_detached, etc...
     output->range = true_backward_range;
     output->allow_detached = input.allow_detached;
     if (output->allow_detached) {
@@ -209,6 +238,35 @@ PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
     }
     delete in_itr;
     delete out_itr;
+    // We also need to deal with the 'broken-n' states. Even though Edman
+    // degradation has no effect on these states, which is the whole reason for
+    // their existence, we still need to copy them to the new tensor so that the
+    // old values are not lost.
+    //
+    // Note that just as with the normal tensor states, we first just set every
+    // value in the 'safe-backward-range' to zero, as that is much easier than
+    // tracking everything properly.
+    TensorIterator* out_n_itr =
+            output->broken_n_tensor.iterator(safe_forward_range);
+    while (!out_n_itr->done()) {
+        *out_n_itr->get() = 0.0;
+        out_n_itr->advance();
+    }
+    delete out_n_itr;
+    // Now we actually transfer the values.
+    ConstTensorIterator* in_n_itr =
+            input.broken_n_tensor.const_iterator(true_backward_range);
+    // true_backward_range is a strict subset of safe_forward_range, so we can
+    // use it to index into output.
+    out_n_itr = output->broken_n_tensor.iterator(true_backward_range);
+    while (!in_n_itr->done()) {
+        *out_n_itr->get() = *in_n_itr->get();
+        in_n_itr->advance();
+        out_n_itr->advance();
+    }
+    delete in_n_itr;
+    delete out_n_itr;
+    // Now we fix up the ranges, allow_detached, etc...
     output->range = true_forward_range;
     output->allow_detached = input.allow_detached;
     if (output->allow_detached) {
