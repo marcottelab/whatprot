@@ -84,6 +84,25 @@ SequencingModel HMMFitter::fit(
             hmm.improve_fit(&peptide_fitter);
             fitter += peptide_fitter;
         }
+        // Here we perform a correction to account for the peptides that
+        // wouldn't be seen due to all fluorophores being duds. This fixes bias
+        // in result for p_dud on all channels.
+        // TODO: maybe make this cleaner - break into separate function?
+        // TODO: also inefficient, maybe should be a precomputation somehow?
+        double ratio_hidden = 1.0;
+        for (unsigned int i = 0; i < dye_seq.length; i++) {
+            if (dye_seq[i] != -1) {
+                ratio_hidden *= sm.channel_models[dye_seq[i]]->p_dud;
+            }
+        }
+        double magic_ratio = 1.0 / (1.0 - ratio_hidden) - 1.0;
+        double expected_hidden_count = magic_ratio * radiometries.size();
+        for (unsigned int i = 0; i < fitter.channel_fits.size(); i++) {
+            fitter.channel_fits[i]->p_dud_fit.numerator +=
+                    expected_hidden_count;
+            fitter.channel_fits[i]->p_dud_fit.denominator +=
+                    expected_hidden_count;
+        }
         SequencingModel next = fitter.get();
         // TODO: ugly hack, do something nicer...
         for (unsigned int i = 0; i < seq_model.channel_models.size(); i++) {

@@ -103,13 +103,11 @@ SequencingModel::~SequencingModel() {
 double SequencingModel::distance(
         const SequencingModel& sequencing_model) const {
     double dist = 0.0;
-    dist = max(dist,
-               abs(p_edman_failure - sequencing_model.p_edman_failure));
+    dist = max(dist, abs(p_edman_failure - sequencing_model.p_edman_failure));
     dist = max(dist, abs(p_detach - sequencing_model.p_detach));
     dist = max(dist,
                abs(p_initial_break_n - sequencing_model.p_initial_break_n));
-    dist = max(dist,
-               abs(p_cyclic_break_n - sequencing_model.p_cyclic_break_n));
+    dist = max(dist, abs(p_cyclic_break_n - sequencing_model.p_cyclic_break_n));
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         dist = max(dist,
                    channel_models[i]->distance(

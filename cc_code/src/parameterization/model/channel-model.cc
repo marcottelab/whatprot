@@ -41,8 +41,7 @@ double ChannelModel::sigma(int state) const {
     return sqrt(bg_sig * bg_sig + (double)state * sig * sig);
 }
 
-double ChannelModel::distance(
-        const ChannelModel& channel_model) const {
+double ChannelModel::distance(const ChannelModel& channel_model) const {
     double dist = 0.0;
     dist = max(dist, abs(p_bleach - channel_model.p_bleach));
     dist = max(dist, abs(p_dud - channel_model.p_dud));

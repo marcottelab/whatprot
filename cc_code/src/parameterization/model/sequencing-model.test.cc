@@ -65,8 +65,7 @@ BOOST_AUTO_TEST_CASE(distance_p_detach_test, *tolerance(TOL)) {
     BOOST_TEST(sm2.distance(sm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(distance_p_initial_break_n_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_p_initial_break_n_test, *tolerance(TOL)) {
     SequencingModel sm1;
     sm1.p_edman_failure = 0.5;
     sm1.p_detach = 0.5;
@@ -100,8 +99,7 @@ BOOST_AUTO_TEST_CASE(distance_p_cyclic_break_n_test, *tolerance(TOL)) {
     BOOST_TEST(sm2.distance(sm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(distance_with_channel_model_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_with_channel_model_test, *tolerance(TOL)) {
     SequencingModel sm1;
     sm1.p_edman_failure = 0.5;
     sm1.p_detach = 0.5;
@@ -128,8 +126,7 @@ BOOST_AUTO_TEST_CASE(distance_with_channel_model_test,
     BOOST_TEST(sm2.distance(sm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(distance_with_two_channel_models_test,
-                     *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_with_two_channel_models_test, *tolerance(TOL)) {
     SequencingModel sm1;
     sm1.p_edman_failure = 0.5;
     sm1.p_detach = 0.5;
