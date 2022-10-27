@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
             "    --dyetracks, --radiometries, and --results.\n"
             "    \n"
             "  For MODE fit, you must NOT define a VARIANT, and you MUST\n"
-            "  define --seqparams, --stoppingthreshold, --dyeseqs, and\n"
+            "  define --seqparams, --stoppingthreshold, --dyeseqstring, and\n"
             "  --radiometries.\n"
             "  \n"
             "  For MODE simulate, you must define a VARIANT as either dt or\n"
