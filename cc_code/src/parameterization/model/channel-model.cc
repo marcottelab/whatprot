@@ -41,14 +41,14 @@ double ChannelModel::sigma(int state) const {
     return sqrt(bg_sig * bg_sig + (double)state * sig * sig);
 }
 
-double ChannelModel::relative_distance(
+double ChannelModel::distance(
         const ChannelModel& channel_model) const {
     double dist = 0.0;
-    dist = max(dist, abs(p_bleach - channel_model.p_bleach) / p_bleach);
-    dist = max(dist, abs(p_dud - channel_model.p_dud) / p_dud);
-    dist = max(dist, abs(bg_sig - channel_model.bg_sig) / bg_sig);
-    dist = max(dist, abs(mu - channel_model.mu) / mu);
-    dist = max(dist, abs(sig - channel_model.sig) / sig);
+    dist = max(dist, abs(p_bleach - channel_model.p_bleach));
+    dist = max(dist, abs(p_dud - channel_model.p_dud));
+    dist = max(dist, abs(bg_sig - channel_model.bg_sig));
+    dist = max(dist, abs(mu - channel_model.mu));
+    dist = max(dist, abs(sig - channel_model.sig));
     return dist;
 }
 

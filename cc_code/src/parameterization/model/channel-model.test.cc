@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(sigma_test, *tolerance(TOL)) {
                == sqrt(0.00667 * 0.00667 + 3.0 * .16 * .16));
 }
 
-BOOST_AUTO_TEST_CASE(relative_distance_p_bleach_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_p_bleach_test, *tolerance(TOL)) {
     ChannelModel cm1;
     cm1.p_bleach = 0.5;
     cm1.p_dud = 0.5;
@@ -118,11 +118,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_p_bleach_test, *tolerance(TOL)) {
     cm2.mu = 0.5;
     cm2.sig = 0.5;
 
-    BOOST_TEST(cm1.relative_distance(cm2) == (0.66 - 0.5) / 0.5);
-    BOOST_TEST(cm2.relative_distance(cm1) == (0.66 - 0.5) / 0.66);
+    BOOST_TEST(cm1.distance(cm2) == (0.66 - 0.5));
+    BOOST_TEST(cm2.distance(cm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(relative_distance_p_dud_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_p_dud_test, *tolerance(TOL)) {
     ChannelModel cm1;
     cm1.p_bleach = 0.5;
     cm1.p_dud = 0.5;
@@ -137,11 +137,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_p_dud_test, *tolerance(TOL)) {
     cm2.mu = 0.5;
     cm2.sig = 0.5;
 
-    BOOST_TEST(cm1.relative_distance(cm2) == (0.66 - 0.5) / 0.5);
-    BOOST_TEST(cm2.relative_distance(cm1) == (0.66 - 0.5) / 0.66);
+    BOOST_TEST(cm1.distance(cm2) == (0.66 - 0.5));
+    BOOST_TEST(cm2.distance(cm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(relative_distance_bg_sig_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_bg_sig_test, *tolerance(TOL)) {
     ChannelModel cm1;
     cm1.p_bleach = 0.5;
     cm1.p_dud = 0.5;
@@ -156,11 +156,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_bg_sig_test, *tolerance(TOL)) {
     cm2.mu = 0.5;
     cm2.sig = 0.5;
 
-    BOOST_TEST(cm1.relative_distance(cm2) == (0.66 - 0.5) / 0.5);
-    BOOST_TEST(cm2.relative_distance(cm1) == (0.66 - 0.5) / 0.66);
+    BOOST_TEST(cm1.distance(cm2) == (0.66 - 0.5));
+    BOOST_TEST(cm2.distance(cm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(relative_distance_mu_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_mu_test, *tolerance(TOL)) {
     ChannelModel cm1;
     cm1.p_bleach = 0.5;
     cm1.p_dud = 0.5;
@@ -175,11 +175,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_mu_test, *tolerance(TOL)) {
     cm2.mu = 0.66;
     cm2.sig = 0.5;
 
-    BOOST_TEST(cm1.relative_distance(cm2) == (0.66 - 0.5) / 0.5);
-    BOOST_TEST(cm2.relative_distance(cm1) == (0.66 - 0.5) / 0.66);
+    BOOST_TEST(cm1.distance(cm2) == (0.66 - 0.5));
+    BOOST_TEST(cm2.distance(cm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(relative_distance_sig_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_sig_test, *tolerance(TOL)) {
     ChannelModel cm1;
     cm1.p_bleach = 0.5;
     cm1.p_dud = 0.5;
@@ -194,11 +194,11 @@ BOOST_AUTO_TEST_CASE(relative_distance_sig_test, *tolerance(TOL)) {
     cm2.mu = 0.5;
     cm2.sig = 0.66;
 
-    BOOST_TEST(cm1.relative_distance(cm2) == (0.66 - 0.5) / 0.5);
-    BOOST_TEST(cm2.relative_distance(cm1) == (0.66 - 0.5) / 0.66);
+    BOOST_TEST(cm1.distance(cm2) == (0.66 - 0.5));
+    BOOST_TEST(cm2.distance(cm1) == (0.66 - 0.5));
 }
 
-BOOST_AUTO_TEST_CASE(relative_distance_max_no_sum_test, *tolerance(TOL)) {
+BOOST_AUTO_TEST_CASE(distance_max_no_sum_test, *tolerance(TOL)) {
     ChannelModel cm1;
     cm1.p_bleach = 0.5;
     cm1.p_dud = 0.5;
@@ -213,8 +213,8 @@ BOOST_AUTO_TEST_CASE(relative_distance_max_no_sum_test, *tolerance(TOL)) {
     cm2.mu = 0.66;
     cm2.sig = 0.7;
 
-    BOOST_TEST(cm1.relative_distance(cm2) == (0.7 - 0.5) / 0.5);
-    BOOST_TEST(cm2.relative_distance(cm1) == (0.7 - 0.5) / 0.7);
+    BOOST_TEST(cm1.distance(cm2) == (0.7 - 0.5));
+    BOOST_TEST(cm2.distance(cm1) == (0.7 - 0.5));
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // channel_model_suite

@@ -93,9 +93,9 @@ SequencingModel HMMFitter::fit(
                     seq_model.channel_models[i]->bg_sig;
         }
         cout << next.debug_string() << "\n";
-        double relative_distance = sm.relative_distance(next);
-        cout << "relative distance: " << relative_distance << "\n";
-        if (relative_distance < stopping_threshold) {
+        double distance = sm.distance(next);
+        cout << "distance: " << distance << "\n";
+        if (distance < stopping_threshold) {
             return next;
         }
         sm = next;

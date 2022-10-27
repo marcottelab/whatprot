@@ -26,7 +26,7 @@ public:
     SequencingModel& operator=(const SequencingModel& other);
     SequencingModel(SequencingModel&& other);
     ~SequencingModel();
-    double relative_distance(const SequencingModel& sequencing_model) const;
+    double distance(const SequencingModel& sequencing_model) const;
     std::string debug_string() const;
 
     double p_edman_failure;
