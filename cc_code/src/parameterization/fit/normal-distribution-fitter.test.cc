@@ -146,7 +146,8 @@ BOOST_AUTO_TEST_CASE(get_mu_two_samples_test, *tolerance(TOL)) {
 //     BOOST_TEST(ndf.get_sig()
 //                == sqrt(((x1 - (double)n1 * mu) * (x1 - (double)n1 * mu) * w1
 //                                 / (double)n1
-//                         + (x2 - (double)n2 * mu) * (x2 - (double)n2 * mu) * w2
+//                         + (x2 - (double)n2 * mu) * (x2 - (double)n2 * mu) *
+//                         w2
 //                                   / (double)n2)
 //                        / (w1 + w2)));
 // }

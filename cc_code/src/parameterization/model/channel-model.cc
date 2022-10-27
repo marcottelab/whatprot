@@ -54,10 +54,7 @@ double ChannelModel::relative_distance(
 
 string ChannelModel::debug_string() const {
     return "Bleach rate: " + to_string(p_bleach)
-           + ", Dud rate: " + to_string(p_dud)
-           + ", Background sig: " + to_string(bg_sig)
-           + ", mu: " + to_string(mu)
-           + ", sig: " + to_string(sig);
+           + ", Dud rate: " + to_string(p_dud);
 }
 
 }  // namespace whatprot

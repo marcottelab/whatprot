@@ -85,6 +85,13 @@ SequencingModel HMMFitter::fit(
             fitter += peptide_fitter;
         }
         SequencingModel next = fitter.get();
+        // TODO: ugly hack, do something nicer...
+        for (unsigned int i = 0; i < seq_model.channel_models.size(); i++) {
+            next.channel_models[i]->mu = seq_model.channel_models[i]->mu;
+            next.channel_models[i]->sig = seq_model.channel_models[i]->sig;
+            next.channel_models[i]->bg_sig =
+                    seq_model.channel_models[i]->bg_sig;
+        }
         cout << next.debug_string() << "\n";
         double relative_distance = sm.relative_distance(next);
         cout << "relative distance: " << relative_distance << "\n";

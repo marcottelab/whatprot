@@ -56,7 +56,8 @@ double NormalDistributionFitter::get_bg_sig() const {
 double NormalDistributionFitter::get_sig() const {
     double mu = get_mu();
     double bg_sig_sq = zero_w_sum_x_sq / zero_total_weight;
-    double sig_sq = (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight - bg_sig_sq;
+    double sig_sq =
+            (w_sum_x_sq_over_n - mu * mu * w_sum_n) / total_weight - bg_sig_sq;
     return sqrt(sig_sq);
 }
 
