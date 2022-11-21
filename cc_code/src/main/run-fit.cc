@@ -33,7 +33,7 @@ using std::vector;
 
 void run_fit(double stopping_threshold,
              string dye_seq_string,
-             std::string seq_params_filename,
+             string seq_params_filename,
              string radiometries_filename) {
     double total_start_time = wall_time();
 
@@ -41,11 +41,20 @@ void run_fit(double stopping_threshold,
     double end_time;
 
     start_time = wall_time();
+    SequencingModel true_seq_model(seq_params_filename);
+    SequencingModel seq_model = true_seq_model.with_mu_as_one();
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
+
+    start_time = wall_time();
     unsigned int num_timesteps;
     unsigned int num_channels;
     unsigned int total_num_radiometries;
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
+                      true_seq_model,
                       &num_timesteps,
                       &num_channels,
                       &total_num_radiometries,
@@ -56,13 +65,6 @@ void run_fit(double stopping_threshold,
     start_time = wall_time();
     DyeSeq dye_seq(num_channels, dye_seq_string);
     end_time = wall_time();
-
-    start_time = wall_time();
-    SequencingModel seq_model(seq_params_filename);
-    SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     HMMFitter fitter(num_timesteps,

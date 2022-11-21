@@ -18,6 +18,7 @@ namespace whatprot {
 class ChannelModel {
 public:
     virtual ~ChannelModel();
+    ChannelModel with_mu_as_one() const;
     virtual double pdf(double observed, int state) const;
     virtual double sigma(int state) const;
     double relative_distance(const ChannelModel& channel_model) const;

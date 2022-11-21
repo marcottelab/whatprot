@@ -59,16 +59,6 @@ def convert_radiometries(num_channels, num_mocks, num_cycles, radmat_file, outpu
 
     radmat = np.transpose(radmat, (0, 2, 1))
 
-    # Fix intensities. If the intensities are systematically too large, the
-    # probabilities will be too low and we will get underflow when the values
-    # are fed into whatprot. Switching into log-probability format is not a
-    # very viable option, because a significant amount of addition is needed,
-    # and addition is very slow in log-probability format. However the intensity
-    # values are of arbitrary units anyways. We have found that when working
-    # with Erisyon data, dividing by 15000 is an appropriate adjustment, but
-    # this number was rather arbitrarily chosen.
-    radmat = radmat / 15000
-
     f = open(output_file, 'w')
     # The output file starts with three lines of metadata useful for
     # understanding the specifics of this file. These are in a standardized

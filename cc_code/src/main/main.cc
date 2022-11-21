@@ -143,8 +143,8 @@ int main(int argc, char** argv) {
             "    --radiometries, and --results. Option --hmmprune is also\n"
             "    permitted.\n"
             "    \n"
-            "    For VARIANT nn, you must define --neighbors, --sigma,\n"
-            "    --dyetracks, --radiometries, and --results.\n"
+            "    For VARIANT nn, you must define --seqparams, --neighbors,\n"
+            "    --sigma, --dyetracks, --radiometries, and --results.\n"
             "    \n"
             "  For MODE fit, you must NOT define a VARIANT, and you MUST\n"
             "  define --seqparams, --stoppingthreshold, --dyeseqs, and\n"
@@ -310,14 +310,14 @@ int main(int argc, char** argv) {
             return 0;
         }
         if (0 == positional_args[1].compare("nn")) {
-            if (num_optional_args != 5 || !has_k || !has_s || !has_T || !has_R
-                || !has_Y) {
+            if (num_optional_args != 6 || !has_P || !has_k || !has_s || !has_T
+                || !has_R || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
                 return 1;
             }
             print_omp_info();
-            run_classify_nn(k, s, T, R, Y);
+            run_classify_nn(P, k, s, T, R, Y);
             return 0;
         }
         cout << endl << "INCORRECT USAGE" << endl << endl;

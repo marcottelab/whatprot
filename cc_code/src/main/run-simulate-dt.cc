@@ -35,13 +35,19 @@ using std::vector;
 
 void run_simulate_dt(unsigned int num_timesteps,
                      unsigned int dye_tracks_per_peptide,
-                     std::string seq_params_filename,
+                     string seq_params_filename,
                      string dye_seqs_filename,
                      string dye_tracks_filename) {
     double total_start_time = wall_time();
 
     double start_time;
     double end_time;
+
+    start_time = wall_time();
+    SequencingModel true_seq_model(seq_params_filename);
+    SequencingModel seq_model = true_seq_model.with_mu_as_one();
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     unsigned int num_channels;
@@ -51,11 +57,6 @@ void run_simulate_dt(unsigned int num_timesteps,
             dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
     end_time = wall_time();
     print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
-
-    start_time = wall_time();
-    SequencingModel seq_model(seq_params_filename);
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     default_random_engine generator(time_based_seed());

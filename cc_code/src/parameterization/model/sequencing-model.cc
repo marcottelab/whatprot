@@ -41,9 +41,10 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     json data = json::parse(f);
     p_edman_failure = data["p_edman_failure"].get<double>();
     p_detach = data["p_detach"].get<double>();
-    for (auto& channel_data: data["channel_models"]) {
+    for (auto& channel_data : data["channel_models"]) {
         channel_models.push_back(new ChannelModel());
-        channel_models.back()->p_bleach = channel_data["p_bleach"].get<double>();
+        channel_models.back()->p_bleach =
+                channel_data["p_bleach"].get<double>();
         channel_models.back()->p_dud = channel_data["p_dud"].get<double>();
         channel_models.back()->bg_sig = channel_data["bg_sig"].get<double>();
         channel_models.back()->mu = channel_data["mu"].get<double>();
@@ -89,6 +90,17 @@ SequencingModel::~SequencingModel() {
             delete channel_model;
         }
     }
+}
+
+SequencingModel SequencingModel::with_mu_as_one() const {
+    SequencingModel x;
+    x.p_detach = p_detach;
+    x.p_edman_failure = p_edman_failure;
+    for (unsigned int i = 0; i < channel_models.size(); i++) {
+        x.channel_models.push_back(
+                new ChannelModel(channel_models[i]->with_mu_as_one()));
+    }
+    return x;
 }
 
 double SequencingModel::relative_distance(

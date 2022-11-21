@@ -34,7 +34,7 @@ using std::vector;
 
 void run_simulate_rad(unsigned int num_timesteps,
                       unsigned int num_to_generate,
-                      std::string seq_params_filename,
+                      string seq_params_filename,
                       string dye_seqs_filename,
                       string radiometries_filename,
                       string ys_filename) {
@@ -44,6 +44,12 @@ void run_simulate_rad(unsigned int num_timesteps,
     double end_time;
 
     start_time = wall_time();
+    SequencingModel true_seq_model(seq_params_filename);
+    SequencingModel seq_model = true_seq_model.with_mu_as_one();
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
+
+    start_time = wall_time();
     unsigned int num_channels;
     unsigned int total_num_dye_seqs;
     vector<SourcedData<DyeSeq, SourceCount<int>>> dye_seqs;
@@ -51,11 +57,6 @@ void run_simulate_rad(unsigned int num_timesteps,
             dye_seqs_filename, &num_channels, &total_num_dye_seqs, &dye_seqs);
     end_time = wall_time();
     print_read_dye_seqs(total_num_dye_seqs, end_time - start_time);
-
-    start_time = wall_time();
-    SequencingModel seq_model(seq_params_filename);
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     default_random_engine generator(time_based_seed());
@@ -72,8 +73,11 @@ void run_simulate_rad(unsigned int num_timesteps,
                                            end_time - start_time);
 
     start_time = wall_time();
-    write_radiometries(
-            radiometries_filename, num_timesteps, num_channels, radiometries);
+    write_radiometries(radiometries_filename,
+                       true_seq_model,
+                       num_timesteps,
+                       num_channels,
+                       radiometries);
     write_ys(ys_filename, radiometries);
     end_time = wall_time();
     print_finished_saving_results(end_time - start_time);

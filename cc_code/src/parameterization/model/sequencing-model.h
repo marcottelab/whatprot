@@ -26,6 +26,7 @@ public:
     SequencingModel& operator=(const SequencingModel& other);
     SequencingModel(SequencingModel&& other);
     ~SequencingModel();
+    SequencingModel with_mu_as_one() const;
     double relative_distance(const SequencingModel& sequencing_model) const;
     std::string debug_string() const;
 

@@ -16,46 +16,24 @@
 // Local project headers:
 #include "common/radiometry.h"
 #include "common/sourced-data.h"
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
 void read_radiometries(const std::string& filename,
+                       const SequencingModel& seq_model,
                        unsigned int* num_timesteps,
                        unsigned int* num_channels,
                        unsigned int* total_num_radiometries,
                        std::vector<Radiometry>* radiometries);
 
-void read_radiometries_raw(const std::string& filename,
-                           unsigned int* num_timesteps,
-                           unsigned int* num_channels,
-                           unsigned int* total_num_radiometries,
-                           unsigned int* num_radiometries,
-                           double** intensities);
-
-void convert_radiometries_from_raw(unsigned int num_timesteps,
-                                   unsigned int num_channels,
-                                   unsigned int num_radiometries,
-                                   double* intensities,
-                                   std::vector<Radiometry>* radiometries);
-
 void write_radiometries(
         const std::string& filename,
+        const SequencingModel& seq_model,
         unsigned int num_timesteps,
         unsigned int num_channels,
         const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
                 radiometries);
-
-void convert_raw_from_radiometries(
-        const std::vector<SourcedData<Radiometry, SourceCount<int>>>&
-                radiometries,
-        unsigned int radiometry_size,
-        double** intensities);
-
-void write_radiometries_raw(const std::string& filename,
-                            unsigned int num_timesteps,
-                            unsigned int num_channels,
-                            unsigned int num_radiometries,
-                            double* intensities);
 
 void write_ys(const std::string& filename,
               const std::vector<SourcedData<Radiometry, SourceCount<int>>>&

@@ -31,6 +31,16 @@ double PI = 3.141592653589793238;
 
 ChannelModel::~ChannelModel() {}
 
+ChannelModel ChannelModel::with_mu_as_one() const {
+    ChannelModel x;
+    x.p_bleach = p_bleach;
+    x.p_dud = p_dud;
+    x.bg_sig = bg_sig / mu;
+    x.mu = 1.0;
+    x.sig = sig / mu;
+    return x;
+}
+
 double ChannelModel::pdf(double observed, int state) const {
     double offset = observed - mu * (double)state;
     double s = sigma(state);
