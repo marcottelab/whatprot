@@ -104,6 +104,8 @@ SequencingModel SequencingModel::with_mu_as_one() const {
     SequencingModel x;
     x.p_detach = p_detach;
     x.p_edman_failure = p_edman_failure;
+    x.p_initial_break_n = p_initial_break_n;
+    x.p_cyclic_break_n = p_cyclic_break_n;
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         x.channel_models.push_back(
                 new ChannelModel(channel_models[i]->with_mu_as_one()));
