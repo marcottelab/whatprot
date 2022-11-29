@@ -33,7 +33,8 @@ using std::string;
 using std::vector;
 }  // namespace
 
-void run_classify_nn(int k,
+void run_classify_nn(string seq_params_filename,
+                     int k,
                      double sig,
                      string dye_tracks_filename,
                      string radiometries_filename,
@@ -42,6 +43,11 @@ void run_classify_nn(int k,
 
     double start_time;
     double end_time;
+
+    start_time = wall_time();
+    SequencingModel true_seq_model(seq_params_filename);
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     unsigned int num_timesteps;
@@ -58,6 +64,7 @@ void run_classify_nn(int k,
     unsigned int total_num_radiometries;  // num radiometries across all procs.
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
+                      true_seq_model,
                       &duplicate_num_timesteps,
                       &duplicate_num_channels,
                       &total_num_radiometries,

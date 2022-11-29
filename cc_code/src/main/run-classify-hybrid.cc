@@ -37,7 +37,7 @@ using std::string;
 using std::vector;
 }  // namespace
 
-void run_classify_hybrid(std::string seq_params_filename,
+void run_classify_hybrid(string seq_params_filename,
                          int k,
                          double sig,
                          int h,
@@ -50,6 +50,14 @@ void run_classify_hybrid(std::string seq_params_filename,
 
     double start_time;
     double end_time;
+
+    start_time = wall_time();
+    SequencingModel true_seq_model(seq_params_filename);
+    SequencingModel seq_model = true_seq_model.with_mu_as_one();
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = hmm_pruning_cutoff;
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     unsigned int num_channels;
@@ -77,19 +85,13 @@ void run_classify_hybrid(std::string seq_params_filename,
     unsigned int total_num_radiometries;  // num radiometries across all procs.
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
+                      true_seq_model,
                       &duplicate_num_timesteps,
                       &triplicate_num_channels,
                       &total_num_radiometries,
                       &radiometries);
     end_time = wall_time();
     print_read_radiometries(total_num_radiometries, end_time - start_time);
-
-    start_time = wall_time();
-    SequencingModel seq_model(seq_params_filename);
-    SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = hmm_pruning_cutoff;
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     HybridClassifier classifier(num_timesteps,

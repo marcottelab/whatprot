@@ -13,7 +13,8 @@
 
 namespace whatprot {
 
-void run_classify_nn(int k,
+void run_classify_nn(std::string seq_params_filename,
+                     int k,
                      double sig,
                      std::string dye_tracks_filename,
                      std::string radiometries_filename,

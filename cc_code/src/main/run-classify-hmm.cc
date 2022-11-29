@@ -36,7 +36,7 @@ using std::string;
 using std::vector;
 }  // namespace
 
-void run_classify_hmm(std::string seq_params_filename,
+void run_classify_hmm(string seq_params_filename,
                       double hmm_pruning_cutoff,
                       string dye_seqs_filename,
                       string radiometries_filename,
@@ -56,24 +56,26 @@ void run_classify_hmm(std::string seq_params_filename,
     print_read_dye_seqs(dye_seqs.size(), end_time - start_time);
 
     start_time = wall_time();
+    SequencingModel true_seq_model(seq_params_filename);
+    SequencingModel seq_model = true_seq_model.with_mu_as_one();
+    SequencingSettings seq_settings;
+    seq_settings.dist_cutoff = hmm_pruning_cutoff;
+    end_time = wall_time();
+    print_finished_basic_setup(end_time - start_time);
+
+    start_time = wall_time();
     unsigned int num_timesteps;
     unsigned int duplicate_num_channels;  // also get this from dye seq file.
     unsigned int total_num_radiometries;  // num radiometries across all procs.
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
+                      true_seq_model,
                       &num_timesteps,
                       &duplicate_num_channels,
                       &total_num_radiometries,
                       &radiometries);
     end_time = wall_time();
     print_read_radiometries(total_num_radiometries, end_time - start_time);
-
-    start_time = wall_time();
-    SequencingModel seq_model(seq_params_filename);
-    SequencingSettings seq_settings;
-    seq_settings.dist_cutoff = hmm_pruning_cutoff;
-    end_time = wall_time();
-    print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     HMMClassifier classifier(

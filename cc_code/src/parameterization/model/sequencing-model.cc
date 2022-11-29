@@ -100,6 +100,17 @@ SequencingModel::~SequencingModel() {
     }
 }
 
+SequencingModel SequencingModel::with_mu_as_one() const {
+    SequencingModel x;
+    x.p_detach = p_detach;
+    x.p_edman_failure = p_edman_failure;
+    for (unsigned int i = 0; i < channel_models.size(); i++) {
+        x.channel_models.push_back(
+                new ChannelModel(channel_models[i]->with_mu_as_one()));
+    }
+    return x;
+}
+
 double SequencingModel::distance(
         const SequencingModel& sequencing_model) const {
     double dist = 0.0;

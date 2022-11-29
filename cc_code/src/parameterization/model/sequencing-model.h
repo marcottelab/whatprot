@@ -27,6 +27,7 @@ public:
     SequencingModel(SequencingModel&& other);
     ~SequencingModel();
     double distance(const SequencingModel& sequencing_model) const;
+    SequencingModel with_mu_as_one() const;
     std::string debug_string() const;
 
     double p_edman_failure;
