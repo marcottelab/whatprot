@@ -22,6 +22,39 @@ def plot_pr_curve(predictions_file,
                    lim_peps_file,
                    directory)
 
+def plot_estimated_and_true_pr_curve(predictions_file,
+                                    true_y_file,
+                                    dye_seqs_file,
+                                    directory = ""):
+    fig, ax = plt.subplots(1)
+    fig.set_size_inches(8, 8)
+    fig.set_dpi(100)
+    plot_pr_curve_noshow(ax,
+                         predictions_file,
+                         true_y_file,
+                         dye_seqs_file,
+                         directory = directory,
+                         label = "true result")
+    plot_estimated_pr_curve_noshow(ax,
+                                   predictions_file,
+                                   directory = directory,
+                                   label = "predicted result")
+    ax.set_xlim(left = 0)
+    ax.set_ylim(bottom = 0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["bottom"].set_linewidth(1.5)
+    ax.spines["left"].set_linewidth(1.5)
+    ax.xaxis.set_tick_params(width=1.5)
+    ax.yaxis.set_tick_params(width=1.5)
+    ax.set_xlabel('recall',
+                    fontsize = 15,
+                    labelpad = 15)
+    ax.set_ylabel('precision',
+                    fontsize = 15,
+                    labelpad = 15)
+    plt.legend(fontsize = 15)
+
 def plot_pr_curves(predictions_files,
                    true_y_file,
                    dye_seqs_file,
@@ -144,6 +177,21 @@ def plot_pr_curve_noshow(ax,
     precision, recall = compute_read_pr_curve(predictions, true_y, weightmap)
     ax.plot(recall, precision, '-', label = label, linewidth = 2)
 
+def plot_estimated_pr_curve_noshow(ax,
+                                   predictions_file,
+                                   directory = "",
+                                   label = None):
+    f = open(directory + predictions_file, "r")
+    csv = f.readlines()
+    csv = csv[1:]
+    predictions = [0] * len(csv)
+    for i in range(0, len(csv)):
+        cells = csv[i].split(",")
+        predictions[i] = (int(cells[1]), float(cells[2]))
+    f.close()
+    precision, recall = compute_estimated_pr_curve(predictions)
+    ax.plot(recall, precision, ':', label = label, linewidth = 2)
+
 def plot_aggregate_pr_curves_noshow(axpep,
                                     axprot,
                                     predictions_file,
@@ -228,6 +276,10 @@ def compute_read_pr_curve(predictions, ground_truth, weightmap):
             amt_correct_and_score[i] = (amt_correct, predictions[i][1])
         else:
             amt_correct_and_score[i] = (0.0, predictions[i][1])
+    return compute_pr_curve_helper(amt_correct_and_score, len(amt_correct_and_score))
+
+def compute_estimated_pr_curve(predictions):
+    amt_correct_and_score = [(x[1], x[1]) for x in predictions]
     return compute_pr_curve_helper(amt_correct_and_score, len(amt_correct_and_score))
 
 def compute_pr_curve_helper(amt_correct_and_score, total):
