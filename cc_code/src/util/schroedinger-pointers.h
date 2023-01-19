@@ -6,10 +6,20 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_UTIL_DELETE_H
-#define WHATPROT_UTIL_DELETE_H
+#ifndef WHATPROT_UTIL_SCHROEDINGER_POINTERS_H
+#define WHATPROT_UTIL_SCHROEDINGER_POINTERS_H
 
 namespace whatprot {
+
+template <class T>
+const T& dereference_if_pointer(const T& t) {
+    return t;
+}
+
+template <class T>
+const T& dereference_if_pointer(T* t) {
+    return *t;
+}
 
 template <class T>
 void delete_if_pointer(const T& t) {}
@@ -34,4 +44,4 @@ void delete_array(unsigned int size, T** array) {
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_UTIL_DELETE_H
+#endif  // WHATPROT_UTIL_SCHROEDINGER_POINTERS_H

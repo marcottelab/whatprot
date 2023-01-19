@@ -12,12 +12,25 @@
 #include <boost/test/unit_test.hpp>
 
 // File under test:
-#include "delete.h"
+#include "schroedinger-pointers.h"
 
 namespace whatprot {
 
 BOOST_AUTO_TEST_SUITE(util_suite)
 BOOST_AUTO_TEST_SUITE(delete_suite)
+
+BOOST_AUTO_TEST_CASE(dereference_if_pointer_not_pointer_test) {
+    int x = 42;
+    int y = dereference_if_pointer(x);
+    BOOST_TEST(y == 42);
+}
+
+BOOST_AUTO_TEST_CASE(dereference_if_pointer_is_pointer_test) {
+    int x = 42;
+    int* y = &x;
+    int z = dereference_if_pointer(y);
+    BOOST_TEST(z == 42);
+}
 
 BOOST_AUTO_TEST_CASE(delete_if_pointer_not_pointer_test) {
     int x = 42;

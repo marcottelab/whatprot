@@ -13,7 +13,7 @@
 #include <utility>
 
 // Local project headers:
-#include "util/delete.h"
+#include "util/schroedinger-pointers.h"
 
 namespace whatprot {
 

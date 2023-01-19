@@ -10,8 +10,6 @@
 #include "hmm-fitter.h"
 
 // Standard C++ library headers:
-#include <iostream>
-#include <vector>
 
 // Local project headers:
 #include "common/dye-seq.h"
@@ -26,12 +24,6 @@
 #include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
-
-namespace {
-using std::cout;
-using std::move;
-using std::vector;
-}  // namespace
 
 HMMFitter::HMMFitter(unsigned int num_timesteps,
                      unsigned int num_channels,
@@ -60,66 +52,6 @@ HMMFitter::HMMFitter(unsigned int num_timesteps,
             max_num_dyes = num_dyes;
         }
     }
-}
-
-SequencingModel HMMFitter::fit(
-        const std::vector<Radiometry>& radiometries) const {
-    SequencingModel sm = seq_model;
-    cout << sm.debug_string() << "\n";
-    while (true) {
-        SequencingModelFitter fitter(num_channels);
-        DyeSeqPrecomputations dye_seq_precomputations(
-                dye_seq, sm, num_timesteps, num_channels);
-        UniversalPrecomputations universal_precomputations(sm, num_channels);
-        universal_precomputations.set_max_num_dyes(max_num_dyes);
-        for (const Radiometry& radiometry : radiometries) {
-            RadiometryPrecomputations radiometry_precomputations(
-                    radiometry, sm, seq_settings, max_num_dyes);
-            PeptideHMM hmm(num_timesteps,
-                           num_channels,
-                           dye_seq_precomputations,
-                           radiometry_precomputations,
-                           universal_precomputations);
-            SequencingModelFitter peptide_fitter(num_channels);
-            hmm.improve_fit(&peptide_fitter);
-            fitter += peptide_fitter;
-        }
-        // Here we perform a correction to account for the peptides that
-        // wouldn't be seen due to all fluorophores being duds. This fixes bias
-        // in result for p_dud on all channels.
-        // TODO: maybe make this cleaner - break into separate function?
-        // TODO: also inefficient, maybe should be a precomputation somehow?
-        double ratio_hidden = 1.0;
-        for (unsigned int i = 0; i < dye_seq.length; i++) {
-            if (dye_seq[i] != -1) {
-                ratio_hidden *= sm.channel_models[dye_seq[i]]->p_dud;
-            }
-        }
-        double magic_ratio = 1.0 / (1.0 - ratio_hidden) - 1.0;
-        double expected_hidden_count = magic_ratio * radiometries.size();
-        for (unsigned int i = 0; i < fitter.channel_fits.size(); i++) {
-            fitter.channel_fits[i]->p_dud_fit.numerator +=
-                    expected_hidden_count;
-            fitter.channel_fits[i]->p_dud_fit.denominator +=
-                    expected_hidden_count;
-        }
-        SequencingModel next = fitter.get();
-        // TODO: ugly hack, do something nicer...
-        for (unsigned int i = 0; i < seq_model.channel_models.size(); i++) {
-            next.channel_models[i]->mu = seq_model.channel_models[i]->mu;
-            next.channel_models[i]->sig = seq_model.channel_models[i]->sig;
-            next.channel_models[i]->bg_sig =
-                    seq_model.channel_models[i]->bg_sig;
-        }
-        cout << next.debug_string() << "\n";
-        double distance = sm.distance(next);
-        cout << "distance: " << distance << "\n";
-        if (distance < stopping_threshold) {
-            return next;
-        }
-        sm = next;
-    }
-    return sm;
 }
 
 }  // namespace whatprot

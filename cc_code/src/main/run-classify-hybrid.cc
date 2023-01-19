@@ -27,7 +27,6 @@
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
-#include "util/delete.h"
 #include "util/time.h"
 
 namespace whatprot {

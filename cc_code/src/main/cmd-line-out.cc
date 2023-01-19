@@ -15,6 +15,9 @@
 // OpenMP
 #include <omp.h>
 
+// Local project headers:
+#include "parameterization/model/sequencing-model.h"
+
 namespace whatprot {
 
 namespace {
@@ -74,6 +77,10 @@ void print_invalid_command() {
 
 void print_omp_info() {
     cout << "Using OpenMP with " << omp_get_max_threads() << " threads.\n";
+}
+
+void print_parameter_results(const SequencingModel& seq_model) {
+    cout << "Parameters:\n" << seq_model.debug_string() << "\n\n";
 }
 
 void print_read_dye_seqs(int num, double time) {

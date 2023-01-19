@@ -17,6 +17,7 @@
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/radiometry.h"
+#include "fitters/bootstrap-fit.h"
 #include "fitters/hmm-fitter.h"
 #include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
@@ -34,7 +35,9 @@ using std::vector;
 void run_fit(double stopping_threshold,
              string dye_seq_string,
              string seq_params_filename,
-             string radiometries_filename) {
+             string radiometries_filename,
+             unsigned int num_bootstrap,
+             double confidence_interval) {
     double total_start_time = wall_time();
 
     double start_time;
@@ -66,16 +69,33 @@ void run_fit(double stopping_threshold,
     DyeSeq dye_seq(num_channels, dye_seq_string);
     end_time = wall_time();
 
-    start_time = wall_time();
-    HMMFitter fitter(num_timesteps,
-                     num_channels,
-                     stopping_threshold,
-                     seq_model,
-                     seq_settings,
-                     dye_seq);
-    fitter.fit(radiometries);
-    print_finished_parameter_fitting(end_time - start_time);
-    end_time = wall_time();
+    if (confidence_interval == 0.0) {
+        start_time = wall_time();
+        HMMFitter fitter(num_timesteps,
+                         num_channels,
+                         stopping_threshold,
+                         seq_model,
+                         seq_settings,
+                         dye_seq);
+        SequencingModel fitted_seq_model = fitter.fit(radiometries);
+        end_time = wall_time();
+        print_finished_parameter_fitting(end_time - start_time);
+
+        print_parameter_results(fitted_seq_model);
+    } else {
+        start_time = wall_time();
+        bootstrap_fit(num_timesteps,
+                      num_channels,
+                      stopping_threshold,
+                      seq_model,
+                      seq_settings,
+                      dye_seq,
+                      radiometries,
+                      num_bootstrap,
+                      confidence_interval);
+        end_time = wall_time();
+        print_finished_parameter_fitting(end_time - start_time);
+    }
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);

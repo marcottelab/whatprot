@@ -9,6 +9,9 @@
 #ifndef WHATPROT_MAIN_CMD_LINE_OUT_H
 #define WHATPROT_MAIN_CMD_LINE_OUT_H
 
+// Local project headers:
+#include "parameterization/model/sequencing-model.h"
+
 namespace whatprot {
 
 void print_bad_inputs();
@@ -23,6 +26,7 @@ void print_finished_saving_results(double time);
 void print_invalid_classifier();
 void print_invalid_command();
 void print_omp_info();
+void print_parameter_results(const SequencingModel& seq_model);
 void print_read_dye_seqs(int num, double time);
 void print_read_dye_tracks(int num, double time);
 void print_read_radiometries(int num, double time);

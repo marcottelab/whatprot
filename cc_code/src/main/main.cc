@@ -54,6 +54,15 @@ int main(int argc, char** argv) {
     // clang-format off
     options.add_options()
         ("h,help", "Print usage\n")
+        ("b,numbootstrap",
+            "Only for parameter fitting, and optional. If specified, indicates "
+            "number of bootstrapping rounds to perform to get confidence "
+            "intervals for parameters. If specified you must also specify "
+            "--confidenceinterval (shorthand -c).")
+        ("c,confidenceinterval",
+            "Only for parameter fitting, and optional. If specified, indicates "
+            "the desired confidence interval size. If specified you must also "
+            "specify --numbootstrap (shorthand -b).")
         ("g,numgenerate",
             "Only for simulation, and required. Number of dye-tracks or "
             "radiometries to generate. For simulate rad, this is the actual "
@@ -174,6 +183,20 @@ int main(int argc, char** argv) {
 
     // Retrieve options, keeping track of which ones were or weren't set.
     unsigned int num_optional_args = 0;
+    bool has_b = false;
+    int b = -1;
+    if (parsed_opts.count("numbootstrap")) {
+        has_b = true;
+        num_optional_args++;
+        b = parsed_opts["numbootstrap"].as<int>();
+    }
+    bool has_c = false;
+    double c = 0.0;
+    if (parsed_opts.count("confidenceinterval")) {
+        has_c = true;
+        num_optional_args++;
+        c = parsed_opts["confidenceinterval"].as<double>();
+    }
     bool has_g = false;
     int g = -1;
     if (parsed_opts.count("numgenerate")) {
@@ -325,13 +348,23 @@ int main(int argc, char** argv) {
         return 1;
     }
     if (0 == positional_args[0].compare("fit")) {
+        // Special handling for b and c. Must have both or neither.
+        if (has_b ^ has_c) {
+            cout << endl << "INCORRECT USAGE" << endl << endl;
+            cout << options.help() << endl;
+            return 1;
+        }
+        // Special handling for b and c. These args are optional.
+        if (has_b & has_c) {
+            num_optional_args -= 2;
+        }
         if (positional_args.size() != 1 || num_optional_args != 4 || !has_P
             || !has_L || !has_x || !has_R) {
             cout << endl << "INCORRECT USAGE" << endl << endl;
             cout << options.help() << endl;
             return 1;
         }
-        run_fit(L, x, P, R);
+        run_fit(L, x, P, R, b, c);
         return 0;
     }
     if (0 == positional_args[0].compare("simulate")) {
