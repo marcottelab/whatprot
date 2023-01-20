@@ -36,6 +36,12 @@ namespace whatprot {
 
 SequencingModel::SequencingModel() {}
 
+SequencingModel::SequencingModel(unsigned int num_channels) {
+    for (unsigned int c = 0; c < num_channels; c++) {
+        channel_models.push_back(new ChannelModel());
+    }
+}
+
 SequencingModel::SequencingModel(const string& seq_model_filename) {
     ifstream f(seq_model_filename);
     json data = json::parse(f);

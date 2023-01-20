@@ -58,11 +58,13 @@ int main(int argc, char** argv) {
             "Only for parameter fitting, and optional. If specified, indicates "
             "number of bootstrapping rounds to perform to get confidence "
             "intervals for parameters. If specified you must also specify "
-            "--confidenceinterval (shorthand -c).")
+            "--confidenceinterval (shorthand -c).\n",
+            value<int>())
         ("c,confidenceinterval",
             "Only for parameter fitting, and optional. If specified, indicates "
             "the desired confidence interval size. If specified you must also "
-            "specify --numbootstrap (shorthand -b).")
+            "specify --numbootstrap (shorthand -b).\n",
+            value<double>())
         ("g,numgenerate",
             "Only for simulation, and required. Number of dye-tracks or "
             "radiometries to generate. For simulate rad, this is the actual "
@@ -364,6 +366,7 @@ int main(int argc, char** argv) {
             cout << options.help() << endl;
             return 1;
         }
+        print_omp_info();
         run_fit(L, x, P, R, b, c);
         return 0;
     }

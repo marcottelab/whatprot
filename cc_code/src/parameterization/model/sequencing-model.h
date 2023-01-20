@@ -21,6 +21,7 @@ namespace whatprot {
 class SequencingModel {
 public:
     SequencingModel();
+    SequencingModel(unsigned int num_channels);
     SequencingModel(const std::string& seq_model_filename);
     SequencingModel(const SequencingModel& other);
     SequencingModel& operator=(const SequencingModel& other);

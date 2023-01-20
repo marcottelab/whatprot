@@ -39,7 +39,6 @@ public:
     template <class R>
     SequencingModel fit(const std::vector<R>& radiometries) const {
         SequencingModel sm = seq_model;
-        std::cout << sm.debug_string() << "\n";
         while (true) {
             SequencingModelFitter fitter(num_channels);
             DyeSeqPrecomputations dye_seq_precomputations(
