@@ -71,8 +71,8 @@ void bootstrap_fit(unsigned int num_timesteps,
     unsigned int ci_max_idx =
             (unsigned int)(((1 - (1 - confidence_interval) / 2))
                            * (double)num_bootstrap_rounds);
-    SequencingModel ci_min;
-    SequencingModel ci_max;
+    SequencingModel ci_min(num_channels);
+    SequencingModel ci_max(num_channels);
     sort(seq_models.begin(),
          seq_models.end(),
          [](SequencingModel a, SequencingModel b) -> bool {
