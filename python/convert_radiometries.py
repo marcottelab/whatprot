@@ -24,7 +24,7 @@ def convert_radiometries(num_channels, num_mocks, num_cycles, radmat_file, outpu
     if radmat_filetype == 'npy':
         radmat = np.load(radmat_file)
     elif radmat_filetype == 'tsv':
-        radmat = np.genfromtxt(radmat_file, delimiter='\t', dtype=float)[:,1:]
+        radmat = np.genfromtxt(radmat_file, delimiter='\t', dtype=float)
         radmat = np.reshape(radmat, (radmat.shape[0], num_channels, num_mocks + num_cycles))
     else:
         # This is a problem.
