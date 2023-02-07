@@ -6,22 +6,22 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_MAIN_RUN_FIT_H
-#define WHATPROT_MAIN_RUN_FIT_H
+#ifndef WHATPROT_IO_PARAMS_IO_H
+#define WHATPROT_IO_PARAMS_IO_H
 
 // Standard C++ library headers:
 #include <string>
+#include <vector>
+
+// Local project headers:
+#include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
 
-void run_fit(double stopping_threshold,
-             std::string dye_seq_string,
-             std::string seq_params_filename,
-             std::string radiometries_filename,
-             unsigned int num_bootstrap,
-             double confidence_interval,
-             std::string results_filename);
+void write_params(const std::string& filename,
+                  unsigned int num_channels,
+                  const std::vector<SequencingModel>& models);
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_MAIN_RUN_FIT_H
+#endif  // WHATPROT_IO_PARAMS_IO_H

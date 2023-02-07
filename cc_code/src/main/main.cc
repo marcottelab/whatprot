@@ -131,8 +131,12 @@ int main(int argc, char** argv) {
             "or name of file to write them to (dt simulation).\n",
             value<string>())
         ("Y,results",
-            "Only for classification, or rad simulation, and required. Name of "
-            "file to write correct or predicted peptide ids (ys) to.\n",
+            "Required for classify and simulate rad. Then it is the name of "
+            "the file to write correct or predicted peptide ids (y values) to. "
+            "Optional for fit, and then only permitted if --numbootstrap "
+            "(shorthand -b) and --confidenceinterval (shorthand -c) are "
+            "specified. Then it is the name of the file to write verbose "
+            "information about parameter fit results for each bootstrap run.\n",
             value<string>());
     // clang-format on
     options.custom_help(
@@ -159,7 +163,10 @@ int main(int argc, char** argv) {
             "    \n"
             "  For MODE fit, you must NOT define a VARIANT, and you MUST\n"
             "  define --seqparams, --stoppingthreshold, --dyeseqstring, and\n"
-            "  --radiometries.\n"
+            "  --radiometries. You may specify BOTH --numbootstrap and\n"
+            "  --confidenceinterval in order to use bootstrapping to produce\n"
+            "  a confidence interval. If you do so (and only if), you may\n"
+            "  also specify --results to get complete results for your run.\n"
             "  \n"
             "  For MODE simulate, you must define a VARIANT as either dt or\n"
             "  rad. Your data will then be simulated as dye-tracks or\n"
@@ -359,6 +366,10 @@ int main(int argc, char** argv) {
         // Special handling for b and c. These args are optional.
         if (has_b & has_c) {
             num_optional_args -= 2;
+            // If we have b and c, then Y is permitted, and optional.
+            if (has_Y) {
+                num_optional_args--;
+            }
         }
         if (positional_args.size() != 1 || num_optional_args != 4 || !has_P
             || !has_L || !has_x || !has_R) {
@@ -367,7 +378,7 @@ int main(int argc, char** argv) {
             return 1;
         }
         print_omp_info();
-        run_fit(L, x, P, R, b, c);
+        run_fit(L, x, P, R, b, c, Y);
         return 0;
     }
     if (0 == positional_args[0].compare("simulate")) {

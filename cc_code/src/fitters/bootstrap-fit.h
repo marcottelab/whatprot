@@ -28,7 +28,8 @@ void bootstrap_fit(unsigned int num_timesteps,
                    const DyeSeq& dye_seq,
                    const std::vector<Radiometry>& radiometries,
                    unsigned int num_bootstrap_rounds,
-                   double confidence_interval);
+                   double confidence_interval,
+                   std::vector<SequencingModel>* seq_models);
 
 }  // namespace whatprot
 

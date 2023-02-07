@@ -19,6 +19,7 @@
 #include "common/radiometry.h"
 #include "fitters/bootstrap-fit.h"
 #include "fitters/hmm-fitter.h"
+#include "io/params-io.h"
 #include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
@@ -37,7 +38,8 @@ void run_fit(double stopping_threshold,
              string seq_params_filename,
              string radiometries_filename,
              unsigned int num_bootstrap,
-             double confidence_interval) {
+             double confidence_interval,
+             string results_filename) {
     double total_start_time = wall_time();
 
     double start_time;
@@ -84,6 +86,7 @@ void run_fit(double stopping_threshold,
         print_parameter_results(fitted_seq_model);
     } else {
         start_time = wall_time();
+        vector<SequencingModel> seq_models;
         bootstrap_fit(num_timesteps,
                       num_channels,
                       stopping_threshold,
@@ -92,9 +95,17 @@ void run_fit(double stopping_threshold,
                       dye_seq,
                       radiometries,
                       num_bootstrap,
-                      confidence_interval);
+                      confidence_interval,
+                      &seq_models);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
+
+        if (results_filename != "") {
+            start_time = wall_time();
+            write_params(results_filename, num_channels, seq_models);
+            end_time = wall_time();
+            print_finished_saving_results(end_time - start_time);
+        }
     }
 
     double total_end_time = wall_time();
