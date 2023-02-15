@@ -13,11 +13,13 @@
 #include <vector>
 
 // Local project headers:
-#include "hmm/step/bleach-transition.h"
+#include "hmm/step/cyclic-bleach-transition.h"
 #include "hmm/step/cyclic-broken-n-transition.h"
-#include "hmm/step/detach-transition.h"
+#include "hmm/step/cyclic-detach-transition.h"
 #include "hmm/step/dud-transition.h"
+#include "hmm/step/initial-bleach-transition.h"
 #include "hmm/step/initial-broken-n-transition.h"
+#include "hmm/step/initial-detach-transition.h"
 #include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
@@ -28,11 +30,13 @@ public:
                              unsigned int num_channels);
     ~UniversalPrecomputations();
     void set_max_num_dyes(int max_num_dyes);
-    DetachTransition detach_transition;
+    InitialDetachTransition initial_detach_transition;
+    CyclicDetachTransition cyclic_detach_transition;
     InitialBrokenNTransition initial_broken_n_transition;
     CyclicBrokenNTransition cyclic_broken_n_transition;
     std::vector<DudTransition*> dud_transitions;
-    std::vector<BleachTransition*> bleach_transitions;
+    std::vector<InitialBleachTransition*> initial_bleach_transitions;
+    std::vector<CyclicBleachTransition*> cyclic_bleach_transitions;
     unsigned int num_channels;
 };
 

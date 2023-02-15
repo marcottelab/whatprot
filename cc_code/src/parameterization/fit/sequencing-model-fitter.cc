@@ -35,7 +35,8 @@ SequencingModelFitter::SequencingModelFitter(unsigned int num_channels) {
 SequencingModelFitter::SequencingModelFitter(
         const SequencingModelFitter& other) {
     p_edman_failure_fit = other.p_edman_failure_fit;
-    p_detach_fit = other.p_detach_fit;
+    p_initial_detach_fit = other.p_initial_detach_fit;
+    p_cyclic_detach_fit = other.p_cyclic_detach_fit;
     p_initial_break_n_fit = other.p_initial_break_n_fit;
     p_cyclic_break_n_fit = other.p_cyclic_break_n_fit;
     for (unsigned int c = 0; c < other.channel_fits.size(); c++) {
@@ -45,7 +46,8 @@ SequencingModelFitter::SequencingModelFitter(
 
 SequencingModelFitter::SequencingModelFitter(SequencingModelFitter&& other) {
     p_edman_failure_fit = move(other.p_edman_failure_fit);
-    p_detach_fit = move(other.p_detach_fit);
+    p_initial_detach_fit = move(other.p_initial_detach_fit);
+    p_cyclic_detach_fit = move(other.p_cyclic_detach_fit);
     p_initial_break_n_fit = move(other.p_initial_break_n_fit);
     p_cyclic_break_n_fit = move(other.p_cyclic_break_n_fit);
     channel_fits = move(other.channel_fits);
@@ -62,7 +64,8 @@ SequencingModelFitter::~SequencingModelFitter() {
 SequencingModel SequencingModelFitter::get() const {
     SequencingModel model;
     model.p_edman_failure = p_edman_failure_fit.get();
-    model.p_detach = p_detach_fit.get();
+    model.p_initial_detach = p_initial_detach_fit.get();
+    model.p_cyclic_detach = p_cyclic_detach_fit.get();
     model.p_initial_break_n = p_initial_break_n_fit.get();
     model.p_cyclic_break_n = p_cyclic_break_n_fit.get();
     for (ChannelModelFitter* channel_fit : channel_fits) {
@@ -76,7 +79,10 @@ SequencingModelFitter SequencingModelFitter::operator+(
     SequencingModelFitter result_fitter;
     result_fitter.p_edman_failure_fit =
             p_edman_failure_fit + other.p_edman_failure_fit;
-    result_fitter.p_detach_fit = p_detach_fit + other.p_detach_fit;
+    result_fitter.p_initial_detach_fit =
+            p_initial_detach_fit + other.p_initial_detach_fit;
+    result_fitter.p_cyclic_detach_fit =
+            p_cyclic_detach_fit + other.p_cyclic_detach_fit;
     result_fitter.p_initial_break_n_fit =
             p_initial_break_n_fit + other.p_initial_break_n_fit;
     result_fitter.p_cyclic_break_n_fit =
@@ -90,7 +96,8 @@ SequencingModelFitter SequencingModelFitter::operator+(
 
 void SequencingModelFitter::operator+=(const SequencingModelFitter& other) {
     p_edman_failure_fit += other.p_edman_failure_fit;
-    p_detach_fit += other.p_detach_fit;
+    p_initial_detach_fit += other.p_initial_detach_fit;
+    p_cyclic_detach_fit += other.p_cyclic_detach_fit;
     p_initial_break_n_fit += other.p_initial_break_n_fit;
     p_cyclic_break_n_fit += other.p_cyclic_break_n_fit;
     for (unsigned int c = 0; c < channel_fits.size(); c++) {
@@ -100,7 +107,8 @@ void SequencingModelFitter::operator+=(const SequencingModelFitter& other) {
 
 void SequencingModelFitter::operator*=(double weight_adjustment) {
     p_edman_failure_fit *= weight_adjustment;
-    p_detach_fit *= weight_adjustment;
+    p_initial_detach_fit *= weight_adjustment;
+    p_cyclic_detach_fit *= weight_adjustment;
     p_initial_break_n_fit *= weight_adjustment;
     p_cyclic_break_n_fit *= weight_adjustment;
     for (unsigned int c = 0; c < channel_fits.size(); c++) {

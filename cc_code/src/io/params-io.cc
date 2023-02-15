@@ -31,16 +31,20 @@ void write_params(const string& filename,
                   unsigned int num_channels,
                   const vector<SequencingModel>& models) {
     ofstream f(filename);
-    f << "p_edman_failure,p_detach,p_initial_break_n,p_cyclic_break_n";
+    f << "p_edman_failure,p_initial_detach,p_cyclic_detach,p_initial_break_n,p_"
+         "cyclic_break_n";
     for (unsigned int c = 0; c < num_channels; c++) {
-        f << ",ch" << c << ":p_bleach,ch" << c << ":p_dud";
+        f << ",ch" << c << ":p_initial_bleach,ch" << c << ":p_cyclic_bleach,ch"
+          << c << ":p_dud";
     }
     f << "\n";
     for (const SequencingModel& model : models) {
-        f << model.p_edman_failure << "," << model.p_detach << ","
-          << model.p_initial_break_n << "," << model.p_cyclic_break_n;
+        f << model.p_edman_failure << "," << model.p_initial_detach << ","
+          << model.p_cyclic_detach << "," << model.p_initial_break_n << ","
+          << model.p_cyclic_break_n;
         for (unsigned int c = 0; c < num_channels; c++) {
-            f << "," << model.channel_models[c]->p_bleach << ","
+            f << "," << model.channel_models[c]->p_initial_bleach << ","
+              << "," << model.channel_models[c]->p_cyclic_bleach
               << model.channel_models[c]->p_dud;
         }
         f << "\n";

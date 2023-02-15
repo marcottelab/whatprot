@@ -46,13 +46,16 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     ifstream f(seq_model_filename);
     json data = json::parse(f);
     p_edman_failure = data["p_edman_failure"].get<double>();
-    p_detach = data["p_detach"].get<double>();
+    p_initial_detach = data["p_initial_detach"].get<double>();
+    p_cyclic_detach = data["p_cyclic_detach"].get<double>();
     p_initial_break_n = data["p_initial_break_n"].get<double>();
     p_cyclic_break_n = data["p_cyclic_break_n"].get<double>();
     for (auto& channel_data : data["channel_models"]) {
         channel_models.push_back(new ChannelModel());
-        channel_models.back()->p_bleach =
-                channel_data["p_bleach"].get<double>();
+        channel_models.back()->p_initial_bleach =
+                channel_data["p_initial_bleach"].get<double>();
+        channel_models.back()->p_cyclic_bleach =
+                channel_data["p_cyclic_bleach"].get<double>();
         channel_models.back()->p_dud = channel_data["p_dud"].get<double>();
         channel_models.back()->bg_sig = channel_data["bg_sig"].get<double>();
         channel_models.back()->mu = channel_data["mu"].get<double>();
@@ -62,7 +65,8 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
 
 SequencingModel::SequencingModel(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
-    p_detach = other.p_detach;
+    p_initial_detach = other.p_initial_detach;
+    p_cyclic_detach = other.p_cyclic_detach;
     p_initial_break_n = other.p_initial_break_n;
     p_cyclic_break_n = other.p_cyclic_break_n;
     for (unsigned int c = 0; c < other.channel_models.size(); c++) {
@@ -72,7 +76,8 @@ SequencingModel::SequencingModel(const SequencingModel& other) {
 
 SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
-    p_detach = other.p_detach;
+    p_initial_detach = other.p_initial_detach;
+    p_cyclic_detach = other.p_cyclic_detach;
     p_initial_break_n = other.p_initial_break_n;
     p_cyclic_break_n = other.p_cyclic_break_n;
     // This function is not necessarily used as a constructor. It is very
@@ -92,7 +97,8 @@ SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
 
 SequencingModel::SequencingModel(SequencingModel&& other) {
     p_edman_failure = move(other.p_edman_failure);
-    p_detach = move(other.p_detach);
+    p_initial_detach = move(other.p_initial_detach);
+    p_cyclic_detach = move(other.p_cyclic_detach);
     p_initial_break_n = move(other.p_initial_break_n);
     p_cyclic_break_n = move(other.p_cyclic_break_n);
     channel_models = move(other.channel_models);
@@ -108,7 +114,8 @@ SequencingModel::~SequencingModel() {
 
 SequencingModel SequencingModel::with_mu_as_one() const {
     SequencingModel x;
-    x.p_detach = p_detach;
+    x.p_initial_detach = p_initial_detach;
+    x.p_cyclic_detach = p_cyclic_detach;
     x.p_edman_failure = p_edman_failure;
     x.p_initial_break_n = p_initial_break_n;
     x.p_cyclic_break_n = p_cyclic_break_n;
@@ -123,7 +130,8 @@ double SequencingModel::distance(
         const SequencingModel& sequencing_model) const {
     double dist = 0.0;
     dist = max(dist, abs(p_edman_failure - sequencing_model.p_edman_failure));
-    dist = max(dist, abs(p_detach - sequencing_model.p_detach));
+    dist = max(dist, abs(p_initial_detach - sequencing_model.p_initial_detach));
+    dist = max(dist, abs(p_cyclic_detach - sequencing_model.p_cyclic_detach));
     dist = max(dist,
                abs(p_initial_break_n - sequencing_model.p_initial_break_n));
     dist = max(dist, abs(p_cyclic_break_n - sequencing_model.p_cyclic_break_n));
@@ -138,7 +146,8 @@ double SequencingModel::distance(
 string SequencingModel::debug_string() const {
     string s = "";
     s += "Edman failure rate: " + to_string(p_edman_failure) + ", ";
-    s += "Detach rate: " + to_string(p_detach) + ", ";
+    s += "Initial detach rate: " + to_string(p_initial_detach) + ", ";
+    s += "Cyclic detach rate: " + to_string(p_cyclic_detach) + ", ";
     s += "Initial blocked N-terminus rate: " + to_string(p_initial_break_n)
          + ", ";
     s += "Cyclic blocked N-terminus rate: " + to_string(p_cyclic_break_n);

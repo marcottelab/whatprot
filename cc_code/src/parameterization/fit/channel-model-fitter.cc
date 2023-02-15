@@ -27,13 +27,15 @@ ChannelModelFitter::ChannelModelFitter() {
 }
 
 ChannelModelFitter::ChannelModelFitter(const ChannelModelFitter& other) {
-    p_bleach_fit = other.p_bleach_fit;
+    p_initial_bleach_fit = other.p_initial_bleach_fit;
+    p_cyclic_bleach_fit = other.p_cyclic_bleach_fit;
     p_dud_fit = other.p_dud_fit;
     distribution_fit = new NormalDistributionFitter(*other.distribution_fit);
 }
 
 ChannelModelFitter::ChannelModelFitter(ChannelModelFitter&& other) {
-    p_bleach_fit = move(other.p_bleach_fit);
+    p_initial_bleach_fit = move(other.p_initial_bleach_fit);
+    p_cyclic_bleach_fit = move(other.p_cyclic_bleach_fit);
     p_dud_fit = move(other.p_dud_fit);
     distribution_fit = other.distribution_fit;
     other.distribution_fit = NULL;
@@ -47,7 +49,8 @@ ChannelModelFitter::~ChannelModelFitter() {
 
 ChannelModel ChannelModelFitter::get() const {
     ChannelModel model;
-    model.p_bleach = p_bleach_fit.get();
+    model.p_initial_bleach = p_initial_bleach_fit.get();
+    model.p_cyclic_bleach = p_cyclic_bleach_fit.get();
     model.p_dud = p_dud_fit.get();
     model.bg_sig = distribution_fit->get_bg_sig();
     model.mu = distribution_fit->get_mu();
@@ -58,7 +61,10 @@ ChannelModel ChannelModelFitter::get() const {
 ChannelModelFitter ChannelModelFitter::operator+(
         const ChannelModelFitter& other) const {
     ChannelModelFitter result_fitter;
-    result_fitter.p_bleach_fit = p_bleach_fit + other.p_bleach_fit;
+    result_fitter.p_initial_bleach_fit =
+            p_initial_bleach_fit + other.p_initial_bleach_fit;
+    result_fitter.p_cyclic_bleach_fit =
+            p_cyclic_bleach_fit + other.p_cyclic_bleach_fit;
     result_fitter.p_dud_fit = p_dud_fit + other.p_dud_fit;
     *result_fitter.distribution_fit =
             *distribution_fit + *other.distribution_fit;
@@ -66,13 +72,15 @@ ChannelModelFitter ChannelModelFitter::operator+(
 }
 
 void ChannelModelFitter::operator+=(const ChannelModelFitter& other) {
-    p_bleach_fit += other.p_bleach_fit;
+    p_initial_bleach_fit += other.p_initial_bleach_fit;
+    p_cyclic_bleach_fit += other.p_cyclic_bleach_fit;
     p_dud_fit += other.p_dud_fit;
     *distribution_fit += *other.distribution_fit;
 }
 
 void ChannelModelFitter::operator*=(double weight_adjustment) {
-    p_bleach_fit *= weight_adjustment;
+    p_initial_bleach_fit *= weight_adjustment;
+    p_cyclic_bleach_fit *= weight_adjustment;
     p_dud_fit *= weight_adjustment;
     *distribution_fit *= weight_adjustment;
 }

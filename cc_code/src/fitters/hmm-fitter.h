@@ -10,6 +10,7 @@
 #define WHATPROT_FITTERS_HMM_FITTER_H
 
 // Standard C++ library headers:
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -46,6 +47,7 @@ public:
             UniversalPrecomputations universal_precomputations(sm,
                                                                num_channels);
             universal_precomputations.set_max_num_dyes(max_num_dyes);
+            double log_likelihood = 0.0;
             for (const auto& radiometry : radiometries) {
                 RadiometryPrecomputations radiometry_precomputations(
                         dereference_if_pointer(radiometry),
@@ -58,7 +60,8 @@ public:
                                radiometry_precomputations,
                                universal_precomputations);
                 SequencingModelFitter peptide_fitter(num_channels);
-                hmm.improve_fit(&peptide_fitter);
+                double p = hmm.improve_fit(&peptide_fitter);
+                log_likelihood += log(p);
                 fitter += peptide_fitter;
             }
             // Here we perform a correction to account for the peptides that
@@ -90,12 +93,11 @@ public:
             }
             double distance = sm.distance(next);
             if (distance < stopping_threshold) {
+                std::cout << "\n\nlog likelihood: " << log_likelihood << "\n\n";
                 return next;
             }
             sm = next;
         }
-        std::cout << "\n" << sm.debug_string() << "\n\n";
-        return sm;
     }
 
     const DyeSeq& dye_seq;

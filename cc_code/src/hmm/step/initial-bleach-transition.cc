@@ -7,7 +7,7 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "bleach-transition.h"
+#include "initial-bleach-transition.h"
 
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
@@ -16,25 +16,27 @@
 
 namespace whatprot {
 
-BleachTransition::BleachTransition(double q, int channel)
+InitialBleachTransition::InitialBleachTransition(double q, int channel)
         : BinomialTransition(q, channel) {}
 
-BleachTransition::BleachTransition(const BleachTransition& other)
+InitialBleachTransition::InitialBleachTransition(
+        const InitialBleachTransition& other)
         : BinomialTransition(other) {}
 
-void BleachTransition::improve_fit(const PeptideStateVector& forward_psv,
-                                   const PeptideStateVector& backward_psv,
-                                   const PeptideStateVector& next_backward_psv,
-                                   unsigned int num_edmans,
-                                   double probability,
-                                   SequencingModelFitter* fitter) const {
+void InitialBleachTransition::improve_fit(
+        const PeptideStateVector& forward_psv,
+        const PeptideStateVector& backward_psv,
+        const PeptideStateVector& next_backward_psv,
+        unsigned int num_edmans,
+        double probability,
+        SequencingModelFitter* fitter) const {
     BinomialTransition::improve_fit(
             forward_psv,
             backward_psv,
             next_backward_psv,
             num_edmans,
             probability,
-            &fitter->channel_fits[channel]->p_bleach_fit);
+            &fitter->channel_fits[channel]->p_initial_bleach_fit);
 }
 
 }  // namespace whatprot

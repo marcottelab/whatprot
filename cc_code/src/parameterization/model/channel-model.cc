@@ -33,7 +33,8 @@ ChannelModel::~ChannelModel() {}
 
 ChannelModel ChannelModel::with_mu_as_one() const {
     ChannelModel x;
-    x.p_bleach = p_bleach;
+    x.p_initial_bleach = p_initial_bleach;
+    x.p_cyclic_bleach = p_cyclic_bleach;
     x.p_dud = p_dud;
     x.bg_sig = bg_sig / mu;
     x.mu = 1.0;
@@ -53,7 +54,8 @@ double ChannelModel::sigma(int state) const {
 
 double ChannelModel::distance(const ChannelModel& channel_model) const {
     double dist = 0.0;
-    dist = max(dist, abs(p_bleach - channel_model.p_bleach));
+    dist = max(dist, abs(p_initial_bleach - channel_model.p_initial_bleach));
+    dist = max(dist, abs(p_cyclic_bleach - channel_model.p_cyclic_bleach));
     dist = max(dist, abs(p_dud - channel_model.p_dud));
     dist = max(dist, abs(bg_sig - channel_model.bg_sig));
     dist = max(dist, abs(mu - channel_model.mu));
@@ -62,7 +64,8 @@ double ChannelModel::distance(const ChannelModel& channel_model) const {
 }
 
 string ChannelModel::debug_string() const {
-    return "Bleach rate: " + to_string(p_bleach)
+    return "Initial bleach rate: " + to_string(p_initial_bleach)
+           + ", Cyclic bleach rate: " + to_string(p_cyclic_bleach)
            + ", Dud rate: " + to_string(p_dud);
 }
 

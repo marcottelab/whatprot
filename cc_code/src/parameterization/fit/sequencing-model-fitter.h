@@ -31,7 +31,8 @@ public:
     void operator+=(const SequencingModelFitter& other);
     void operator*=(double weight_adjustment);
     ParameterFitter p_edman_failure_fit;
-    ParameterFitter p_detach_fit;
+    ParameterFitter p_initial_detach_fit;
+    ParameterFitter p_cyclic_detach_fit;
     ParameterFitter p_initial_break_n_fit;
     ParameterFitter p_cyclic_break_n_fit;
     std::vector<ChannelModelFitter*> channel_fits;

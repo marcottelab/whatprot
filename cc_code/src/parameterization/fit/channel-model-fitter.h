@@ -25,7 +25,8 @@ public:
     ChannelModelFitter operator+(const ChannelModelFitter& other) const;
     void operator+=(const ChannelModelFitter& other);
     void operator*=(double weight_adjustment);
-    ParameterFitter p_bleach_fit;
+    ParameterFitter p_initial_bleach_fit;
+    ParameterFitter p_cyclic_bleach_fit;
     ParameterFitter p_dud_fit;
     NormalDistributionFitter* distribution_fit;
 };

@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_HMM_STEP_DETACH_TRANSITION_H
-#define WHATPROT_HMM_STEP_DETACH_TRANSITION_H
+#ifndef WHATPROT_HMM_STEP_CYCLIC_DETACH_TRANSITION_H
+#define WHATPROT_HMM_STEP_CYCLIC_DETACH_TRANSITION_H
 
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
@@ -17,9 +17,9 @@
 
 namespace whatprot {
 
-class DetachTransition : public PeptideStep {
+class CyclicDetachTransition : public PeptideStep {
 public:
-    DetachTransition(double p_detach);
+    CyclicDetachTransition(double p_detach);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     virtual PeptideStateVector* forward(
@@ -50,4 +50,4 @@ public:
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_HMM_STEP_DETACH_TRANSITION_H
+#endif  // WHATPROT_HMM_STEP_CYCLIC_DETACH_TRANSITION_H

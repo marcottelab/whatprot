@@ -24,7 +24,8 @@ public:
     double distance(const ChannelModel& channel_model) const;
     std::string debug_string() const;
 
-    double p_bleach;
+    double p_initial_bleach;
+    double p_cyclic_bleach;
     double p_dud;
     double bg_sig;
     double mu;

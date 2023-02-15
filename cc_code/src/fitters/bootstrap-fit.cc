@@ -84,10 +84,17 @@ void bootstrap_fit(unsigned int num_timesteps,
     sort(seq_models->begin(),
          seq_models->end(),
          [](SequencingModel a, SequencingModel b) -> bool {
-             return a.p_detach < b.p_detach;
+             return a.p_initial_detach < b.p_initial_detach;
          });
-    ci_min.p_detach = (*seq_models)[ci_min_idx].p_detach;
-    ci_max.p_detach = (*seq_models)[ci_max_idx].p_detach;
+    ci_min.p_initial_detach = (*seq_models)[ci_min_idx].p_initial_detach;
+    ci_max.p_initial_detach = (*seq_models)[ci_max_idx].p_initial_detach;
+    sort(seq_models->begin(),
+         seq_models->end(),
+         [](SequencingModel a, SequencingModel b) -> bool {
+             return a.p_cyclic_detach < b.p_cyclic_detach;
+         });
+    ci_min.p_cyclic_detach = (*seq_models)[ci_min_idx].p_cyclic_detach;
+    ci_max.p_cyclic_detach = (*seq_models)[ci_max_idx].p_cyclic_detach;
     sort(seq_models->begin(),
          seq_models->end(),
          [](SequencingModel a, SequencingModel b) -> bool {
@@ -106,13 +113,23 @@ void bootstrap_fit(unsigned int num_timesteps,
         sort(seq_models->begin(),
              seq_models->end(),
              [c](SequencingModel a, SequencingModel b) -> bool {
-                 return a.channel_models[c]->p_bleach
-                        < b.channel_models[c]->p_bleach;
+                 return a.channel_models[c]->p_initial_bleach
+                        < b.channel_models[c]->p_initial_bleach;
              });
-        ci_min.channel_models[c]->p_bleach =
-                (*seq_models)[ci_min_idx].channel_models[c]->p_bleach;
-        ci_max.channel_models[c]->p_bleach =
-                (*seq_models)[ci_max_idx].channel_models[c]->p_bleach;
+        ci_min.channel_models[c]->p_initial_bleach =
+                (*seq_models)[ci_min_idx].channel_models[c]->p_initial_bleach;
+        ci_max.channel_models[c]->p_initial_bleach =
+                (*seq_models)[ci_max_idx].channel_models[c]->p_initial_bleach;
+        sort(seq_models->begin(),
+             seq_models->end(),
+             [c](SequencingModel a, SequencingModel b) -> bool {
+                 return a.channel_models[c]->p_cyclic_bleach
+                        < b.channel_models[c]->p_cyclic_bleach;
+             });
+        ci_min.channel_models[c]->p_cyclic_bleach =
+                (*seq_models)[ci_min_idx].channel_models[c]->p_cyclic_bleach;
+        ci_max.channel_models[c]->p_cyclic_bleach =
+                (*seq_models)[ci_max_idx].channel_models[c]->p_cyclic_bleach;
         sort(seq_models->begin(),
              seq_models->end(),
              [c](SequencingModel a, SequencingModel b) -> bool {

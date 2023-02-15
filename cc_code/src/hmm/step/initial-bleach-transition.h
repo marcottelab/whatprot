@@ -6,8 +6,8 @@
 * Project: Protein Fluorosequencing                                            *
 \******************************************************************************/
 
-#ifndef WHATPROT_HMM_STEP_BLEACH_TRANSITION_H
-#define WHATPROT_HMM_STEP_BLEACH_TRANSITION_H
+#ifndef WHATPROT_HMM_STEP_INITIAL_BLEACH_TRANSITION_H
+#define WHATPROT_HMM_STEP_INITIAL_BLEACH_TRANSITION_H
 
 // Standard C++ library headers:
 #include <vector>
@@ -19,10 +19,10 @@
 
 namespace whatprot {
 
-class BleachTransition : public BinomialTransition {
+class InitialBleachTransition : public BinomialTransition {
 public:
-    BleachTransition(double q, int channel);
-    BleachTransition(const BleachTransition& other);
+    InitialBleachTransition(double q, int channel);
+    InitialBleachTransition(const InitialBleachTransition& other);
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
@@ -33,4 +33,4 @@ public:
 
 }  // namespace whatprot
 
-#endif  // WHATPROT_HMM_STEP_BLEACH_TRANSITION_H
+#endif  // WHATPROT_HMM_STEP_INITIAL_BLEACH_TRANSITION_H

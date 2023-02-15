@@ -33,14 +33,15 @@ void generate_dye_track(const SequencingModel& seq_model,
                         default_random_engine* generator,
                         DyeTrack* dye_track) {
     bernoulli_distribution edman_failure(seq_model.p_edman_failure);
-    bernoulli_distribution detach_event(seq_model.p_detach);
+    bernoulli_distribution detach_event(seq_model.p_cyclic_detach);
     bernoulli_distribution initial_blocked_n(seq_model.p_initial_break_n);
     bernoulli_distribution cyclic_blocked_n(seq_model.p_cyclic_break_n);
     vector<bernoulli_distribution> dud_events;
     vector<bernoulli_distribution> bleach_events;
     for (unsigned int c = 0; c < num_channels; c++) {
         dud_events.emplace_back(seq_model.channel_models[c]->p_dud);
-        bleach_events.emplace_back(seq_model.channel_models[c]->p_bleach);
+        bleach_events.emplace_back(
+                seq_model.channel_models[c]->p_cyclic_bleach);
     }
     DyeSeq ds(dye_seq);
     // Duds.
