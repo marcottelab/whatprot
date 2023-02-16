@@ -420,6 +420,7 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     delete[] shape;
     psv1.tensor[{0, 0}] = 3.14;
     psv1.broken_n_tensor[{0, 0}] = 3.014;
+    psv1.allow_detached = true;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -427,6 +428,11 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}])
                == 3.014 * cm_mock.get().pdf(1.0, 0));
     BOOST_TEST(psv2->p_detached == 1.23 * cm_mock.get().pdf(1.0, 0));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 1u);
+    BOOST_TEST(psv2->allow_detached == true);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -467,6 +473,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     psv1.broken_n_tensor[{0, 0}] = 3.0;
     psv1.broken_n_tensor[{1, 0}] = 3.1;
     psv1.broken_n_tensor[{2, 0}] = 3.2;
+    psv1.allow_detached = true;
     psv1.p_detached = 1.23;
     unsigned int edmans = 2;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -480,6 +487,11 @@ BOOST_AUTO_TEST_CASE(forward_multiple_timesteps_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{2, 0}])
                == 3.2 * cm_mock.get().pdf(2.0, 0));
     BOOST_TEST(psv2->p_detached == 1.23 * cm_mock.get().pdf(2.0, 0));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 3u);
+    BOOST_TEST(psv2->range.max[1] == 1u);
+    BOOST_TEST(psv2->allow_detached == true);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -520,6 +532,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     delete[] shape;
     psv1.tensor[{0, 0, 0, 0}] = 13.0;
     psv1.broken_n_tensor[{0, 0, 0, 0}] = 3.0;
+    psv1.allow_detached = true;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -532,6 +545,15 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_test, *tolerance(TOL)) {
     BOOST_TEST(psv2->p_detached
                == 1.23 * cm_mock.get().pdf(0.0, 0) * cm_mock.get().pdf(0.1, 0)
                           * cm_mock.get().pdf(0.2, 0));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.min[2] == 0u);
+    BOOST_TEST(psv2->range.min[3] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 1u);
+    BOOST_TEST(psv2->range.max[2] == 1u);
+    BOOST_TEST(psv2->range.max[3] == 1u);
+    BOOST_TEST(psv2->allow_detached == true);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -585,6 +607,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
     delete[] shape;
     psv1.tensor[{0, 0, 0, 0}] = 13.0;
     psv1.broken_n_tensor[{0, 0, 0, 0}] = 3.0;
+    psv1.allow_detached = true;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -600,6 +623,15 @@ BOOST_AUTO_TEST_CASE(forward_multiple_channels_different_pdfs_test,
                == 1.23 * cm_mock_0.get().pdf(0.0, 0)
                           * cm_mock_1.get().pdf(0.1, 0)
                           * cm_mock_2.get().pdf(0.2, 0));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.min[2] == 0u);
+    BOOST_TEST(psv2->range.min[3] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 1u);
+    BOOST_TEST(psv2->range.max[2] == 1u);
+    BOOST_TEST(psv2->range.max[3] == 1u);
+    BOOST_TEST(psv2->allow_detached == true);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -638,6 +670,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     psv1.broken_n_tensor[{0, 0}] = 3.0;
     psv1.broken_n_tensor[{0, 1}] = 3.1;
     psv1.broken_n_tensor[{0, 2}] = 3.2;
+    psv1.allow_detached = true;
     psv1.p_detached = 1.23;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -651,6 +684,11 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_counts_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
                == 3.2 * cm_mock.get().pdf(0.0, 2));
     BOOST_TEST(psv2->p_detached == 1.23 * cm_mock.get().pdf(0.0, 0));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == true);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -687,6 +725,7 @@ BOOST_AUTO_TEST_CASE(forward_reduced_range_test, *tolerance(TOL)) {
     psv1.tensor[{0, 2}] = 13.2;
     psv1.broken_n_tensor[{0, 1}] = 3.1;
     psv1.broken_n_tensor[{0, 2}] = 3.2;
+    psv1.allow_detached = false;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 1}]) == 13.1 * cm_mock.get().pdf(0.0, 1));
@@ -695,6 +734,11 @@ BOOST_AUTO_TEST_CASE(forward_reduced_range_test, *tolerance(TOL)) {
                == 3.1 * cm_mock.get().pdf(0.0, 1));
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
                == 3.2 * cm_mock.get().pdf(0.0, 2));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 1u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == false);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;
@@ -748,6 +792,7 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
     psv1.broken_n_tensor[{1, 0, 1}] = 17.101;
     psv1.broken_n_tensor[{1, 1, 0}] = 17.110;
     psv1.broken_n_tensor[{1, 1, 1}] = 17.111;
+    psv1.allow_detached = true;
     psv1.p_detached = 1.23;
     unsigned int edmans = 1;
     PeptideStateVector* psv2 = e.forward(psv1, &edmans);
@@ -801,6 +846,13 @@ BOOST_AUTO_TEST_CASE(forward_multiple_everything_test, *tolerance(TOL)) {
                           * cm_mock.get().pdf(1.1, 1));
     BOOST_TEST(psv2->p_detached
                == 1.23 * cm_mock.get().pdf(1.0, 0) * cm_mock.get().pdf(1.1, 0));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.min[2] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 2u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->range.max[2] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     // Avoid double clean-up:
     seq_model.channel_models.resize(0);
     delete psv2;

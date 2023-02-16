@@ -50,6 +50,12 @@ PeptideStateVector* BrokenNTransition::forward(const PeptideStateVector& input,
     delete brkn_in_itr;
     delete tsr_out_itr;
     delete brkn_out_itr;
+    // Now we fix up the ranges, allow_detached, etc...
+    output->range = pruned_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
     return output;
 }
 
@@ -75,6 +81,12 @@ PeptideStateVector* BrokenNTransition::backward(
     delete brkn_in_itr;
     delete tsr_out_itr;
     delete brkn_out_itr;
+    // Now we fix up the ranges, allow_detached, etc...
+    output->range = pruned_range;
+    output->allow_detached = input.allow_detached;
+    if (output->allow_detached) {
+        output->p_detached = input.p_detached;
+    }
     return output;
 }
 

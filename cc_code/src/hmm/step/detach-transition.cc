@@ -44,6 +44,9 @@ PeptideStateVector* DetachTransition::forward(const PeptideStateVector& input,
             output->p_detached = p_detach * sum;
         }
     }
+    // Now we fix up the ranges, allow_detached, etc...
+    output->range = pruned_range;
+    output->allow_detached = detached_backward;
     return output;
 }
 
@@ -75,6 +78,9 @@ PeptideStateVector* DetachTransition::backward(const PeptideStateVector& input,
             output->p_detached = 0.0;
         }
     }
+    // Now we fix up the ranges, allow_detached, etc...
+    output->range = pruned_range;
+    output->allow_detached = detached_forward;
     return output;
 }
 

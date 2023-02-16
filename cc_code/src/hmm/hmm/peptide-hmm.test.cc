@@ -252,8 +252,8 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 0.20309173685169121);
+    // giving the correct result on February 16 2023.
+    BOOST_TEST(hmm.probability() == 758907.43743397435);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
