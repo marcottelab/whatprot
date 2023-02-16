@@ -65,12 +65,20 @@ BOOST_AUTO_TEST_CASE(forward_test) {
     psv1.tensor[{0, 1}] = 0.7;
     psv1.broken_n_tensor[{0, 0}] = 0.03;
     psv1.broken_n_tensor[{0, 1}] = 0.07;
+    psv1.allow_detached = true;
+    psv1.p_detached = 0.123;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bnt.forward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}]) == (1 - p_break_n) * 0.3);
     BOOST_TEST((psv2->tensor[{0, 1}]) == (1 - p_break_n) * 0.7);
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03 + p_break_n * 0.3);
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.07 + p_break_n * 0.7);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
+    BOOST_TEST(psv2->p_detached == 0.123);
     delete psv2;
 }
 
@@ -89,6 +97,8 @@ BOOST_AUTO_TEST_CASE(backward_test) {
     psv1.tensor[{0, 1}] = 0.7;
     psv1.broken_n_tensor[{0, 0}] = 0.03;
     psv1.broken_n_tensor[{0, 1}] = 0.07;
+    psv1.allow_detached = true;
+    psv1.p_detached = 0.123;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bnt.backward(psv1, &edmans);
     BOOST_TEST((psv2->tensor[{0, 0}])
@@ -97,6 +107,12 @@ BOOST_AUTO_TEST_CASE(backward_test) {
                == p_break_n * 0.07 + (1 - p_break_n) * 0.7);
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03);
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.07);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
+    BOOST_TEST(psv2->p_detached == 0.123);
     delete psv2;
 }
 

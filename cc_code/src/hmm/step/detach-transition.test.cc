@@ -94,6 +94,11 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->tensor[{0, 0}]) == 1.0 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 2.0 * (1 - p_detach));
     BOOST_TEST(psv2->p_detached == 1.0 + (1.0 + 2.0) * p_detach);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 1u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -122,6 +127,11 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.07 * (1 - p_detach));
     BOOST_TEST(psv2->p_detached == (0.3 + 0.7 + 0.03 + 0.07) * p_detach + 0.9);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -155,6 +165,11 @@ BOOST_AUTO_TEST_CASE(forward_bigger_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == 0.01 * (1 - p_detach));
     BOOST_TEST(psv2->p_detached
                == (0.3 + 0.6 + 0.1 + 0.03 + 0.06 + 0.01) * p_detach + 0.2);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -208,6 +223,11 @@ BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
                == 0.1 + 0.3 + 0.5 + 0.01 + 0.03 + 0.05
                           + (0.2 + 0.4 + 0.6 + 0.02 + 0.04 + 0.06) * p_detach
                           + 0.7);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 3u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -247,6 +267,13 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
     BOOST_TEST(psv2->p_detached
                == (0.1 + 0.2 + 0.3 + 0.4 + 0.01 + 0.02 + 0.03 + 0.04) * p_detach
                           + 0.5);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.min[2] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->range.max[2] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -275,6 +302,11 @@ BOOST_AUTO_TEST_CASE(forward_pruned_range_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->tensor[{0, 1}]) == 0.6 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.06 * (1 - p_detach));
     BOOST_TEST(psv2->p_detached == (0.6 + 0.06) * p_detach + 0.2);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 1u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -308,6 +340,11 @@ BOOST_AUTO_TEST_CASE(forward_no_detached_forward_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == 0.01 * (1 - p_detach));
     BOOST_TEST(psv2->p_detached
                == (0.3 + 0.6 + 0.1 + 0.03 + 0.06 + 0.01) * p_detach);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -339,6 +376,11 @@ BOOST_AUTO_TEST_CASE(forward_no_detached_backward_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.06 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == 0.01 * (1 - p_detach));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == false);
     delete psv2;
 }
 
@@ -371,6 +413,11 @@ BOOST_AUTO_TEST_CASE(forward_no_detached_forward_or_backward_test,
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.06 * (1 - p_detach));
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == 0.01 * (1 - p_detach));
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == false);
     delete psv2;
 }
 
@@ -396,6 +443,11 @@ BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}])
                == 1.0 * p_detach + 2.0 * (1 - p_detach));
     BOOST_TEST(psv2->p_detached == 1.0);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 1u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -426,6 +478,11 @@ BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}])
                == p_detach * 0.9 + (1 - p_detach) * 0.07);
     BOOST_TEST(psv2->p_detached = 0.9);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -461,6 +518,11 @@ BOOST_AUTO_TEST_CASE(backward_bigger_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
                == p_detach * 0.2 + (1 - p_detach) * 0.01);
     BOOST_TEST(psv2->p_detached = 0.2);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -511,6 +573,11 @@ BOOST_AUTO_TEST_CASE(backward_multiple_edmans_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{2, 1}])
                == p_detach * 0.88 + (1 - p_detach) * 0.06);
     BOOST_TEST(psv2->p_detached == 0.88);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 3u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -555,6 +622,13 @@ BOOST_AUTO_TEST_CASE(backward_multiple_dye_colors_test, *tolerance(TOL)) {
                == p_detach * 0.5 + (1 - p_detach) * 0.03);
     BOOST_TEST((psv2->broken_n_tensor[{0, 1, 1}])
                == p_detach * 0.5 + (1 - p_detach) * 0.04);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.min[2] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->range.max[2] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -584,6 +658,11 @@ BOOST_AUTO_TEST_CASE(backward_pruned_range_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}])
                == p_detach * 0.2 + (1 - p_detach) * 0.06);
     BOOST_TEST(psv2->p_detached == 0.2);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 1u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 2u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -618,6 +697,11 @@ BOOST_AUTO_TEST_CASE(backward_no_detached_forward_test, *tolerance(TOL)) {
                == p_detach * 0.2 + (1 - p_detach) * 0.06);
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}])
                == p_detach * 0.2 + (1 - p_detach) * 0.01);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == false);
     delete psv2;
 }
 
@@ -650,6 +734,11 @@ BOOST_AUTO_TEST_CASE(backward_no_detached_backward_test, *tolerance(TOL)) {
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == (1 - p_detach) * 0.06);
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == (1 - p_detach) * 0.01);
     BOOST_TEST(psv2->p_detached == 0.0);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == true);
     delete psv2;
 }
 
@@ -682,6 +771,11 @@ BOOST_AUTO_TEST_CASE(backward_no_detached_forward_or_backward_test,
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == (1 - p_detach) * 0.03);
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == (1 - p_detach) * 0.06);
     BOOST_TEST((psv2->broken_n_tensor[{0, 2}]) == (1 - p_detach) * 0.01);
+    BOOST_TEST(psv2->range.min[0] == 0u);
+    BOOST_TEST(psv2->range.min[1] == 0u);
+    BOOST_TEST(psv2->range.max[0] == 1u);
+    BOOST_TEST(psv2->range.max[1] == 3u);
+    BOOST_TEST(psv2->allow_detached == false);
     delete psv2;
 }
 
