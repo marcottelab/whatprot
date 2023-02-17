@@ -7,17 +7,17 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "initial-broken-n-transition.h"
+#include "initial-block-transition.h"
 
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
-#include "hmm/step/broken-n-transition.h"
+#include "hmm/step/block-transition.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
 
 namespace whatprot {
 
-InitialBrokenNTransition::InitialBrokenNTransition(double p_initial_break_n)
-        : BrokenNTransition(p_initial_break_n) {}
+InitialBrokenNTransition::InitialBrokenNTransition(double p_initial_block)
+        : BrokenNTransition(p_initial_block) {}
 
 void InitialBrokenNTransition::improve_fit(
         const PeptideStateVector& forward_psv,
@@ -31,7 +31,7 @@ void InitialBrokenNTransition::improve_fit(
                                    next_backward_psv,
                                    num_edmans,
                                    probability,
-                                   &fitter->p_initial_break_n_fit);
+                                   &fitter->p_initial_block_fit);
 }
 
 }  // namespace whatprot

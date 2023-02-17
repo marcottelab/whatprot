@@ -124,7 +124,7 @@ PeptideStateVector* EdmanTransition::forward(const PeptideStateVector& input,
     }
     delete in_itr;
     delete out_itr;
-    // We also need to deal with the 'broken-n' states. Even though Edman
+    // We also need to deal with the 'block' states. Even though Edman
     // degradation has no effect on these states, which is the whole reason for
     // their existence, we still need to copy them to the new tensor so that the
     // old values are not lost.
@@ -238,7 +238,7 @@ PeptideStateVector* EdmanTransition::backward(const PeptideStateVector& input,
     }
     delete in_itr;
     delete out_itr;
-    // We also need to deal with the 'broken-n' states. Even though Edman
+    // We also need to deal with the 'block' states. Even though Edman
     // degradation has no effect on these states, which is the whole reason for
     // their existence, we still need to copy them to the new tensor so that the
     // old values are not lost.

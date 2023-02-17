@@ -10,7 +10,7 @@
 #include <boost/test/unit_test.hpp>
 
 // File under test:
-#include "cyclic-broken-n-transition.h"
+#include "cyclic-block-transition.h"
 
 // Local project headers:
 #include "parameterization/fit/sequencing-model-fitter.h"
@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(cyclic_broken_n_transition_suite)
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
-    double p_break_n = 0.07;
-    CyclicBrokenNTransition cbnt(p_break_n);
+    double p_block = 0.07;
+    CyclicBrokenNTransition cbnt(p_block);
     cbnt.pruned_range.min = {0, 0};
     cbnt.pruned_range.max = {1, 2};
     unsigned int order = 2;
@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     double probability = 1.0;
     SequencingModelFitter smf;
     cbnt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
-    BOOST_TEST(smf.p_cyclic_break_n_fit.get()
-               == (0.31 * p_break_n * 0.033 + 0.71 * p_break_n * 0.073)
+    BOOST_TEST(smf.p_cyclic_block_fit.get()
+               == (0.31 * p_block * 0.033 + 0.71 * p_block * 0.073)
                           / (0.31 * 0.32 + 0.71 * 0.72));
 }
 

@@ -7,7 +7,7 @@
 \******************************************************************************/
 
 // Defining symbols from header:
-#include "broken-n-transition.h"
+#include "block-transition.h"
 
 // Local project headers:
 #include "hmm/state-vector/peptide-state-vector.h"
@@ -17,7 +17,7 @@
 
 namespace whatprot {
 
-BrokenNTransition::BrokenNTransition(double p_break_n) : p_break_n(p_break_n) {}
+BrokenNTransition::BrokenNTransition(double p_block) : p_block(p_block) {}
 
 void BrokenNTransition::prune_forward(KDRange* range, bool* allow_detached) {
     pruned_range = *range;
@@ -38,9 +38,9 @@ PeptideStateVector* BrokenNTransition::forward(const PeptideStateVector& input,
     TensorIterator* brkn_out_itr =
             output->broken_n_tensor.iterator(pruned_range);
     while (!tsr_in_itr->done()) {
-        *tsr_out_itr->get() = (1 - p_break_n) * (*tsr_in_itr->get());
+        *tsr_out_itr->get() = (1 - p_block) * (*tsr_in_itr->get());
         *brkn_out_itr->get() =
-                (*brkn_in_itr->get()) + p_break_n * (*tsr_in_itr->get());
+                (*brkn_in_itr->get()) + p_block * (*tsr_in_itr->get());
         tsr_in_itr->advance();
         brkn_in_itr->advance();
         tsr_out_itr->advance();
@@ -69,8 +69,8 @@ PeptideStateVector* BrokenNTransition::backward(
     TensorIterator* brkn_out_itr =
             output->broken_n_tensor.iterator(pruned_range);
     while (!tsr_in_itr->done()) {
-        *tsr_out_itr->get() = p_break_n * (*brkn_in_itr->get())
-                              + (1 - p_break_n) * (*tsr_in_itr->get());
+        *tsr_out_itr->get() = p_block * (*brkn_in_itr->get())
+                              + (1 - p_block) * (*tsr_in_itr->get());
         *brkn_out_itr->get() = *brkn_in_itr->get();
         tsr_in_itr->advance();
         brkn_in_itr->advance();
@@ -104,7 +104,7 @@ void BrokenNTransition::improve_fit(const PeptideStateVector& forward_psv,
             next_backward_psv.broken_n_tensor.const_iterator(pruned_range);
     while (!f_itr->done()) {
         fitter->numerator +=
-                (*f_itr->get()) * p_break_n * (*nb_n_itr->get()) / probability;
+                (*f_itr->get()) * p_block * (*nb_n_itr->get()) / probability;
         fitter->denominator += (*f_itr->get()) * (*b_itr->get()) / probability;
         f_itr->advance();
         b_itr->advance();

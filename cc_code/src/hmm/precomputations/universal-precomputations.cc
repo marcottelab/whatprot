@@ -23,8 +23,8 @@ namespace whatprot {
 UniversalPrecomputations::UniversalPrecomputations(
         const SequencingModel& seq_model, unsigned int num_channels)
         : detach_transition(seq_model.p_detach),
-          initial_broken_n_transition(seq_model.p_initial_break_n),
-          cyclic_broken_n_transition(seq_model.p_cyclic_break_n),
+          initial_broken_n_transition(seq_model.p_initial_block),
+          cyclic_broken_n_transition(seq_model.p_cyclic_block),
           num_channels(num_channels) {
     for (unsigned int i = 0; i < num_channels; i++) {
         dud_transitions.push_back(

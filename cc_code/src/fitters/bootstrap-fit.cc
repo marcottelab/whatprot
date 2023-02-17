@@ -91,17 +91,17 @@ void bootstrap_fit(unsigned int num_timesteps,
     sort(seq_models->begin(),
          seq_models->end(),
          [](SequencingModel a, SequencingModel b) -> bool {
-             return a.p_initial_break_n < b.p_initial_break_n;
+             return a.p_initial_block < b.p_initial_block;
          });
-    ci_min.p_initial_break_n = (*seq_models)[ci_min_idx].p_initial_break_n;
-    ci_max.p_initial_break_n = (*seq_models)[ci_max_idx].p_initial_break_n;
+    ci_min.p_initial_block = (*seq_models)[ci_min_idx].p_initial_block;
+    ci_max.p_initial_block = (*seq_models)[ci_max_idx].p_initial_block;
     sort(seq_models->begin(),
          seq_models->end(),
          [](SequencingModel a, SequencingModel b) -> bool {
-             return a.p_cyclic_break_n < b.p_cyclic_break_n;
+             return a.p_cyclic_block < b.p_cyclic_block;
          });
-    ci_min.p_cyclic_break_n = (*seq_models)[ci_min_idx].p_cyclic_break_n;
-    ci_max.p_cyclic_break_n = (*seq_models)[ci_max_idx].p_cyclic_break_n;
+    ci_min.p_cyclic_block = (*seq_models)[ci_min_idx].p_cyclic_block;
+    ci_max.p_cyclic_block = (*seq_models)[ci_max_idx].p_cyclic_block;
     for (unsigned int c = 0; c < num_channels; c++) {
         sort(seq_models->begin(),
              seq_models->end(),

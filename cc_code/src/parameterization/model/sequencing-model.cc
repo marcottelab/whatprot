@@ -47,8 +47,8 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     json data = json::parse(f);
     p_edman_failure = data["p_edman_failure"].get<double>();
     p_detach = data["p_detach"].get<double>();
-    p_initial_break_n = data["p_initial_break_n"].get<double>();
-    p_cyclic_break_n = data["p_cyclic_break_n"].get<double>();
+    p_initial_block = data["p_initial_block"].get<double>();
+    p_cyclic_block = data["p_cyclic_block"].get<double>();
     for (auto& channel_data : data["channel_models"]) {
         channel_models.push_back(new ChannelModel());
         channel_models.back()->p_bleach =
@@ -63,8 +63,8 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
 SequencingModel::SequencingModel(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
-    p_initial_break_n = other.p_initial_break_n;
-    p_cyclic_break_n = other.p_cyclic_break_n;
+    p_initial_block = other.p_initial_block;
+    p_cyclic_block = other.p_cyclic_block;
     for (unsigned int c = 0; c < other.channel_models.size(); c++) {
         channel_models.push_back(new ChannelModel(*other.channel_models[c]));
     }
@@ -73,8 +73,8 @@ SequencingModel::SequencingModel(const SequencingModel& other) {
 SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
     p_edman_failure = other.p_edman_failure;
     p_detach = other.p_detach;
-    p_initial_break_n = other.p_initial_break_n;
-    p_cyclic_break_n = other.p_cyclic_break_n;
+    p_initial_block = other.p_initial_block;
+    p_cyclic_block = other.p_cyclic_block;
     // This function is not necessarily used as a constructor. It is very
     // important to clear contents of channel_models before filling it.
     for (ChannelModel* channel_model : channel_models) {
@@ -93,8 +93,8 @@ SequencingModel& SequencingModel::operator=(const SequencingModel& other) {
 SequencingModel::SequencingModel(SequencingModel&& other) {
     p_edman_failure = move(other.p_edman_failure);
     p_detach = move(other.p_detach);
-    p_initial_break_n = move(other.p_initial_break_n);
-    p_cyclic_break_n = move(other.p_cyclic_break_n);
+    p_initial_block = move(other.p_initial_block);
+    p_cyclic_block = move(other.p_cyclic_block);
     channel_models = move(other.channel_models);
 }
 
@@ -110,8 +110,8 @@ SequencingModel SequencingModel::with_mu_as_one() const {
     SequencingModel x;
     x.p_detach = p_detach;
     x.p_edman_failure = p_edman_failure;
-    x.p_initial_break_n = p_initial_break_n;
-    x.p_cyclic_break_n = p_cyclic_break_n;
+    x.p_initial_block = p_initial_block;
+    x.p_cyclic_block = p_cyclic_block;
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         x.channel_models.push_back(
                 new ChannelModel(channel_models[i]->with_mu_as_one()));
@@ -125,8 +125,8 @@ double SequencingModel::distance(
     dist = max(dist, abs(p_edman_failure - sequencing_model.p_edman_failure));
     dist = max(dist, abs(p_detach - sequencing_model.p_detach));
     dist = max(dist,
-               abs(p_initial_break_n - sequencing_model.p_initial_break_n));
-    dist = max(dist, abs(p_cyclic_break_n - sequencing_model.p_cyclic_break_n));
+               abs(p_initial_block - sequencing_model.p_initial_block));
+    dist = max(dist, abs(p_cyclic_block - sequencing_model.p_cyclic_block));
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         dist = max(dist,
                    channel_models[i]->distance(
@@ -139,9 +139,9 @@ string SequencingModel::debug_string() const {
     string s = "";
     s += "Edman failure rate: " + to_string(p_edman_failure) + ", ";
     s += "Detach rate: " + to_string(p_detach) + ", ";
-    s += "Initial blocked N-terminus rate: " + to_string(p_initial_break_n)
+    s += "Initial blocked N-terminus rate: " + to_string(p_initial_block)
          + ", ";
-    s += "Cyclic blocked N-terminus rate: " + to_string(p_cyclic_break_n);
+    s += "Cyclic blocked N-terminus rate: " + to_string(p_cyclic_block);
     for (unsigned int i = 0; i < channel_models.size(); i++) {
         s += ", ";
         s += "Channel " + to_string(i) + " info: (";

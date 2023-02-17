@@ -18,10 +18,10 @@
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/bleach-transition.h"
-#include "hmm/step/cyclic-broken-n-transition.h"
+#include "hmm/step/cyclic-block-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/edman-transition.h"
-#include "hmm/step/initial-broken-n-transition.h"
+#include "hmm/step/initial-block-transition.h"
 #include "hmm/step/peptide-emission.h"
 
 namespace whatprot {

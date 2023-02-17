@@ -31,14 +31,14 @@ void write_params(const string& filename,
                   unsigned int num_channels,
                   const vector<SequencingModel>& models) {
     ofstream f(filename);
-    f << "p_edman_failure,p_detach,p_initial_break_n,p_cyclic_break_n";
+    f << "p_edman_failure,p_detach,p_initial_block,p_cyclic_block";
     for (unsigned int c = 0; c < num_channels; c++) {
         f << ",ch" << c << ":p_bleach,ch" << c << ":p_dud";
     }
     f << "\n";
     for (const SequencingModel& model : models) {
         f << model.p_edman_failure << "," << model.p_detach << ","
-          << model.p_initial_break_n << "," << model.p_cyclic_break_n;
+          << model.p_initial_block << "," << model.p_cyclic_block;
         for (unsigned int c = 0; c < num_channels; c++) {
             f << "," << model.channel_models[c]->p_bleach << ","
               << model.channel_models[c]->p_dud;

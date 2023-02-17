@@ -27,11 +27,11 @@
 #include "hmm/precomputations/universal-precomputations.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "hmm/step/bleach-transition.h"
-#include "hmm/step/cyclic-broken-n-transition.h"
+#include "hmm/step/cyclic-block-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
 #include "hmm/step/edman-transition.h"
-#include "hmm/step/initial-broken-n-transition.h"
+#include "hmm/step/initial-block-transition.h"
 #include "hmm/step/peptide-emission.h"
 #include "hmm/step/peptide-step.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
@@ -61,8 +61,8 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
     seq_model.p_detach = 0.02;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;
@@ -150,8 +150,8 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -187,8 +187,8 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -224,8 +224,8 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -261,8 +261,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -298,8 +298,8 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
     seq_model.p_detach = 0.05;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.05;
@@ -335,8 +335,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
     seq_model.p_detach = 0.02;
-    seq_model.p_initial_break_n = 0.07;
-    seq_model.p_cyclic_break_n = 0.025;
+    seq_model.p_initial_block = 0.07;
+    seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
         seq_model.channel_models.push_back(new ChannelModel());
         seq_model.channel_models[i]->p_bleach = 0.03;

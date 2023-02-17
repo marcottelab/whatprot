@@ -19,7 +19,7 @@ namespace whatprot {
 
 class BrokenNTransition : public PeptideStep {
 public:
-    BrokenNTransition(double p_break_n);
+    BrokenNTransition(double p_block);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     virtual PeptideStateVector* forward(
@@ -35,7 +35,7 @@ public:
                      double probability,
                      ParameterFitter* fitter) const;
     KDRange pruned_range;
-    double p_break_n;
+    double p_block;
 };
 
 }  // namespace whatprot

@@ -14,10 +14,10 @@
 
 // Local project headers:
 #include "hmm/step/bleach-transition.h"
-#include "hmm/step/cyclic-broken-n-transition.h"
+#include "hmm/step/cyclic-block-transition.h"
 #include "hmm/step/detach-transition.h"
 #include "hmm/step/dud-transition.h"
-#include "hmm/step/initial-broken-n-transition.h"
+#include "hmm/step/initial-block-transition.h"
 #include "parameterization/model/sequencing-model.h"
 
 namespace whatprot {
