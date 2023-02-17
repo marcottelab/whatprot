@@ -22,6 +22,39 @@ def plot_pr_curve(predictions_file,
                    lim_peps_file,
                    directory)
 
+def plot_estimated_and_true_pr_curve(predictions_file,
+                                    true_y_file,
+                                    dye_seqs_file,
+                                    directory = ""):
+    fig, ax = plt.subplots(1)
+    fig.set_size_inches(8, 8)
+    fig.set_dpi(100)
+    plot_pr_curve_noshow(ax,
+                         predictions_file,
+                         true_y_file,
+                         dye_seqs_file,
+                         directory = directory,
+                         label = "true result")
+    plot_estimated_pr_curve_noshow(ax,
+                                   predictions_file,
+                                   directory = directory,
+                                   label = "predicted result")
+    ax.set_xlim(left = 0)
+    ax.set_ylim(bottom = 0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["bottom"].set_linewidth(1.5)
+    ax.spines["left"].set_linewidth(1.5)
+    ax.xaxis.set_tick_params(width=1.5)
+    ax.yaxis.set_tick_params(width=1.5)
+    ax.set_xlabel('recall',
+                    fontsize = 15,
+                    labelpad = 15)
+    ax.set_ylabel('precision',
+                    fontsize = 15,
+                    labelpad = 15)
+    plt.legend(fontsize = 15)
+
 def plot_pr_curves(predictions_files,
                    true_y_file,
                    dye_seqs_file,
@@ -101,22 +134,81 @@ def plot_pr_curves(predictions_files,
     if labels != []:
         plt.legend(fontsize = 15)
 
+def plot_score_calibration(predictions_file,
+                           true_y_file,
+                           dye_seqs_file,
+                           directory = ""):
+    true_y = read_true_y_file(directory + true_y_file)
+    weightmap = read_dye_seqs_file(directory + dye_seqs_file)
+    predictions = read_predictions_file(directory + predictions_file)
+    amt_correct_and_score = compute_amt_correct_and_score(predictions,
+                                                          true_y,
+                                                          weightmap)
+    amt_correct_and_score.sort(key = lambda entry: entry[1])
+    aggregate_amt_correct_and_score = []
+    for i in range(100):
+        amt_correct = 0.0
+        score = 0.0
+        num_entries = 0
+        for j in range(int(len(amt_correct_and_score) * i / 100),
+                       int(len(amt_correct_and_score) * (i + 1) / 100)):
+            amt_correct += amt_correct_and_score[j][0]
+            score += amt_correct_and_score[j][1]
+            num_entries += 1
+        amt_correct /= num_entries
+        score /= num_entries
+        if num_entries > 0:
+            aggregate_amt_correct_and_score += [(amt_correct, score)]
+    y = [entry[0] for entry in aggregate_amt_correct_and_score]
+    x = [entry[1] for entry in aggregate_amt_correct_and_score]
+    plt.scatter(x, y)
+    plt.plot([0, 1], [0, 1], ls="--")
+
 def plot_pr_curve_noshow(ax,
                          predictions_file,
                          true_y_file,
                          dye_seqs_file,
                          directory = "",
                          label = None):
+    true_y = read_true_y_file(directory + true_y_file)
+    weightmap = read_dye_seqs_file(directory + dye_seqs_file)
+    predictions = read_predictions_file(directory + predictions_file)
+    precision, recall = compute_read_pr_curve(predictions, true_y, weightmap)
+    ax.plot(recall, precision, '-', label = label, linewidth = 2)
+
+def plot_estimated_pr_curve_noshow(ax,
+                                   predictions_file,
+                                   directory = "",
+                                   label = None):
+    predictions = read_predictions_file(directory + predictions_file)
+    precision, recall = compute_estimated_pr_curve(predictions)
+    ax.plot(recall, precision, ':', label = label, linewidth = 2)
+
+def read_predictions_file(predictions_filepath):
+    f = open(predictions_filepath, "r")
+    csv = f.readlines()
+    csv = csv[1:]
+    predictions = [0] * len(csv)
+    for i in range(0, len(csv)):
+        cells = csv[i].split(",")
+        predictions[i] = (int(cells[1]), float(cells[2]))
+    f.close()
+    return predictions
+
+def read_true_y_file(true_y_filepath):
     true_y = None
-    if (true_y_file.split(".")[-1] == "npy"):
-        true_y = load(directory + true_y_file)
+    if (true_y_filepath.split(".")[-1] == "npy"):
+        true_y = load(true_y_filepath)
     else:  # then it's a tsv file
-        f = open(directory + true_y_file, "r")
+        f = open(true_y_filepath, "r")
         tsv = f.readlines()
         tsv = tsv[1:]
         true_y = [int(x) for x in tsv]
         f.close()
-    f = open(directory + dye_seqs_file, "r")
+    return true_y
+
+def read_dye_seqs_file(dye_seqs_filepath):
+    f = open(dye_seqs_filepath, "r")
     f.readline()  # number of channels
     f.readline()  # number of dye seqs
     weightmap = {}
@@ -133,16 +225,7 @@ def plot_pr_curve_noshow(ax,
             dseq_id = id_or_ids[0]
         weightmap[dseq_id] = int(ltabs[1])
     f.close()
-    f = open(directory + predictions_file, "r")
-    csv = f.readlines()
-    csv = csv[1:]
-    predictions = [0] * len(csv)
-    for i in range(0, len(csv)):
-        cells = csv[i].split(",")
-        predictions[i] = (int(cells[1]), float(cells[2]))
-    f.close()
-    precision, recall = compute_read_pr_curve(predictions, true_y, weightmap)
-    ax.plot(recall, precision, '-', label = label, linewidth = 2)
+    return weightmap
 
 def plot_aggregate_pr_curves_noshow(axpep,
                                     axprot,
@@ -221,6 +304,12 @@ def compute_aggregate_pr_curve(predictions, ground_truth):
     return compute_pr_curve_helper(amt_correct_and_score, len_ground_truth)
 
 def compute_read_pr_curve(predictions, ground_truth, weightmap):
+    amt_correct_and_score = compute_amt_correct_and_score(predictions,
+                                                          ground_truth,
+                                                          weightmap)
+    return compute_pr_curve_helper(amt_correct_and_score, len(amt_correct_and_score))
+
+def compute_amt_correct_and_score(predictions, ground_truth, weightmap):
     amt_correct_and_score = [(0.0, 0.0)] * len(predictions)
     for i in range(len(ground_truth)):
         if predictions[i][0] == ground_truth[i]:
@@ -228,6 +317,10 @@ def compute_read_pr_curve(predictions, ground_truth, weightmap):
             amt_correct_and_score[i] = (amt_correct, predictions[i][1])
         else:
             amt_correct_and_score[i] = (0.0, predictions[i][1])
+    return amt_correct_and_score
+
+def compute_estimated_pr_curve(predictions):
+    amt_correct_and_score = [(x[1], x[1]) for x in predictions]
     return compute_pr_curve_helper(amt_correct_and_score, len(amt_correct_and_score))
 
 def compute_pr_curve_helper(amt_correct_and_score, total):
