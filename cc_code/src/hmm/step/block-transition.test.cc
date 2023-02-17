@@ -27,8 +27,7 @@ const double TOL = 0.000000001;
 // BrokenNTransition is abstract, so we need to override undefined methods.
 class TestableBrokenNTransition : public BrokenNTransition {
 public:
-    TestableBrokenNTransition(double p_block)
-            : BrokenNTransition(p_block) {}
+    TestableBrokenNTransition(double p_block) : BrokenNTransition(p_block) {}
     using BrokenNTransition::improve_fit;
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
@@ -101,10 +100,8 @@ BOOST_AUTO_TEST_CASE(backward_test) {
     psv1.p_detached = 0.123;
     unsigned int edmans = 0;
     PeptideStateVector* psv2 = bnt.backward(psv1, &edmans);
-    BOOST_TEST((psv2->tensor[{0, 0}])
-               == p_block * 0.03 + (1 - p_block) * 0.3);
-    BOOST_TEST((psv2->tensor[{0, 1}])
-               == p_block * 0.07 + (1 - p_block) * 0.7);
+    BOOST_TEST((psv2->tensor[{0, 0}]) == p_block * 0.03 + (1 - p_block) * 0.3);
+    BOOST_TEST((psv2->tensor[{0, 1}]) == p_block * 0.07 + (1 - p_block) * 0.7);
     BOOST_TEST((psv2->broken_n_tensor[{0, 0}]) == 0.03);
     BOOST_TEST((psv2->broken_n_tensor[{0, 1}]) == 0.07);
     BOOST_TEST(psv2->range.min[0] == 0u);
