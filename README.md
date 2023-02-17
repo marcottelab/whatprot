@@ -57,6 +57,7 @@ Classify has three different modes: k-Nearest Neighbors (kNN or just NN), Hidden
 For datasets with smaller numbers of peptides we recommend the HMM classifier. Note that this classifier will have a runtime proportional to the product of your number of peptides and the number of reads you want to analyze; this tends to be unreasonable when your reference database has more than perhaps 1000 peptides, though this may depend on your labeling scheme and other factors. If running the HMM classifier we recommend to run it in the following manner:
 ```bash
 # Classify data using the HMM classifier
+#   -P (or --seqparams) path to .json file with parameterization information.
 #   -p (or --hmmprune) pruning cutoff for HMM (measured in sigma of fluorophore/count
 #      combination). This parameter is optional; if omitted, no pruning cutoff will be
 #      used.
@@ -70,6 +71,7 @@ $ ./bin/release/whatprot classify hmm -p 5 -P ./path/to/seq-params.json -S ./pat
 The hybrid classifier will greatly improve runtime performance for larger datasets, with little to no impact on the accuracy of your results. To classify data using our recommended parameters with the hybrid classifier, run something like the following:
 ```bash
 # Classify data using the hybrid classifier
+#   -P (or --seqparams) path to .json file with parameterization information.
 #   -k (or --neighbors) number of neighbors to use for kNN part of hybrid classifier.
 #   -s (or --sigma) sigma value for gaussian weighting function for neighbor voting.
 #   -H (or --passthrough) max-cutoff for number of peptides to forward from kNN to HMM
@@ -86,7 +88,8 @@ $ ./bin/release/whatprot classify hybrid -k 10000 -s 0.5 -H 1000 -p 5 -P ./path/
 ### kNN classification <a name='knnclassification' />
 The kNN classifier is also available for your use. It will be slightly faster than the hybrid classifier but will give much worse results. Although we believe the hybrid and HMM classifiers should be better for all use cases, if you choose to run the kNN classifier you can run it as follows:
 ```bash
-# Classify data using the hybrid classifier
+# Classify data using the kNN classifier
+#   -P (or --seqparams) path to .json file with parameterization information.
 #   -k (or --neighbors) number of neighbors to use for kNN part of hybrid classifier.
 #   -s (or --sigma) sigma value for gaussian weighting function for neighbor voting.
 #   -T (or --dyetracks) dye-tracks to use as training data for kNN classification.
@@ -130,18 +133,16 @@ The first three lines are special.
 * Second line is an integer representing the number of channels (number of colors or types of fluorophore).
 * Third line is an integer representing the number of reads in the file.
 
-The rest of the lines in the file contain read data. Each line is one read. Tab-separated values represent intensity values at each channel and timestep. Two important notes about this file.
-* Each line iterates first through channels and then through timesteps, i.e., timestep 0 channel 0 TAB timestep 0 channel 1 TAB timestep 1 channel 0..... This is the opposite arrangement to the organization of data from Erisyon. This is one of the things handled by the convert_radiometries python function described below.
-* If the range of your intensity values is too high, you could get underflow during classification. Intensity values are arbitrary anyways, so we divide by 15000 in the convert_radiometries function (described below) to avoid this issue for you.
+The rest of the lines in the file contain read data. Each line is one read. Tab-separated values represent intensity values at each channel and timestep. Note that each line iterates first through channels and then through timesteps, i.e., timestep 0 channel 0 TAB timestep 0 channel 1 TAB timestep 1 channel 0..... This is the opposite arrangement to the organization of data from Erisyon. This is handled by the convert_radiometries python function described below.
 
 Example radiometries.tsv
 ```
 5
 2
 3
-1.05  0.12  0.97  -0.03 1.02  0.01  -0.04 0.02  0.07  0.06
-0.01  1.01  0.03  0.97  0.02  1.02  -0.04 1.04  0.05  0.92
--0.03 1.07  0.13  0.86  0.09  1.03  -0.06 0.06  0.02  -0.11
+1050.0  120.0  970.0  -30.0 1020.0  10.0  -40.0 20.0  70.0  60.0
+10.0  1010.0  30.0  970.0  20.0  1020.0  -40.0 1040.0  50.0  920.0
+-30.0 1070.0  130.0  860.0  90.0  1030.0  -60.0 60.0  20.0  -110.0
 ```
 
 #### Converting from Erisyon's format <a name='radiometryfromerisyon' />
