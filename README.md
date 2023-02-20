@@ -1,3 +1,7 @@
+### Note on branch
+
+We believe this branch faithfully represents the state of the repository when the paper "Amino acid sequence assignment from single molecule peptide sequencing data using a two-stage classifier" was written. A pre-print can be found on biorxiv, see https://www.biorxiv.org/content/10.1101/2022.09.23.509260v3 .
+
 # Whatprot
 
 A fluoro-sequencing pipeline by Matthew Beauregard Smith
