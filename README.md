@@ -106,10 +106,14 @@ Classification is automatically multithreaded with OpenMP. You can change the nu
 
 ### Sequencing parameters file - contains your parameterization of the sequencing process. <a name='sequencingparametersfile' />
 
+Here is an example file with one channel:
+
 ```json
 {
   "p_edman_failure": 0.06,
   "p_detach": 0.05,
+  "p_initial_block": 0.07,
+  "p_cyclic_block": 0.02,
   "channel_models": [
     {
       "p_bleach": 0.05,
@@ -117,6 +121,33 @@ Classification is automatically multithreaded with OpenMP. You can change the nu
       "bg_sig": 0.00667,
       "mu": 1.0,
       "sig": 0.16
+    }
+  ]
+}
+```
+
+It's easy to add more channels, for example to have two do this:
+
+```json
+{
+  "p_edman_failure": 0.06,
+  "p_detach": 0.05,
+  "p_initial_block": 0.07,
+  "p_cyclic_block": 0.02,
+  "channel_models": [
+    {
+      "p_bleach": 0.05,
+      "p_dud": 0.07,
+      "bg_sig": 66.7,
+      "mu": 10000,
+      "sig": 1600
+    },
+    {
+      "p_bleach": 0.05,
+      "p_dud": 0.07,
+      "bg_sig": 66.7,
+      "mu": 10000,
+      "sig": 1600
     }
   ]
 }
