@@ -17,6 +17,7 @@ Oden Institute and Institute for Cellular and Molecular Biology
   * [Hybrid classification](#hybridclassification)
   * [kNN classification](#knnclassification)
   * [Multithreaded performance](#multithreadedperformance)
+* [Fitting parameters](#fittingparameters)
 * [Filetypes](#filetypes)
   * [Sequencing parameters file](#sequencingparametersfile)
   * [Radiometry files](#radiometryfile)
@@ -101,6 +102,48 @@ $ ./bin/release/whatprot classify nn -k 10000 -s 0.5 -P ./path/to/seq-params.jso
 ### Multithreaded performance <a name='multithreadedperformance' />
 
 Classification is automatically multithreaded with OpenMP. You can change the number of threads by setting the OMP_NUM_THREADS environment variable. You may experience sub-optimal performance as the number of threads increases on many linux systems. This is because the default memory allocators included with many linux systems have very poor performance with multithreaded workloads. This issue can be alleviated by using the LD_PRELOAD environment variable to inject a better performing implementation of malloc into the application. We use jemalloc, but we expect that any malloc implementation designed to deal with memory allocations from large numbers of threads will be roughly equivalent in performance (i.e., tcmalloc, hoard, or ptmalloc2).
+
+## Fitting parameters - using real data to determine the correct parameterization. <a name='fittingparameters' />
+
+You will provide a parameter json file in which you provide starting values for your parameters. Note that:
+* mu, sig, and bg_sig will be held constant, and should be fit separately before running fit with whatprot.
+* Any probability set to 0 or to 1 will be fixed; this is a limitation inherent in the fit procedure being used.
+
+The simplest fitting procedure might look as follows:
+```bash
+# Fit data using whatprot.
+#   -P (or --seqparams) path to .json file with parameterization information.
+#   -L (or --stoppingthreshold) iteration will stop when the difference between
+#      iterations is less than this value. Note that the difference between the fit
+#      value and the true value may be more than this limit.
+#   -x (or --dyeseqstring) a sequence of digits and dots (i.e., period characters)
+#      representing the peptide being fit. Dots represent amino acids that can't be
+#      labeled, while each digit represents an amino acid which can be labeled by a
+#      particular type of fluorophore given your labeling scheme. For example '..0.1'
+#      is a peptide that can be labelled in position 2 on channel 0 and position 4 on
+#      channel 1.
+#   -R (or --radiometries) radiometries to fit.
+$ ./bin/release/whatprot fit -P /path/to/seq-params.json -L 0.00001 -x ..0.1 -R /path/to/radiometries.tsv
+```
+
+Sometimes a confidence interval is desired. You must then additionally specify both the number of bootstrap rounds you want to run and the size of the confidence interval you wish to estimate. You can do this as follows:
+```bash
+# Fit data using whatprot.
+# See previous example for repeated parameters. Additional parameters are:
+#   -b (or --numbootstrap) declares the number of bootstrap rounds to run.
+#   -c (or --confidenceinterval) declares the size of the confidence interval. Giving
+#      0.9 will give a 90% confidence interval using the percentile method, starting
+#      at the 5th percentile and ending at the 95th.
+$ ./bin/release/whatprot fit -P /path/to/seq-params.json -L 0.00001 -x ..0.1 -R /path/to/radiometries.tsv -b 200 -c .9
+```
+
+If you use bootstrapping to produce a confidence interval, you can also get an output file with a table containing the estimated parameter values from every bootstrap run. You would do this as follows:
+```bash
+# Fit data using whatprot.
+# See previous example for repeated parameters. Additional parameter is:
+#   -Y (or --results) for the path to where you want to save the bootstrapping information.
+$ ./bin/release/whatprot fit -P /path/to/seq-params.json -L 0.00001 -x ..0.1 -R /path/to/radiometries.tsv -b 200 -c .9 -Y /path/to/results.csv
+```
 
 ## Filetypes - what they are and how to get them. <a name='filetypes' />
 
