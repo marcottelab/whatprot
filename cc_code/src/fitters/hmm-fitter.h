@@ -94,8 +94,6 @@ public:
             }
             sm = next;
         }
-        std::cout << "\n" << sm.debug_string() << "\n\n";
-        return sm;
     }
 
     const DyeSeq& dye_seq;
