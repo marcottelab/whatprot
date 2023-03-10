@@ -10,7 +10,6 @@
 #define WHATPROT_FITTERS_HMM_FITTER_H
 
 // Standard C++ library headers:
-#include <iostream>
 #include <vector>
 
 // Local project headers:
