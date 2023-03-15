@@ -79,14 +79,16 @@ void run_fit(double stopping_threshold,
                          seq_model,
                          seq_settings,
                          dye_seq);
-        SequencingModel fitted_seq_model = fitter.fit(radiometries);
+        SequencingModel fitted_seq_model;
+        double log_l = fitter.fit(radiometries, &fitted_seq_model);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
 
-        print_parameter_results(fitted_seq_model);
+        print_parameter_results(fitted_seq_model, log_l);
     } else {
         start_time = wall_time();
         vector<SequencingModel> seq_models;
+        vector<double> log_ls;
         bootstrap_fit(num_timesteps,
                       num_channels,
                       stopping_threshold,
@@ -96,13 +98,14 @@ void run_fit(double stopping_threshold,
                       radiometries,
                       num_bootstrap,
                       confidence_interval,
-                      &seq_models);
+                      &seq_models,
+                      &log_ls);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
 
         if (results_filename != "") {
             start_time = wall_time();
-            write_params(results_filename, num_channels, seq_models);
+            write_params(results_filename, num_channels, seq_models, log_ls);
             end_time = wall_time();
             print_finished_saving_results(end_time - start_time);
         }

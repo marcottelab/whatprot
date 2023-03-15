@@ -29,7 +29,8 @@ void bootstrap_fit(unsigned int num_timesteps,
                    const std::vector<Radiometry>& radiometries,
                    unsigned int num_bootstrap_rounds,
                    double confidence_interval,
-                   std::vector<SequencingModel>* seq_models);
+                   std::vector<SequencingModel>* seq_models,
+                   std::vector<double>* log_ls);
 
 }  // namespace whatprot
 

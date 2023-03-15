@@ -11,6 +11,7 @@
 
 // Standard C++ library headers:
 #include <fstream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -23,28 +24,32 @@ namespace whatprot {
 namespace {
 using std::ifstream;
 using std::ofstream;
+using std::setprecision;
 using std::string;
 using std::vector;
 }  // namespace
 
 void write_params(const string& filename,
                   unsigned int num_channels,
-                  const vector<SequencingModel>& models) {
+                  const vector<SequencingModel>& models,
+                  const vector<double>& log_ls) {
     ofstream f(filename);
     f << "p_edman_failure,p_detach,p_initial_block,p_cyclic_block";
     for (unsigned int c = 0; c < num_channels; c++) {
         f << ",ch" << c << ":p_bleach,ch" << c << ":p_dud";
     }
-    f << "\n";
-    for (const SequencingModel& model : models) {
-        f << model.p_edman_failure << "," << model.p_detach << ","
-          << model.p_initial_block << "," << model.p_cyclic_block;
+    f << ",log(L)\n";
+    f << setprecision(17);
+    for (unsigned int i = 0; i < models.size(); i++) {
+        f << models[i].p_edman_failure << "," << models[i].p_detach << ","
+          << models[i].p_initial_block << "," << models[i].p_cyclic_block;
         for (unsigned int c = 0; c < num_channels; c++) {
-            f << "," << model.channel_models[c]->p_bleach << ","
-              << model.channel_models[c]->p_dud;
+            f << "," << models[i].channel_models[c]->p_bleach << ","
+              << models[i].channel_models[c]->p_dud;
         }
-        f << "\n";
+        f << "," << log_ls[i] << "\n";
     }
+    f.close();
 }
 
 }  // namespace whatprot

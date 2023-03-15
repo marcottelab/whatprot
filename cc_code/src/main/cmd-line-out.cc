@@ -11,6 +11,7 @@
 
 // Standard C++ library headers:
 #include <iostream>
+#include <iomanip>
 
 // OpenMP
 #include <omp.h>
@@ -22,6 +23,8 @@ namespace whatprot {
 
 namespace {
 using std::cout;
+using std::setprecision;
+using std::streamsize;
 }  // namespace
 
 void print_bad_inputs() {
@@ -79,8 +82,11 @@ void print_omp_info() {
     cout << "Using OpenMP with " << omp_get_max_threads() << " threads.\n";
 }
 
-void print_parameter_results(const SequencingModel& seq_model) {
+void print_parameter_results(const SequencingModel& seq_model, double log_l) {
     cout << "Parameters:\n" << seq_model.debug_string() << "\n\n";
+    streamsize x = cout.precision();
+    cout << "log(L): " << setprecision(17) <<  log_l << "\n\n";
+    cout << setprecision(x);
 }
 
 void print_read_dye_seqs(int num, double time) {

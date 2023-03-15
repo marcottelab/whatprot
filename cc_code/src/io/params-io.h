@@ -20,7 +20,8 @@ namespace whatprot {
 
 void write_params(const std::string& filename,
                   unsigned int num_channels,
-                  const std::vector<SequencingModel>& models);
+                  const std::vector<SequencingModel>& models,
+                  const std::vector<double>& log_ls);
 
 }  // namespace whatprot
 

@@ -10,6 +10,9 @@
 #define WHATPROT_FITTERS_HMM_FITTER_H
 
 // Standard C++ library headers:
+#include <cmath>
+#include <iomanip>
+#include <iostream>
 #include <vector>
 
 // Local project headers:
@@ -36,7 +39,7 @@ public:
 
     // Note: R must be Radiometry type or Radiometry pointer type.
     template <class R>
-    SequencingModel fit(const std::vector<R>& radiometries) const {
+    double fit(const std::vector<R>& radiometries, SequencingModel* x) const {
         SequencingModel sm = seq_model;
         while (true) {
             SequencingModelFitter fitter(num_channels);
@@ -89,10 +92,38 @@ public:
             }
             double distance = sm.distance(next);
             if (distance < stopping_threshold) {
-                return next;
+                *x = next;
+                break;
             }
             sm = next;
         }
+        return log_likelihood(radiometries, *x);
+    }
+
+    // Note: R must be Radiometry type or Radiometry pointer type.
+    template <class R>
+    double log_likelihood(const std::vector<R>& radiometries,
+                          const SequencingModel& seq_model) const {
+        DyeSeqPrecomputations dye_seq_precomputations(
+                dye_seq, seq_model, num_timesteps, num_channels);
+        UniversalPrecomputations universal_precomputations(seq_model,
+                                                           num_channels);
+        universal_precomputations.set_max_num_dyes(max_num_dyes);
+        double log_l = 0.0;
+        for (const auto& radiometry : radiometries) {
+            RadiometryPrecomputations radiometry_precomputations(
+                    dereference_if_pointer(radiometry),
+                    seq_model,
+                    seq_settings,
+                    max_num_dyes);
+            PeptideHMM hmm(num_timesteps,
+                           num_channels,
+                           dye_seq_precomputations,
+                           radiometry_precomputations,
+                           universal_precomputations);
+            log_l += log(hmm.probability());
+        }
+        return log_l;
     }
 
     const DyeSeq& dye_seq;

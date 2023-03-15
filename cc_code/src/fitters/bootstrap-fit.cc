@@ -42,7 +42,8 @@ void bootstrap_fit(unsigned int num_timesteps,
                    const vector<Radiometry>& radiometries,
                    unsigned int num_bootstrap_rounds,
                    double confidence_interval,
-                   vector<SequencingModel>* seq_models) {
+                   vector<SequencingModel>* seq_models,
+                   vector<double>* log_ls) {
     HMMFitter fitter(num_timesteps,
                      num_channels,
                      stopping_threshold,
@@ -56,6 +57,7 @@ void bootstrap_fit(unsigned int num_timesteps,
     // The uniform_int_distribution uses both limits inclusively!
     uniform_int_distribution<> rand_idx(0, radiometries.size() - 1);
     seq_models->resize(num_bootstrap_rounds);
+    log_ls->resize(num_bootstrap_rounds);
 #pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int i = 0; i < num_bootstrap_rounds; i++) {
         vector<const Radiometry*> subsample;
@@ -64,9 +66,12 @@ void bootstrap_fit(unsigned int num_timesteps,
             subsample.push_back(&radiometries[rand_idx(generator)]);
         }
         // end pragma omp critical
-        (*seq_models)[i] = fitter.fit(subsample);
+        (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i]);
     }
     // end pragma omp parallel for
+    // Temporary copy of seq_models so we can sort without messing up
+    // concordance with log_ls.
+    vector<SequencingModel> smz = *seq_models;
     unsigned int ci_min_idx = (unsigned int)((1 - confidence_interval) / 2
                                              * (double)num_bootstrap_rounds);
     unsigned int ci_max_idx =
@@ -74,54 +79,54 @@ void bootstrap_fit(unsigned int num_timesteps,
                            * (double)num_bootstrap_rounds);
     SequencingModel ci_min(num_channels);
     SequencingModel ci_max(num_channels);
-    sort(seq_models->begin(),
-         seq_models->end(),
+    sort(smz.begin(),
+         smz.end(),
          [](SequencingModel a, SequencingModel b) -> bool {
              return a.p_edman_failure < b.p_edman_failure;
          });
-    ci_min.p_edman_failure = (*seq_models)[ci_min_idx].p_edman_failure;
-    ci_max.p_edman_failure = (*seq_models)[ci_max_idx].p_edman_failure;
-    sort(seq_models->begin(),
-         seq_models->end(),
+    ci_min.p_edman_failure = smz[ci_min_idx].p_edman_failure;
+    ci_max.p_edman_failure = smz[ci_max_idx].p_edman_failure;
+    sort(smz.begin(),
+         smz.end(),
          [](SequencingModel a, SequencingModel b) -> bool {
              return a.p_detach < b.p_detach;
          });
-    ci_min.p_detach = (*seq_models)[ci_min_idx].p_detach;
-    ci_max.p_detach = (*seq_models)[ci_max_idx].p_detach;
-    sort(seq_models->begin(),
-         seq_models->end(),
+    ci_min.p_detach = smz[ci_min_idx].p_detach;
+    ci_max.p_detach = smz[ci_max_idx].p_detach;
+    sort(smz.begin(),
+         smz.end(),
          [](SequencingModel a, SequencingModel b) -> bool {
              return a.p_initial_block < b.p_initial_block;
          });
-    ci_min.p_initial_block = (*seq_models)[ci_min_idx].p_initial_block;
-    ci_max.p_initial_block = (*seq_models)[ci_max_idx].p_initial_block;
-    sort(seq_models->begin(),
-         seq_models->end(),
+    ci_min.p_initial_block = smz[ci_min_idx].p_initial_block;
+    ci_max.p_initial_block = smz[ci_max_idx].p_initial_block;
+    sort(smz.begin(),
+         smz.end(),
          [](SequencingModel a, SequencingModel b) -> bool {
              return a.p_cyclic_block < b.p_cyclic_block;
          });
-    ci_min.p_cyclic_block = (*seq_models)[ci_min_idx].p_cyclic_block;
-    ci_max.p_cyclic_block = (*seq_models)[ci_max_idx].p_cyclic_block;
+    ci_min.p_cyclic_block = smz[ci_min_idx].p_cyclic_block;
+    ci_max.p_cyclic_block = smz[ci_max_idx].p_cyclic_block;
     for (unsigned int c = 0; c < num_channels; c++) {
-        sort(seq_models->begin(),
-             seq_models->end(),
+        sort(smz.begin(),
+             smz.end(),
              [c](SequencingModel a, SequencingModel b) -> bool {
                  return a.channel_models[c]->p_bleach
                         < b.channel_models[c]->p_bleach;
              });
         ci_min.channel_models[c]->p_bleach =
-                (*seq_models)[ci_min_idx].channel_models[c]->p_bleach;
+                smz[ci_min_idx].channel_models[c]->p_bleach;
         ci_max.channel_models[c]->p_bleach =
-                (*seq_models)[ci_max_idx].channel_models[c]->p_bleach;
-        sort(seq_models->begin(),
-             seq_models->end(),
+                smz[ci_max_idx].channel_models[c]->p_bleach;
+        sort(smz.begin(),
+             smz.end(),
              [c](SequencingModel a, SequencingModel b) -> bool {
                  return a.channel_models[c]->p_dud < b.channel_models[c]->p_dud;
              });
         ci_min.channel_models[c]->p_dud =
-                (*seq_models)[ci_min_idx].channel_models[c]->p_dud;
+                smz[ci_min_idx].channel_models[c]->p_dud;
         ci_max.channel_models[c]->p_dud =
-                (*seq_models)[ci_max_idx].channel_models[c]->p_dud;
+                smz[ci_max_idx].channel_models[c]->p_dud;
     }
     cout << "lower bounds: " << ci_min.debug_string() << "\n";
     cout << "upper bounds: " << ci_max.debug_string() << "\n";
