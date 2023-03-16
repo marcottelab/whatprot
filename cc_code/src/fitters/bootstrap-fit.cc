@@ -33,17 +33,18 @@ using std::uniform_int_distribution;
 using std::vector;
 }  // namespace
 
-void bootstrap_fit(unsigned int num_timesteps,
-                   unsigned int num_channels,
-                   double stopping_threshold,
-                   const SequencingModel& seq_model,
-                   const SequencingSettings& seq_settings,
-                   const DyeSeq& dye_seq,
-                   const vector<Radiometry>& radiometries,
-                   unsigned int num_bootstrap_rounds,
-                   double confidence_interval,
-                   vector<SequencingModel>* seq_models,
-                   vector<double>* log_ls) {
+double bootstrap_fit(unsigned int num_timesteps,
+                     unsigned int num_channels,
+                     double stopping_threshold,
+                     const SequencingModel& seq_model,
+                     const SequencingSettings& seq_settings,
+                     const DyeSeq& dye_seq,
+                     const vector<Radiometry>& radiometries,
+                     unsigned int num_bootstrap_rounds,
+                     double confidence_interval,
+                     vector<SequencingModel>* seq_models,
+                     vector<double>* log_ls,
+                     SequencingModel* best_seq_model) {
     HMMFitter fitter(num_timesteps,
                      num_channels,
                      stopping_threshold,
@@ -58,15 +59,22 @@ void bootstrap_fit(unsigned int num_timesteps,
     uniform_int_distribution<> rand_idx(0, radiometries.size() - 1);
     seq_models->resize(num_bootstrap_rounds);
     log_ls->resize(num_bootstrap_rounds);
+    double best_log_l = 0.0;
 #pragma omp parallel for schedule(dynamic, 1)
-    for (unsigned int i = 0; i < num_bootstrap_rounds; i++) {
-        vector<const Radiometry*> subsample;
+    for (unsigned int i = 0; i <= num_bootstrap_rounds; i++) {
+        // Extra case so we can get base results to display. Otherwise we
+        // subsample.
+        if (i == num_bootstrap_rounds) {
+            best_log_l = fitter.fit(radiometries, best_seq_model);
+        } else {
+            vector<const Radiometry*> subsample;
 #pragma omp critical
-        for (unsigned int j = 0; j < radiometries.size(); j++) {
-            subsample.push_back(&radiometries[rand_idx(generator)]);
+            for (unsigned int j = 0; j < radiometries.size(); j++) {
+                subsample.push_back(&radiometries[rand_idx(generator)]);
+            }
+            // end pragma omp critical
+            (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i]);
         }
-        // end pragma omp critical
-        (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i]);
     }
     // end pragma omp parallel for
     // Temporary copy of seq_models so we can sort without messing up
@@ -130,6 +138,7 @@ void bootstrap_fit(unsigned int num_timesteps,
     }
     cout << "lower bounds: " << ci_min.debug_string() << "\n";
     cout << "upper bounds: " << ci_max.debug_string() << "\n";
+    return best_log_l;
 }
 
 }  // namespace whatprot

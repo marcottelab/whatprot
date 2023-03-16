@@ -71,6 +71,9 @@ void run_fit(double stopping_threshold,
     DyeSeq dye_seq(num_channels, dye_seq_string);
     end_time = wall_time();
 
+    SequencingModel fitted_seq_model;
+    double log_l;
+
     if (confidence_interval == 0.0) {
         start_time = wall_time();
         HMMFitter fitter(num_timesteps,
@@ -79,27 +82,25 @@ void run_fit(double stopping_threshold,
                          seq_model,
                          seq_settings,
                          dye_seq);
-        SequencingModel fitted_seq_model;
-        double log_l = fitter.fit(radiometries, &fitted_seq_model);
+        log_l = fitter.fit(radiometries, &fitted_seq_model);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
-
-        print_parameter_results(fitted_seq_model, log_l);
     } else {
         start_time = wall_time();
         vector<SequencingModel> seq_models;
         vector<double> log_ls;
-        bootstrap_fit(num_timesteps,
-                      num_channels,
-                      stopping_threshold,
-                      seq_model,
-                      seq_settings,
-                      dye_seq,
-                      radiometries,
-                      num_bootstrap,
-                      confidence_interval,
-                      &seq_models,
-                      &log_ls);
+        log_l = bootstrap_fit(num_timesteps,
+                              num_channels,
+                              stopping_threshold,
+                              seq_model,
+                              seq_settings,
+                              dye_seq,
+                              radiometries,
+                              num_bootstrap,
+                              confidence_interval,
+                              &seq_models,
+                              &log_ls,
+                              &fitted_seq_model);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
 
@@ -110,6 +111,8 @@ void run_fit(double stopping_threshold,
             print_finished_saving_results(end_time - start_time);
         }
     }
+
+    print_parameter_results(fitted_seq_model, log_l);
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);
