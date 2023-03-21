@@ -28,6 +28,7 @@ namespace whatprot {
 HMMFitter::HMMFitter(unsigned int num_timesteps,
                      unsigned int num_channels,
                      double stopping_threshold,
+                     double max_runtime,
                      const SequencingModel& seq_model,
                      const SequencingSettings& seq_settings,
                      const DyeSeq& dye_seq)
@@ -35,6 +36,7 @@ HMMFitter::HMMFitter(unsigned int num_timesteps,
           seq_model(seq_model),
           seq_settings(seq_settings),
           stopping_threshold(stopping_threshold),
+          max_runtime(max_runtime),
           num_timesteps(num_timesteps),
           num_channels(num_channels) {
     max_num_dyes = 0;

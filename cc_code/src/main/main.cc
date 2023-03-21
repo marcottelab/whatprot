@@ -110,6 +110,14 @@ int main(int argc, char** argv) {
             "Only for fit, and required. Threshold of change in the norm to "
             "stop the fitting iteration.\n",
             value<double>())
+        ("M,maxruntime",
+            "Only for fit, but NOT required. Sets a time limit in minutes, "
+            "after which runtime stops, even if the --stoppingthreshold (-L) "
+            "has not been reached. Note that this runtime cut-off is "
+            "approximate and some parts of the code are exempt, so you should "
+            "set this parameter with that in mind if you have strict limits "
+            "in your computational set-up.\n",
+            value<int>())
         ("P,seqparams",
             "Needed by all code paths except for kNN classification. Provides"
             "necessary modeling params for HMM classification (and by extension"
@@ -262,6 +270,13 @@ int main(int argc, char** argv) {
         num_optional_args++;
         L = parsed_opts["stoppingthreshold"].as<double>();
     }
+    bool has_M = false;
+    int M = std::numeric_limits<int>::max();
+    if (parsed_opts.count("maxruntime")) {
+        has_M = true;
+        num_optional_args++;
+        M = parsed_opts["maxruntime"].as<int>();
+    }
     bool has_P = false;
     string P("");
     if (parsed_opts.count("seqparams")) {
@@ -371,6 +386,10 @@ int main(int argc, char** argv) {
                 num_optional_args--;
             }
         }
+        // Special handling for M since it is optional.
+        if (has_M) {
+            num_optional_args--;
+        }
         if (positional_args.size() != 1 || num_optional_args != 4 || !has_P
             || !has_L || !has_x || !has_R) {
             cout << endl << "INCORRECT USAGE" << endl << endl;
@@ -378,7 +397,9 @@ int main(int argc, char** argv) {
             return 1;
         }
         print_omp_info();
-        run_fit(L, x, P, R, b, c, Y);
+        // Convert M from more human-readable minutes as integer, to more
+        // machine readable seconds as double.
+        run_fit(L, 60.0 * (double)M, x, P, R, b, c, Y);
         return 0;
     }
     if (0 == positional_args[0].compare("simulate")) {

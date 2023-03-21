@@ -35,6 +35,10 @@ void print_built_classifier(double time) {
     cout << "Built classifier (" << time << " seconds).\n";
 }
 
+void print_final_step_size(double step_size) {
+    cout << "Final step-size: " << step_size << " (under inf-norm)\n";
+}
+
 void print_finished_basic_setup(double time) {
     cout << "Finished basic setup (" << time << " seconds).\n";
 }

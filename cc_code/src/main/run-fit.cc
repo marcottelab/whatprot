@@ -34,6 +34,7 @@ using std::vector;
 }  // namespace
 
 void run_fit(double stopping_threshold,
+             double max_runtime,
              string dye_seq_string,
              string seq_params_filename,
              string radiometries_filename,
@@ -73,16 +74,17 @@ void run_fit(double stopping_threshold,
 
     SequencingModel fitted_seq_model;
     double log_l;
-
+    double step_size;
     if (confidence_interval == 0.0) {
         start_time = wall_time();
         HMMFitter fitter(num_timesteps,
                          num_channels,
                          stopping_threshold,
+                         max_runtime,
                          seq_model,
                          seq_settings,
                          dye_seq);
-        log_l = fitter.fit(radiometries, &fitted_seq_model);
+        log_l = fitter.fit(radiometries, &fitted_seq_model, &step_size);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
     } else {
@@ -92,6 +94,7 @@ void run_fit(double stopping_threshold,
         log_l = bootstrap_fit(num_timesteps,
                               num_channels,
                               stopping_threshold,
+                              max_runtime,
                               seq_model,
                               seq_settings,
                               dye_seq,
@@ -100,7 +103,8 @@ void run_fit(double stopping_threshold,
                               confidence_interval,
                               &seq_models,
                               &log_ls,
-                              &fitted_seq_model);
+                              &fitted_seq_model,
+                              &step_size);
         end_time = wall_time();
         print_finished_parameter_fitting(end_time - start_time);
 
@@ -113,6 +117,7 @@ void run_fit(double stopping_threshold,
     }
 
     print_parameter_results(fitted_seq_model, log_l);
+    print_final_step_size(step_size);
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);
