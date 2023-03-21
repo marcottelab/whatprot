@@ -79,11 +79,16 @@ public:
             }
             double magic_ratio = 1.0 / (1.0 - ratio_hidden) - 1.0;
             double expected_hidden_count = magic_ratio * radiometries.size();
-            for (unsigned int i = 0; i < fitter.channel_fits.size(); i++) {
-                fitter.channel_fits[i]->p_dud_fit.numerator +=
-                        expected_hidden_count;
-                fitter.channel_fits[i]->p_dud_fit.denominator +=
-                        expected_hidden_count;
+            // We have to account for expected hidden count for EACH fluorophore
+            // so that they are additive (i.e., two fluorophores equals double
+            // the effect on the fitter).
+            for (unsigned int i = 0; i < dye_seq.length; i++) {
+                if (dye_seq[i] != -1) {
+                    fitter.channel_fits[dye_seq[i]]->p_dud_fit.numerator +=
+                            expected_hidden_count;
+                    fitter.channel_fits[dye_seq[i]]->p_dud_fit.denominator +=
+                            expected_hidden_count;
+                }
             }
             SequencingModel next = fitter.get();
             // TODO: ugly hack, do something nicer...
