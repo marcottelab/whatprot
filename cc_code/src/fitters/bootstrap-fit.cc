@@ -15,6 +15,9 @@
 #include <random>
 #include <vector>
 
+// OpenMP
+#include <omp.h>
+
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/radiometry.h"
@@ -33,20 +36,34 @@ using std::uniform_int_distribution;
 using std::vector;
 }  // namespace
 
-void bootstrap_fit(unsigned int num_timesteps,
-                   unsigned int num_channels,
-                   double stopping_threshold,
-                   const SequencingModel& seq_model,
-                   const SequencingSettings& seq_settings,
-                   const DyeSeq& dye_seq,
-                   const vector<Radiometry>& radiometries,
-                   unsigned int num_bootstrap_rounds,
-                   double confidence_interval,
-                   vector<SequencingModel>* seq_models,
-                   vector<double>* log_ls) {
+double bootstrap_fit(unsigned int num_timesteps,
+                     unsigned int num_channels,
+                     double stopping_threshold,
+                     double max_runtime,
+                     const SequencingModel& seq_model,
+                     const SequencingSettings& seq_settings,
+                     const DyeSeq& dye_seq,
+                     const vector<Radiometry>& radiometries,
+                     unsigned int num_bootstrap_rounds,
+                     double confidence_interval,
+                     vector<SequencingModel>* seq_models,
+                     vector<double>* log_ls,
+                     SequencingModel* best_seq_model,
+                     double* step_size) {
+    unsigned int num_threads = omp_get_max_threads();
+    double adjusted_max_runtime;
+    if (num_threads >= num_bootstrap_rounds + 1) {
+        adjusted_max_runtime = max_runtime;
+    } else {
+        unsigned int num_fittings = num_bootstrap_rounds + 1;
+        // Here we add one extra to account for integer division rounding down.
+        unsigned int num_fittings_per_thread = 1 + num_fittings / num_threads;
+        adjusted_max_runtime = max_runtime / (double)num_fittings_per_thread;
+    }
     HMMFitter fitter(num_timesteps,
                      num_channels,
                      stopping_threshold,
+                     adjusted_max_runtime,
                      seq_model,
                      seq_settings,
                      dye_seq);
@@ -58,15 +75,31 @@ void bootstrap_fit(unsigned int num_timesteps,
     uniform_int_distribution<> rand_idx(0, radiometries.size() - 1);
     seq_models->resize(num_bootstrap_rounds);
     log_ls->resize(num_bootstrap_rounds);
+    double best_log_l = 0.0;
+    double worst_bootstrap_step_size;
 #pragma omp parallel for schedule(dynamic, 1)
-    for (unsigned int i = 0; i < num_bootstrap_rounds; i++) {
-        vector<const Radiometry*> subsample;
+    for (unsigned int i = 0; i <= num_bootstrap_rounds; i++) {
+        // Extra case so we can get base results to display. Otherwise we
+        // subsample.
+        if (i == num_bootstrap_rounds) {
+            best_log_l = fitter.fit(radiometries, best_seq_model, step_size);
+        } else {
+            vector<const Radiometry*> subsample;
 #pragma omp critical
-        for (unsigned int j = 0; j < radiometries.size(); j++) {
-            subsample.push_back(&radiometries[rand_idx(generator)]);
+            for (unsigned int j = 0; j < radiometries.size(); j++) {
+                subsample.push_back(&radiometries[rand_idx(generator)]);
+            }
+            // end pragma omp critical
+            double bootstrap_step_size;
+            (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i], &bootstrap_step_size);
+            // This should probably be a reduction instead of an omp critical
+            // but I'm lazy and given the omp critical above this probably has a
+            // marginal negative impact on runtime.
+#pragma omp critical
+            if (bootstrap_step_size > worst_bootstrap_step_size) {
+                worst_bootstrap_step_size = bootstrap_step_size;
+            }
         }
-        // end pragma omp critical
-        (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i]);
     }
     // end pragma omp parallel for
     // Temporary copy of seq_models so we can sort without messing up
@@ -130,6 +163,8 @@ void bootstrap_fit(unsigned int num_timesteps,
     }
     cout << "lower bounds: " << ci_min.debug_string() << "\n";
     cout << "upper bounds: " << ci_max.debug_string() << "\n";
+    cout << "worst bootstrap step size: " << worst_bootstrap_step_size << "\n";
+    return best_log_l;
 }
 
 }  // namespace whatprot

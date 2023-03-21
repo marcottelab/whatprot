@@ -10,8 +10,8 @@
 #include "cmd-line-out.h"
 
 // Standard C++ library headers:
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 // OpenMP
 #include <omp.h>
@@ -33,6 +33,10 @@ void print_bad_inputs() {
 
 void print_built_classifier(double time) {
     cout << "Built classifier (" << time << " seconds).\n";
+}
+
+void print_final_step_size(double step_size) {
+    cout << "Final step-size: " << step_size << " (under inf-norm)\n";
 }
 
 void print_finished_basic_setup(double time) {
@@ -85,7 +89,7 @@ void print_omp_info() {
 void print_parameter_results(const SequencingModel& seq_model, double log_l) {
     cout << "Parameters:\n" << seq_model.debug_string() << "\n\n";
     streamsize x = cout.precision();
-    cout << "log(L): " << setprecision(17) <<  log_l << "\n\n";
+    cout << "log(L): " << setprecision(17) << log_l << "\n\n";
     cout << setprecision(x);
 }
 

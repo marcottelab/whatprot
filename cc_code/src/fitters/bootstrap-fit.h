@@ -20,17 +20,20 @@
 
 namespace whatprot {
 
-void bootstrap_fit(unsigned int num_timesteps,
-                   unsigned int num_channels,
-                   double stopping_threshold,
-                   const SequencingModel& seq_model,
-                   const SequencingSettings& seq_settings,
-                   const DyeSeq& dye_seq,
-                   const std::vector<Radiometry>& radiometries,
-                   unsigned int num_bootstrap_rounds,
-                   double confidence_interval,
-                   std::vector<SequencingModel>* seq_models,
-                   std::vector<double>* log_ls);
+double bootstrap_fit(unsigned int num_timesteps,
+                     unsigned int num_channels,
+                     double stopping_threshold,
+                     double max_runtime,
+                     const SequencingModel& seq_model,
+                     const SequencingSettings& seq_settings,
+                     const DyeSeq& dye_seq,
+                     const std::vector<Radiometry>& radiometries,
+                     unsigned int num_bootstrap_rounds,
+                     double confidence_interval,
+                     std::vector<SequencingModel>* seq_models,
+                     std::vector<double>* log_ls,
+                     SequencingModel* best_seq_model,
+                     double* step_size);
 
 }  // namespace whatprot
 

@@ -16,6 +16,7 @@ namespace whatprot {
 
 void print_bad_inputs();
 void print_built_classifier(double time);
+void print_final_step_size(double step_size);
 void print_finished_basic_setup(double time);
 void print_finished_classification(double time);
 void print_finished_deduping_dye_tracks(int num, double time);

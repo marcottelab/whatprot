@@ -15,6 +15,7 @@
 namespace whatprot {
 
 void run_fit(double stopping_threshold,
+             double max_runtime,
              std::string dye_seq_string,
              std::string seq_params_filename,
              std::string radiometries_filename,

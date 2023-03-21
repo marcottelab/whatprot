@@ -25,6 +25,7 @@
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
 #include "util/schroedinger-pointers.h"
+#include "util/time.h"
 
 namespace whatprot {
 
@@ -33,14 +34,16 @@ public:
     HMMFitter(unsigned int num_timesteps,
               unsigned int num_channels,
               double stopping_threshold,
+              double max_runtime,
               const SequencingModel& seq_model,
               const SequencingSettings& seq_settings,
               const DyeSeq& dye_seq);
 
     // Note: R must be Radiometry type or Radiometry pointer type.
     template <class R>
-    double fit(const std::vector<R>& radiometries, SequencingModel* x) const {
+    double fit(const std::vector<R>& radiometries, SequencingModel* x, double* step_size) const {
         SequencingModel sm = seq_model;
+        double start_time = wall_time();
         while (true) {
             SequencingModelFitter fitter(num_channels);
             DyeSeqPrecomputations dye_seq_precomputations(
@@ -90,8 +93,12 @@ public:
                 next.channel_models[i]->bg_sig =
                         seq_model.channel_models[i]->bg_sig;
             }
-            double distance = sm.distance(next);
-            if (distance < stopping_threshold) {
+            *step_size = sm.distance(next);
+            if (*step_size < stopping_threshold) {
+                *x = next;
+                break;
+            }
+            if (wall_time() - start_time > max_runtime) {
                 *x = next;
                 break;
             }
@@ -131,6 +138,7 @@ public:
     const SequencingModel& seq_model;
     const SequencingSettings& seq_settings;
     double stopping_threshold;
+    double max_runtime;
     unsigned int num_timesteps;
     unsigned int num_channels;
     int max_num_dyes;
