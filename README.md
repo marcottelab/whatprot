@@ -334,7 +334,8 @@ Example dye-track file:
 ```bash
 # Generate dyetrack samples:
 #   -t (or --timesteps) number of timesteps to generate during simulation. Should equal number of Edmans + 1.
-#   -g (or --numbenerate) number of reads to simulate for each dye-seq. We recommend setting this to 1000.
+#   -g (or --numgenerate) number of reads to simulate for each peptide (more generated for dye-seqs mapping to
+#      multiple peptides). We recommend setting this to 1000.
 #   -P (or --seqparams) path to .json file with the sequencing parameters.
 #   -S (or --dyeseqs) path to dye-seq file from previous step to generate dye-tracks based on.
 #   -T (or --dyetracks) path to dye-track file to save results to.
