@@ -114,9 +114,16 @@ int main(int argc, char** argv) {
             "Only for fit, but NOT required. Sets a time limit in minutes, "
             "after which runtime stops, even if the --stoppingthreshold (-L) "
             "has not been reached. Note that this runtime cut-off is "
-            "approximate and some parts of the code are exempt, so you should "
-            "set this parameter with that in mind if you have strict limits "
-            "in your computational set-up.\n",
+            "approximate and some parts of the code are exempt, and users "
+            "should provide a large margin of error if runtime constraints are "
+            "tight. Additionally, if used in combination with bootstrapping "
+            "(when --confidenceinterval and --numbootstrap are set), this "
+            "runtime limit is used for each bootstrap round and again for the "
+            "original data to get a best fit. In that case, the true runtime "
+            "may run as high as M * (1 + (1 + b) / t), where M is the value of "
+            "--maxruntime, b is the value of --numbootstrap and t is the "
+            "number of threads, which is dependent on your specific computing "
+            "set-up.\n",
             value<int>())
         ("P,seqparams",
             "Needed by all code paths except for kNN classification. Provides"

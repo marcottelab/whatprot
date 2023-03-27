@@ -15,9 +15,6 @@
 #include <random>
 #include <vector>
 
-// OpenMP
-#include <omp.h>
-
 // Local project headers:
 #include "common/dye-seq.h"
 #include "common/radiometry.h"
@@ -50,20 +47,10 @@ double bootstrap_fit(unsigned int num_timesteps,
                      vector<double>* log_ls,
                      SequencingModel* best_seq_model,
                      double* step_size) {
-    unsigned int num_threads = omp_get_max_threads();
-    double adjusted_max_runtime;
-    if (num_threads >= num_bootstrap_rounds + 1) {
-        adjusted_max_runtime = max_runtime;
-    } else {
-        unsigned int num_fittings = num_bootstrap_rounds + 1;
-        // Here we add one extra to account for integer division rounding down.
-        unsigned int num_fittings_per_thread = 1 + num_fittings / num_threads;
-        adjusted_max_runtime = max_runtime / (double)num_fittings_per_thread;
-    }
     HMMFitter fitter(num_timesteps,
                      num_channels,
                      stopping_threshold,
-                     adjusted_max_runtime,
+                     max_runtime,
                      seq_model,
                      seq_settings,
                      dye_seq);
