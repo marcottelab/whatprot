@@ -31,7 +31,8 @@ Oden Institute and Institute for Cellular and Molecular Biology
     * [Dye-track file format](#dyetrackfileformat)
     * [Generate dye-tracks](#generatedyetracks)
 * [Plotting results](#plottingresults)
-* [Sample runthrough with simulated data](#samplerunthroughsimulated)
+* [Example usage: simulate then classify](#simclassify)
+* [Example usage: simulate then fit](#simfit)
 
 ## Prerequisites <a name='prerequisites' />
 
@@ -385,7 +386,7 @@ plot_pr_curve("path/to/predictions.tsv",
 
 To plot multiple PR curves together, use instead the 'plot_pr_curves()' function in pr_curves.py (note the extra 's' at the end of the function name). The parameter ordering is the same. You must then provide a list of prediction files instead of just one. You may optionally provide a list of true-values files, a list of dye-seqs files, or even lists of full peptides files or limited (true-set) peptide files. For each of these variables, if one value is given it is used for every predictions file specified, and if you instead provide a list then the values are collated.
 
-## Sample runthrough with simulated data <a name='samplerunthroughsimulated' />
+## Example use case: simulate then classify <a name='simclassify' />
 
 First we make a directory to put our intermediate files and results into, then go into the python subdirectory and start python.
 ```bash
@@ -431,3 +432,35 @@ What you get should look something like this:
 ![example](https://user-images.githubusercontent.com/3892206/193147900-16c8ec47-5837-4bdc-bb7a-69b59cac09c4.png)
 
 Note that you may not get exactly the same result, as there is randomness involved. Nevertheless your result should be similar.
+
+## Example use case: simulate then fit <a name='simfit' />
+
+Make a temp folder, generate radiometries from a dye-seq file with one dye-seq in it, and then fit the data in that file.
+```bash
+$ mkdir temp
+$ cd ../cc_code
+$ ./bin/release/whatprot simulate rad -t 10 -g 10000 -P ../examples/seqparams_atto647n_x3.json -S ../examples/dye-seq-two-fluors.tsv -R ../temp/radiometries.tsv -Y ../temp/true-ids.tsv
+$ ./bin/release/whatprot fit -P ../examples/other_seqparams_x3.json -x .0.1.2 -L .001 -R ../temp/radiometries.tsv -b 20 -c .5 -Y ../temp/bootstrap-results.csv
+```
+
+Your output may then look like this.
+```bash
+$ Using OpenMP with 8 threads.
+$ Finished basic setup (5.4947e-05 seconds).
+$ Read 9476 radiometries (0.0582195 seconds).
+$ lower bounds: Edman failure rate: 0.063015, Detach rate: 0.047566, Initial blocked N-terminus rate: 0.068497, Cyclic blocked N-terminus rate: 0.018901, Channel 0 info: (Bleach rate: 0.050518, Dud rate: 0.066344), Channel 1 info: (Bleach rate: 0.048865, Dud rate: 0.067726), Channel 2 info: (Bleach rate: 0.049550, Dud rate: 0.068981)
+$ upper bounds: Edman failure rate: 0.064961, Detach rate: 0.049560, Initial blocked N-terminus rate: 0.074887, Cyclic blocked N-terminus rate: 0.020154, Channel 0 info: (Bleach rate: 0.053470, Dud rate: 0.069334), Channel 1 info: (Bleach rate: 0.049959, Dud rate: 0.070694), Channel 2 info: (Bleach rate: 0.051456, Dud rate: 0.072493)
+$ worst bootstrap step size: 0.000998972
+$ Finished fitting parameters (539.327seconds).
+$ Finished saving results (0.000465195 seconds).
+$ Parameters:
+$ Edman failure rate: 0.063561, Detach rate: 0.048956, Initial blocked N-terminus rate: 0.070127, Cyclic blocked N-terminus rate: 0.019674, Channel 0 info: (Bleach rate: 0.051705, Dud rate: 0.068059), Channel 1 info: (Bleach rate: 0.048782, Dud rate: 0.069747), Channel 2 info: (Bleach rate: 0.050528, Dud rate: 0.069853)
+$ 
+$ log(L): 648304.41097236145
+$ 
+$ Final step-size: 0.000945713 (under inf-norm)
+$ Total run time: 539.387 seconds.
+```
+
+Of course your results may be slightly different since there is randomization. In this scenario temp/bootstrap-results.csv contains the full results.
+
