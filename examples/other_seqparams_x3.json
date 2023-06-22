@@ -1,0 +1,30 @@
+{
+    "p_edman_failure": 0.10,
+    "p_detach": 0.10,
+    "p_initial_block": 0.10,
+    "p_cyclic_block": 0.10,
+    "channel_models": [
+      {
+        "p_bleach": 0.10,
+        "p_dud": 0.10,
+        "bg_sig": 66.7,
+        "mu": 10000,
+        "sig": 1600
+      },
+      {
+        "p_bleach": 0.10,
+        "p_dud": 0.10,
+        "bg_sig": 66.7,
+        "mu": 10000,
+        "sig": 1600
+      },
+      {
+        "p_bleach": 0.10,
+        "p_dud": 0.10,
+        "bg_sig": 66.7,
+        "mu": 10000,
+        "sig": 1600
+      }
+    ]
+  }
+  
