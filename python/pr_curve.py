@@ -175,6 +175,10 @@ def plot_pr_curve_noshow(ax,
     predictions = read_predictions_file(directory + predictions_file)
     precision, recall = compute_read_pr_curve(predictions, true_y, weightmap)
     ax.plot(recall, precision, '-', label = label, linewidth = 2)
+    if label:
+        print('Overall accuracy for ' + label + ': ' + str(precision[-1]))
+    else:
+        print('Overall accuracy: ' + str(precision[-1]))
 
 def plot_estimated_pr_curve_noshow(ax,
                                    predictions_file,
