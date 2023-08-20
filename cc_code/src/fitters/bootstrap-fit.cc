@@ -78,7 +78,8 @@ double bootstrap_fit(unsigned int num_timesteps,
             }
             // end pragma omp critical
             double bootstrap_step_size;
-            (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i], &bootstrap_step_size);
+            (*log_ls)[i] = fitter.fit(
+                    subsample, &(*seq_models)[i], &bootstrap_step_size);
             // This should probably be a reduction instead of an omp critical
             // but I'm lazy and given the omp critical above this probably has a
             // marginal negative impact on runtime.

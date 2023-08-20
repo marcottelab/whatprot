@@ -41,7 +41,9 @@ public:
 
     // Note: R must be Radiometry type or Radiometry pointer type.
     template <class R>
-    double fit(const std::vector<R>& radiometries, SequencingModel* x, double* step_size) const {
+    double fit(const std::vector<R>& radiometries,
+               SequencingModel* x,
+               double* step_size) const {
         SequencingModel sm = seq_model;
         double start_time = wall_time();
         while (true) {

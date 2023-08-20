@@ -417,13 +417,14 @@ int main(int argc, char** argv) {
             if (has_p) {
                 num_optional_args--;
             }
-            if (num_optional_args != 3 || !has_S || !has_R || !has_Y) {
+            if (num_optional_args != 4 || !has_P || !has_S || !has_R
+                || !has_Y) {
                 cout << endl << "INCORRECT USAGE" << endl << endl;
                 cout << options.help() << endl;
                 return 1;
             }
             print_omp_info();
-            run_score_hmm(p, S, R, Y);
+            run_score_hmm(P, p, S, R, Y);
             return 0;
         }
         cout << endl << "INCORRECT USAGE" << endl << endl;
