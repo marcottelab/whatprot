@@ -20,6 +20,7 @@ Oden Institute and Institute for Cellular and Molecular Biology
 * [Fitting parameters](#fittingparameters)
 * [Filetypes](#filetypes)
   * [Sequencing parameters file](#sequencingparametersfile)
+  * [Fit settings file](#fitsettingsfile)
   * [Radiometry files](#radiometryfile)
     * [Radiometry file format](#radiometryfileformat)
     * [Converting from Erisyon's format](#radiometryfromerisyon)
@@ -106,14 +107,15 @@ Classification is automatically multithreaded with OpenMP. You can change the nu
 
 ## Fitting parameters - using real data to determine the correct parameterization. <a name='fittingparameters' />
 
-You will provide a parameter json file in which you provide starting values for your parameters. Note that:
-* mu, sig, and bg_sig will be held constant, and should be fit separately before running fit with whatprot.
-* Any probability set to 0 or to 1 will be fixed; this is a limitation inherent in the fit procedure being used.
+You will provide a parameter json file in which you provide starting values for your parameters. You can also provide a fit-settings json file in which you can mark parameters to be held constant. Note that:
+* mu, sig, and bg_sig will always be held constant, and should be fit separately before running fit with whatprot.
+* Any probability set to 0 or to 1 will be held fixed; this is a limitation inherent in the fit procedure being used.
 
 The simplest fitting procedure might look as follows:
 ```bash
 # Fit data using whatprot.
 #   -P (or --seqparams) path to .json file with parameterization information.
+#   -F (or --fitsettings) path to .json file with fit settings information.
 #   -L (or --stoppingthreshold) iteration will stop when the difference between
 #      iterations is less than this value. Note that the difference between the fit
 #      value and the true value may be more than this limit.
@@ -124,7 +126,7 @@ The simplest fitting procedure might look as follows:
 #      is a peptide that can be labelled in position 2 on channel 0 and position 4 on
 #      channel 1.
 #   -R (or --radiometries) radiometries to fit.
-$ ./bin/release/whatprot fit -P /path/to/seq-params.json -L 0.00001 -x ..0.1 -R /path/to/radiometries.tsv
+$ ./bin/release/whatprot fit -P /path/to/seq-params.json -F /path/to/fit-settings.json -L 0.00001 -x ..0.1 -R /path/to/radiometries.tsv
 ```
 
 Sometimes a confidence interval is desired. You must then additionally specify both the number of bootstrap rounds you want to run and the size of the confidence interval you wish to estimate. You can do this as follows:
@@ -192,6 +194,82 @@ It's easy to add more channels, for example to have two do this:
       "bg_sig": 66.7,
       "mu": 10000,
       "sig": 1600
+    }
+  ]
+}
+```
+
+### Fit settings file - contains settings used in the parameter fitting process. <a name='fitsettingsfile' />
+
+You could send an empty file, but the command line parameter is optional. If you did send an empty file, it would of course look like this:
+
+```json
+{
+}
+```
+
+Here is an example where all the parameters are held constant.
+
+```json
+{
+  "hold_p_edman_failure": true,
+  "hold_p_detach": true,
+  "hold_p_initial_block": true,
+  "hold_p_cyclic_block": true,
+  "channel_models": [
+    {
+      "hold_p_bleach": true,
+      "hold_p_dud": true
+    }
+  ]
+}
+```
+
+Of course, holding all parameters constant is a bit silly. Let's imagine a real use case. You are fitting a dataset for a peptide with only one fluorophore. This is an underdetermined system. In particular, the dud rate cannot be fit, and the initial and cyclic block rates are interchangeable, as are the bleach and detach rates. So we hold some of these constant to well-known estimates, and allow the other variables to move freely. You could use the following file.
+
+```json
+{
+  "hold_p_edman_failure": false,
+  "hold_p_detach": true,
+  "hold_p_initial_block": false,
+  "hold_p_cyclic_block": true,
+  "channel_models": [
+    {
+      "hold_p_bleach": false,
+      "hold_p_dud": true
+    }
+  ]
+}
+```
+
+Alternatively, missing values default to false, so you could instead write:
+
+```json
+{
+  "hold_p_detach": true,
+  "hold_p_cyclic_block": true,
+  "channel_models": [
+    {
+      "hold_p_dud": true
+    }
+  ]
+}
+```
+
+You can also extend this across multiple channels, similarly to the sequencing model above.
+
+```json
+{
+  "hold_p_detach": true,
+  "hold_p_cyclic_block": true,
+  "channel_models": [
+    {
+      "hold_p_dud": true
+    }
+  ],
+  "channel_models": [
+    {
+      "hold_p_dud": true
     }
   ]
 }

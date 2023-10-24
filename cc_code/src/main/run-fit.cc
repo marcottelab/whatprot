@@ -23,6 +23,7 @@
 #include "io/radiometries-io.h"
 #include "main/cmd-line-out.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 #include "parameterization/settings/sequencing-settings.h"
 #include "util/time.h"
 
@@ -37,6 +38,7 @@ void run_fit(double stopping_threshold,
              double max_runtime,
              string dye_seq_string,
              string seq_params_filename,
+             string fit_params_filename,
              string radiometries_filename,
              unsigned int num_bootstrap,
              double confidence_interval,
@@ -47,30 +49,39 @@ void run_fit(double stopping_threshold,
     double end_time;
 
     start_time = wall_time();
+    // Sequencing model
     SequencingModel true_seq_model(seq_params_filename);
     SequencingModel seq_model = true_seq_model.with_mu_as_one();
+    // Need this later
+    unsigned int num_channels = seq_model.channel_models.size();
+    // Sequencing settings
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
+    // Fit settings
+    FitSettings fit_settings;
+    if (fit_params_filename == "") {
+        fit_settings = FitSettings(num_channels);
+    } else {
+        fit_settings = FitSettings(num_channels, fit_params_filename);
+    }
+    // Create dye seq
+    DyeSeq dye_seq(num_channels, dye_seq_string);
     end_time = wall_time();
     print_finished_basic_setup(end_time - start_time);
 
     start_time = wall_time();
     unsigned int num_timesteps;
-    unsigned int num_channels;
+    unsigned int duplicate_num_channels;
     unsigned int total_num_radiometries;
     vector<Radiometry> radiometries;
     read_radiometries(radiometries_filename,
                       true_seq_model,
                       &num_timesteps,
-                      &num_channels,
+                      &duplicate_num_channels,
                       &total_num_radiometries,
                       &radiometries);
     end_time = wall_time();
     print_read_radiometries(total_num_radiometries, end_time - start_time);
-
-    start_time = wall_time();
-    DyeSeq dye_seq(num_channels, dye_seq_string);
-    end_time = wall_time();
 
     SequencingModel fitted_seq_model;
     double log_l;
@@ -83,6 +94,7 @@ void run_fit(double stopping_threshold,
                          max_runtime,
                          seq_model,
                          seq_settings,
+                         fit_settings,
                          dye_seq);
         log_l = fitter.fit(radiometries, &fitted_seq_model, &step_size);
         end_time = wall_time();
@@ -97,6 +109,7 @@ void run_fit(double stopping_threshold,
                               max_runtime,
                               seq_model,
                               seq_settings,
+                              fit_settings,
                               dye_seq,
                               radiometries,
                               num_bootstrap,

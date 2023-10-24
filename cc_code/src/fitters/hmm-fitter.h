@@ -23,6 +23,7 @@
 #include "hmm/precomputations/radiometry-precomputations.h"
 #include "hmm/precomputations/universal-precomputations.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 #include "parameterization/settings/sequencing-settings.h"
 #include "util/schroedinger-pointers.h"
 #include "util/time.h"
@@ -37,11 +38,18 @@ public:
               double max_runtime,
               const SequencingModel& seq_model,
               const SequencingSettings& seq_settings,
+              const FitSettings& fit_settings,
               const DyeSeq& dye_seq);
+
+    // helper function
+    void update_with_holds(const SequencingModel& update,
+                           SequencingModel* sm) const;
 
     // Note: R must be Radiometry type or Radiometry pointer type.
     template <class R>
-    double fit(const std::vector<R>& radiometries, SequencingModel* x, double* step_size) const {
+    double fit(const std::vector<R>& radiometries,
+               SequencingModel* x,
+               double* step_size) const {
         SequencingModel sm = seq_model;
         double start_time = wall_time();
         while (true) {
@@ -90,14 +98,8 @@ public:
                             expected_hidden_count;
                 }
             }
-            SequencingModel next = fitter.get();
-            // TODO: ugly hack, do something nicer...
-            for (unsigned int i = 0; i < seq_model.channel_models.size(); i++) {
-                next.channel_models[i]->mu = seq_model.channel_models[i]->mu;
-                next.channel_models[i]->sig = seq_model.channel_models[i]->sig;
-                next.channel_models[i]->bg_sig =
-                        seq_model.channel_models[i]->bg_sig;
-            }
+            SequencingModel next = sm;
+            update_with_holds(fitter.get(), &next);
             *step_size = sm.distance(next);
             if (*step_size < stopping_threshold) {
                 *x = next;
@@ -142,6 +144,7 @@ public:
     std::vector<DyeSeq> stuck_dyes;
     const SequencingModel& seq_model;
     const SequencingSettings& seq_settings;
+    const FitSettings& fit_settings;
     double stopping_threshold;
     double max_runtime;
     unsigned int num_timesteps;

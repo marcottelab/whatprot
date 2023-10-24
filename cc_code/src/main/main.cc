@@ -102,6 +102,13 @@ int main(int argc, char** argv) {
             "a fluorophore on channel 0 at position 3 and on channel 1 at "
             "position 5.\n",
             value<string>())
+        ("F,fitsettings",
+            "Only for fit, and NOT required. Provides json file in "
+            "standardized format with options related to parameter fitting. In "
+            "particular, this file can specify that some sequencing parameters "
+            "should be held constant. If no file is provided, all parameters "
+            "will be assumed to be left unconstrained.\n",
+            value<string>())
         ("H,passthrough",
             "Only for hybrid classification, and required. Number of peptide "
             "candidates to pass through from kNN to HMM.\n",
@@ -126,10 +133,11 @@ int main(int argc, char** argv) {
             "set-up.\n",
             value<int>())
         ("P,seqparams",
-            "Needed by all code paths except for kNN classification. Provides"
-            "necessary modeling params for HMM classification (and by extension"
-            "hybrid classification), simulation parameters, and starting"
-            "estimates for fitting procedures.\n",
+            "Needed by all code paths except for kNN classification. Provides "
+            "json file in standardized format with necessary modeling params "
+            "for HMM classification (and by extension hybrid classification), "
+            "simulation parameters, and starting estimates for fitting "
+            "procedures.\n",
             value<string>())
         ("R,radiometries",
             "Only for classification, fit, or rad simulation, and required. "
@@ -178,10 +186,12 @@ int main(int argc, char** argv) {
             "    \n"
             "  For MODE fit, you must NOT define a VARIANT, and you MUST\n"
             "  define --seqparams, --stoppingthreshold, --dyeseqstring, and\n"
-            "  --radiometries. You may specify BOTH --numbootstrap and\n"
-            "  --confidenceinterval in order to use bootstrapping to produce\n"
-            "  a confidence interval. If you do so (and only if), you may\n"
-            "  also specify --results to get complete results for your run.\n"
+            "  --radiometries. You may define --fitsettings to provide a\n"
+            "  .json file specifying parameters to be held constant. You may\n"
+            "  specify BOTH --numbootstrap and --confidenceinterval in order\n"
+            "  to use bootstrapping to produce a confidence interval. If you\n"
+            "  do so (and only if), you may also specify --results to get\n"
+            "  complete results for your run.\n"
             "  \n"
             "  For MODE simulate, you must define a VARIANT as either dt or\n"
             "  rad. Your data will then be simulated as dye-tracks or\n"
@@ -262,6 +272,13 @@ int main(int argc, char** argv) {
         has_x = true;
         num_optional_args++;
         x = parsed_opts["dyeseqstring"].as<string>();
+    }
+    bool has_F = false;
+    string F("");
+    if (parsed_opts.count("fitsettings")) {
+        has_F = true;
+        num_optional_args++;
+        F = parsed_opts["fitsettings"].as<string>();
     }
     bool has_H = false;
     int H = -1;
@@ -386,12 +403,16 @@ int main(int argc, char** argv) {
             return 1;
         }
         // Special handling for b and c. These args are optional.
-        if (has_b & has_c) {
+        if (has_b && has_c) {
             num_optional_args -= 2;
             // If we have b and c, then Y is permitted, and optional.
             if (has_Y) {
                 num_optional_args--;
             }
+        }
+        // Special handling for F since it is optional.
+        if (has_F) {
+            num_optional_args--;
         }
         // Special handling for M since it is optional.
         if (has_M) {
@@ -406,7 +427,7 @@ int main(int argc, char** argv) {
         print_omp_info();
         // Convert M from more human-readable minutes as integer, to more
         // machine readable seconds as double.
-        run_fit(L, 60.0 * (double)M, x, P, R, b, c, Y);
+        run_fit(L, 60.0 * (double)M, x, P, F, R, b, c, Y);
         return 0;
     }
     if (0 == positional_args[0].compare("simulate")) {

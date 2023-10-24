@@ -20,6 +20,7 @@
 #include "common/radiometry.h"
 #include "fitters/hmm-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 #include "parameterization/settings/sequencing-settings.h"
 #include "util/time.h"
 
@@ -39,6 +40,7 @@ double bootstrap_fit(unsigned int num_timesteps,
                      double max_runtime,
                      const SequencingModel& seq_model,
                      const SequencingSettings& seq_settings,
+                     const FitSettings& fit_settings,
                      const DyeSeq& dye_seq,
                      const vector<Radiometry>& radiometries,
                      unsigned int num_bootstrap_rounds,
@@ -53,6 +55,7 @@ double bootstrap_fit(unsigned int num_timesteps,
                      max_runtime,
                      seq_model,
                      seq_settings,
+                     fit_settings,
                      dye_seq);
     // This prng is not thread safe and having one copy for each thread risks
     // issues with randomness. May be worth exploring multi-threaded randomness
@@ -78,7 +81,8 @@ double bootstrap_fit(unsigned int num_timesteps,
             }
             // end pragma omp critical
             double bootstrap_step_size;
-            (*log_ls)[i] = fitter.fit(subsample, &(*seq_models)[i], &bootstrap_step_size);
+            (*log_ls)[i] = fitter.fit(
+                    subsample, &(*seq_models)[i], &bootstrap_step_size);
             // This should probably be a reduction instead of an omp critical
             // but I'm lazy and given the omp critical above this probably has a
             // marginal negative impact on runtime.
