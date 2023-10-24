@@ -1,0 +1,13 @@
+{
+  "hold_p_edman_failure": true,
+  "hold_p_detach": true,
+  "hold_p_initial_block": true,
+  "hold_p_cyclic_block": true,
+  "channel_models": [
+    {
+      "hold_p_bleach": true,
+      "hold_p_dud": true
+    }
+  ]
+}
+  
