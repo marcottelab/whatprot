@@ -8,6 +8,15 @@ The University of Texas at Austin
 
 Oden Institute and Institute for Cellular and Molecular Biology
 
+## Important note on branches and publications
+
+We try to faithfully preserve versions of the code used in publication in git branches in this repo. To the best of our knowledge, these branches faithfully represent the status of the code at the time the paper was sent for review. There are currently two such branches.
+
+* **publication-1** branch corresponds to "Amino acid sequence assignment from single molecule peptide sequencing data using a two-stage classifier" PLOS Comp Bio, May 2023, Smith _et al._ This also corresponds to the biorxiv preprint of the same name.
+* **publication-2** branch corresponds to "Estimating error rates for single molecule protein sequencing experiments" Smith _et al._, which is currently going through the review process. There is a biorxiv preprint of the same name.
+
+If you simply wish to use the most up-to-date stable version of the code, that can be found in the master branch.
+
 ## Table of Contents
 
 * [Prerequisites](#prerequisites)
