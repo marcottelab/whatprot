@@ -39,7 +39,8 @@ FitSettings::FitSettings(unsigned int num_channels)
     }
 }
 
-FitSettings::FitSettings(unsigned int num_channels, const string& fit_settings_filename) {
+FitSettings::FitSettings(unsigned int num_channels,
+                         const string& fit_settings_filename) {
     ifstream f(fit_settings_filename);
     json data = json::parse(f);
     if (data.contains("hold_p_edman_failure")) {
@@ -92,7 +93,8 @@ FitSettings::FitSettings(const FitSettings& other) {
     hold_p_initial_block = other.hold_p_initial_block;
     hold_p_cyclic_block = other.hold_p_cyclic_block;
     for (unsigned int c = 0; c < other.channel_fit_settings.size(); c++) {
-        channel_fit_settings.push_back(new ChannelFitSettings(*other.channel_fit_settings[c]));
+        channel_fit_settings.push_back(
+                new ChannelFitSettings(*other.channel_fit_settings[c]));
     }
 }
 
@@ -110,7 +112,8 @@ FitSettings& FitSettings::operator=(const FitSettings& other) {
     }
     channel_fit_settings.resize(0);
     for (unsigned int c = 0; c < other.channel_fit_settings.size(); c++) {
-        channel_fit_settings.push_back(new ChannelFitSettings(*other.channel_fit_settings[c]));
+        channel_fit_settings.push_back(
+                new ChannelFitSettings(*other.channel_fit_settings[c]));
     }
     return *this;
 }

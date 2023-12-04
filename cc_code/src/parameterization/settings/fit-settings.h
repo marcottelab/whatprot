@@ -20,7 +20,8 @@ class FitSettings {
 public:
     FitSettings();
     FitSettings(unsigned int num_channels);
-    FitSettings(unsigned int num_channels, const std::string& fit_settings_filename);
+    FitSettings(unsigned int num_channels,
+                const std::string& fit_settings_filename);
     FitSettings(const FitSettings& other);
     FitSettings& operator=(const FitSettings& other);
     FitSettings(FitSettings&& other);
