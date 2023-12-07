@@ -25,7 +25,9 @@ NormalDistributionFitter::NormalDistributionFitter()
         : w_sum_x(0.0),
           w_sum_x_sq_over_n(0.0),
           w_sum_n(0.0),
-          total_weight(0.0) {}
+          total_weight(0.0),
+          zero_w_sum_x_sq(0.0),
+          zero_total_weight(0.0) {}
 
 NormalDistributionFitter::~NormalDistributionFitter() {}
 
