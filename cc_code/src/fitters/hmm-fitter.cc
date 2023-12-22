@@ -66,7 +66,13 @@ void HMMFitter::update_with_holds(const SequencingModel& update,
         sm->p_edman_failure = update.p_edman_failure;
     }
     if (!fit_settings.hold_p_detach) {
-        sm->p_detach = update.p_detach;
+        sm->p_detach.base = update.p_detach.base;
+    }
+    if (!fit_settings.hold_p_initial_detach) {
+        sm->p_detach.initial = update.p_detach.initial;
+    }
+    if (!fit_settings.hold_p_initial_detach_decay) {
+        sm->p_detach.initial_decay = update.p_detach.initial_decay;
     }
     if (!fit_settings.hold_p_initial_block) {
         sm->p_initial_block = update.p_initial_block;

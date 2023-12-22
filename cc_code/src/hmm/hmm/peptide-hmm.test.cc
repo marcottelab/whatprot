@@ -60,7 +60,9 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
-    seq_model.p_detach = 0.02;
+    seq_model.p_detach.base = 0.02;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -73,9 +75,10 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     int max_num_dyes = 3;
-    UniversalPrecomputations universal_precomputations(seq_model, num_channels);
-    universal_precomputations.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 4;
+    UniversalPrecomputations universal_precomputations(
+            seq_model, num_timesteps, num_channels);
+    universal_precomputations.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, ".1.0.1.0.1");  // two in ch 0, three in ch 1.
     DyeSeqPrecomputations dye_seq_precomputations(
             ds, seq_model, num_timesteps, num_channels);
@@ -149,7 +152,9 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
+    seq_model.p_detach.base = 0.05;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -163,9 +168,9 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     int max_num_dyes = 5;
-    UniversalPrecomputations up(seq_model, num_channels);
-    up.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 3;
+    UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
+    up.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
     DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
@@ -178,15 +183,17 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 0.042073244987065869);
+    // giving the correct result on December 6, 2023.
+    BOOST_TEST(hmm.probability() == 0.039508395241831577);
 }
 
 BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
+    seq_model.p_detach.base = 0.05;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -200,9 +207,9 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     int max_num_dyes = 5;
-    UniversalPrecomputations up(seq_model, num_channels);
-    up.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 3;
+    UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
+    up.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
     DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
@@ -215,15 +222,17 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 2.832048536598378e-96);
+    // giving the correct result on December 6, 2023.
+    BOOST_TEST(hmm.probability() == 2.6594025006242441e-96);
 }
 
 BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
+    seq_model.p_detach.base = 0.05;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -237,9 +246,9 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     int max_num_dyes = 5;
-    UniversalPrecomputations up(seq_model, num_channels);
-    up.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 3;
+    UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
+    up.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
     DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
@@ -252,15 +261,17 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on February 16 2023.
-    BOOST_TEST(hmm.probability() == 758907.43743397435);
+    // giving the correct result on December 6, 2023.
+    BOOST_TEST(hmm.probability() == 1214251.7716258934);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
+    seq_model.p_detach.base = 0.05;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -274,9 +285,9 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = 5.0;
     int max_num_dyes = 5;
-    UniversalPrecomputations up(seq_model, num_channels);
-    up.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 3;
+    UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
+    up.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
     DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
@@ -289,15 +300,17 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     RadiometryPrecomputations rp(r, seq_model, seq_settings, max_num_dyes);
     PeptideHMM hmm(num_timesteps, num_channels, dsp, rp, up);
     // This is essentially a "no change" test. It assumes that the function was
-    // giving the correct result on October 25, 2022.
-    BOOST_TEST(hmm.probability() == 0.042073244682031316);
+    // giving the correct result on December 6, 2023.
+    BOOST_TEST(hmm.probability() == 0.039508394955392406);
 }
 
 BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.06;
-    seq_model.p_detach = 0.05;
+    seq_model.p_detach.base = 0.05;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -311,9 +324,9 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = 5.0;
     int max_num_dyes = 5;
-    UniversalPrecomputations up(seq_model, num_channels);
-    up.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 3;
+    UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
+    up.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, "10.01111");  // two in ch 0, five in ch 1.
     DyeSeqPrecomputations dsp(ds, seq_model, num_timesteps, num_channels);
     Radiometry r(num_timesteps, num_channels);
@@ -334,7 +347,9 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     unsigned int num_channels = 2;
     SequencingModel seq_model;
     seq_model.p_edman_failure = 0.01;
-    seq_model.p_detach = 0.02;
+    seq_model.p_detach.base = 0.02;
+    seq_model.p_detach.initial = 0.03;
+    seq_model.p_detach.initial_decay = 0.04;
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
@@ -348,9 +363,10 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
     int max_num_dyes = 3;
-    UniversalPrecomputations universal_precomputations(seq_model, num_channels);
-    universal_precomputations.set_max_num_dyes(max_num_dyes);
     unsigned int num_timesteps = 4;
+    UniversalPrecomputations universal_precomputations(
+            seq_model, num_timesteps, num_channels);
+    universal_precomputations.set_max_num_dyes(max_num_dyes);
     DyeSeq ds(num_channels, ".1.0.1.0.1");  // two in ch 0, three in ch 1.
     DyeSeqPrecomputations dye_seq_precomputations(
             ds, seq_model, num_timesteps, num_channels);
@@ -370,7 +386,9 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                    dye_seq_precomputations,
                    radiometry_precomputations,
                    universal_precomputations);
-    SequencingModelFitter smf(num_channels);
+    SequencingModel sm;
+    FitSettings fs(num_channels);
+    SequencingModelFitter smf(num_timesteps, num_channels, sm, fs);
     hmm.improve_fit(&smf);
     // There are no BOOST_TEST statements because setting up a proper test for
     // this function is very difficult. We still have the test though as a no

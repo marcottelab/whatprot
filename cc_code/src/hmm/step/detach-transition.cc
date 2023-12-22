@@ -18,7 +18,8 @@
 
 namespace whatprot {
 
-DetachTransition::DetachTransition(double p_detach) : p_detach(p_detach) {}
+DetachTransition::DetachTransition(unsigned int timestep, double p_detach)
+        : p_detach(p_detach), timestep(timestep) {}
 
 void DetachTransition::prune_forward(KDRange* range, bool* allow_detached) {
     pruned_range = *range;
@@ -155,12 +156,13 @@ void DetachTransition::improve_fit(const Tensor& forward_tsr,
     }
     delete f_itr;
     delete b_itr;
-    fitter->p_detach_fit.numerator +=
+    double numerator =
             forward_sum * p_detach * next_backward_p_detached / probability;
     // Probability of being in a state that can detach is 1.0, because all
     // states can detach (although we are ignoring the case where there are no
     // amino acids left but that's fine and in fact better).
-    fitter->p_detach_fit.denominator += forward_backward_sum / probability;
+    double denominator = forward_backward_sum / probability;
+    fitter->p_detach_fit.add_timestep(timestep, numerator, denominator);
 }
 
 }  // namespace whatprot

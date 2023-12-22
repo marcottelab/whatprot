@@ -13,9 +13,11 @@
 #include <utility>
 
 // Local project headers:
+#include "parameterization/fit/channel-model-fitter.h"
 #include "parameterization/fit/log-normal-distribution-fitter.h"
 #include "parameterization/fit/normal-distribution-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 
 namespace {
 using std::move;
@@ -25,7 +27,11 @@ namespace whatprot {
 
 SequencingModelFitter::SequencingModelFitter() {}
 
-SequencingModelFitter::SequencingModelFitter(unsigned int num_channels) {
+SequencingModelFitter::SequencingModelFitter(unsigned int num_timesteps,
+                                             unsigned int num_channels,
+                                             const SequencingModel& prev,
+                                             const FitSettings& fit_settings)
+        : p_detach_fit(num_timesteps, prev.p_detach, fit_settings) {
     channel_fits.resize(num_channels);
     for (unsigned int i = 0; i < num_channels; i++) {
         channel_fits[i] = new ChannelModelFitter();

@@ -21,6 +21,7 @@
 
 // Local project headers:
 #include "parameterization/model/channel-model.h"
+#include "parameterization/model/decaying-rate-model.h"
 
 namespace {
 using json = nlohmann::json;
@@ -37,7 +38,7 @@ namespace whatprot {
 
 SequencingModel::SequencingModel() {}
 
-SequencingModel::SequencingModel(unsigned int num_channels) {
+SequencingModel::SequencingModel(unsigned int num_channels) : p_detach() {
     for (unsigned int c = 0; c < num_channels; c++) {
         channel_models.push_back(new ChannelModel());
     }
@@ -47,7 +48,9 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     ifstream f(seq_model_filename);
     json data = json::parse(f);
     p_edman_failure = data["p_edman_failure"].get<double>();
-    p_detach = data["p_detach"].get<double>();
+    p_detach.base = data["p_detach"].get<double>();
+    p_detach.initial = data["p_initial_detach"].get<double>();
+    p_detach.initial_decay = data["p_initial_detach_decay"].get<double>();
     p_initial_block = data["p_initial_block"].get<double>();
     p_cyclic_block = data["p_cyclic_block"].get<double>();
     for (auto& channel_data : data["channel_models"]) {
@@ -124,7 +127,7 @@ double SequencingModel::distance(
         const SequencingModel& sequencing_model) const {
     double dist = 0.0;
     dist = max(dist, abs(p_edman_failure - sequencing_model.p_edman_failure));
-    dist = max(dist, abs(p_detach - sequencing_model.p_detach));
+    dist = max(dist, p_detach.distance(sequencing_model.p_detach));
     dist = max(dist, abs(p_initial_block - sequencing_model.p_initial_block));
     dist = max(dist, abs(p_cyclic_block - sequencing_model.p_cyclic_block));
     for (unsigned int i = 0; i < channel_models.size(); i++) {
@@ -138,7 +141,10 @@ double SequencingModel::distance(
 string SequencingModel::debug_string() const {
     string s = "";
     s += "Edman failure rate: " + to_string(p_edman_failure) + ", ";
-    s += "Detach rate: " + to_string(p_detach) + ", ";
+    s += "Detach rate: " + to_string(p_detach.base) + ", ";
+    s += "Initial detach rate: " + to_string(p_detach.initial) + ", ";
+    s += "Initial detach decay rate: " + to_string(p_detach.initial_decay)
+         + ", ";
     s += "Initial blocked N-terminus rate: " + to_string(p_initial_block)
          + ", ";
     s += "Cyclic blocked N-terminus rate: " + to_string(p_cyclic_block);

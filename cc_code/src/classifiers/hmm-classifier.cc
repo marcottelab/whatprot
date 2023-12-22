@@ -40,7 +40,7 @@ HMMClassifier::HMMClassifier(
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : seq_model(seq_model),
           seq_settings(seq_settings),
-          universal_precomputations(seq_model, num_channels),
+          universal_precomputations(seq_model, num_timesteps, num_channels),
           dye_seqs(dye_seqs),
           num_timesteps(num_timesteps),
           num_channels(num_channels) {

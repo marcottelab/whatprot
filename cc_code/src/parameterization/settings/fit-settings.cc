@@ -32,6 +32,8 @@ FitSettings::FitSettings() {}
 FitSettings::FitSettings(unsigned int num_channels)
         : hold_p_edman_failure(false),
           hold_p_detach(false),
+          hold_p_initial_detach(false),
+          hold_p_initial_detach_decay(false),
           hold_p_initial_block(false),
           hold_p_cyclic_block(false) {
     for (unsigned int c = 0; c < num_channels; c++) {
@@ -52,6 +54,17 @@ FitSettings::FitSettings(unsigned int num_channels,
         hold_p_detach = data["hold_p_detach"].get<bool>();
     } else {
         hold_p_detach = false;
+    }
+    if (data.contains("hold_p_initial_detach")) {
+        hold_p_initial_detach = data["hold_p_initial_detach"].get<bool>();
+    } else {
+        hold_p_initial_detach = false;
+    }
+    if (data.contains("hold_p_initial_detach_decay")) {
+        hold_p_initial_detach_decay =
+                data["hold_p_initial_detach_decay"].get<bool>();
+    } else {
+        hold_p_initial_detach_decay = false;
     }
     if (data.contains("hold_p_initial_block")) {
         hold_p_initial_block = data["hold_p_initial_block"].get<bool>();
@@ -90,6 +103,8 @@ FitSettings::FitSettings(unsigned int num_channels,
 FitSettings::FitSettings(const FitSettings& other) {
     hold_p_edman_failure = other.hold_p_edman_failure;
     hold_p_detach = other.hold_p_detach;
+    hold_p_initial_detach = other.hold_p_initial_detach;
+    hold_p_initial_detach_decay = other.hold_p_initial_detach_decay;
     hold_p_initial_block = other.hold_p_initial_block;
     hold_p_cyclic_block = other.hold_p_cyclic_block;
     for (unsigned int c = 0; c < other.channel_fit_settings.size(); c++) {
@@ -101,6 +116,8 @@ FitSettings::FitSettings(const FitSettings& other) {
 FitSettings& FitSettings::operator=(const FitSettings& other) {
     hold_p_edman_failure = other.hold_p_edman_failure;
     hold_p_detach = other.hold_p_detach;
+    hold_p_initial_detach = other.hold_p_initial_detach;
+    hold_p_initial_detach_decay = other.hold_p_initial_detach_decay;
     hold_p_initial_block = other.hold_p_initial_block;
     hold_p_cyclic_block = other.hold_p_cyclic_block;
     // This function is not necessarily used as a constructor. It is very
@@ -121,6 +138,8 @@ FitSettings& FitSettings::operator=(const FitSettings& other) {
 FitSettings::FitSettings(FitSettings&& other) {
     hold_p_edman_failure = move(other.hold_p_edman_failure);
     hold_p_detach = move(other.hold_p_detach);
+    hold_p_initial_detach = move(other.hold_p_initial_detach);
+    hold_p_initial_detach_decay = move(other.hold_p_initial_detach_decay);
     hold_p_initial_block = move(other.hold_p_initial_block);
     hold_p_cyclic_block = move(other.hold_p_cyclic_block);
     channel_fit_settings = move(other.channel_fit_settings);

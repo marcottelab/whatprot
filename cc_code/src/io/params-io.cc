@@ -34,14 +34,17 @@ void write_params(const string& filename,
                   const vector<SequencingModel>& models,
                   const vector<double>& log_ls) {
     ofstream f(filename);
-    f << "p_edman_failure,p_detach,p_initial_block,p_cyclic_block";
+    f << "p_edman_failure,p_detach,p_initial_detach,p_initial_detach_decay,"
+         "p_initial_block,p_cyclic_block";
     for (unsigned int c = 0; c < num_channels; c++) {
         f << ",ch" << c << ":p_bleach,ch" << c << ":p_dud";
     }
     f << ",log(L)\n";
     f << setprecision(17);
     for (unsigned int i = 0; i < models.size(); i++) {
-        f << models[i].p_edman_failure << "," << models[i].p_detach << ","
+        f << models[i].p_edman_failure << "," << models[i].p_detach.base << ","
+          << models[i].p_detach.initial << ","
+          << models[i].p_detach.initial_decay << ","
           << models[i].p_initial_block << "," << models[i].p_cyclic_block;
         for (unsigned int c = 0; c < num_channels; c++) {
             f << "," << models[i].channel_models[c]->p_bleach << ","

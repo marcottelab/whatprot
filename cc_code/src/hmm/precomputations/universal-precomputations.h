@@ -25,10 +25,11 @@ namespace whatprot {
 class UniversalPrecomputations {
 public:
     UniversalPrecomputations(const SequencingModel& seq_model,
+                             unsigned int num_timesteps,
                              unsigned int num_channels);
     ~UniversalPrecomputations();
     void set_max_num_dyes(int max_num_dyes);
-    DetachTransition detach_transition;
+    std::vector<DetachTransition*> detach_transitions;
     InitialBrokenNTransition initial_broken_n_transition;
     CyclicBrokenNTransition cyclic_broken_n_transition;
     std::vector<DudTransition*> dud_transitions;

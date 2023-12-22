@@ -49,7 +49,7 @@ PeptideHMM::PeptideHMM(
         steps.push_back(new CyclicBrokenNTransition(
                 universal_precomputations.cyclic_broken_n_transition));
         steps.push_back(new DetachTransition(
-                universal_precomputations.detach_transition));
+                *universal_precomputations.detach_transitions[t - 1]));
         for (unsigned int c = 0; c < num_channels; c++) {
             steps.push_back(new BleachTransition(
                     *universal_precomputations.bleach_transitions[c]));

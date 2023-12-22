@@ -15,6 +15,7 @@
 
 // Local project headers:
 #include "parameterization/model/channel-model.h"
+#include "parameterization/model/decaying-rate-model.h"
 
 namespace whatprot {
 
@@ -32,7 +33,7 @@ public:
     std::string debug_string() const;
 
     double p_edman_failure;
-    double p_detach;
+    DecayingRateModel p_detach;
     double p_initial_block;
     double p_cyclic_block;
     std::vector<ChannelModel*> channel_models;

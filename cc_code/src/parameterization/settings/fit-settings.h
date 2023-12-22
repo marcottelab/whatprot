@@ -29,6 +29,8 @@ public:
 
     bool hold_p_edman_failure;
     bool hold_p_detach;
+    bool hold_p_initial_detach;
+    bool hold_p_initial_detach_decay;
     bool hold_p_initial_block;
     bool hold_p_cyclic_block;
     std::vector<ChannelFitSettings*> channel_fit_settings;

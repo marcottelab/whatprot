@@ -1,6 +1,8 @@
 {
   "hold_p_edman_failure": true,
   "hold_p_detach": true,
+  "hold_p_initial_detach": true,
+  "hold_p_initial_detach_decay": true,
   "hold_p_initial_block": true,
   "hold_p_cyclic_block": true,
   "channel_models": [
