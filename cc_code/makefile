@@ -40,6 +40,9 @@ CC = g++
 LDFLAGS = -L./extern/mrmpi-7Apr14/src/ -lmrmpi_serial
 LDFLAGS += -L./extern/mrmpi-7Apr14/mpistubs/ -lmpi_stubs
 LDFLAGS += -fopenmp
+LDFLAGS += -L./extern/levmar-2.6/ -llevmar
+
+LEVMAR = extern/levmar-2.6/liblevmar.a
 
 SRC_DIR = ./src
 TEST_DIR = ./test
@@ -79,6 +82,7 @@ INCLUDE += -I./extern/FakeIt/single_header/boost/
 INCLUDE += -I./extern/cxxopts-3.0.0/include/
 INCLUDE += -I./extern/cereal-1.3.2/include/
 INCLUDE += -I./extern/nlohmann-json-3.11.2/
+INCLUDE += -I./extern/levmar-2.6/
 
 # These flags tell g++ to generate dependencies in the form of makefile rules
 # as a side effect of compilation. This macro assumes that the target is the
@@ -109,20 +113,20 @@ CFLAGS = -Wall -Wextra -Wno-cast-function-type -Wno-deprecated-copy -Wno-maybe-u
 
 # Generate binary. This is first so that it will be the default rule.
 all: CFLAGS += -Og -ggdb
-all: $(DEBUG_DEV_OBJS)
+all: $(DEBUG_DEV_OBJS) $(LEVMAR)
 	@mkdir -p $(BIN_DIR)/debug
 	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/debug/whatprot
 
 # Generate release version.
 release: CFLAGS += -O2 -flto
 release: LDFLAGS += $(CFLAGS)
-release: $(RELEASE_DEV_OBJS)
+release: $(RELEASE_DEV_OBJS) $(LEVMAR)
 	@mkdir -p $(BIN_DIR)/release
 	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/release/whatprot
 
 # Compile and run tests.
 test: CFLAGS += -Og -ggdb
-test: $(DEBUG_TEST_OBJS)
+test: $(DEBUG_TEST_OBJS) $(LEVMAR)
 	@mkdir -p $(BIN_DIR)/debug
 	$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/debug/test
 	$(BIN_DIR)/debug/test
@@ -131,6 +135,7 @@ test: $(DEBUG_TEST_OBJS)
 clean:
 	rm -rf $(BIN_DIR)/*
 	rm -rf $(BUILD_DIR)/*
+	$(MAKE) -C extern/levmar-2.6 cleanall
 
 # Run clang-format
 format: $(BUILD_DIR)/format
@@ -160,3 +165,7 @@ $(BUILD_DEBUG_DIR)/%.o: ./%.cc
 $(BUILD_RELEASE_DIR)/%.o: ./%.cc
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@ $(GENDEPS)
+
+# Running make in external directories.
+$(LEVMAR):
+	$(MAKE) -C extern/levmar-2.6 liblevmar.a
