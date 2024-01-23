@@ -72,28 +72,49 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                 }
             }
             pruned_range.min[1 + c] = cmin;
-            // max needs lower bound of distributions. Use of cross_dye_maximum
-            // is to avoid excessive lack of pruning.
-            unsigned int cross_channel = 0;
-            bool has_interaction = false;
-            double worst_interaction = 1.0;
-            for (unsigned int cc = 0; cc < num_channels; cc++) {
-                // Skip self. Self quenching effect is handled gracefully by the
-                // adjusted mu calculation without creating the same kind of
-                // problems too many fluorophores does.
-                if (cc == c) {
-                    continue;
+            // Need this at non-zero value in order to test effect on mu of
+            // cross-channel interactions.
+            counts[c] = 1;
+            // To set maximum end of the pruned ranges we need the lower bound
+            // of distributions. This is variable due to cross-dye interactions.
+            // Extreme scenarios exist in some cases with max_num_dyes larger
+            // than 100. To avoid overly impacting classification against other
+            // peptides, we use cross_dye_maximum so that we can avoid
+            // overpruning.
+            for (unsigned int i = 0; i < seq_settings.cross_dye_maximum; i++) {
+                unsigned int cross_channel = 0;
+                bool has_interaction = false;
+                double worst_mu = channel_model.adjusted_mu(&counts[0]);
+                for (unsigned int cc = 0; cc < num_channels; cc++) {
+                    // Skip self. Self quenching effect is handled gracefully by
+                    // the adjusted mu calculation without creating the same
+                    // kind of problems too many fluorophores does.
+                    if (cc == c) {
+                        continue;
+                    }
+                    // Never put more dyes on a channel than the max_num_dyes.
+                    if (counts[cc] == max_num_dyes) {
+                        continue;
+                    }
+                    // Easier to use existing variable than create new one, so
+                    // we increase channel cc, see what value it gives, then
+                    // return it to its original value.
+                    counts[cc] += 1;
+                    double mu = channel_model.adjusted_mu(&counts[0]);
+                    counts[cc] -= 1;
+                    if (mu < worst_mu) {
+                        cross_channel = cc;
+                        worst_mu = mu;
+                        has_interaction = true;
+                    }
                 }
-                double interaction = channel_model.interactions[cc];
-                if (interaction < worst_interaction) {
-                    cross_channel = cc;
-                    worst_interaction = interaction;
-                    has_interaction = true;
+                // If we didn't find an interaction each loop will be the same
+                // and we never will.
+                if (!has_interaction) {
+                    break;
                 }
-            }
-            if (has_interaction) {
-                counts[cross_channel] =
-                        min(max_num_dyes, seq_settings.cross_dye_maximum);
+                // Finally we can update the value.
+                counts[cross_channel] += 1;
             }
             // max might not get set, if not, this is the value we want.
             unsigned int cmax = max_num_dyes + 1;

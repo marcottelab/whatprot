@@ -11,7 +11,14 @@
         "p_dud": 0.1,
         "bg_sig": 66.7,
         "mu": 10000,
-        "sig": 1600
+        "sig": 1600,
+        "interactions": [
+          {
+            "other_channel": 0,
+            "effect": 0.0,
+            "flat_effect": 0.0
+          }
+        ]
       }
     ]
   }

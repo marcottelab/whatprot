@@ -38,13 +38,17 @@ public:
         adjusted_mu *= (double)counts[channel];
         for (unsigned int c = 0; c < num_channels; c++) {
             if (c == channel) {
-                // Avoid self-interactions. Note that we don't need special
-                // logic for negative exponentiation if the count is 0 because
-                // the adjusted_mu will be 0 already, so the result is 0 either
-                // way.
-                adjusted_mu *= std::pow(interactions[c], counts[c] - 1);
+                // For self quenching there is only an interaction if there are
+                // two dyes on the channel.
+                if (counts[c] > 1) {
+                    adjusted_mu *= flat_interactions[c];
+                    adjusted_mu *= std::pow(interactions[c], counts[c] - 1);
+                }
             } else {
-                adjusted_mu *= std::pow(interactions[c], counts[c]);
+                if (counts[c] > 0) {
+                    adjusted_mu *= flat_interactions[c];
+                    adjusted_mu *= std::pow(interactions[c], counts[c]);
+                }
             }
         }
         return adjusted_mu;
@@ -77,6 +81,7 @@ public:
     double mu;
     double sig;
     std::vector<double> interactions;
+    std::vector<double> flat_interactions;
 };
 
 }  // namespace whatprot

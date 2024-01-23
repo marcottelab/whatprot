@@ -56,6 +56,10 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     p_cyclic_block = data["p_cyclic_block"].get<double>();
     unsigned int c = 0;
     unsigned int num_channels = data["channel_models"].size();
+    // It would be cleaner to delegate this logic to ChannelModel, but it is not
+    // clear what type "auto& channel_data" represents. The user-guide for
+    // nlohmann::json provides no further insight. This works though, so it's
+    // good enough.
     for (auto& channel_data : data["channel_models"]) {
         channel_models.push_back(new ChannelModel(c, num_channels));
         channel_models.back()->p_bleach =
@@ -69,6 +73,9 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
             unsigned int other_channel = interaction["other_channel"];
             double effect = interaction["effect"];
             channel_models.back()->interactions[other_channel] = 1.0 - effect;
+            double flat_effect = interaction["flat_effect"];
+            channel_models.back()->flat_interactions[other_channel] =
+                    1.0 - flat_effect;
         }
         c++;
     }

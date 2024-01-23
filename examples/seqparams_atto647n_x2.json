@@ -15,11 +15,13 @@
       "interactions": [
         {
           "other_channel": 0,
-          "effect": 0.0
+          "effect": 0.0,
+          "flat_effect": 0.0
         },
         {
           "other_channel": 1,
-          "effect": 0.0
+          "effect": 0.0,
+          "flat_effect": 0.0
         }
       ]
     },
@@ -32,11 +34,13 @@
       "interactions": [
         {
           "other_channel": 0,
-          "effect": 0.0
+          "effect": 0.0,
+          "flat_effect": 0.0
         },
         {
           "other_channel": 1,
-          "effect": 0.0
+          "effect": 0.0,
+          "flat_effect": 0.0
         }
       ]
     }

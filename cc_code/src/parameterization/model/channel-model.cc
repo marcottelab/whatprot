@@ -27,7 +27,8 @@ using std::to_string;
 ChannelModel::ChannelModel(unsigned int channel, unsigned int num_channels)
         : channel(channel),
           num_channels(num_channels),
-          interactions(num_channels, 1.0) {}
+          interactions(num_channels, 1.0),
+          flat_interactions(num_channels, 1.0) {}
 
 ChannelModel::~ChannelModel() {}
 
@@ -39,6 +40,7 @@ ChannelModel ChannelModel::with_mu_as_one() const {
     x.mu = 1.0;
     x.sig = sig / mu;
     x.interactions = interactions;
+    x.flat_interactions = flat_interactions;
     return x;
 }
 
