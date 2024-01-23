@@ -84,7 +84,7 @@ public:
     const std::vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs;
     unsigned int num_timesteps;
     unsigned int num_channels;
-    int max_num_dyes;
+    unsigned int max_num_dyes;
 };
 
 }  // namespace whatprot

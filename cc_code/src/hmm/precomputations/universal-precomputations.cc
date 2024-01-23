@@ -51,7 +51,7 @@ UniversalPrecomputations::~UniversalPrecomputations() {
     }
 }
 
-void UniversalPrecomputations::set_max_num_dyes(int max_num_dyes) {
+void UniversalPrecomputations::set_max_num_dyes(unsigned int max_num_dyes) {
     for (unsigned int i = 0; i < num_channels; i++) {
         dud_transitions[i]->reserve(max_num_dyes);
         bleach_transitions[i]->reserve(max_num_dyes);

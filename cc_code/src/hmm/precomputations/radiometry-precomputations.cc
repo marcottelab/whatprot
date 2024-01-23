@@ -21,7 +21,7 @@ RadiometryPrecomputations::RadiometryPrecomputations(
         const Radiometry& radiometry,
         const SequencingModel& seq_model,
         const SequencingSettings& seq_settings,
-        int max_num_dyes) {
+        unsigned int max_num_dyes) {
     for (unsigned int t = 0; t < radiometry.num_timesteps; t++) {
         peptide_emissions.push_back(new PeptideEmission(
                 radiometry, t, max_num_dyes, seq_model, seq_settings));

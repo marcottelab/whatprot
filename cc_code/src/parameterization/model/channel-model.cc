@@ -12,53 +12,53 @@
 // Standard C++ library headers:
 #include <algorithm>
 #include <cmath>
-#include <functional>
 #include <string>
 
 namespace whatprot {
 
 namespace {
 using std::abs;
-using std::exp;
-using std::function;
-using std::log;
 using std::max;
 using std::sqrt;
 using std::string;
 using std::to_string;
-double PI = 3.141592653589793238;
 }  // namespace
+
+ChannelModel::ChannelModel(unsigned int channel, unsigned int num_channels)
+        : channel(channel),
+          num_channels(num_channels),
+          interactions(num_channels, 1.0) {}
 
 ChannelModel::~ChannelModel() {}
 
 ChannelModel ChannelModel::with_mu_as_one() const {
-    ChannelModel x;
+    ChannelModel x(channel, num_channels);
     x.p_bleach = p_bleach;
     x.p_dud = p_dud;
     x.bg_sig = bg_sig / mu;
     x.mu = 1.0;
     x.sig = sig / mu;
+    x.interactions = interactions;
     return x;
 }
 
-double ChannelModel::pdf(double observed, int state) const {
-    double offset = observed - mu * (double)state;
-    double s = sigma(state);
-    return (1.0 / (s * sqrt(2.0 * PI))) * exp(-offset * offset / (2.0 * s * s));
-}
-
-double ChannelModel::sigma(int state) const {
-    return sqrt(bg_sig * bg_sig + (double)state * sig * sig);
+double ChannelModel::sigma(double amu) const {
+    return sqrt(bg_sig * bg_sig + amu * sig * sig);
 }
 
 double ChannelModel::distance(const ChannelModel& channel_model) const {
     double dist = 0.0;
     dist = max(dist, abs(p_bleach - channel_model.p_bleach));
     dist = max(dist, abs(p_dud - channel_model.p_dud));
-    dist = max(dist, abs(bg_sig - channel_model.bg_sig));
-    dist = max(dist, abs(mu - channel_model.mu));
-    dist = max(dist, abs(sig - channel_model.sig));
     return dist;
+}
+
+double ChannelModel::pdf(double observed, const unsigned int* counts) const {
+    return pdf_helper(observed, counts);
+}
+
+double ChannelModel::pdf(double observed, const short* counts) const {
+    return pdf_helper(observed, counts);
 }
 
 string ChannelModel::debug_string() const {

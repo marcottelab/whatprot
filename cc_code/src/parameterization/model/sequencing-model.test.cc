@@ -158,6 +158,9 @@ BOOST_AUTO_TEST_CASE(distance_p_cyclic_block_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(distance_with_channel_model_test, *tolerance(TOL)) {
+    unsigned int num_channels = 1;
+    unsigned int channel = 0;
+
     SequencingModel sm1;
     sm1.p_edman_failure = 0.5;
     sm1.p_detach.base = 0.5;
@@ -165,7 +168,7 @@ BOOST_AUTO_TEST_CASE(distance_with_channel_model_test, *tolerance(TOL)) {
     sm1.p_detach.initial_decay = 0.5;
     sm1.p_initial_block = 0.5;
     sm1.p_cyclic_block = 0.5;
-    sm1.channel_models.push_back(new ChannelModel());
+    sm1.channel_models.push_back(new ChannelModel(channel, num_channels));
     sm1.channel_models[0]->p_bleach = 0.5;
     sm1.channel_models[0]->p_dud = 0.5;
     sm1.channel_models[0]->mu = 0.5;
@@ -178,7 +181,7 @@ BOOST_AUTO_TEST_CASE(distance_with_channel_model_test, *tolerance(TOL)) {
     sm2.p_detach.initial_decay = 0.5;
     sm2.p_initial_block = 0.5;
     sm2.p_cyclic_block = 0.5;
-    sm2.channel_models.push_back(new ChannelModel());
+    sm2.channel_models.push_back(new ChannelModel(channel, num_channels));
     sm2.channel_models[0]->p_bleach = 0.5;
     sm2.channel_models[0]->p_dud = 0.66;
     sm2.channel_models[0]->mu = 0.5;
@@ -189,6 +192,8 @@ BOOST_AUTO_TEST_CASE(distance_with_channel_model_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(distance_with_two_channel_models_test, *tolerance(TOL)) {
+    unsigned int num_channels = 2;
+
     SequencingModel sm1;
     sm1.p_edman_failure = 0.5;
     sm1.p_detach.base = 0.5;
@@ -196,12 +201,12 @@ BOOST_AUTO_TEST_CASE(distance_with_two_channel_models_test, *tolerance(TOL)) {
     sm1.p_detach.initial_decay = 0.5;
     sm1.p_initial_block = 0.5;
     sm1.p_cyclic_block = 0.5;
-    sm1.channel_models.push_back(new ChannelModel());
+    sm1.channel_models.push_back(new ChannelModel(0, num_channels));
     sm1.channel_models[0]->p_bleach = 0.5;
     sm1.channel_models[0]->p_dud = 0.5;
     sm1.channel_models[0]->mu = 0.5;
     sm1.channel_models[0]->sig = 0.5;
-    sm1.channel_models.push_back(new ChannelModel());
+    sm1.channel_models.push_back(new ChannelModel(1, num_channels));
     sm1.channel_models[1]->p_bleach = 0.5;
     sm1.channel_models[1]->p_dud = 0.5;
     sm1.channel_models[1]->mu = 0.5;
@@ -214,12 +219,12 @@ BOOST_AUTO_TEST_CASE(distance_with_two_channel_models_test, *tolerance(TOL)) {
     sm2.p_detach.initial_decay = 0.5;
     sm2.p_initial_block = 0.5;
     sm2.p_cyclic_block = 0.5;
-    sm2.channel_models.push_back(new ChannelModel());
+    sm2.channel_models.push_back(new ChannelModel(0, num_channels));
     sm2.channel_models[0]->p_bleach = 0.5;
     sm2.channel_models[0]->p_dud = 0.5;
     sm2.channel_models[0]->mu = 0.5;
     sm2.channel_models[0]->sig = 0.5;
-    sm2.channel_models.push_back(new ChannelModel());
+    sm2.channel_models.push_back(new ChannelModel(1, num_channels));
     sm2.channel_models[1]->p_bleach = 0.5;
     sm2.channel_models[1]->p_dud = 0.66;
     sm2.channel_models[1]->mu = 0.5;
@@ -230,6 +235,8 @@ BOOST_AUTO_TEST_CASE(distance_with_two_channel_models_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(distance_max_no_sum_test, *tolerance(TOL)) {
+    unsigned int num_channels = 2;
+
     SequencingModel sm1;
     sm1.p_edman_failure = 0.5;
     sm1.p_detach.base = 0.5;
@@ -237,12 +244,12 @@ BOOST_AUTO_TEST_CASE(distance_max_no_sum_test, *tolerance(TOL)) {
     sm1.p_detach.initial_decay = 0.5;
     sm1.p_initial_block = 0.5;
     sm1.p_cyclic_block = 0.5;
-    sm1.channel_models.push_back(new ChannelModel());
+    sm1.channel_models.push_back(new ChannelModel(0, num_channels));
     sm1.channel_models[0]->p_bleach = 0.5;
     sm1.channel_models[0]->p_dud = 0.5;
     sm1.channel_models[0]->mu = 0.5;
     sm1.channel_models[0]->sig = 0.5;
-    sm1.channel_models.push_back(new ChannelModel());
+    sm1.channel_models.push_back(new ChannelModel(1, num_channels));
     sm1.channel_models[1]->p_bleach = 0.5;
     sm1.channel_models[1]->p_dud = 0.5;
     sm1.channel_models[1]->mu = 0.5;
@@ -255,12 +262,12 @@ BOOST_AUTO_TEST_CASE(distance_max_no_sum_test, *tolerance(TOL)) {
     sm2.p_detach.initial_decay = 0.5;
     sm2.p_initial_block = 0.5;
     sm2.p_cyclic_block = 0.5;
-    sm2.channel_models.push_back(new ChannelModel());
+    sm2.channel_models.push_back(new ChannelModel(0, num_channels));
     sm2.channel_models[0]->p_bleach = 0.5;
     sm2.channel_models[0]->p_dud = 0.5;
     sm2.channel_models[0]->mu = 0.5;
     sm2.channel_models[0]->sig = 0.5;
-    sm2.channel_models.push_back(new ChannelModel());
+    sm2.channel_models.push_back(new ChannelModel(1, num_channels));
     sm2.channel_models[1]->p_bleach = 0.5;
     sm2.channel_models[1]->p_dud = 0.66;
     sm2.channel_models[1]->mu = 0.5;

@@ -25,7 +25,7 @@ public:
     RadiometryPrecomputations(const Radiometry& radiometry,
                               const SequencingModel& seq_model,
                               const SequencingSettings& seq_settings,
-                              int max_num_dyes);
+                              unsigned int max_num_dyes);
     ~RadiometryPrecomputations();
     std::vector<PeptideEmission*> peptide_emissions;
 };

@@ -11,14 +11,34 @@
       "p_dud": 0.07,
       "bg_sig": 66.7,
       "mu": 10000,
-      "sig": 1600
+      "sig": 1600,
+      "interactions": [
+        {
+          "other_channel": 0,
+          "effect": 0.0
+        },
+        {
+          "other_channel": 1,
+          "effect": 0.0
+        }
+      ]
     },
     {
       "p_bleach": 0.05,
       "p_dud": 0.07,
       "bg_sig": 66.7,
       "mu": 10000,
-      "sig": 1600
+      "sig": 1600,
+      "interactions": [
+        {
+          "other_channel": 0,
+          "effect": 0.0
+        },
+        {
+          "other_channel": 1,
+          "effect": 0.0
+        }
+      ]
     }
   ]
 }

@@ -45,7 +45,7 @@ HMMFitter::HMMFitter(unsigned int num_timesteps,
           num_channels(num_channels) {
     max_num_dyes = 0;
     for (unsigned int c = 0; c < num_channels; c++) {
-        int num_dyes = 0;
+        unsigned int num_dyes = 0;
         for (unsigned int i = 0; i < dye_seq.length; i++) {
             // Can safely compare with type-cast. c is unsigned because it is
             // a channel index, the DyeSeq [] operator is signed because values

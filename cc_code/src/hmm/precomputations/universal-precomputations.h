@@ -28,7 +28,7 @@ public:
                              unsigned int num_timesteps,
                              unsigned int num_channels);
     ~UniversalPrecomputations();
-    void set_max_num_dyes(int max_num_dyes);
+    void set_max_num_dyes(unsigned int max_num_dyes);
     std::vector<DetachTransition*> detach_transitions;
     InitialBrokenNTransition initial_broken_n_transition;
     CyclicBrokenNTransition cyclic_broken_n_transition;

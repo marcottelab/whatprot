@@ -33,8 +33,8 @@ SequencingModelFitter::SequencingModelFitter(unsigned int num_timesteps,
                                              const FitSettings& fit_settings)
         : p_detach_fit(num_timesteps, prev.p_detach, fit_settings) {
     channel_fits.resize(num_channels);
-    for (unsigned int i = 0; i < num_channels; i++) {
-        channel_fits[i] = new ChannelModelFitter();
+    for (unsigned int c = 0; c < num_channels; c++) {
+        channel_fits[c] = new ChannelModelFitter(*prev.channel_models[c]);
     }
 }
 

@@ -199,6 +199,23 @@ BOOST_AUTO_TEST_CASE(paren_op_const_test) {
     BOOST_TEST(cdt(1, 1) == 4);
 }
 
+BOOST_AUTO_TEST_CASE(bracket_op_test) {
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 2;
+    DyeTrack dt(num_timesteps, num_channels);
+    dt[1][1] = 4;
+    BOOST_TEST(dt[1][1] == 4);
+}
+
+BOOST_AUTO_TEST_CASE(bracket_op_const_test) {
+    unsigned int num_timesteps = 3;
+    unsigned int num_channels = 2;
+    DyeTrack dt(num_timesteps, num_channels);
+    dt[1][1] = 4;
+    const DyeTrack& cdt = dt;
+    BOOST_TEST(cdt[1][1] == 4);
+}
+
 // This test may fail by bad luck, but this is very unlikely.
 BOOST_AUTO_TEST_CASE(hash_same_test) {
     unsigned int num_timesteps = 3;

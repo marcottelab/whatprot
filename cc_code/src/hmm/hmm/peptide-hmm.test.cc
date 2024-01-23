@@ -66,15 +66,16 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
+        seq_model.channel_models[i]->bg_sig = 0.015;
         seq_model.channel_models[i]->mu = 1.0;
         seq_model.channel_models[i]->sig = 0.05;
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    int max_num_dyes = 3;
+    unsigned int max_num_dyes = 3;
     unsigned int num_timesteps = 4;
     UniversalPrecomputations universal_precomputations(
             seq_model, num_timesteps, num_channels);
@@ -158,7 +159,7 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
         seq_model.channel_models[i]->bg_sig = 0.00667;
@@ -167,7 +168,7 @@ BOOST_AUTO_TEST_CASE(probability_test, *tolerance(TOL)) {
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    int max_num_dyes = 5;
+    unsigned int max_num_dyes = 5;
     unsigned int num_timesteps = 3;
     UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
     up.set_max_num_dyes(max_num_dyes);
@@ -197,7 +198,7 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
         seq_model.channel_models[i]->bg_sig = 0.00667;
@@ -206,7 +207,7 @@ BOOST_AUTO_TEST_CASE(probability_distribution_tails_test, *tolerance(TOL)) {
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    int max_num_dyes = 5;
+    unsigned int max_num_dyes = 5;
     unsigned int num_timesteps = 3;
     UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
     up.set_max_num_dyes(max_num_dyes);
@@ -236,7 +237,7 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
         seq_model.channel_models[i]->bg_sig = 0.00667;
@@ -245,7 +246,7 @@ BOOST_AUTO_TEST_CASE(probability_detachment_test, *tolerance(TOL)) {
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    int max_num_dyes = 5;
+    unsigned int max_num_dyes = 5;
     unsigned int num_timesteps = 3;
     UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
     up.set_max_num_dyes(max_num_dyes);
@@ -275,7 +276,7 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
         seq_model.channel_models[i]->bg_sig = 0.00667;
@@ -284,7 +285,7 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_test, *tolerance(TOL)) {
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = 5.0;
-    int max_num_dyes = 5;
+    unsigned int max_num_dyes = 5;
     unsigned int num_timesteps = 3;
     UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
     up.set_max_num_dyes(max_num_dyes);
@@ -314,7 +315,7 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.05;
         seq_model.channel_models[i]->p_dud = 0.07;
         seq_model.channel_models[i]->bg_sig = 0.00667;
@@ -323,7 +324,7 @@ BOOST_AUTO_TEST_CASE(probability_with_cutoff_zero_test, *tolerance(TOL)) {
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = 5.0;
-    int max_num_dyes = 5;
+    unsigned int max_num_dyes = 5;
     unsigned int num_timesteps = 3;
     UniversalPrecomputations up(seq_model, num_timesteps, num_channels);
     up.set_max_num_dyes(max_num_dyes);
@@ -353,7 +354,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     seq_model.p_initial_block = 0.07;
     seq_model.p_cyclic_block = 0.025;
     for (unsigned int i = 0; i < num_channels; i++) {
-        seq_model.channel_models.push_back(new ChannelModel());
+        seq_model.channel_models.push_back(new ChannelModel(i, num_channels));
         seq_model.channel_models[i]->p_bleach = 0.03;
         seq_model.channel_models[i]->p_dud = 0.04;
         seq_model.channel_models[i]->bg_sig = 0.00667;
@@ -362,7 +363,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     }
     SequencingSettings seq_settings;
     seq_settings.dist_cutoff = std::numeric_limits<double>::max();
-    int max_num_dyes = 3;
+    unsigned int max_num_dyes = 3;
     unsigned int num_timesteps = 4;
     UniversalPrecomputations universal_precomputations(
             seq_model, num_timesteps, num_channels);
@@ -386,7 +387,7 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
                    dye_seq_precomputations,
                    radiometry_precomputations,
                    universal_precomputations);
-    SequencingModel sm;
+    SequencingModel sm(num_channels);
     FitSettings fs(num_channels);
     SequencingModelFitter smf(num_timesteps, num_channels, sm, fs);
     hmm.improve_fit(&smf);

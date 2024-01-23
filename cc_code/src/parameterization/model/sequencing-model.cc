@@ -40,7 +40,8 @@ SequencingModel::SequencingModel() {}
 
 SequencingModel::SequencingModel(unsigned int num_channels) : p_detach() {
     for (unsigned int c = 0; c < num_channels; c++) {
-        channel_models.push_back(new ChannelModel());
+        channel_models.push_back(new ChannelModel(c, num_channels));
+        channel_models.back()->interactions.resize(num_channels, 1.0);
     }
 }
 
@@ -53,14 +54,23 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
     p_detach.initial_decay = data["p_initial_detach_decay"].get<double>();
     p_initial_block = data["p_initial_block"].get<double>();
     p_cyclic_block = data["p_cyclic_block"].get<double>();
+    unsigned int c = 0;
+    unsigned int num_channels = data["channel_models"].size();
     for (auto& channel_data : data["channel_models"]) {
-        channel_models.push_back(new ChannelModel());
+        channel_models.push_back(new ChannelModel(c, num_channels));
         channel_models.back()->p_bleach =
                 channel_data["p_bleach"].get<double>();
         channel_models.back()->p_dud = channel_data["p_dud"].get<double>();
         channel_models.back()->bg_sig = channel_data["bg_sig"].get<double>();
         channel_models.back()->mu = channel_data["mu"].get<double>();
         channel_models.back()->sig = channel_data["sig"].get<double>();
+        channel_models.back()->interactions.resize(num_channels, 1.0);
+        for (auto& interaction : channel_data["interactions"]) {
+            unsigned int other_channel = interaction["other_channel"];
+            double effect = interaction["effect"];
+            channel_models.back()->interactions[other_channel] = 1.0 - effect;
+        }
+        c++;
     }
 }
 

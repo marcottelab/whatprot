@@ -10,6 +10,7 @@
 #include "peptide-emission.h"
 
 // Standard C++ library headers:
+#include <algorithm>
 #include <limits>
 #include <vector>
 
@@ -17,6 +18,7 @@
 #include "common/radiometry.h"
 #include "hmm/state-vector/peptide-state-vector.h"
 #include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/channel-model.h"
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
 #include "tensor/const-tensor-iterator.h"
@@ -27,12 +29,14 @@ namespace whatprot {
 
 namespace {
 using std::function;
+using std::min;
+using std::numeric_limits;
 using std::vector;
 }  // namespace
 
 PeptideEmission::PeptideEmission(const Radiometry& radiometry,
                                  unsigned int timestep,
-                                 int max_num_dyes,
+                                 unsigned int max_num_dyes,
                                  const SequencingModel& seq_model,
                                  const SequencingSettings& seq_settings)
         : radiometry(radiometry),
@@ -40,41 +44,63 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
           i_am_a_copy(false),
           num_channels(radiometry.num_channels),
           max_num_dyes(max_num_dyes) {
-    values = new vector<double>(num_channels * (max_num_dyes + 1), 0);
-    for (unsigned int c = 0; c < num_channels; c++) {
-        for (int d = 0; d < (max_num_dyes + 1); d++) {
-            prob(c, d) = seq_model.channel_models[c]->pdf(
-                    radiometry(timestep, c), d);
-        }
-    }
     pruned_range.min.resize(1 + num_channels);
     pruned_range.max.resize(1 + num_channels);
     pruned_range.min[0] = 0;
     pruned_range.max[0] = timestep + 1;
-    if (seq_settings.dist_cutoff == std::numeric_limits<double>::max()) {
+    if (seq_settings.dist_cutoff == numeric_limits<double>::max()) {
         for (unsigned int c = 0; c < num_channels; c++) {
             pruned_range.min[1 + c] = 0;
-            pruned_range.max[1 + c] = std::numeric_limits<unsigned int>::max();
+            pruned_range.max[1 + c] = max_num_dyes + 1;
         }
     } else {
         for (unsigned int c = 0; c < num_channels; c++) {
+            // We use this a lot in this scope. Nice as a convenience variable.
+            const ChannelModel& channel_model = *seq_model.channel_models[c];
+            // Need this to collect adjusted_mu (which is in turn to get sigma).
+            vector<unsigned int> counts(num_channels, 0);
             // min might not get set, if not, the range should be empty, and
             // this is the value we want.
-            int cmin = max_num_dyes + 1;
-            for (int d = 0; d < max_num_dyes; d++) {
-                double s = seq_settings.dist_cutoff
-                           * seq_model.channel_models[c]->sigma(d);
-                if ((double)d + s > radiometry(timestep, c)) {
+            unsigned int cmin = max_num_dyes + 1;
+            for (unsigned int d = 0; d < max_num_dyes; d++) {
+                counts[c] = d;
+                double mu = channel_model.adjusted_mu(&counts[0]);
+                double s = seq_settings.dist_cutoff * channel_model.sigma(mu);
+                if ((double)d * mu + s > radiometry(timestep, c)) {
                     cmin = d;
                     break;
                 }
             }
             pruned_range.min[1 + c] = cmin;
+            // max needs lower bound of distributions. Use of cross_dye_maximum
+            // is to avoid excessive lack of pruning.
+            unsigned int cross_channel = 0;
+            bool has_interaction = false;
+            double worst_interaction = 1.0;
+            for (unsigned int cc = 0; cc < num_channels; cc++) {
+                // Skip self. Self quenching effect is handled gracefully by the
+                // adjusted mu calculation without creating the same kind of
+                // problems too many fluorophores does.
+                if (cc == c) {
+                    continue;
+                }
+                double interaction = channel_model.interactions[cc];
+                if (interaction < worst_interaction) {
+                    cross_channel = cc;
+                    worst_interaction = interaction;
+                    has_interaction = true;
+                }
+            }
+            if (has_interaction) {
+                counts[cross_channel] =
+                        min(max_num_dyes, seq_settings.cross_dye_maximum);
+            }
             // max might not get set, if not, this is the value we want.
-            int cmax = max_num_dyes + 1;
-            for (int d = pruned_range.min[1 + c]; d < max_num_dyes; d++) {
-                double s = seq_settings.dist_cutoff
-                           * seq_model.channel_models[c]->sigma(d);
+            unsigned int cmax = max_num_dyes + 1;
+            for (unsigned int d = cmin; d < max_num_dyes; d++) {
+                counts[c] = d;
+                double mu = channel_model.adjusted_mu(&counts[0]);
+                double s = seq_settings.dist_cutoff * channel_model.sigma(mu);
                 if ((double)d - s > radiometry(timestep, c)) {
                     cmax = d;
                     break;
@@ -83,29 +109,38 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
             pruned_range.max[1 + c] = cmax;
         }
     }
+    // pruned_range saves us the trouble of literally filling in every possible
+    // value (with likely performance improvements), but we need to exclude its
+    // first element because that refers to the Edman cycle.
+    KDRange trange = pruned_range;
+    trange.min.erase(trange.min.begin());
+    trange.max.erase(trange.max.begin());
+    ptsr = new Tensor(trange);
+    TensorIterator* it = ptsr->iterator(trange);
+    while (!it->done()) {
+        *it->get() = 1.0;
+        for (unsigned int c = 0; c < num_channels; c++) {
+            double observed = radiometry(timestep, c);
+            *it->get() *= seq_model.channel_models[c]->pdf(observed, it->loc);
+        }
+        it->advance();
+    }
+    delete it;
 }
 
 PeptideEmission::PeptideEmission(const PeptideEmission& other)
         : radiometry(other.radiometry),
           timestep(other.timestep),
           pruned_range(other.pruned_range),
-          values(other.values),
+          ptsr(other.ptsr),
           i_am_a_copy(true),
           num_channels(other.num_channels),
           max_num_dyes(other.max_num_dyes) {}
 
 PeptideEmission::~PeptideEmission() {
     if (!i_am_a_copy) {
-        delete values;
+        delete ptsr;
     }
-}
-
-double& PeptideEmission::prob(int channel, int num_dyes) {
-    return (*values)[channel * (max_num_dyes + 1) + num_dyes];
-}
-
-double PeptideEmission::prob(int channel, int num_dyes) const {
-    return (*values)[channel * (max_num_dyes + 1) + num_dyes];
 }
 
 void PeptideEmission::prune_forward(KDRange* range, bool* allow_detached) {
@@ -124,15 +159,15 @@ void PeptideEmission::prune_backward(KDRange* range, bool* allow_detached) {
 
 PeptideStateVector* PeptideEmission::forward_or_backward(
         const PeptideStateVector& input, unsigned int* num_edmans) const {
+    vector<unsigned int> zeros(num_channels, 0);
     PeptideStateVector* output = new PeptideStateVector(pruned_range);
     forward_or_backward(input.tensor, &output->tensor);
     forward_or_backward(input.broken_n_tensor, &output->broken_n_tensor);
     if (allow_detached) {
-        double p_detached = input.p_detached;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            p_detached *= prob(c, 0);
-        }
-        output->p_detached = p_detached;
+        // This is safe because the allow_detached is only true if pruned_range
+        // includes zero.
+        double prob = (*ptsr)[&zeros[0]];
+        output->p_detached = input.p_detached * prob;
     }
     output->range = pruned_range;
     output->allow_detached = allow_detached;
@@ -144,11 +179,10 @@ void PeptideEmission::forward_or_backward(const Tensor& input,
     ConstTensorIterator* inputit = input.const_iterator(pruned_range);
     TensorIterator* outputit = output->iterator(pruned_range);
     while (!inputit->done()) {
-        double product = 1.0;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            product *= prob(c, inputit->loc[1 + c]);
-        }
-        *outputit->get() = *inputit->get() * product;
+        // Edman cycle is always the 0th index. We need to snag the rest of the
+        // index since the values aren't indexed by Edman cycle.
+        double prob = (*ptsr)[&inputit->loc[1]];
+        *outputit->get() = *inputit->get() * prob;
         inputit->advance();
         outputit->advance();
     }
@@ -171,40 +205,6 @@ void PeptideEmission::improve_fit(const PeptideStateVector& forward_psv,
                                   const PeptideStateVector& next_backward_psv,
                                   unsigned int num_edmans,
                                   double probability,
-                                  SequencingModelFitter* fitter) const {
-    improve_fit(forward_psv.tensor,
-                backward_psv.tensor,
-                num_edmans,
-                probability,
-                fitter);
-    improve_fit(forward_psv.broken_n_tensor,
-                backward_psv.broken_n_tensor,
-                num_edmans,
-                probability,
-                fitter);
-}
-
-void PeptideEmission::improve_fit(const Tensor& forward_tsr,
-                                  const Tensor& backward_tsr,
-                                  unsigned int num_edmans,
-                                  double probability,
-                                  SequencingModelFitter* fitter) const {
-    KDRange range = forward_tsr.range;
-    ConstTensorIterator* fit = forward_tsr.const_iterator(range);
-    ConstTensorIterator* bit = backward_tsr.const_iterator(range);
-    while (fit->index < (num_edmans + 1) * forward_tsr.strides[0]) {
-        double p_state = (*fit->get()) * (*bit->get()) / probability;
-        for (unsigned int c = 0; c < num_channels; c++) {
-            double intensity = radiometry(num_edmans, c);
-            int dye_count = fit->loc[1 + c];
-            fitter->channel_fits[c]->distribution_fit->add_sample(
-                    intensity, dye_count, p_state);
-        }
-        fit->advance();
-        bit->advance();
-    }
-    delete fit;
-    delete bit;
-}
+                                  SequencingModelFitter* fitter) const {}
 
 }  // namespace whatprot
