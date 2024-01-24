@@ -11,6 +11,7 @@
 
 // Standard C++ library headers:
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -29,6 +30,7 @@ namespace whatprot {
 
 namespace {
 using std::function;
+using std::lround;
 using std::min;
 using std::numeric_limits;
 using std::vector;
@@ -54,80 +56,109 @@ PeptideEmission::PeptideEmission(const Radiometry& radiometry,
             pruned_range.max[1 + c] = max_num_dyes + 1;
         }
     } else {
-        for (unsigned int c = 0; c < num_channels; c++) {
-            // We use this a lot in this scope. Nice as a convenience variable.
-            const ChannelModel& channel_model = *seq_model.channel_models[c];
-            // Need this to collect adjusted_mu (which is in turn to get sigma).
-            vector<unsigned int> counts(num_channels, 0);
-            // min might not get set, if not, the range should be empty, and
-            // this is the value we want.
-            unsigned int cmin = max_num_dyes + 1;
-            for (unsigned int d = 0; d < max_num_dyes; d++) {
-                counts[c] = d;
-                double mu = channel_model.adjusted_mu(&counts[0]);
+        // This vector is a rough estimate of what the lower-bound of the
+        // pruned_range will be for channel c. This is used to call the
+        // adjusted_mu() function to determine mu for a channel, given FRET
+        // effects with other channels and quenching effects with itself. We
+        // just set this one to all zeros. Something similar was tried to what
+        // is done for counts_hi (see below), but this seemed to result in an
+        // infinite loop.
+        vector<unsigned int> counts_lo(num_channels, 0);
+        // This vector is a rough estimate of what the upper-bound of the
+        // pruned_range will be for channel c. This then gets used to call the
+        // adjusted_mu() function with reasonable estimates of the numbers of
+        // dyes to consider for cross-channel FRET effects. Considerable logic
+        // is used for this estimate; the computational burden is low and this
+        // improves performance, as the ranges need to be bigger than you would
+        // expect.
+        vector<unsigned int> counts_hi(num_channels, 0);
+        // Repeat until no changes are made to the values. This is set to false
+        // on every loop and only flips true when a value is changed.
+        bool did_change = true;
+        while (did_change) {
+            did_change = false;
+            for (unsigned int c = 0; c < num_channels; c++) {
+                // Convenience variable.
+                const ChannelModel& channel_model =
+                        *seq_model.channel_models[c];
+                // We need to temporarily override the channel c value, so we
+                // stash it in another variable then set things how they were.
+                // This is how we get the mu value for a count of 1.
+                double old_counts_hi_c = counts_hi[c];
+                counts_hi[c] = 1;
+                double mu1 = channel_model.adjusted_mu(&counts_hi[0]);
+                counts_hi[c] = old_counts_hi_c;
+                // Need mu value for actual count to estimate sigma (for count).
+                double mu = channel_model.adjusted_mu(&counts_hi[0]);
                 double s = seq_settings.dist_cutoff * channel_model.sigma(mu);
-                if ((double)d * mu + s > radiometry(timestep, c)) {
+                // lround rounds to a long (there is no 'round to int' in stl).
+                // Also dividing by mu1 is a lazy approximation; due to self-
+                // quenching effects, mu grows more slowly as it gets larger.
+                // This seems to be a good enough approximation though. Better
+                // would be to test different counts until the mu value is as
+                // close as possible to the radiometry value.
+                unsigned int new_cts = (unsigned int)lround(
+                        (radiometry(timestep, c) + s) / mu1);
+                // No point in having a value larger than max_num_dyes + 1. We
+                // add one because pruned_range max is an exclusive max (<=)
+                new_cts = min(max_num_dyes + 1, new_cts);
+                // Set and mark changed (or not).
+                if (new_cts != counts_hi[c]) {
+                    did_change = true;
+                    counts_hi[c] = new_cts;
+                }
+            }
+        }
+        // Determine pruned_range.
+        for (unsigned int c = 0; c < num_channels; c++) {
+            // Convenience variable.
+            const ChannelModel& channel_model = *seq_model.channel_models[c];
+
+            // Set minimum of pruned range for channel c.
+            //
+            // min might not get set, if not, the range should be empty, and
+            // this is the value we want (pruned_range max is exclusive max).
+            unsigned int cmin = max_num_dyes + 1;
+            // Stash original value as we will need this to choose cmin for
+            // other channels.
+            double old_counts_lo_c = counts_lo[c];
+            // Increase dye count until the radiometry is in the range (subject
+            // to dist_cutoff) of the dye-count. The cut-off is like a z-value
+            // in statistics, but is an approximation so that we can more easily
+            // account for FRET interactions.
+            for (unsigned int d = 0; d < max_num_dyes + 1; d++) {
+                counts_lo[c] = d;
+                double mu = channel_model.adjusted_mu(&counts_lo[0]);
+                double s = seq_settings.dist_cutoff * channel_model.sigma(mu);
+                if (mu + s > radiometry(timestep, c)) {
                     cmin = d;
                     break;
                 }
             }
             pruned_range.min[1 + c] = cmin;
-            // Need this at non-zero value in order to test effect on mu of
-            // cross-channel interactions.
-            counts[c] = 1;
-            // To set maximum end of the pruned ranges we need the lower bound
-            // of distributions. This is variable due to cross-dye interactions.
-            // Extreme scenarios exist in some cases with max_num_dyes larger
-            // than 100. To avoid overly impacting classification against other
-            // peptides, we use cross_dye_maximum so that we can avoid
-            // overpruning.
-            for (unsigned int i = 0; i < seq_settings.cross_dye_maximum; i++) {
-                unsigned int cross_channel = 0;
-                bool has_interaction = false;
-                double worst_mu = channel_model.adjusted_mu(&counts[0]);
-                for (unsigned int cc = 0; cc < num_channels; cc++) {
-                    // Skip self. Self quenching effect is handled gracefully by
-                    // the adjusted mu calculation without creating the same
-                    // kind of problems too many fluorophores does.
-                    if (cc == c) {
-                        continue;
-                    }
-                    // Never put more dyes on a channel than the max_num_dyes.
-                    if (counts[cc] == max_num_dyes) {
-                        continue;
-                    }
-                    // Easier to use existing variable than create new one, so
-                    // we increase channel cc, see what value it gives, then
-                    // return it to its original value.
-                    counts[cc] += 1;
-                    double mu = channel_model.adjusted_mu(&counts[0]);
-                    counts[cc] -= 1;
-                    if (mu < worst_mu) {
-                        cross_channel = cc;
-                        worst_mu = mu;
-                        has_interaction = true;
-                    }
-                }
-                // If we didn't find an interaction each loop will be the same
-                // and we never will.
-                if (!has_interaction) {
-                    break;
-                }
-                // Finally we can update the value.
-                counts[cross_channel] += 1;
-            }
-            // max might not get set, if not, this is the value we want.
+            // Restore original value of counts_lo[c].
+            counts_lo[c] = old_counts_lo_c;
+
+            // Set maximum of pruned range for channel c.
+            //
+            // max might not get set, if not, this is the value we want
+            // (pruned_range max is exclusive max).
             unsigned int cmax = max_num_dyes + 1;
-            for (unsigned int d = cmin; d < max_num_dyes; d++) {
-                counts[c] = d;
-                double mu = channel_model.adjusted_mu(&counts[0]);
+            // Stash original value as we will need this to choose cmax for
+            // other channels.
+            double old_counts_hi_c = counts_hi[c];
+            for (unsigned int d = cmin; d < max_num_dyes + 1; d++) {
+                counts_hi[c] = d;
+                double mu = channel_model.adjusted_mu(&counts_hi[0]);
                 double s = seq_settings.dist_cutoff * channel_model.sigma(mu);
-                if ((double)d - s > radiometry(timestep, c)) {
+                if (mu - s > radiometry(timestep, c)) {
                     cmax = d;
                     break;
                 }
             }
             pruned_range.max[1 + c] = cmax;
+            // Restore original value of counts_hi[c].
+            counts_hi[c] = old_counts_hi_c;
         }
     }
     // pruned_range saves us the trouble of literally filling in every possible
