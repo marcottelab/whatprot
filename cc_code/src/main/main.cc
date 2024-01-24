@@ -51,6 +51,17 @@ int main(int argc, char** argv) {
                     "whatprot is a program for analyzing protein "
                     "fluorosequencing data.");
 
+    // To add a new option, you need to do the following:
+    //   1. Give a help message for the option.
+    //   2. Add text to the generic help message at the bottom to declare when
+    //      the option is valid.
+    //   3. Retrieve the option in code to a variable with the same name as the
+    //      option's short-form (one character version).
+    //   4. Send the option where it's supposed to go, changing if-statement
+    //      requirements as appropriate.
+    //
+    // Help messages for options follow.
+    //
     // clang-format off
     options.add_options()
         ("h,help", "Print usage\n")
@@ -81,7 +92,8 @@ int main(int argc, char** argv) {
         ("p,hmmprune",
             "Only for hmm or hybrid classification, and NOT required. Defines "
             "a multiplier on sigma to use when pruning an HMM for greater "
-            "efficiency. Higher values imply less pruning.\n",
+            "efficiency. Higher values imply less pruning. Defaults to "
+            "infinity.\n",
             value<double>())
         ("s,sigma",
             "Only for nn or hybrid classification, and required. Sigma to use "
@@ -162,6 +174,7 @@ int main(int argc, char** argv) {
             "information about parameter fit results for each bootstrap run.\n",
             value<string>());
     // clang-format on
+    // Generic text for options, declaring when to use each option.
     options.custom_help(
             "[MODE] [VARIANT] [OPTS...]\n\n"
             "  MODE is one of classify, fit, or simulate. Other parameter\n"
@@ -216,6 +229,8 @@ int main(int argc, char** argv) {
             parsed_opts.unmatched();
 
     // Retrieve options, keeping track of which ones were or weren't set.
+    // Parameter for option should have same name as the one-character version
+    // of the option.
     unsigned int num_optional_args = 0;
     bool has_b = false;
     int b = -1;
