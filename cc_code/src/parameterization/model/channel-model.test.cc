@@ -126,11 +126,13 @@ BOOST_AUTO_TEST_CASE(pdf_quench_test, *tolerance(TOL)) {
     channel_model.bg_sig = 0.00667;
     channel_model.mu = 1.0;
     channel_model.sig = .16;
+    channel_model.interactions[0] = 0.95;
+    channel_model.flat_interactions[0] = 0.96;
     double observed = 2.0;
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 2;
-    // This is a regression test from January 22, 2024.
-    BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.7623269509001338);
+    // This is a regression test from January 24, 2024.
+    BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.3248217904301611);
     delete[] counts;
 }
 
@@ -143,11 +145,13 @@ BOOST_AUTO_TEST_CASE(pdf_multiple_quench_test, *tolerance(TOL)) {
     channel_model.bg_sig = 0.00667;
     channel_model.mu = 1.0;
     channel_model.sig = .16;
+    channel_model.interactions[0] = 0.95;
+    channel_model.flat_interactions[0] = 0.96;
     double observed = 3.0;
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 3;
-    // This is a regression test from January 22, 2024.
-    BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.4391421815015384);
+    // This is a regression test from January 24, 2024.
+    BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 0.46273832091183492);
     delete[] counts;
 }
 
@@ -160,13 +164,15 @@ BOOST_AUTO_TEST_CASE(pdf_fret_test, *tolerance(TOL)) {
     channel_model.bg_sig = 0.00667;
     channel_model.mu = 1.0;
     channel_model.sig = .16;
+    channel_model.interactions[1] = 0.97;
+    channel_model.flat_interactions[1] = 0.98;
     double observed = 3.0;
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 1;
     counts[1] = 1;
-    // This is a regression test from January 22, 2024.
+    // This is a regression test from January 24, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
-               == 3.3575170705185706e-34);
+               == 9.961776308698737e-38);
     delete[] counts;
 }
 
@@ -179,13 +185,15 @@ BOOST_AUTO_TEST_CASE(pdf_multiple_fret_test, *tolerance(TOL)) {
     channel_model.bg_sig = 0.00667;
     channel_model.mu = 1.0;
     channel_model.sig = .16;
+    channel_model.interactions[1] = 0.97;
+    channel_model.flat_interactions[1] = 0.98;
     double observed = 3.0;
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 1;
     counts[1] = 2;
-    // This is a regression test from January 22, 2024.
+    // This is a regression test from January 24, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
-               == 3.3575170705185706e-34);
+               == 5.8804666576569527e-40);
     delete[] counts;
 }
 
@@ -198,13 +206,17 @@ BOOST_AUTO_TEST_CASE(pdf_quench_and_fret_test, *tolerance(TOL)) {
     channel_model.bg_sig = 0.00667;
     channel_model.mu = 1.0;
     channel_model.sig = .16;
+    channel_model.interactions[0] = 0.95;
+    channel_model.flat_interactions[0] = 0.96;
+    channel_model.interactions[1] = 0.97;
+    channel_model.flat_interactions[1] = 0.98;
     double observed = 3.0;
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 2;
     counts[1] = 1;
-    // This is a regression test from January 22, 2024.
+    // This is a regression test from January 24, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
-               == 0.00010200265499372211);
+               == 2.7722216687510138e-08);
     delete[] counts;
 }
 
@@ -217,12 +229,16 @@ BOOST_AUTO_TEST_CASE(pdf_multiple_quench_multiple_fret_test, *tolerance(TOL)) {
     channel_model.bg_sig = 0.00667;
     channel_model.mu = 1.0;
     channel_model.sig = .16;
+    channel_model.interactions[0] = 0.95;
+    channel_model.flat_interactions[0] = 0.96;
+    channel_model.interactions[1] = 0.97;
+    channel_model.flat_interactions[1] = 0.98;
     double observed = 3.0;
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 3;
     counts[1] = 2;
-    // This is a regression test from January 22, 2024.
-    BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.4391421815015384);
+    // This is a regression test from January 24, 2024.
+    BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 0.08307899998347866);
     delete[] counts;
 }
 
