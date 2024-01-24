@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(pdf_state_zero_obs_zero_test) {
     unsigned int* counts = new unsigned int[num_channels];
     counts[0] = 0;
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 59.811436342043883);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_state_zero_obs_one_test) {
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(pdf_state_zero_obs_one_test) {
     counts[0] = 0;
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 0);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_state_one_obs_zero_test) {
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(pdf_state_one_obs_zero_test) {
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
                == 8.488175272749065e-09);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_state_one_obs_one_test, *tolerance(TOL)) {
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(pdf_state_one_obs_one_test, *tolerance(TOL)) {
     counts[0] = 1;
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 2.4912255069616864);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_state_eq_obs_ne_one_test, *tolerance(TOL)) {
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(pdf_state_eq_obs_ne_one_test, *tolerance(TOL)) {
     counts[0] = 1;
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 0.43085303703574312);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_quench_test, *tolerance(TOL)) {
@@ -131,11 +131,11 @@ BOOST_AUTO_TEST_CASE(pdf_quench_test, *tolerance(TOL)) {
     counts[0] = 2;
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.7623269509001338);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_multiple_quench_test, *tolerance(TOL)) {
-    unsigned int num_channels = 2;
+    unsigned int num_channels = 1;
     unsigned int channel = 0;
     ChannelModel channel_model(channel, num_channels);
     channel_model.p_bleach = .05;
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(pdf_multiple_quench_test, *tolerance(TOL)) {
     counts[0] = 3;
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.4391421815015384);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_fret_test, *tolerance(TOL)) {
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(pdf_fret_test, *tolerance(TOL)) {
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
                == 3.3575170705185706e-34);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_multiple_fret_test, *tolerance(TOL)) {
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(pdf_multiple_fret_test, *tolerance(TOL)) {
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
                == 3.3575170705185706e-34);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_quench_and_fret_test, *tolerance(TOL)) {
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(pdf_quench_and_fret_test, *tolerance(TOL)) {
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0])
                == 0.00010200265499372211);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(pdf_multiple_quench_multiple_fret_test, *tolerance(TOL)) {
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(pdf_multiple_quench_multiple_fret_test, *tolerance(TOL)) {
     counts[1] = 2;
     // This is a regression test from January 22, 2024.
     BOOST_TEST(channel_model.pdf(observed, &counts[0]) == 1.4391421815015384);
-    delete counts;
+    delete[] counts;
 }
 
 BOOST_AUTO_TEST_CASE(sigma_test, *tolerance(TOL)) {
