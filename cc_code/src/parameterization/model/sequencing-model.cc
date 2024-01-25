@@ -69,13 +69,23 @@ SequencingModel::SequencingModel(const string& seq_model_filename) {
         channel_models.back()->mu = channel_data["mu"].get<double>();
         channel_models.back()->sig = channel_data["sig"].get<double>();
         channel_models.back()->interactions.resize(num_channels, 1.0);
+        // Not required for users to fill in every possible interaction. The
+        // default value for these is 0.0 (see channel-model.cc).
         for (auto& interaction : channel_data["interactions"]) {
             unsigned int other_channel = interaction["other_channel"];
-            double effect = interaction["effect"];
-            channel_models.back()->interactions[other_channel] = 1.0 - effect;
-            double flat_effect = interaction["flat_effect"];
-            channel_models.back()->flat_interactions[other_channel] =
-                    1.0 - flat_effect;
+            // Neither effect nor flat_effect need be specified. Optional. This
+            // makes it easier to specify just one (would be weird to specify
+            // neither but not a huge problem if someone does that).
+            if (interaction.contains("effect")) {
+                double effect = interaction["effect"];
+                channel_models.back()->interactions[other_channel] =
+                        1.0 - effect;
+            }
+            if (interaction.contains("flat_effect")) {
+                double flat_effect = interaction["flat_effect"];
+                channel_models.back()->flat_interactions[other_channel] =
+                        1.0 - flat_effect;
+            }
         }
         c++;
     }
