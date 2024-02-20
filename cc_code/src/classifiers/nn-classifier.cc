@@ -38,22 +38,30 @@ using whatprot::KDTEntry;  // in namespace std for swap
 
 namespace whatprot {
 
-KDTEntry::KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
-        : dye_track(move(dye_track)) {
+KDTEntry::KDTEntry(const SequencingModel& seq_model,
+                   SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track)
+        : seq_model(&seq_model), dye_track(move(dye_track)) {
     hits = this->dye_track.source.total_hits();
 }
 
 KDTEntry::KDTEntry(KDTEntry&& other)
-        : dye_track(move(other.dye_track)), hits(other.hits) {}
+        : seq_model(other.seq_model),
+          dye_track(move(other.dye_track)),
+          hits(other.hits) {}
 
 KDTEntry& KDTEntry::operator=(KDTEntry&& other) {
+    seq_model = other.seq_model;
     dye_track = move(other.dye_track);
     hits = other.hits;
     return *this;
 }
 
 double KDTEntry::operator[](int i) const {
-    return (double)dye_track.value.counts[i];
+    unsigned int num_channels = dye_track.value.num_channels;
+    unsigned int c = i % num_channels;
+    unsigned int t = i / num_channels;
+    const short* t_counts = &dye_track.value.counts[t * num_channels];
+    return seq_model->channel_models[c]->adjusted_mu(t_counts);
 }
 
 }  // namespace whatprot
@@ -79,6 +87,7 @@ double KDTQuery::operator[](int i) const {
 NNClassifier::NNClassifier(
         unsigned int num_timesteps,
         unsigned int num_channels,
+        const SequencingModel& seq_model,
         int k,
         double sig,
         vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>* dye_tracks)
@@ -90,7 +99,7 @@ NNClassifier::NNClassifier(
     vector<KDTEntry> kdt_entries;
     kdt_entries.reserve(num_train);
     for (int i = 0; i < num_train; i++) {
-        KDTEntry kdt_convert(move((*dye_tracks)[i]));
+        KDTEntry kdt_convert(seq_model, move((*dye_tracks)[i]));
         kdt_entries.push_back(move(kdt_convert));
     }
     kd_tree = new KDTree<KDTEntry, KDTQuery>(k,
