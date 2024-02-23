@@ -58,9 +58,18 @@ KDTEntry& KDTEntry::operator=(KDTEntry&& other) {
 
 double KDTEntry::operator[](int i) const {
     unsigned int num_channels = dye_track.value.num_channels;
+    // The dye_track counts are served by a single index which flattens the
+    // indexing scheme. We extract c (the channel) and t (the timestep).
     unsigned int c = i % num_channels;
     unsigned int t = i / num_channels;
+    // To compute the mu value accounting for cross-dye interactions, we need
+    // counts for all channels at the timestep. This is a bit ugly but we can
+    // get a pointer to the value for channel 0 at the desired timestep t (by
+    // indexing at t * num_channels), and adjusted_mu() will index the various
+    // channels as needed.
     const short* t_counts = &dye_track.value.counts[t * num_channels];
+    // Now we can use the channel_model for our channel of interest (c) and
+    // retrieve the adjusted_mu value based on t_counts.
     return seq_model->channel_models[c]->adjusted_mu(t_counts);
 }
 
