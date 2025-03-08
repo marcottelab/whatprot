@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
 BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     double q = 0.05;
     int channel = 0;
+    unsigned int num_channels = 1;
     BleachTransition bt(q, channel);
     bt.reserve(1);
     bt.forward_range.min = {0, 0};
@@ -61,7 +62,8 @@ BOOST_AUTO_TEST_CASE(improve_fit_basic_test, *tolerance(TOL)) {
     unsigned int edmans = 0;
     double probability = 1.0;
     SequencingModelFitter smf;
-    smf.channel_fits.push_back(new ChannelModelFitter());
+    ChannelModel cm(channel, num_channels);
+    smf.channel_fits.push_back(new ChannelModelFitter(cm));
     bt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
     BOOST_TEST(smf.channel_fits[0]->p_bleach_fit.get()
                == (0.71 * q * 0.33) / (0.71 * 0.72));

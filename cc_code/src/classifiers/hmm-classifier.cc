@@ -40,7 +40,7 @@ HMMClassifier::HMMClassifier(
         const vector<SourcedData<DyeSeq, SourceCount<int>>>& dye_seqs)
         : seq_model(seq_model),
           seq_settings(seq_settings),
-          universal_precomputations(seq_model, num_channels),
+          universal_precomputations(seq_model, num_timesteps, num_channels),
           dye_seqs(dye_seqs),
           num_timesteps(num_timesteps),
           num_channels(num_channels) {
@@ -57,7 +57,7 @@ HMMClassifier::HMMClassifier(
             //   * We subtract one from the tensor shape because the tensor
             //     shape for the channel is one larger than the number of dyes,
             //     as it needs to go from 0 to the number of dyes, inclusively.
-            int num_dyes = back.tensor_shape[1 + c] - 1;
+            unsigned int num_dyes = back.tensor_shape[1 + c] - 1;
             if (num_dyes > max_num_dyes) {
                 max_num_dyes = num_dyes;
             }

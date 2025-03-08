@@ -20,6 +20,7 @@
 #include "common/radiometry.h"
 #include "fitters/hmm-fitter.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 #include "parameterization/settings/sequencing-settings.h"
 #include "util/time.h"
 
@@ -39,6 +40,7 @@ double bootstrap_fit(unsigned int num_timesteps,
                      double max_runtime,
                      const SequencingModel& seq_model,
                      const SequencingSettings& seq_settings,
+                     const FitSettings& fit_settings,
                      const DyeSeq& dye_seq,
                      const vector<Radiometry>& radiometries,
                      unsigned int num_bootstrap_rounds,
@@ -53,6 +55,7 @@ double bootstrap_fit(unsigned int num_timesteps,
                      max_runtime,
                      seq_model,
                      seq_settings,
+                     fit_settings,
                      dye_seq);
     // This prng is not thread safe and having one copy for each thread risks
     // issues with randomness. May be worth exploring multi-threaded randomness
@@ -110,10 +113,24 @@ double bootstrap_fit(unsigned int num_timesteps,
     sort(smz.begin(),
          smz.end(),
          [](SequencingModel a, SequencingModel b) -> bool {
-             return a.p_detach < b.p_detach;
+             return a.p_detach.base < b.p_detach.base;
          });
-    ci_min.p_detach = smz[ci_min_idx].p_detach;
-    ci_max.p_detach = smz[ci_max_idx].p_detach;
+    ci_min.p_detach.base = smz[ci_min_idx].p_detach.base;
+    ci_max.p_detach.base = smz[ci_max_idx].p_detach.base;
+    sort(smz.begin(),
+         smz.end(),
+         [](SequencingModel a, SequencingModel b) -> bool {
+             return a.p_detach.initial < b.p_detach.initial;
+         });
+    ci_min.p_detach.initial = smz[ci_min_idx].p_detach.initial;
+    ci_max.p_detach.initial = smz[ci_max_idx].p_detach.initial;
+    sort(smz.begin(),
+         smz.end(),
+         [](SequencingModel a, SequencingModel b) -> bool {
+             return a.p_detach.initial_decay < b.p_detach.initial_decay;
+         });
+    ci_min.p_detach.initial_decay = smz[ci_min_idx].p_detach.initial_decay;
+    ci_max.p_detach.initial_decay = smz[ci_max_idx].p_detach.initial_decay;
     sort(smz.begin(),
          smz.end(),
          [](SequencingModel a, SequencingModel b) -> bool {

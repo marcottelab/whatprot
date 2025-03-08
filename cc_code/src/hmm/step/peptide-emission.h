@@ -19,6 +19,7 @@
 #include "parameterization/fit/sequencing-model-fitter.h"
 #include "parameterization/model/sequencing-model.h"
 #include "parameterization/settings/sequencing-settings.h"
+#include "tensor/tensor.h"
 #include "util/kd-range.h"
 
 namespace whatprot {
@@ -27,13 +28,11 @@ class PeptideEmission : public PeptideStep {
 public:
     PeptideEmission(const Radiometry& radiometry,
                     unsigned int timestep,
-                    int max_num_dyes,
+                    unsigned int max_num_dyes,
                     const SequencingModel& seq_model,
                     const SequencingSettings& seq_settings);
     PeptideEmission(const PeptideEmission& other);
     virtual ~PeptideEmission();
-    double& prob(int channel, int num_dyes);
-    double prob(int channel, int num_dyes) const;
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     PeptideStateVector* forward_or_backward(const PeptideStateVector& input,
@@ -45,25 +44,32 @@ public:
     virtual PeptideStateVector* backward(
             const PeptideStateVector& input,
             unsigned int* num_edmans) const override;
+    // This improve_fit() function currently does nothing. While fitting normal
+    // distributions in addition to other parameters during parameter fitting
+    // with whatprot's HMMs worked well on simulated data, the mismatch in
+    // results on real data was catastrophically bad, and made fitting other
+    // parameters impossible. The cause is either the presence of contaminants
+    // that are difficult to remove from the dataset, the not-quite-normal
+    // shape of the real distribution, or perhaps both effects together. This
+    // deserves further exploration but does not have a simple fix.
     virtual void improve_fit(const PeptideStateVector& forward_psv,
                              const PeptideStateVector& backward_psv,
                              const PeptideStateVector& next_backward_psv,
                              unsigned int num_edmans,
                              double probability,
                              SequencingModelFitter* fitter) const override;
-    void improve_fit(const Tensor& forward_tsr,
-                     const Tensor& backward_tsr,
-                     unsigned int num_edmans,
-                     double probability,
-                     SequencingModelFitter* fitter) const;
     const Radiometry& radiometry;
     unsigned int timestep;
     KDRange pruned_range;
     bool allow_detached;
-    std::vector<double>* values;
+    // This is a pointer so that endless copies of PeptideEmission can be made
+    // with minimal resource requirements.
+    Tensor* ptsr;
+    // We need to know whether this instance is a copy to know whether to delete
+    // ptsr when the destructor is called.
     bool i_am_a_copy;
     unsigned int num_channels;
-    int max_num_dyes;
+    unsigned int max_num_dyes;
 };
 
 }  // namespace whatprot

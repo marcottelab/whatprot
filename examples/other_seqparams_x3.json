@@ -1,6 +1,8 @@
 {
     "p_edman_failure": 0.10,
     "p_detach": 0.10,
+    "p_initial_detach": 0.10,
+    "p_initial_detach_decay": 0.50,
     "p_initial_block": 0.10,
     "p_cyclic_block": 0.10,
     "channel_models": [

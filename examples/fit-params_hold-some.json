@@ -1,0 +1,9 @@
+{
+  "hold_p_detach": true,
+  "hold_p_cyclic_block": true,
+  "channel_models": [
+    {
+      "hold_p_dud": true
+    }
+  ]
+}

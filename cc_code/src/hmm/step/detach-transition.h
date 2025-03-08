@@ -19,7 +19,7 @@ namespace whatprot {
 
 class DetachTransition : public PeptideStep {
 public:
-    DetachTransition(double p_detach);
+    DetachTransition(unsigned int timestep, double p_detach);
     virtual void prune_forward(KDRange* range, bool* allow_detached) override;
     virtual void prune_backward(KDRange* range, bool* allow_detached) override;
     virtual PeptideStateVector* forward(
@@ -46,6 +46,7 @@ public:
     KDRange pruned_range;
     bool detached_forward;
     bool detached_backward;
+    unsigned int timestep;
 };
 
 }  // namespace whatprot

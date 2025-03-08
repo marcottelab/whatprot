@@ -14,15 +14,21 @@
 
 // Local project headers:
 #include "parameterization/fit/channel-model-fitter.h"
+#include "parameterization/fit/decaying-parameter-fitter.h"
 #include "parameterization/fit/log-normal-distribution-fitter.h"
 #include "parameterization/fit/parameter-fitter.h"
+#include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 
 namespace whatprot {
 
 class SequencingModelFitter {
 public:
     SequencingModelFitter();
-    SequencingModelFitter(unsigned int num_channels);
+    SequencingModelFitter(unsigned int num_timesteps,
+                          unsigned int num_channels,
+                          const SequencingModel& prev,
+                          const FitSettings& fit_settings);
     SequencingModelFitter(const SequencingModelFitter& other);
     SequencingModelFitter(SequencingModelFitter&& other);
     ~SequencingModelFitter();
@@ -31,7 +37,7 @@ public:
     void operator+=(const SequencingModelFitter& other);
     void operator*=(double weight_adjustment);
     ParameterFitter p_edman_failure_fit;
-    ParameterFitter p_detach_fit;
+    DecayingParameterFitter p_detach_fit;
     ParameterFitter p_initial_block_fit;
     ParameterFitter p_cyclic_block_fit;
     std::vector<ChannelModelFitter*> channel_fits;

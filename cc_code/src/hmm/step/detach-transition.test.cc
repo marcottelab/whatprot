@@ -15,6 +15,10 @@
 // File under test:
 #include "detach-transition.h"
 #include "hmm/state-vector/peptide-state-vector.h"
+#include "parameterization/fit/sequencing-model-fitter.h"
+#include "parameterization/model/decaying-rate-model.h"
+#include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 #include "util/kd-range.h"
 
 namespace whatprot {
@@ -30,14 +34,16 @@ BOOST_AUTO_TEST_SUITE(step_suite)
 BOOST_AUTO_TEST_SUITE(detach_transition_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     BOOST_CHECK_EQUAL(dt.p_detach, p_detach);
 }
 
 BOOST_AUTO_TEST_CASE(prune_forward_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     KDRange range;
     range.min = vector<unsigned int>(2, 1u);
     range.max = vector<unsigned int>(2, 3u);
@@ -54,8 +60,9 @@ BOOST_AUTO_TEST_CASE(prune_forward_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(prune_backward_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     KDRange range;
     range.min = vector<unsigned int>(2, 1u);
     range.max = vector<unsigned int>(2, 3u);
@@ -74,8 +81,9 @@ BOOST_AUTO_TEST_CASE(prune_backward_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 1};
     dt.detached_forward = true;
@@ -103,8 +111,9 @@ BOOST_AUTO_TEST_CASE(forward_trivial_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 2};
     dt.detached_forward = true;
@@ -136,8 +145,9 @@ BOOST_AUTO_TEST_CASE(forward_basic_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_bigger_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = true;
@@ -174,8 +184,9 @@ BOOST_AUTO_TEST_CASE(forward_bigger_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {3, 2};
     dt.detached_forward = true;
@@ -232,8 +243,9 @@ BOOST_AUTO_TEST_CASE(forward_multiple_edmans_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0, 0};
     dt.pruned_range.max = {1, 2, 2};
     dt.detached_forward = true;
@@ -278,8 +290,9 @@ BOOST_AUTO_TEST_CASE(forward_multiple_dye_colors_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_pruned_range_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 1};
     dt.pruned_range.max = {1, 2};
     dt.detached_forward = true;
@@ -311,8 +324,9 @@ BOOST_AUTO_TEST_CASE(forward_pruned_range_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_no_detached_forward_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = false;
@@ -349,8 +363,9 @@ BOOST_AUTO_TEST_CASE(forward_no_detached_forward_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(forward_no_detached_backward_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = true;
@@ -386,8 +401,9 @@ BOOST_AUTO_TEST_CASE(forward_no_detached_backward_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(forward_no_detached_forward_or_backward_test,
                      *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = false;
@@ -422,8 +438,9 @@ BOOST_AUTO_TEST_CASE(forward_no_detached_forward_or_backward_test,
 }
 
 BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 1};
     dt.detached_forward = true;
@@ -452,8 +469,9 @@ BOOST_AUTO_TEST_CASE(backward_trivial_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 2};
     dt.detached_forward = true;
@@ -487,8 +505,9 @@ BOOST_AUTO_TEST_CASE(backward_basic_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_bigger_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = true;
@@ -527,8 +546,9 @@ BOOST_AUTO_TEST_CASE(backward_bigger_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_multiple_edmans_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {3, 2};
     dt.detached_forward = true;
@@ -582,8 +602,9 @@ BOOST_AUTO_TEST_CASE(backward_multiple_edmans_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_multiple_dye_colors_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0, 0};
     dt.pruned_range.max = {1, 2, 2};
     dt.detached_forward = true;
@@ -633,8 +654,9 @@ BOOST_AUTO_TEST_CASE(backward_multiple_dye_colors_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_pruned_range_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 1};
     dt.pruned_range.max = {1, 2};
     dt.detached_forward = true;
@@ -667,8 +689,9 @@ BOOST_AUTO_TEST_CASE(backward_pruned_range_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_no_detached_forward_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = false;
@@ -706,8 +729,9 @@ BOOST_AUTO_TEST_CASE(backward_no_detached_forward_test, *tolerance(TOL)) {
 }
 
 BOOST_AUTO_TEST_CASE(backward_no_detached_backward_test, *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = true;
@@ -744,8 +768,9 @@ BOOST_AUTO_TEST_CASE(backward_no_detached_backward_test, *tolerance(TOL)) {
 
 BOOST_AUTO_TEST_CASE(backward_no_detached_forward_or_backward_test,
                      *tolerance(TOL)) {
+    unsigned int timestep = 0;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
+    DetachTransition dt(timestep, p_detach);
     dt.pruned_range.min = {0, 0};
     dt.pruned_range.max = {1, 3};
     dt.detached_forward = false;
@@ -780,10 +805,23 @@ BOOST_AUTO_TEST_CASE(backward_no_detached_forward_or_backward_test,
 }
 
 BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
+    unsigned int num_timesteps = 4;
+    unsigned int num_channels = 1;
     double p_detach = 0.05;
-    DetachTransition dt(p_detach);
-    dt.pruned_range.min = {0, 0};
-    dt.pruned_range.max = {1, 3};
+    unsigned int timestep = 0;
+    // Need three timesteps of data otherwise levmar will complain that there
+    // are fewer measurements than unknowns.
+    DetachTransition dt0(timestep, p_detach);
+    dt0.pruned_range.min = {0, 0};
+    dt0.pruned_range.max = {1, 3};
+    timestep = 1;
+    DetachTransition dt1(timestep, p_detach);
+    dt1.pruned_range.min = {0, 0};
+    dt1.pruned_range.max = {1, 3};
+    timestep = 2;
+    DetachTransition dt2(timestep, p_detach);
+    dt2.pruned_range.min = {0, 0};
+    dt2.pruned_range.max = {1, 3};
     unsigned int order = 2;
     unsigned int* shape = new unsigned int[order];
     shape[0] = 1;
@@ -814,13 +852,20 @@ BOOST_AUTO_TEST_CASE(improve_fit_test, *tolerance(TOL)) {
     unsigned int edmans = 0;
     double probability = 0.31 * 0.32 + 0.71 * 0.72 + 0.91 * 0.92 + 0.031 * 0.032
                          + 0.071 * 0.072 + 0.091 * 0.092;
-    SequencingModelFitter smf;
-    dt.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
-    BOOST_TEST(smf.p_detach_fit.get()
-               == (0.71 * p_detach * 0.33 + 0.91 * p_detach * 0.33
-                   + 0.071 * p_detach * 0.33 + 0.091 * p_detach * 0.33)
-                          / (0.71 * 0.72 + 0.91 * 0.92 + 0.071 * 0.072
-                             + 0.091 * 0.092));
+    SequencingModel sm(num_channels);
+    sm.p_detach.base = 0.1;
+    sm.p_detach.initial = 0.1;
+    sm.p_detach.initial_decay = 0.1;
+    FitSettings fs(num_channels);
+    SequencingModelFitter smf(num_timesteps, num_channels, sm, fs);
+    dt0.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    dt1.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    dt2.improve_fit(fpsv, bpsv, nbpsv, edmans, probability, &smf);
+    DecayingRateModel drm = smf.p_detach_fit.get();
+    // This is a no-change test, created on December 22, 2023
+    BOOST_TEST(drm.base == 0.021589944512009754);
+    BOOST_TEST(drm.initial == 6.5752198121518307e-12);
+    BOOST_TEST(drm.initial_decay == 0.092770636551426436);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // detach_transition_suite

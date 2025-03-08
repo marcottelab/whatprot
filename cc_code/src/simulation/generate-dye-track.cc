@@ -33,7 +33,10 @@ void generate_dye_track(const SequencingModel& seq_model,
                         default_random_engine* generator,
                         DyeTrack* dye_track) {
     bernoulli_distribution edman_failure(seq_model.p_edman_failure);
-    bernoulli_distribution detach_event(seq_model.p_detach);
+    vector<bernoulli_distribution> detach_events;
+    for (unsigned int t = 0; t < num_timesteps; t++) {
+        detach_events.emplace_back(seq_model.p_detach[t]);
+    }
     bernoulli_distribution initial_block(seq_model.p_initial_block);
     bernoulli_distribution cyclic_block(seq_model.p_cyclic_block);
     vector<bernoulli_distribution> dud_events;
@@ -59,55 +62,49 @@ void generate_dye_track(const SequencingModel& seq_model,
         }
     }
     unsigned int e = 0;  // Successful Edman cycles.
-    unsigned int t = 0;  // Timesteps.
     bool block = false;
     if (initial_block(*generator)) {
         block = true;
     }
-    while (true) {
-        // Record results.
-        for (unsigned int c = 0; c < num_channels; c++) {
-            (*dye_track)(t, c) = counts[c];
-        }
-        // block n
-        if (cyclic_block(*generator)) {
-            block = true;
-        }
-        // Detach.
-        if (detach_event(*generator)) {
-            break;
-        }
-        t++;
-        if (t >= num_timesteps) {
-            break;
-        }
-        // Edman failures.
-        if (!block) {
-            if (!edman_failure(*generator)) {
-                if (ds[e] != -1) {
-                    counts[ds[e]]--;
-                }
-                e++;
+    for (unsigned int t = 0; t < num_timesteps; t++) {
+        if (e < ds.length) {
+            // Record results.
+            for (unsigned int c = 0; c < num_channels; c++) {
+                (*dye_track)(t, c) = counts[c];
             }
-            if (e >= ds.length) {
-                break;
+            // block n
+            if (cyclic_block(*generator)) {
+                block = true;
             }
-        }
-        // Bleaching.
-        for (unsigned int i = e; i < ds.length; i++) {
-            if (ds[i] != -1) {
-                if (bleach_events[ds[i]](*generator)) {
-                    counts[ds[i]]--;
-                    ds[i] = -1;
+            // Detach.
+            if (detach_events[t](*generator)) {
+                e = ds.length;
+                continue;
+            }
+            // Edman failures.
+            if (!block) {
+                if (!edman_failure(*generator)) {
+                    if (ds[e] != -1) {
+                        counts[ds[e]]--;
+                    }
+                    e++;
                 }
             }
+            // Bleaching.
+            for (unsigned int i = e; i < ds.length; i++) {
+                if (ds[i] != -1) {
+                    if (bleach_events[ds[i]](*generator)) {
+                        counts[ds[i]]--;
+                        ds[i] = -1;
+                    }
+                }
+            }
+        } else {
+            // Record results.
+            for (unsigned int c = 0; c < num_channels; c++) {
+                (*dye_track)(t, c) = 0;
+            }
         }
-    }
-    while (t < num_timesteps) {
-        for (unsigned int c = 0; c < num_channels; c++) {
-            (*dye_track)(t, c) = 0;
-        }
-        t++;
     }
     delete[] counts;
 }

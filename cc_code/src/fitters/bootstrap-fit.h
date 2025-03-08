@@ -16,6 +16,7 @@
 #include "common/dye-seq.h"
 #include "common/radiometry.h"
 #include "parameterization/model/sequencing-model.h"
+#include "parameterization/settings/fit-settings.h"
 #include "parameterization/settings/sequencing-settings.h"
 
 namespace whatprot {
@@ -26,6 +27,7 @@ double bootstrap_fit(unsigned int num_timesteps,
                      double max_runtime,
                      const SequencingModel& seq_model,
                      const SequencingSettings& seq_settings,
+                     const FitSettings& fit_settings,
                      const DyeSeq& dye_seq,
                      const std::vector<Radiometry>& radiometries,
                      unsigned int num_bootstrap_rounds,

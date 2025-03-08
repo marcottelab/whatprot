@@ -27,10 +27,14 @@ namespace whatprot {
 
 class KDTEntry {
 public:
-    KDTEntry(SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track);
+    KDTEntry(const SequencingModel& seq_model,
+             SourcedData<DyeTrack, SourceCountHitsList<int>>&& dye_track);
     KDTEntry(KDTEntry&& other);
     KDTEntry& operator=(KDTEntry&& other);
     double operator[](int i) const;
+    // Using pointer instead of reference to make assignment operator possible
+    // to override.
+    const SequencingModel* seq_model;
     SourcedData<DyeTrack, SourceCountHitsList<int>> dye_track;
     int hits;
 };
@@ -55,6 +59,7 @@ class NNClassifier {
 public:
     NNClassifier(unsigned int num_timesteps,
                  unsigned int num_channels,
+                 const SequencingModel& seq_model,
                  int k,
                  double sig,
                  std::vector<SourcedData<DyeTrack, SourceCountHitsList<int>>>*

@@ -85,6 +85,14 @@ short DyeTrack::operator()(int t, int c) const {
     return counts[t * num_channels + c];
 }
 
+short* DyeTrack::operator[](int t) {
+    return &counts[t * num_channels];
+}
+
+const short* DyeTrack::operator[](int t) const {
+    return &counts[t * num_channels];
+}
+
 }  // namespace whatprot
 
 namespace std {

@@ -34,6 +34,8 @@ public:
     bool operator==(const DyeTrack& other) const;
     short& operator()(int t, int c);
     short operator()(int t, int c) const;
+    short* operator[](int t);
+    const short* operator[](int t) const;
 
     std::vector<short> counts;
     unsigned int num_timesteps;
