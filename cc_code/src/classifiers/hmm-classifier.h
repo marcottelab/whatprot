@@ -41,9 +41,12 @@ public:
                                   const std::vector<int>& candidate_indices);
     std::vector<ScoredClassification> classify(
             const std::vector<Radiometry>& radiometries);
-    std::vector<double> score(const Radiometry& radiometry);
-    std::vector<std::vector<double>> score(
-            const std::vector<Radiometry>& radiometries);
+    std::vector<ScoredClassification> score(const Radiometry& radiometry);
+    std::vector<ScoredClassification> HMMClassifier::score(
+            const Radiometry& radiometry,
+            const std::vector<int>& candidate_indices)
+            std::vector<std::vector<ScoredClassification>> score(
+                    const std::vector<Radiometry>& radiometries);
 
     template <typename I>
     ScoredClassification classify_helper(const Radiometry& radiometry,
@@ -76,6 +79,39 @@ public:
         if (std::isnan(result.adjusted_score())) {
             result.score = 0.0;
             result.total = 1.0;
+        }
+        return result;
+    }
+
+    template <typename I>
+    vector<ScoredClassification> score_helper(const Radiometry& radiometry,
+                                              I indices) {
+        RadiometryPrecomputations radiometry_precomputations(
+                radiometry, seq_model, seq_settings, max_num_dyes);
+        double total_score = 0.0;
+        vector<ScoredClassification> result;
+        result.reserve(indices.size());
+        for (int i : indices) {
+            PeptideHMM hmm(num_timesteps,
+                           num_channels,
+                           *dye_seq_precomputations_vec[i],
+                           radiometry_precomputations,
+                           universal_precomputations);
+            double score = hmm.probability();
+            total_score += score * dye_seqs[i].source.count;
+            result.emplace_back(dye_seqs[i].source.source, score, 0.0);
+        }
+        for (unsigned int j = 0; j < result.size(); j++) {
+            result[j].total = total_score;
+            // This next thing is a bit of a hack. Sometimes the candidates have
+            // a total score of 0.0, which causes the adjusted score to be nan.
+            // This can mess things up for us later. The best way to deal with
+            // it is to just set the score to 0.0 when this happens. It might be
+            // better though to find a way to avoid this situation.
+            if (std::isnan(result.adjusted_score())) {
+                result.score = 0.0;
+                result.total = 1.0;
+            }
         }
         return result;
     }

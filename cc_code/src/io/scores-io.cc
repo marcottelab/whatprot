@@ -25,12 +25,13 @@ using std::vector;
 }  // namespace
 
 void write_scores(const string& filename,
-                  const vector<vector<double>>& all_scores) {
+                  const vector<vector<ScoredClassification>>& all_scores) {
     ofstream f(filename);
     for (unsigned int i = 0; i < all_scores.size(); i++) {
+        f << all_scores[i].size();
         f << setprecision(17) << all_scores[i][0];
         for (unsigned int j = 1; j < all_scores[0].size(); j++) {
-            f << "," << setprecision(17) << all_scores[i][j];
+            f << "," << all_scores[i][j]. << "\t" << setprecision(17) << all_scores[i][j].value;
         }
         f << "\n";
     }

@@ -19,6 +19,7 @@ public:
     Range(int min, int max);
     RangeIterator begin();
     RangeIterator end();
+    unsigned int size();
 
     int min;
     int max;

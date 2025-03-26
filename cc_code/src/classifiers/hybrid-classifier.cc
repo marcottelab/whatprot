@@ -54,7 +54,7 @@ HybridClassifier::HybridClassifier(
 
 ScoredClassification HybridClassifier::classify(const Radiometry& radiometry) {
     vector<ScoredClassification> candidates;
-    candidates = nn_classifier.classify(radiometry, h);
+    candidates = nn_classifier.classify(radiometry, h);  // todo: rename "score"
     double subfraction = 0.0;
     vector<int> candidate_indices;
     candidate_indices.reserve(candidates.size());

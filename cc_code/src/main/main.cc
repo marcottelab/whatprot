@@ -67,6 +67,11 @@ int main(int argc, char** argv) {
     // clang-format off
     options.add_options()
         ("h,help", "Print usage\n")
+        ("a,allresults",
+            "Only for classification, and optional. If true, all results will "
+            "be returned. If false, only the top score for each radiometry "
+            "will be returned. Defaults to false (shorthand -a).\n",
+            value<bool>())
         ("b,numbootstrap",
             "Only for parameter fitting, and optional. If specified, indicates "
             "number of bootstrapping rounds to perform to get confidence "
@@ -185,7 +190,8 @@ int main(int argc, char** argv) {
             "  For MODE classify, you must define a VARIANT as one of hmm,\n"
             "  hybrid, or nn. Your data will then be classified using the\n"
             "  model defined by VARIANT. These VARIANT possibilities require\n"
-            "  specific parameters.\n"
+            "  specific parameters. All VARIANTs permit --allresults to be\n"
+            "  optionally set.\n"
             "  \n"
             "    For VARIANT hmm, you must define --seqparams, --dyeseqs,\n"
             "    --radiometries, and --results. Option --hmmprune is also\n"
@@ -234,6 +240,13 @@ int main(int argc, char** argv) {
     // Parameter for option should have same name as the one-character version
     // of the option.
     unsigned int num_optional_args = 0;
+    bool has_a = false;
+    bool a = false;
+    if (parsed_opts.count("allresults")) {
+        has_a = true;
+        num_optional_args++;
+        a = parsed_opts["allresults"].as<bool>();
+    }
     bool has_b = false;
     int b = -1;
     if (parsed_opts.count("numbootstrap")) {
@@ -367,6 +380,9 @@ int main(int argc, char** argv) {
             cout << options.help() << endl;
             return 1;
         }
+        if (has_a) {
+            num_optional_args--;
+        }
         if (0 == positional_args[1].compare("hmm")) {
             // Special handling for p since it is optional for classify hmm.
             if (has_p) {
@@ -379,7 +395,7 @@ int main(int argc, char** argv) {
                 return 1;
             }
             print_omp_info();
-            run_classify_hmm(P, p, S, R, Y);
+            run_classify_hmm(P, p, S, R, Y, a);
             return 0;
         }
         if (0 == positional_args[1].compare("hybrid")) {
@@ -394,7 +410,7 @@ int main(int argc, char** argv) {
                 return 1;
             }
             print_omp_info();
-            run_classify_hybrid(P, k, s, H, p, S, T, R, Y);
+            run_classify_hybrid(P, k, s, H, p, S, T, R, Y, a);
             return 0;
         }
         if (0 == positional_args[1].compare("nn")) {
@@ -405,7 +421,7 @@ int main(int argc, char** argv) {
                 return 1;
             }
             print_omp_info();
-            run_classify_nn(P, k, s, T, R, Y);
+            run_classify_nn(P, k, s, T, R, Y, a);
             return 0;
         }
         cout << endl << "INCORRECT USAGE" << endl << endl;

@@ -21,7 +21,8 @@ void run_classify_hybrid(std::string seq_params_filename,
                          std::string dye_seqs_filename,
                          std::string dye_tracks_filename,
                          std::string radiometries_filename,
-                         std::string predictions_filename);
+                         std::string predictions_filename,
+                         bool all_results);
 
 }  // namespace whatprot
 

@@ -18,7 +18,8 @@ void run_classify_nn(std::string seq_params_filename,
                      double sig,
                      std::string dye_tracks_filename,
                      std::string radiometries_filename,
-                     std::string predictions_filename);
+                     std::string predictions_filename,
+                     bool all_results);
 
 }  // namespace whatprot
 

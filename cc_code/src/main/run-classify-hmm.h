@@ -17,7 +17,8 @@ void run_classify_hmm(std::string seq_params_filename,
                       double hmm_pruning_cutoff,
                       std::string dye_seqs_filename,
                       std::string radiometries_filename,
-                      std::string predictions_filename);
+                      std::string predictions_filename,
+                      bool all_results);
 
 }  // namespace whatprot
 

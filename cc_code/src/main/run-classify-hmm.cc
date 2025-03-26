@@ -39,7 +39,8 @@ void run_classify_hmm(string seq_params_filename,
                       double hmm_pruning_cutoff,
                       string dye_seqs_filename,
                       string radiometries_filename,
-                      string predictions_filename) {
+                      string predictions_filename,
+                      bool all_results) {
     double total_start_time = wall_time();
 
     double start_time;
@@ -82,16 +83,32 @@ void run_classify_hmm(string seq_params_filename,
     end_time = wall_time();
     print_built_classifier(end_time - start_time);
 
-    start_time = wall_time();
-    vector<ScoredClassification> results = classifier.classify(radiometries);
-    end_time = wall_time();
-    print_finished_classification(end_time - start_time);
+    if (all_results) {
+        start_time = wall_time();
+        vector<vector<ScoredClassification>> results =
+                classifier.score(radiometries);
+        end_time = wall_time();
+        print_finished_classification(end_time - start_time);
 
-    start_time = wall_time();
-    write_scored_classifications(
-            predictions_filename, total_num_radiometries, results);
-    end_time = wall_time();
-    print_finished_saving_results(end_time - start_time);
+        start_time = wall_time();
+        write_scored_classifications(
+                predictions_filename, total_num_radiometries, results);
+        end_time = wall_time();
+        print_finished_saving_results(end_time - start_time);
+
+    } else {
+        start_time = wall_time();
+        vector<ScoredClassification> results =
+                classifier.classify(radiometries);
+        end_time = wall_time();
+        print_finished_classification(end_time - start_time);
+
+        start_time = wall_time();
+        write_scored_classifications(
+                predictions_filename, total_num_radiometries, results);
+        end_time = wall_time();
+        print_finished_saving_results(end_time - start_time);
+    }
 
     double total_end_time = wall_time();
     print_total_time(total_end_time - total_start_time);

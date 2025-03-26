@@ -23,6 +23,10 @@ RangeIterator Range::end() {
     return RangeIterator(max);
 }
 
+unsigned int Range::size() {
+    return max - min;
+}
+
 RangeIterator::RangeIterator(int index) : index(index) {}
 
 void RangeIterator::operator++() {

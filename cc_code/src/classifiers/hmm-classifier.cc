@@ -92,22 +92,19 @@ vector<ScoredClassification> HMMClassifier::classify(
     return results;
 }
 
-vector<double> HMMClassifier::score(const Radiometry& radiometry) {
+vector<ScoredClassification> HMMClassifier::score(
+        const Radiometry& radiometry) {
     RadiometryPrecomputations radiometry_precomputations(
             radiometry, seq_model, seq_settings, max_num_dyes);
-    vector<double> scores;
-    for (unsigned int i = 0; i < dye_seq_precomputations_vec.size(); i++) {
-        PeptideHMM hmm(num_timesteps,
-                       num_channels,
-                       *dye_seq_precomputations_vec[i],
-                       radiometry_precomputations,
-                       universal_precomputations);
-        scores.push_back(hmm.probability());
-    }
-    return scores;
+    return score_helper<Range>(radiometry, Range(dye_seqs.size()));
 }
 
-vector<vector<double>> HMMClassifier::score(
+vector<ScoredClassification> HMMClassifier::score(
+        const Radiometry& radiometry, const vector<int>& candidate_indices) {
+    return score_helper<const vector<int>&>(radiometry, candidate_indices);
+}
+
+vector<vector<ScoredClassification>> HMMClassifier::score(
         const vector<Radiometry>& radiometries) {
     vector<vector<double>> all_scores;
     all_scores.resize(radiometries.size());

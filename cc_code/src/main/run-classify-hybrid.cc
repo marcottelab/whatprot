@@ -44,7 +44,8 @@ void run_classify_hybrid(string seq_params_filename,
                          string dye_seqs_filename,
                          string dye_tracks_filename,
                          string radiometries_filename,
-                         string predictions_filename) {
+                         string predictions_filename,
+                         bool all_results) {
     double total_start_time = wall_time();
 
     double start_time;
